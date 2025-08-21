@@ -39,7 +39,6 @@ namespace TPMapEditor.Data
         public IList<WorldObject> WorldObjects { get; }
         public IList<Team> Teams { get; }
         public IList<Player> Players { get; }
-        //public IList<Player> PlayersAi { get; }
         public IList<Group> Groups { get; }
         public IList<WaypointPath> WaypointPaths { get; }
         public IList<WorldPolygon> WorldPolygons { get; }
@@ -48,6 +47,7 @@ namespace TPMapEditor.Data
         public IList<PlayerAlliance> PlayerAlliances { get; }
         public IList<Timer> Timers { get; }
         public IList<SpeechEvent> SpeechEvents { get; }
+        public IList<WorldRule> WorldRules { get; }
 
         public WorldMap()
         {
@@ -68,6 +68,7 @@ namespace TPMapEditor.Data
             PlayerAlliances = new ObservableCollection<PlayerAlliance>();
             Timers = new ObservableCollection<Timer>();
             SpeechEvents = new ObservableCollection<SpeechEvent>();
+            WorldRules = new ObservableCollection<WorldRule>();
         }
     }
 }
