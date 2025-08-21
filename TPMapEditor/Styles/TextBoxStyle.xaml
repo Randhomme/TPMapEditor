@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="TPMapEditor.Styles.TextBoxStyle">
+    <Style TargetType="TextBox" x:Key="TextBoxGlobalStyle">
+        <EventSetter Event="Validation.Error" Handler="TextBox_Error"/>
+        <EventSetter Event="KeyDown" Handler="TextBox_KeyEnterUpdate"/>
+    </Style>
+    <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxGlobalStyle}"/>
+    <Style TargetType="DataGrid">
+        <Style.Resources>
+            <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxGlobalStyle}">
+                <Setter Property="BorderBrush" Value="Transparent"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+</ResourceDictionary>

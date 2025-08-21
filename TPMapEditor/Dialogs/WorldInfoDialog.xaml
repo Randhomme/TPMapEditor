@@ -1,0 +1,36 @@
+﻿<local:DialogWindow x:Class="TPMapEditor.Dialogs.WorldInfoDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:controls="clr-namespace:TPMapEditor.Controls"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="WorldInfoDialog" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel x:Name="stackPanel" Margin="15" VerticalAlignment="Stretch" LastChildFill="False">
+            <GroupBox Header="World settings" DockPanel.Dock="Top">
+                <StackPanel>
+                    <ComboBox x:Name="mapTypeComboBox" Margin="5" SelectionChanged="mapTypeComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Historical map"/>
+                        <ComboBoxItem Content="Open map"/>
+                        <ComboBoxItem Content="Campaign map"/>
+                        <ComboBoxItem Content="Custom map"/>
+                    </ComboBox>
+                    <CheckBox x:Name="mustAssembleFleetCheckBox" Margin="5" Content="Must assemble fleet" IsChecked="{Binding Map.MustAssembleFleet}"/>
+                    <CheckBox x:Name="isCampaignCheckBox" Margin="5" Content="Is campaign" IsChecked="{Binding Map.IsCampaign}"/>
+                </StackPanel>
+            </GroupBox>
+            <controls:TextGroupBox DockPanel.Dock="Top" Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+            <controls:TextGroupBox DockPanel.Dock="Top" Header="Map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+        </DockPanel>
+        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="15" HorizontalAlignment="Right">
+            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+        </StackPanel>
+    </Grid>
+</local:DialogWindow>

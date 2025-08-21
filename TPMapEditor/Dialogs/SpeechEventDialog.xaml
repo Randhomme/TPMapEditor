@@ -1,0 +1,86 @@
+﻿<local:DialogWindow x:Class="TPMapEditor.Dialogs.SpeechEventDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:enums="clr-namespace:TPMapEditor.Enums"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="SpeechEventDialog" Height="450" Width="800">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0*" MinWidth="200"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <DataGrid Margin="10" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.SpeechEvents}" SelectedItem="{Binding SelectedSpeechEvent}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                        <DataGridTemplateColumn MinWidth="70">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Remove" Click="RemoveSpeechEvent_Click"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Margin="10" Grid.Row="1" MinWidth="85" Content="Add speech event" Command="{Binding AddSpeechEventCommand}"/>
+            </Grid>
+            <GridSplitter Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="10">
+                    <Label Margin="-5,0,0,0" Content="Name"/>
+                    <TextBox Text="{Binding SelectedSpeechEvent.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                    <Label Margin="-5,5,0,0" Content="Sound file name"/>
+                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.DialogueFilesList}" SelectedValue="{Binding SelectedSpeechEvent.SoundFileName, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Label Margin="-5,5,0,0" Content="Face texture"/>
+                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.FaceTexturesList}" SelectedValue="{Binding SelectedSpeechEvent.FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Label Margin="-5,5,0,0" Content="Text"/>
+                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.SpeechEventDictionnary}" SelectedValue="{Binding SelectedSpeechEvent.TextStringID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                    <Label Margin="-5,5,0,0" Content="Speaker"/>
+                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.SpeakerNamesDictionnary}" SelectedValue="{Binding SelectedSpeechEvent.SpeakerID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <Label Margin="-5,5,0,0" Content="Text color"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Width="70" Content="Edit" Click="EditTextColor_Click"/>
+                        <Rectangle Grid.Column="1">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle Grid.Column="1">
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding SelectedSpeechEvent.TextColor}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Grid>
+                    <Label Margin="-5,5,0,0" Content="Talking head location"/>
+                    <ComboBox SelectedItem="{Binding SelectedSpeechEvent.TalkingHeadLocation}" ItemsSource="{enums:EnumBindingSource enums:TalkingHeadLocation}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Has been played once" IsChecked="{Binding SelectedSpeechEvent.HasBeenPlayedOnce, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Is secondary speech" IsChecked="{Binding SelectedSpeechEvent.IsSecondarySpeech, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Open chat bar" IsChecked="{Binding SelectedSpeechEvent.OpenChatBar, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Open talking head" IsChecked="{Binding SelectedSpeechEvent.OpenTalkingHead, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Has text" IsChecked="{Binding SelectedSpeechEvent.HasText, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Use sound file length" IsChecked="{Binding SelectedSpeechEvent.UseSoundFileLength, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Margin="0,10,0,0" Content="Always open speech event bar" IsChecked="{Binding SelectedSpeechEvent.AlwaysOpenSpeechEventBar, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</local:DialogWindow>

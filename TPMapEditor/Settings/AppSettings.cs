@@ -1,0 +1,482 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Runtime;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
+using TPMapEditor.Data;
+
+namespace TPMapEditor.Settings
+{
+    public partial class AppSettings : ObservableObject
+    {
+        private readonly string filename = "TPMapEditor.xml";
+        [ObservableProperty]
+        private string tpGamePath;
+        public ObservableCollection<GameHeadersFile> TPTeamNames { get; }
+        public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
+        public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
+        [XmlIgnore]
+        public string GameHeadersFiles { get; set; }
+        [XmlIgnore]
+        public string GameStringsEnglish { get; set; }
+        [XmlIgnore]
+        public string SoundDirectory { get; set; }
+        [XmlIgnore]
+        public string WorldObjectFilesDirectory { get; set; }
+
+        public AppSettings()
+        {
+            // Set default paths
+            tpGamePath = "";
+            TPTeamNames = new ObservableCollection<GameHeadersFile>();
+            TPSpeechEvents = new ObservableCollection<GameHeadersFile>();
+            TPSpeakerNames = new ObservableCollection<GameHeadersFile>();
+            GameHeadersFiles = "";
+            GameStringsEnglish = "";
+            SoundDirectory = "";
+            WorldObjectFilesDirectory = "";
+        }
+
+        partial void OnTpGamePathChanged(string value)
+        {
+            UpdateAppSettingsStrings();
+            UpdateAppSettingsFolders();
+            UpdateGameHeadersFilesList();
+            UpdateDialogueFilesList();
+            UpdateFaceTexturesList();
+            var gameStrings = new Dictionary<string, string>();
+            UpdateGameStringsDictionary(gameStrings);
+            UpdateTeamNamesDictionary(gameStrings);
+            UpdateSpeechEventDictionnary(gameStrings);
+            UpdateSpeakersDictionnary(gameStrings);
+            UpdateWorldObjectTypeList();
+        }
+
+        public void UpdateStringsDictionnaries()
+        {
+            var gameStrings = new Dictionary<string, string>();
+            UpdateGameStringsDictionary(gameStrings);
+            UpdateTeamNamesDictionary(gameStrings);
+        }
+
+        private void UpdateAppSettingsStrings()
+        {
+            var stringsFilePath = Path.Combine(this.TpGamePath, "Strings.ini");
+            if (File.Exists(stringsFilePath))
+            {
+                try
+                {
+                    using (var reader = new StreamReader(File.OpenRead(stringsFilePath)))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            if (line.StartsWith("Game Header Files:"))
+                            {
+                                var gameHeadersFiles = Path.Combine(TpGamePath, line.Substring("Game Header Files:".Length).Trim());
+                                this.GameHeadersFiles = gameHeadersFiles;
+                            }
+                            if (line.StartsWith("Game Strings - English:"))
+                            {
+                                var gameStringsFile = Path.Combine(TpGamePath, line.Substring("Game Strings - English:".Length).Trim());
+                                this.GameStringsEnglish = gameStringsFile;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading Strings.ini: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Strings.ini file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateAppSettingsFolders()
+        {
+            var appSettingsFile = Path.Combine(this.TpGamePath, "AppSettings.ini");
+            if (File.Exists(appSettingsFile))
+            {
+                try
+                {
+                    using (var reader = new StreamReader(File.OpenRead(appSettingsFile)))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            if (line.StartsWith("SOUND DIRECTORY:"))
+                            {
+                                var soundDirectory = Path.Combine(TpGamePath, line.Substring("SOUND DIRECTORY:".Length).Trim());
+                                this.SoundDirectory = soundDirectory;
+                            }
+                            else if (line.StartsWith("WORLD OBJECT FILES DIRECTORY:"))
+                            {
+                                var worldObjectFilesDirectory = Path.Combine(TpGamePath, line.Substring("WORLD OBJECT FILES DIRECTORY:".Length).Trim());
+                                this.WorldObjectFilesDirectory = worldObjectFilesDirectory;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading AppSettings.ini: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("AppSettings.ini file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateGameHeadersFilesList()
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                GameHeadersFile.GameHeadersFilesList.Clear();
+                foreach (var file in Directory.GetFiles(GameHeadersFiles, "*.h"))
+                {
+                    var fileName = Path.GetFileName(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        GameHeadersFile.GameHeadersFilesList.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateDialogueFilesList()
+        {
+            var dialogueDirectory = Path.Combine(SoundDirectory, "Dialogue");
+            if (Directory.Exists(dialogueDirectory))
+            {
+                SpeechEvent.DialogueFilesList.Clear();
+                foreach (var file in Directory.GetFiles(dialogueDirectory, "*.ogg"))
+                {
+                    var fileName = Path.GetFileName(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        SpeechEvent.DialogueFilesList.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Dialogue directory '{dialogueDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateFaceTexturesList()
+        {
+            var hudFilePath = Path.Combine(this.TpGamePath, "hud.hdt");
+            if (File.Exists(hudFilePath))
+            {
+                try
+                {
+                    using (var reader = new StreamReader(File.OpenRead(hudFilePath), Encoding.GetEncoding("Windows-1252")))
+                    {
+                        SpeechEvent.FaceTexturesList.Clear();
+                        for (int i = 0; i < 185; i++)
+                        {
+                            if (!reader.EndOfStream)
+                                reader.ReadLine(); // Skip the first 185 lines
+                        }
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            // skip one line
+                            if(!reader.EndOfStream)
+                                reader.ReadLine();
+                            if (!reader.EndOfStream)
+                            {
+                                var line2 = reader.ReadLine();
+                                if (line2.Trim().StartsWith("TextureName"))
+                                {
+                                    var lineSplit = line.Split(' ');
+                                    if(lineSplit.Length > 1)
+                                    {
+                                        // Extract the face texture name
+                                        var faceTextureName = lineSplit[1];
+                                        if (!string.IsNullOrEmpty(faceTextureName))
+                                        {
+                                            SpeechEvent.FaceTexturesList.Add(faceTextureName);
+                                        }
+                                    }
+                                    // skip another 24 lines
+                                    for (int j = 0; j < 24; j++)
+                                    {
+                                        if (!reader.EndOfStream)
+                                            reader.ReadLine();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading hud.hdt: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("hud.hdt file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateGameStringsDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (File.Exists(GameStringsEnglish))
+            {
+                try
+                {
+                    using (var reader = new StreamReader(File.OpenRead(GameStringsEnglish), Encoding.GetEncoding("Windows-1252")))
+                    {
+                        string key, value;
+                        while ((key = reader.ReadLine()) != null)
+                        {
+                            if (string.IsNullOrEmpty(key) || key.StartsWith("\"") || key.EndsWith("\"") || key.StartsWith("//"))
+                                continue;
+                            if ((value = reader.ReadLine()) != null && (value = value.Trim('"')) != null)
+                                gameStrings[key] = value;
+                            else
+                                gameStrings[key] = key;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading game strings file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game strings file '{GameStringsEnglish}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateTeamNamesDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                Team.TeamNames.Clear();
+                foreach (var file in this.TPTeamNames)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var teamName = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(teamName, out var teamString))
+                                    {
+                                        Team.TeamNames[teamName] = teamString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateSpeechEventDictionnary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                SpeechEvent.SpeechEventDictionnary.Clear();
+                foreach (var file in this.TPSpeechEvents)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var parts = line.Substring(8).Split(' ');
+                                    if (parts.Length >= 2)
+                                    {
+                                        var eventName = parts[0];
+                                        if (gameStrings.TryGetValue(eventName, out var eventText))
+                                        {
+                                            SpeechEvent.SpeechEventDictionnary[eventName] = eventText;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading speech events file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateSpeakersDictionnary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                SpeechEvent.SpeakerNamesDictionnary.Clear();
+                foreach (var file in this.TPSpeakerNames)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var parts = line.Substring(8).Split(' ');
+                                    if (parts.Length >= 2)
+                                    {
+                                        var speakerName = parts[0];
+                                        if (gameStrings.TryGetValue(speakerName, out var speakerText))
+                                        {
+                                            SpeechEvent.SpeakerNamesDictionnary[speakerName] = speakerText;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading speaker names file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateWorldObjectTypeList()
+        {
+            if (Directory.Exists(WorldObjectFilesDirectory))
+            {
+                WotGridItem.WotTypes.Clear();
+                foreach (var file in Directory.GetFiles(WorldObjectFilesDirectory, "*.wot"))
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(file)))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("Type String"))
+                                {
+                                    string typeString = line.Substring("Type String:".Length).Trim('\'');
+                                    var wotGridItem = new WotGridItem
+                                    {
+                                        Type = typeString
+                                    };
+                                    // Attempt to load the image for the world object type
+                                    if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + "ImageData/WorldObjects/" + typeString + ".png"))
+                                    {
+                                        wotGridItem.Image = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "ImageData/WorldObjects/" + typeString + ".png"));
+                                    }
+                                    else
+                                    {
+                                        wotGridItem.Image = new BitmapImage(new Uri("pack://application:,,,/Images/WotPlaceholder.png"));
+                                    }
+                                    WotGridItem.WotTypes.Add(wotGridItem);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading world object file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"World object files directory '{WorldObjectFilesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void AddDefaultHeadersToLists()
+        {
+            TPTeamNames.Clear();
+            TPSpeechEvents.Clear();
+            TPSpeakerNames.Clear();
+            TPTeamNames.Add(new("TPTEAMNAMES_GameStrings.h"));
+            TPSpeechEvents.Add(new("TPSPEECHEVENTS000_GameStrings.h"));
+            TPSpeechEvents.Add(new("TPSPEECHEVENTS001_GameStrings.h"));
+            TPSpeechEvents.Add(new("TPSPEECHEVENTS002_GameStrings.h"));
+            TPSpeechEvents.Add(new("TPSPEECHEVENTS003_GameStrings.h"));
+            TPSpeechEvents.Add(new("TPSPEECHEVENTS004_GameStrings.h"));
+            TPSpeechEvents.Add(new("TPSPEECHEVENTS005_GameStrings.h"));
+            TPSpeakerNames.Add(new("TPSPEAKERNAMES_GameStrings.h"));
+        }
+
+        public AppSettings Load()
+        {
+            try
+            {
+                using (var reader = new StreamReader(File.OpenRead(filename)))
+                {
+                    var xmls = new XmlSerializer(typeof(AppSettings));
+                    return (AppSettings)xmls.Deserialize(reader);
+                }
+            }
+            catch
+            {
+                AddDefaultHeadersToLists();
+                Save();
+                return this;
+            }
+        }
+
+        public void Save()
+        {
+            try
+            {
+                using (var writer = new StreamWriter(File.Open(filename, FileMode.Create, FileAccess.ReadWrite)))
+                {
+                    var xmls = new XmlSerializer(typeof(AppSettings));
+                    xmls.Serialize(writer, this);
+                }
+            }
+            catch { }
+        }
+    }
+}

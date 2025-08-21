@@ -1,0 +1,109 @@
+﻿<local:DialogWindow x:Class="TPMapEditor.Dialogs.GameStringsHeadersDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:data="clr-namespace:TPMapEditor.Data"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="GameHeadersDialog" Height="450" Width="800">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="Team names">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="15">
+                        <Button MinWidth="85" Content="Add" Command="{Binding AddTeamNamesHeaderFileCommand}"/>
+                    </StackPanel>
+                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,15,15,15" ItemsSource="{Binding AppSettings.TPTeamNames}" SelectedItem="{Binding SelectedTeamNamesHeaderFile}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Header file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn MinWidth="85">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Remove" Click="RemoveTeamNamesHeaderFileButton_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Speech events">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="15">
+                        <Button MinWidth="85" Content="Add" Command="{Binding AddSpeechEventsHeaderFileCommand}"/>
+                    </StackPanel>
+                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,15,15,15" ItemsSource="{Binding AppSettings.TPSpeechEvents}" SelectedItem="{Binding SelectedSpeechEventsHeaderFile}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Header file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn MinWidth="85">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Remove" Click="RemoveSpeechEventsHeaderFileButton_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Speaker names">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="15">
+                        <Button MinWidth="85" Content="Add" Command="{Binding AddSpeakerNamesHeaderFileCommand}"/>
+                    </StackPanel>
+                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,15,15,15" ItemsSource="{Binding AppSettings.TPSpeakerNames}" SelectedItem="{Binding SelectedSpeakerNamesHeaderFile}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Header file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn MinWidth="85">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Remove" Click="RemoveSpeakerNamesHeaderFileButton_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StackPanel Margin="0,15,0,0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+        </StackPanel>
+    </Grid>
+</local:DialogWindow>
