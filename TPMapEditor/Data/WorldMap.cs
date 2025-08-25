@@ -59,7 +59,6 @@ namespace TPMapEditor.Data
             WorldObjects = new List<WorldObject>();
             Teams = new ObservableCollection<Team>();
             Players = new ObservableCollection<Player>();
-            //PlayersAi = new ObservableCollection<Player>();
             Groups = new ObservableCollection<Group>();
             WaypointPaths = new List<WaypointPath>();
             WorldPolygons = new List<WorldPolygon>();
