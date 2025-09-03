@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Runtime;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -18,6 +16,7 @@ namespace TPMapEditor.Settings
         private readonly string filename = "TPMapEditor.xml";
         [ObservableProperty]
         private string tpGamePath;
+        public static IList<string> FlagTextures { get; } = new List<string>();
         public ObservableCollection<GameHeadersFile> TPTeamNames { get; }
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
@@ -29,6 +28,8 @@ namespace TPMapEditor.Settings
         public string SoundDirectory { get; set; }
         [XmlIgnore]
         public string WorldObjectFilesDirectory { get; set; }
+        [XmlIgnore]
+        public string FlagTexturesDirectory { get; set; }
 
         public AppSettings()
         {
@@ -41,6 +42,7 @@ namespace TPMapEditor.Settings
             GameStringsEnglish = "";
             SoundDirectory = "";
             WorldObjectFilesDirectory = "";
+            FlagTexturesDirectory = "";
         }
 
         partial void OnTpGamePathChanged(string value)
@@ -50,6 +52,7 @@ namespace TPMapEditor.Settings
             UpdateGameHeadersFilesList();
             UpdateDialogueFilesList();
             UpdateFaceTexturesList();
+            UpdateFlagTexturesList();
             var gameStrings = new Dictionary<string, string>();
             UpdateGameStringsDictionary(gameStrings);
             UpdateTeamNamesDictionary(gameStrings);
@@ -115,13 +118,15 @@ namespace TPMapEditor.Settings
                             var line = reader.ReadLine();
                             if (line.StartsWith("SOUND DIRECTORY:"))
                             {
-                                var soundDirectory = Path.Combine(TpGamePath, line.Substring("SOUND DIRECTORY:".Length).Trim());
-                                this.SoundDirectory = soundDirectory;
+                                SoundDirectory = Path.Combine(TpGamePath, line.Substring("SOUND DIRECTORY:".Length).Trim()); ;
                             }
                             else if (line.StartsWith("WORLD OBJECT FILES DIRECTORY:"))
                             {
-                                var worldObjectFilesDirectory = Path.Combine(TpGamePath, line.Substring("WORLD OBJECT FILES DIRECTORY:".Length).Trim());
-                                this.WorldObjectFilesDirectory = worldObjectFilesDirectory;
+                                WorldObjectFilesDirectory = Path.Combine(TpGamePath, line.Substring("WORLD OBJECT FILES DIRECTORY:".Length).Trim()); ;
+                            }
+                            else if (line.StartsWith("FLAG TEXTURES:"))
+                            {
+                                FlagTexturesDirectory = Path.Combine(TpGamePath, line.Substring("FLAG TEXTURES:".Length).Trim());
                             }
                         }
                     }
@@ -233,6 +238,26 @@ namespace TPMapEditor.Settings
             else
             {
                 MessageBox.Show("hud.hdt file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateFlagTexturesList()
+        {
+            FlagTextures.Clear();
+            if (Directory.Exists(FlagTexturesDirectory))
+            {
+                foreach (var file in Directory.GetFiles(FlagTexturesDirectory, "*.tga"))
+                {
+                    var fileName = Path.GetFileName(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        FlagTextures.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Flag textures directory '{FlagTexturesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
