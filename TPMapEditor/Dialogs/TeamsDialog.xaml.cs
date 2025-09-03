@@ -38,7 +38,15 @@ namespace TPMapEditor.Dialogs
             if (SelectedTeam != null)
             {
                 Map.Teams.Remove(SelectedTeam);
+                foreach(var player in Map.Players)
+                {
+                    if (player.Team == SelectedTeam)
+                    {
+                        player.Team = null;
+                    }
+                }
                 AddTeamCommand.NotifyCanExecuteChanged();
+                SelectedTeam = null;
             }
         }
 
