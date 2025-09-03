@@ -40,7 +40,8 @@
                 <MenuItem Header="Flags" Command="{Binding FlagsEditCommand}"/>
                 <MenuItem Header="Player alliances" Command="{Binding PlayerAlliancesEditCommand}"/>
                 <MenuItem Header="Timers" Command="{Binding TimersEditCommand}"/>
-                <MenuItem Header="Speech events" Command="{Binding SpeechEventEditCommand}"/>
+                <MenuItem Header="Speech events" Command="{Binding SpeechEventsEditCommand}"/>
+                <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
@@ -248,7 +249,8 @@
                                                                 SelectedItem="{Binding SelectedWot.WorldObject.Group}"
                                                                 ItemsSource="{Binding Map.Groups}"
                                                                 IsEnabled="{Binding IsChecked, ElementName=wotIsInGroup}"
-                                                                SelectedIndex="{c:Binding ElementName=wotIsInGroup, Mode=OneWay, Path=IsChecked ? 0 : -1}"/>
+                                                                SelectedIndex="{c:Binding ElementName=wotIsInGroup, Mode=OneWay, Path=IsChecked ? 0 : -1}"
+                                                                DisplayMemberPath="Name"/>
                                                         </StackPanel>
                                                     </GroupBox>
                                                 </StackPanel>

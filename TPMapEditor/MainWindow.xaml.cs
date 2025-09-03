@@ -141,9 +141,15 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
-        private void OnSpeechEventEdit()
+        private void OnSpeechEventsEdit()
         {
             new SpeechEventDialog(this, Map).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnWorldRulesEdit()
+        {
+            new WorldRuleDialog(this, Map).ShowDialog();
         }
 
         [RelayCommand]
