@@ -46,7 +46,7 @@ namespace TPMapEditor.Enums
         GroupUnitHitAtLeastXTimes,
 
         [Description("Group/Unit Hit at least x Times by Player (with equivalence)")]
-        GroupUnitHitAtLeastXTimesByPlayer,
+        GroupUnitHitAtLeastXTimesByPlayerWithEquivalence,
 
         [Description("Group/Unit Is Docked")]
         GroupUnitIsDocked,
@@ -57,11 +57,8 @@ namespace TPMapEditor.Enums
         [Description("Group/Unit has >,<,= X damage")]
         GroupUnitHasDamage,
 
-        [Description("Group/Unit is Within any Nebula")]
-        GroupUnitIsWithinAnyNebula,
-
-        [Description("Group/Unit Under Attack")]
-        GroupUnitUnderAttack,
+        [Description("Group Under Attack")]
+        GroupUnderAttack,
 
         [Description("Is Group A attacking Group B")]
         IsGroupAAttackingGroupB,
@@ -129,7 +126,7 @@ namespace TPMapEditor.Enums
         [Description("Unit Flag Texture")]
         UnitFlagTexture,
 
-        [Description("Unit from Group enters trigger volume (Once per Unit)")]
+        [Description("Unit from Group enters trigger volume ( Once per Unit )")]
         UnitFromGroupEntersTriggerVolumeOncePerUnit,
 
         [Description("Unit is Within any Nebula")]
