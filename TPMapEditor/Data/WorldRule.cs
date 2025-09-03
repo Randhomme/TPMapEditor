@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Data
 {
-    public class WorldRule : NamedElement
+    public partial class WorldRule : NamedElement
     {
+        [ObservableProperty]
+        private bool runOnce;
         public ObservableCollection<RuleCondition> Conditions { get; } = new ObservableCollection<RuleCondition>();
         public ObservableCollection<RuleAction> Actions { get; } = new ObservableCollection<RuleAction>();
 

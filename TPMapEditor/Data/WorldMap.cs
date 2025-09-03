@@ -48,6 +48,7 @@ namespace TPMapEditor.Data
         public IList<Timer> Timers { get; }
         public IList<SpeechEvent> SpeechEvents { get; }
         public IList<WorldRule> WorldRules { get; }
+        public IList<ShipUnit> ShipUnits { get; }
 
         public WorldMap()
         {
@@ -68,6 +69,7 @@ namespace TPMapEditor.Data
             Timers = new ObservableCollection<Timer>();
             SpeechEvents = new ObservableCollection<SpeechEvent>();
             WorldRules = new ObservableCollection<WorldRule>();
+            ShipUnits = new ObservableCollection<ShipUnit>();
         }
     }
 }
