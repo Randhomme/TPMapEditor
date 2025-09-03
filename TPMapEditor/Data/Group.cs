@@ -17,9 +17,12 @@ namespace TPMapEditor.Data
             WorldObjects = new ObservableCollection<WorldObject>();
         }
 
-        public override string ToString()
+        public void ClearWot()
         {
-            return Name;
+            foreach (var wot in WorldObjects)
+            {
+                wot.Group = null;
+            }
         }
 
         protected override bool IsNameTaken(string name)
