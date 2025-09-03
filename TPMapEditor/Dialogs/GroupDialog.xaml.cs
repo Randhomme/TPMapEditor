@@ -43,7 +43,11 @@ namespace TPMapEditor.Dialogs
         private void RemoveGroup_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedGroup != null)
+            {
+                SelectedGroup.ClearWot();
                 Map.Groups.Remove(SelectedGroup);
+                SelectedGroup = null;
+            }
         }
 
         private void EditGroupColor_Click(object sender, RoutedEventArgs e)

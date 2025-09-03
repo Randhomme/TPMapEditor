@@ -41,7 +41,7 @@
             <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="10">
                     <Label Margin="-5,0,0,0" Content="Name"/>
-                    <TextBox Text="{Binding SelectedGroup.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Text="{Binding SelectedGroup.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Color"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
