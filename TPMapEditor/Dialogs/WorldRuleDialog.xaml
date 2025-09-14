@@ -91,101 +91,92 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnitNameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Group/Unit name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupUnitNameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnitUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Group/Unit"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupUnitUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupUnitNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupUnitName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnitNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupUnitName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupUnitUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupUnit, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnitUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupUnit, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsDockersNameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Dockers name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsDockersNameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsDockersUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Dockers"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsDockersUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsDockersNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.DockersName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsDockersNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.DockersName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsDockersUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.Dockers, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsDockersUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.Dockers, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsTargetsNameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Targets name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTargetsNameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsTargetsUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Targets"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTargetsUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTargetsNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.TargetsName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTargetsNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.TargetsName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTargetsUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.Targets, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTargetsUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.Targets, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupANameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Group A name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupANameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupAUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Group A"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupAUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupANameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupAName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupANameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupAName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupAUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupA, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupAUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupA, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupBNameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Group B name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupBNameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupBUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Group B"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupBUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupBNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupBName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupBNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupBName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupBUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupB, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupBUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupB, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsTowingGroupNameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Towing group name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTowingGroupNameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsTowingGroupUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Towing group"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTowingGroupUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTowingGroupNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.TowingGroupName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTowingGroupNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.TowingGroupName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTowingGroupUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.TowingGroup, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTowingGroupUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.TowingGroup, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsTargetToTowNameUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Target to tow name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTargetToTowNameUnit, UpdateSourceTrigger=PropertyChanged}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsTargetToTowUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Target to tow"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTargetToTowUnit, UpdateSourceTrigger=PropertyChanged}">
                                         <ComboBoxItem Content="Group"/>
                                         <ComboBoxItem Content="Unit"/>
                                     </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTargetToTowNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.TargetToTowName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTargetToTowNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.TargetToTowName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTargetToTowUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.TargetToTow, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTargetToTowUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.TargetToTow, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.TargetToTowName!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Target to tow name"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsTargetToTowNameUnit, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="Group"/>
-                                        <ComboBoxItem Content="Unit"/>
-                                    </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsTargetToTowNameUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.TargetToTowName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsTargetToTowNameUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.TargetToTowName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasGroup'}">
+                                    <Label Margin="-5,5,0,0" Content="Group"/>
+                                    <ComboBox ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.Group, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasGroupName'}">
-                                    <Label Margin="-5,5,0,0" Content="Group name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasVolume'}">
+                                    <Label Margin="-5,5,0,0" Content="Volume"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleCondition.Volume, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasVolumeName'}">
-                                    <Label Margin="-5,5,0,0" Content="Volume name"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleCondition.VolumeName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayer'}">
+                                    <Label Margin="-5,5,0,0" Content="Player"/>
+                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.Player, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayerName'}">
-                                    <Label Margin="-5,5,0,0" Content="Player name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.PlayerName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayerA'}">
+                                    <Label Margin="-5,5,0,0" Content="Player A"/>
+                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.PlayerA, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayerNameA'}">
-                                    <Label Margin="-5,5,0,0" Content="Player name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.PlayerNameA, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayerB'}">
+                                    <Label Margin="-5,5,0,0" Content="Player B"/>
+                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.PlayerB, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayerNameB'}">
-                                    <Label Margin="-5,5,0,0" Content="Player name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.PlayerNameB, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasFlagName'}">
-                                    <Label Margin="-5,5,0,0" Content="Flag name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Flags}" SelectedValue="{Binding SelectedRuleCondition.FlagName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasFlag'}">
+                                    <Label Margin="-5,5,0,0" Content="Flag"/>
+                                    <ComboBox ItemsSource="{Binding Map.Flags}" SelectedValue="{Binding SelectedRuleCondition.Flag, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasEquivalence'}">
                                     <Label Margin="-5,5,0,0" Content="Equivalence"/>
@@ -199,17 +190,17 @@
                                     <Label Margin="-5,5,0,0" Content="World object type"/>
                                     <ComboBox ItemsSource="{enums:EnumBindingSource enums:WorldObjectType}" SelectedValue="{Binding SelectedRuleCondition.WorldObjectType, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasSpeechEventName'}">
-                                    <Label Margin="-5,5,0,0" Content="Speech event name"/>
-                                    <ComboBox ItemsSource="{Binding Map.SpeechEvents}" SelectedValue="{Binding SelectedRuleCondition.SpeechEventName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasSpeechEvent'}">
+                                    <Label Margin="-5,5,0,0" Content="Speech event"/>
+                                    <ComboBox ItemsSource="{Binding Map.SpeechEvents}" SelectedValue="{Binding SelectedRuleCondition.SpeechEvent, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasTeamName'}">
-                                    <Label Margin="-5,5,0,0" Content="Team name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Teams}" SelectedValue="{Binding SelectedRuleCondition.TeamName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasTeam'}">
+                                    <Label Margin="-5,5,0,0" Content="Team"/>
+                                    <ComboBox ItemsSource="{Binding Map.Teams}" SelectedValue="{Binding SelectedRuleCondition.Team, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasTimerName'}">
-                                    <Label Margin="-5,5,0,0" Content="Timer name"/>
-                                    <ComboBox ItemsSource="{Binding Map.Timers}" SelectedValue="{Binding SelectedRuleCondition.TimerName, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" SelectedValuePath="Name"/>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasTimer'}">
+                                    <Label Margin="-5,5,0,0" Content="Timer"/>
+                                    <ComboBox ItemsSource="{Binding Map.Timers}" SelectedValue="{Binding SelectedRuleCondition.Timer, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasFlagType'}">
                                     <Label Margin="-5,5,0,0" Content="Flag texture"/>
@@ -316,21 +307,21 @@
                                     <Label Margin="-5,5,0,0" Content="Etherium current name"/>
                                     <TextBox Text="{Binding SelectedRuleAction.EtheriumName}"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasEtheriumPathName'}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasEtheriumPath'}">
                                     <Label Margin="-5,5,0,0" Content="Etherium current path"/>
-                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.EtheriumPathName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.EtheriumPath}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.CombatStrength!=null'}">
                                     <Label Margin="-5,5,0,0" Content="Combat strength"/>
                                     <Slider Value="{Binding SelectedRuleAction.CombatStrength}" Minimum="0" Maximum="9999"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasPlayerOwnerName'}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasPlayerOwner'}">
                                     <Label Margin="-5,5,0,0" Content="Has player/owner"/>
-                                    <CheckBox Content="{Binding SelectedRuleAction.HasPlayerOwnerName}" IsChecked="{Binding SelectedRuleAction.HasPlayerOwnerName}"/>
+                                    <CheckBox Content="{Binding SelectedRuleAction.HasPlayerOwner}" IsChecked="{Binding SelectedRuleAction.HasPlayerOwner}"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPlayerOwnerName'}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPlayerOwner'}">
                                     <Label Margin="-5,5,0,0" Content="Player/Owner"/>
-                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleAction.PlayerOwnerName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleAction.PlayerOwner}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasCrewSkillLevel'}">
                                     <Label Margin="-5,5,0,0" Content="Gunnery level"/>
@@ -340,9 +331,9 @@
                                     <Label Margin="-5,5,0,0" Content="Nebula name"/>
                                     <TextBox Text="{Binding SelectedRuleAction.NebulaName}"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPolygonName'}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPolygon'}">
                                     <Label Margin="-5,5,0,0" Content="Polygon"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleAction.PolygonName}"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleAction.Polygon}"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasLightningOnOff'}">
                                     <Label Margin="-5,5,0,0" Content="Lightning On/Off"/>
@@ -368,7 +359,7 @@
                                     <Label Margin="-5,5,0,0" Content="Nebula cloud effect"/>
                                     <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudEffectName}"/>
                                     <Label Margin="-5,5,0,0" Content="Nebula clound point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudPointSetName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudPointSet}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasSolarStormEffect'}">
                                     <Label Margin="-5,5,0,0" Content="Has solar storm effect"/>
@@ -378,7 +369,7 @@
                                     <Label Margin="-5,5,0,0" Content="Solar storm effect"/>
                                     <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.SolarStormEffectName}"/>
                                     <Label Margin="-5,5,0,0" Content="Solar storm point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.SolarStormPointSetName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.SolarStormPointSet}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasMeteorShowerEffect'}">
                                     <Label Margin="-5,5,0,0" Content="Has meteor shower effect"/>
@@ -388,7 +379,7 @@
                                     <Label Margin="-5,5,0,0" Content="Meteor shower effect"/>
                                     <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerEffectName}"/>
                                     <Label Margin="-5,5,0,0" Content="Meteor shower point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerPointSetName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerPointSet}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasRotationalWindsOnOff'}">
                                     <Label Margin="-5,5,0,0" Content="Rotational winds On/Off"/>
@@ -418,9 +409,9 @@
                                     <Label Margin="-5,5,0,0" Content="Ship name"/>
                                     <TextBox Text="{Binding SelectedRuleAction.ShipUnit.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                 </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasShipPathName'}">
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasShipPath'}">
                                     <Label Margin="-5,5,0,0" Content="Ship path"/>
-                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.ShipPathName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.ShipPath}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasFollowMode'}">
                                     <Label Margin="-5,5,0,0" Content="Follow mode"/>
@@ -437,6 +428,19 @@
                                 <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasLocalizedShipName'}">
                                     <Label Margin="-5,5,0,0" Content="Localized ship name"/>
                                     <ComboBox  ItemsSource="{x:Static data:ShipUnit.ShipNamesDictionnary}" SelectedValue="{Binding SelectedRuleAction.LocalizedShipName}" SelectedValuePath="Key" DisplayMemberPath="Value" IsEditable="True"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.VictoryPointsToBeAdded!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Victory points to be added"/>
+                                    <Slider Value="{Binding SelectedRuleAction.VictoryPointsToBeAdded}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsTowerGroupAUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Tower group A"/>
+                                    <ComboBox SelectedIndex="{Binding SelectedRuleAction.IsTowerGroupAUnit, UpdateSourceTrigger=PropertyChanged}">
+                                        <ComboBoxItem Content="Group"/>
+                                        <ComboBoxItem Content="Unit"/>
+                                    </ComboBox>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleAction.IsTowerGroupAUnit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleAction.TowerGroupA, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleAction.IsTowerGroupAUnit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleAction.TowerGroupA, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                                 </StackPanel>
                             </StackPanel>
                         </ScrollViewer>
