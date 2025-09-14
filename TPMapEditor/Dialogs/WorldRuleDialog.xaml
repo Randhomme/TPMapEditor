@@ -8,11 +8,12 @@
         xmlns:enums="clr-namespace:TPMapEditor.Enums"
         xmlns:converter="clr-namespace:TPMapEditor.Converter"
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
+        xmlns:data="clr-namespace:TPMapEditor.Data"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="WorldRuleDialog" Height="450" Width="800">
     <Window.Resources>
-        <converter:EnumToDescriptionConverter x:Key="EnumDescriptionConverter"/>
+        <converter:EnumToNameConverter x:Key="EnumToNameConverter"/>
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -67,7 +68,7 @@
                             </Grid.RowDefinitions>
                             <DataGrid Margin="10" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding SelectedWorldRule.Conditions}" SelectedItem="{Binding SelectedRuleCondition}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn  Binding="{Binding Type, Converter={StaticResource EnumDescriptionConverter}}" Header="Type" Width="*"/>
+                                    <DataGridTextColumn  Binding="{Binding Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
                                     <DataGridTemplateColumn MinWidth="70">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
@@ -86,7 +87,7 @@
                                 <ComboBox ItemsSource="{enums:EnumBindingSource enums:RuleCondition}" SelectedValue="{Binding SelectedRuleCondition.Type, UpdateSourceTrigger=PropertyChanged}">
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumToNameConverter}}"/>
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
@@ -272,26 +273,173 @@
                 </TabItem>
                 <TabItem Header="Actions">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <DataGrid Margin="10" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding SelectedWorldRule.Actions}" SelectedItem="{Binding SelectedRuleAction}">
-                            <DataGrid.Resources>
-                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
-                            </DataGrid.Resources>
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Binding="{Binding Type, Converter={StaticResource EnumDescriptionConverter}}" Header="Action type" Width="*"/>
-                                <DataGridTemplateColumn MinWidth="70">
-                                    <DataGridTemplateColumn.CellTemplate>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="200"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition MinWidth="200"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <DataGrid Margin="10" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding SelectedWorldRule.Actions}" SelectedItem="{Binding SelectedRuleAction}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn  Binding="{Binding Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
+                                    <DataGridTemplateColumn MinWidth="70">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="Remove" Click="RemoveRuleAction_Click"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Button Margin="10,10,10,7" Grid.Row="1" MinWidth="85" Content="Add action" Command="{Binding AddRuleActionCommand}"/>
+                        </Grid>
+                        <GridSplitter Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+                        <ScrollViewer Grid.Column="2" Visibility="{c:Binding 'SelectedRuleAction!=null'}" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Grid.Column="2" Margin="10">
+                                <Label Margin="-5,0,0,0" Content="Type"/>
+                                <ComboBox ItemsSource="{enums:EnumBindingSource enums:RuleAction}" SelectedValue="{Binding SelectedRuleAction.Type, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Button Content="Remove" Click="RemoveRuleAction_Click"/>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumToNameConverter}}"/>
                                         </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <Button Margin="10,10,10,7" Grid.Row="1" MinWidth="85" Content="Add action" Command="{Binding AddRuleActionCommand}"/>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasWorldObject'}">
+                                    <Label Margin="-5,5,0,0" Content="World object"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldObjects}" SelectedItem="{Binding SelectedRuleAction.WorldObject, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.EtheriumName!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Etherium current name"/>
+                                    <TextBox Text="{Binding SelectedRuleAction.EtheriumName}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasEtheriumPathName'}">
+                                    <Label Margin="-5,5,0,0" Content="Etherium current path"/>
+                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.EtheriumPathName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.CombatStrength!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Combat strength"/>
+                                    <Slider Value="{Binding SelectedRuleAction.CombatStrength}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasPlayerOwnerName'}">
+                                    <Label Margin="-5,5,0,0" Content="Has player/owner"/>
+                                    <CheckBox Content="{Binding SelectedRuleAction.HasPlayerOwnerName}" IsChecked="{Binding SelectedRuleAction.HasPlayerOwnerName}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPlayerOwnerName'}">
+                                    <Label Margin="-5,5,0,0" Content="Player/Owner"/>
+                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleAction.PlayerOwnerName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasCrewSkillLevel'}">
+                                    <Label Margin="-5,5,0,0" Content="Gunnery level"/>
+                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:CrewSkillLevel}" SelectedValue="{Binding SelectedRuleAction.CrewSkillLevel}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.NebulaName!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Nebula name"/>
+                                    <TextBox Text="{Binding SelectedRuleAction.NebulaName}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPolygonName'}">
+                                    <Label Margin="-5,5,0,0" Content="Polygon"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleAction.PolygonName}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasLightningOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Lightning On/Off"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.LightningOnOff}" Content="{Binding SelectedRuleAction.LightningOnOff}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.LightningOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Ligthning blast recharge time"/>
+                                    <Slider Value="{Binding SelectedRuleAction.LightningBlastRechargeTime}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasMeteorsOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Meteors On/Off"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.MeteorsOnOff}" Content="{Binding SelectedRuleAction.MeteorsOnOff}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.MeteorsOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Meteor strike recharge time"/>
+                                    <Slider Value="{Binding SelectedRuleAction.MeteorStrikeRechargeTime}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasNebulaCloudEffect'}">
+                                    <Label Margin="-5,5,0,0" Content="Has nebula cloud effect"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasNebulaCloudEffect}" Content="{Binding SelectedRuleAction.HasNebulaCloudEffect}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasNebulaCloudEffect'}">
+                                    <Label Margin="-5,5,0,0" Content="Nebula cloud effect"/>
+                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudEffectName}"/>
+                                    <Label Margin="-5,5,0,0" Content="Nebula clound point set"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudPointSetName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasSolarStormEffect'}">
+                                    <Label Margin="-5,5,0,0" Content="Has solar storm effect"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasSolarStormEffect}" Content="{Binding SelectedRuleAction.HasSolarStormEffect}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasSolarStormEffect'}">
+                                    <Label Margin="-5,5,0,0" Content="Solar storm effect"/>
+                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.SolarStormEffectName}"/>
+                                    <Label Margin="-5,5,0,0" Content="Solar storm point set"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.SolarStormPointSetName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasMeteorShowerEffect'}">
+                                    <Label Margin="-5,5,0,0" Content="Has meteor shower effect"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasMeteorShowerEffect}" Content="{Binding SelectedRuleAction.HasMeteorShowerEffect}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasMeteorShowerEffect'}">
+                                    <Label Margin="-5,5,0,0" Content="Meteor shower effect"/>
+                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerEffectName}"/>
+                                    <Label Margin="-5,5,0,0" Content="Meteor shower point set"/>
+                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerPointSetName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasRotationalWindsOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Rotational winds On/Off"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.RotationalWindsOnOff}" Content="{Binding SelectedRuleAction.RotationalWindsOnOff}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.RotationalWindsOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Wind magnitude"/>
+                                    <Slider Value="{Binding SelectedRuleAction.WindMagnitude}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.RotationalWindsOnOff'}">
+                                    <Label Margin="-5,5,0,0" Content="Wind damage frequency"/>
+                                    <Slider Value="{Binding SelectedRuleAction.WindDamageFrequency}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.NebulaCloudDrainEnergyOnOff!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Nebula energy drain"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.NebulaCloudDrainEnergyOnOff}" Content="{Binding SelectedRuleAction.NebulaCloudDrainEnergyOnOff}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.NebulaOcclusionOnOff!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Nebula occlusion"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.NebulaOcclusionOnOff}" Content="{Binding SelectedRuleAction.NebulaOcclusionOnOff}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.AmbientSoundMaxDistance!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Ambient sound max distance"/>
+                                    <Slider Value="{Binding SelectedRuleAction.AmbientSoundMaxDistance}" Minimum="0" Maximum="9999"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.ShipUnit!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Ship name"/>
+                                    <TextBox Text="{Binding SelectedRuleAction.ShipUnit.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasShipPathName'}">
+                                    <Label Margin="-5,5,0,0" Content="Ship path"/>
+                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.ShipPathName}" SelectedValuePath="Name" DisplayMemberPath="Name"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasFollowMode'}">
+                                    <Label Margin="-5,5,0,0" Content="Follow mode"/>
+                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:FollowMode}" SelectedValue="{Binding SelectedRuleAction.FollowMode}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsPrimaryShip!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Is primary ship"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.IsPrimaryShip}" Content="{Binding SelectedRuleAction.IsPrimaryShip}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsBoardable!=null'}">
+                                    <Label Margin="-5,5,0,0" Content="Is boardable"/>
+                                    <CheckBox IsChecked="{Binding SelectedRuleAction.IsBoardable}" Content="{Binding SelectedRuleAction.IsBoardable}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasLocalizedShipName'}">
+                                    <Label Margin="-5,5,0,0" Content="Localized ship name"/>
+                                    <ComboBox  ItemsSource="{x:Static data:ShipUnit.ShipNamesDictionnary}" SelectedValue="{Binding SelectedRuleAction.LocalizedShipName}" SelectedValuePath="Key" DisplayMemberPath="Value" IsEditable="True"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Grid>
                 </TabItem>
             </TabControl>

@@ -56,7 +56,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand(CanExecute = nameof(IsSelectedWorldRuleNull))]
         private void OnAddRuleAction()
         {
-            SelectedWorldRule?.Actions.Add(new());
+            SelectedWorldRule?.Actions.Add(new(Map));
         }
 
         private void RemoveWorldRule_Click(object sender, RoutedEventArgs e)
