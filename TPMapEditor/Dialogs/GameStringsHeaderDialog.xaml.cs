@@ -30,6 +30,8 @@ namespace TPMapEditor.Dialogs
         private GameHeadersFile? selectedSpeechEventsHeaderFile;
         [ObservableProperty]
         private GameHeadersFile? selectedSpeakerNamesHeaderFile;
+        [ObservableProperty]
+        private GameHeadersFile? selectedShipNamesHeaderFile;
         public AppSettings AppSettings { get; }
         public GameStringsHeadersDialog(Window owner, AppSettings appSettings) : base(owner)
         {
@@ -58,6 +60,13 @@ namespace TPMapEditor.Dialogs
             AppSettings.TPSpeakerNames.Add(new GameHeadersFile(fileName));
         }
 
+        [RelayCommand]
+        private void OnAddShipNamesHeaderFile()
+        {
+            string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
+            AppSettings.TPShipNames.Add(new GameHeadersFile(fileName));
+        }
+
         private void RemoveTeamNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
         {
             if(SelectedTeamNamesHeaderFile != null)
@@ -82,6 +91,15 @@ namespace TPMapEditor.Dialogs
             {
                 AppSettings.TPSpeakerNames.Remove(SelectedSpeakerNamesHeaderFile);
                 SelectedSpeakerNamesHeaderFile = null;
+            }
+        }
+
+        private void RemoveShipNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedShipNamesHeaderFile != null)
+            {
+                AppSettings.TPSpeakerNames.Remove(SelectedShipNamesHeaderFile);
+                SelectedShipNamesHeaderFile = null;
             }
         }
     }

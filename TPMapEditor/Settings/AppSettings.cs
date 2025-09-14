@@ -17,9 +17,11 @@ namespace TPMapEditor.Settings
         [ObservableProperty]
         private string tpGamePath;
         public static IList<string> FlagTextures { get; } = new List<string>();
+        public static IList<string> Effects { get; } = new List<string>();
         public ObservableCollection<GameHeadersFile> TPTeamNames { get; }
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
+        public ObservableCollection<GameHeadersFile> TPShipNames { get; }
         [XmlIgnore]
         public string GameHeadersFiles { get; set; }
         [XmlIgnore]
@@ -30,6 +32,8 @@ namespace TPMapEditor.Settings
         public string WorldObjectFilesDirectory { get; set; }
         [XmlIgnore]
         public string FlagTexturesDirectory { get; set; }
+        [XmlIgnore]
+        public string EffectsDirectory { get; set; }
 
         public AppSettings()
         {
@@ -38,11 +42,13 @@ namespace TPMapEditor.Settings
             TPTeamNames = new ObservableCollection<GameHeadersFile>();
             TPSpeechEvents = new ObservableCollection<GameHeadersFile>();
             TPSpeakerNames = new ObservableCollection<GameHeadersFile>();
+            TPShipNames = new ObservableCollection<GameHeadersFile>();
             GameHeadersFiles = "";
             GameStringsEnglish = "";
             SoundDirectory = "";
             WorldObjectFilesDirectory = "";
             FlagTexturesDirectory = "";
+            EffectsDirectory = "";
         }
 
         partial void OnTpGamePathChanged(string value)
@@ -53,11 +59,13 @@ namespace TPMapEditor.Settings
             UpdateDialogueFilesList();
             UpdateFaceTexturesList();
             UpdateFlagTexturesList();
+            UpdateEffectsList();
             var gameStrings = new Dictionary<string, string>();
             UpdateGameStringsDictionary(gameStrings);
             UpdateTeamNamesDictionary(gameStrings);
             UpdateSpeechEventDictionnary(gameStrings);
             UpdateSpeakersDictionnary(gameStrings);
+            UpdateShipNamesDictionnary(gameStrings);
             UpdateWorldObjectTypeList();
         }
 
@@ -127,6 +135,10 @@ namespace TPMapEditor.Settings
                             else if (line.StartsWith("FLAG TEXTURES:"))
                             {
                                 FlagTexturesDirectory = Path.Combine(TpGamePath, line.Substring("FLAG TEXTURES:".Length).Trim());
+                            }
+                            else if (line.StartsWith("EFFECTS DIRECTORY:"))
+                            {
+                                EffectsDirectory = Path.Combine(TpGamePath, line.Substring("EFFECTS DIRECTORY:".Length).Trim());
                             }
                         }
                     }
@@ -258,6 +270,26 @@ namespace TPMapEditor.Settings
             else
             {
                 MessageBox.Show($"Flag textures directory '{FlagTexturesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateEffectsList()
+        {
+            Effects.Clear();
+            if (Directory.Exists(EffectsDirectory))
+            {
+                foreach (var file in Directory.GetFiles(EffectsDirectory, "*.eft"))
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        Effects.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Effects directory '{EffectsDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -411,6 +443,47 @@ namespace TPMapEditor.Settings
             }
         }
 
+        private void UpdateShipNamesDictionnary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                ShipUnit.ShipNamesDictionnary.Clear();
+                foreach (var file in this.TPShipNames)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var parts = line.Substring(8).Split(' ');
+                                    if (parts.Length >= 2)
+                                    {
+                                        var shipName = parts[0];
+                                        if (gameStrings.TryGetValue(shipName, out var shipDisplayName))
+                                        {
+                                            ShipUnit.ShipNamesDictionnary[shipName] = shipDisplayName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading ship names file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
         private void UpdateWorldObjectTypeList()
         {
             if (Directory.Exists(WorldObjectFilesDirectory))
@@ -471,6 +544,15 @@ namespace TPMapEditor.Settings
             TPSpeechEvents.Add(new("TPSPEECHEVENTS004_GameStrings.h"));
             TPSpeechEvents.Add(new("TPSPEECHEVENTS005_GameStrings.h"));
             TPSpeakerNames.Add(new("TPSPEAKERNAMES_GameStrings.h"));
+            TPShipNames.Add(new("TPCAMPAIGNSHIPNAMES00_GameStrings.h"));
+            TPShipNames.Add(new("TPCAMPAIGNSHIPNAMES01_GameStrings.h"));
+            TPShipNames.Add(new("TPCAMPAIGNSHIPNAMES02_GameStrings.h"));
+            TPShipNames.Add(new("TPSHIPNAMENAVY00_GameStrings.h"));
+            TPShipNames.Add(new("TPSHIPNAMENAVY01_GameStrings.h"));
+            TPShipNames.Add(new("TPSHIPNAMEPIRATE00_GameStrings.h"));
+            TPShipNames.Add(new("TPSHIPNAMEPIRATE01_GameStrings.h"));
+            TPShipNames.Add(new("TPSHIPNAMEPROCYON00_GameStrings.h"));
+            TPShipNames.Add(new("TPSHIPNAMEPROCYON01_GameStrings.h"));
         }
 
         public AppSettings Load()
