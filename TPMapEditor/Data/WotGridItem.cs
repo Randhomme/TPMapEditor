@@ -16,7 +16,7 @@ namespace TPMapEditor.Data
 
         public override string ToString()
         {
-            return Type ?? "WorldObect";
+            return Type ?? "WorldObject";
         }
     }
 }

@@ -6,6 +6,8 @@ namespace TPMapEditor.Data
     public partial class WorldObject : DefaultElement
     {
         [ObservableProperty]
+        private int id;
+        [ObservableProperty]
         private WotGridItem type;
         [ObservableProperty]
         private double x, y, z, xRotation, yRotation, zRotation;
@@ -32,5 +34,7 @@ namespace TPMapEditor.Data
                 newValue.WorldObjects.Add(this);
             }
         }
+
+        public override string ToString() => $"#{Id} {Type}";
     }
 }

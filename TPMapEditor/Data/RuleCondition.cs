@@ -6,7 +6,7 @@ namespace TPMapEditor.Data
 {
     public partial class RuleCondition : ObservableObject
     {
-        public WorldMap Map { get; }
+        private WorldMap map;
         [ObservableProperty]
         private Enums.RuleCondition type;
         [ObservableProperty]
@@ -38,7 +38,7 @@ namespace TPMapEditor.Data
 
         public RuleCondition(WorldMap map)
         {
-            Map = map;
+            this.map = map;
             OnTypeChanged(Enums.RuleCondition.AllUnitsFromGroupHaveEnteredTriggerVolumeOnce);
         }
 
@@ -99,139 +99,139 @@ namespace TPMapEditor.Data
                 case Enums.RuleCondition.AllUnitsFromGroupHaveEnteredTriggerVolumeOnce:
                     SetDefaults();
                     HasGroupName = HasVolumeName = HasPlayerName = true;
-                    GroupName = Map.Groups.FirstOrDefault()?.Name;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
-                    PlayerName = Map.Players.FirstOrDefault()?.Name;
+                    GroupName = map.Groups.FirstOrDefault()?.Name;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
+                    PlayerName = map.Players.FirstOrDefault()?.Name;
                     ObjectThatHaveAlreadyEntered = 0; //not used, must be 0 for now
                     break;
                 case Enums.RuleCondition.DoesGroupContainUnitName:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name; //might need to be a unit
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name; //might need to be a unit
                     Exists = false;
                     break;
                 case Enums.RuleCondition.EnterVolume:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name; //might need to be a unit
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name; //might need to be a unit
                     HasVolumeName = true;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.ExitVolume:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name; //might need to be a unit
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name; //might need to be a unit
                     HasVolumeName = true;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.FlagCondition:
                     SetDefaults();
                     HasFlagName = true;
-                    FlagName = Map.Flags.FirstOrDefault()?.Name;
+                    FlagName = map.Flags.FirstOrDefault()?.Name;
                     BoolValue = true;
                     break;
                 case Enums.RuleCondition.GroupDestroyed:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name; //might need to be a group
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name; //might need to be a group
                     break;
                 case Enums.RuleCondition.GroupHasXMembers:
                     SetDefaults();
                     HasGroupName = HasEquivalence = true;
-                    GroupName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupName = map.Groups.FirstOrDefault()?.Name;
                     NumberInGroup = 1;
                     break;
                 case Enums.RuleCondition.GroupToGroupDistance:
                     SetDefaults();
                     HasEquivalence = true;
                     IsGroupANameUnit = IsGroupBNameUnit = false;
-                    GroupAName = Map.Groups.FirstOrDefault()?.Name;
-                    GroupBName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupAName = map.Groups.FirstOrDefault()?.Name;
+                    GroupBName = map.Groups.FirstOrDefault()?.Name;
                     Distance = 100;
                     break;
                 case Enums.RuleCondition.GroupUnitContainsNoMissionEssentialShips:
                     SetDefaults();
                     HasGroupName = true; //might also be unit
-                    GroupName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupName = map.Groups.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.GroupUnitDocked:
                     SetDefaults();
                     IsDockersNameUnit = IsTargetsNameUnit = false;
-                    DockersName = Map.Groups.FirstOrDefault()?.Name;
-                    TargetsName = Map.Groups.FirstOrDefault()?.Name;
+                    DockersName = map.Groups.FirstOrDefault()?.Name;
+                    TargetsName = map.Groups.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.GroupUnitFiredXShots:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
                     HasEquivalence = true;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     NumberOfRoundsFired = 0;
                     break;
                 case Enums.RuleCondition.GroupUnitHitAtLeastXTimes:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     NumberOfTimesHit = 0;
                     break;
                 case Enums.RuleCondition.GroupUnitHitAtLeastXTimesByPlayerWithEquivalence:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
                     HasEquivalence = true;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     NumberOfTimesHit = 0;
-                    PlayerName = Map.Players.FirstOrDefault()?.Name;
+                    PlayerName = map.Players.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.GroupUnitIsDocked:
                     SetDefaults();
                     IsDockersNameUnit = IsTargetsNameUnit = false;
-                    DockersName = Map.Groups.FirstOrDefault()?.Name;
-                    TargetsName = Map.Groups.FirstOrDefault()?.Name;
+                    DockersName = map.Groups.FirstOrDefault()?.Name;
+                    TargetsName = map.Groups.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.GroupUnitVitalSectionHasDamage:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
                     HasEquivalence = HasVitalSection = true;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     DamagePercent = 0;
                     break;
                 case Enums.RuleCondition.GroupUnitHasDamage:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
                     HasEquivalence = true;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     DamagePercent = 0;
                     break;
                 case Enums.RuleCondition.GroupUnderAttack:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.IsGroupAAttackingGroupB:
                     SetDefaults();
                     IsGroupANameUnit = IsGroupBNameUnit = false;
-                    GroupAName = Map.Groups.FirstOrDefault()?.Name;
-                    GroupBName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupAName = map.Groups.FirstOrDefault()?.Name;
+                    GroupBName = map.Groups.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.IsGroupInVolume:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name; //might need to be a unit
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name; //might need to be a unit
                     HasVolumeName = true;
                     EntireGroup = true;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.IsShipInTow:
                     SetDefaults();
                     IsTowingGroupNameUnit = IsTargetToTowNameUnit = false;
-                    TowingGroupName = Map.Groups.FirstOrDefault()?.Name;
-                    TargetToTowName = Map.Groups.FirstOrDefault()?.Name; //might need to be a unit
+                    TowingGroupName = map.Groups.FirstOrDefault()?.Name;
+                    TargetToTowName = map.Groups.FirstOrDefault()?.Name; //might need to be a unit
                     break;
                 case Enums.RuleCondition.IsStarmapOpen:
                     break;
                 case Enums.RuleCondition.Mission9IfMortarExplodesWithinArea:
                     SetDefaults();
                     HasVolumeName = true;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.NoHumanControlledShipsRemain:
                     break;
@@ -240,26 +240,26 @@ namespace TPMapEditor.Data
                 case Enums.RuleCondition.PlayerHasHitGroupUnitAtLeastXTimes:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     HasPlayerName = true;
-                    PlayerName = Map.Players.FirstOrDefault()?.Name;
+                    PlayerName = map.Players.FirstOrDefault()?.Name;
                     NumberOfTimesHit = 0;
                     break;
                 case Enums.RuleCondition.PlayerHasNoLifeboats:
                     SetDefaults();
                     HasPlayerName = true;
-                    PlayerName = Map.Players.FirstOrDefault()?.Name;
+                    PlayerName = map.Players.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.PlayerKilledAObject:
                     SetDefaults();
                     HasPlayerName = HasWorldObjectType = true;
-                    PlayerName = Map.Players.FirstOrDefault()?.Name;
+                    PlayerName = map.Players.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.PlayerVsPlayerCaptureCount:
                     SetDefaults();
                     HasPlayerNameA = HasPlayerNameB = true;
-                    PlayerNameA = Map.Players.FirstOrDefault()?.Name;
-                    PlayerNameB = Map.Players.FirstOrDefault()?.Name;
+                    PlayerNameA = map.Players.FirstOrDefault()?.Name;
+                    PlayerNameB = map.Players.FirstOrDefault()?.Name;
                     HasEquivalence = true;
                     NumberOfCaptures = 0;
                     break;
@@ -268,58 +268,58 @@ namespace TPMapEditor.Data
                 case Enums.RuleCondition.SpeechEventNotPlayedYet:
                     SetDefaults();
                     HasSpeechEventName = true;
-                    SpeechEventName = Map.SpeechEvents.FirstOrDefault()?.Name;
+                    SpeechEventName = map.SpeechEvents.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.SpeechEventPlayedOnce:
                     SetDefaults();
                     HasSpeechEventName = true;
-                    SpeechEventName = Map.SpeechEvents.FirstOrDefault()?.Name;
+                    SpeechEventName = map.SpeechEvents.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.TeamGameComplete:
                     break;
                 case Enums.RuleCondition.TeamMemberEntersVolume:
                     SetDefaults();
                     HasTeamName = HasVolumeName = true;
-                    TeamName = Map.Teams.FirstOrDefault()?.RealName;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
+                    TeamName = map.Teams.FirstOrDefault()?.RealName;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
                     break;
                 case Enums.RuleCondition.TeamXHasNoShips:
                     SetDefaults();
                     HasTeamName = true;
-                    TeamName = Map.Teams.FirstOrDefault()?.RealName;
+                    TeamName = map.Teams.FirstOrDefault()?.RealName;
                     break;
                 case Enums.RuleCondition.TeamHasCapturedAShipFromGroupUnit:
                     SetDefaults();
                     HasTeamName = true;
-                    TeamName = Map.Teams.FirstOrDefault()?.RealName;
+                    TeamName = map.Teams.FirstOrDefault()?.RealName;
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     NumberOfCaptures = 0;
                     break;
                 case Enums.RuleCondition.TeamHasDestroyedAShipFromGroupUnit:
                     SetDefaults();
                     HasTeamName = true;
-                    TeamName = Map.Teams.FirstOrDefault()?.RealName;
+                    TeamName = map.Teams.FirstOrDefault()?.RealName;
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     NumberOfShipsDestroyed = 0;
                     break;
                 case Enums.RuleCondition.TeamHasXPoints:
                     SetDefaults();
                     HasTeamName = true;
-                    TeamName = Map.Teams.FirstOrDefault()?.RealName;
+                    TeamName = map.Teams.FirstOrDefault()?.RealName;
                     Points = 0;
                     break;
                 case Enums.RuleCondition.TimerCondition:
                     SetDefaults();
                     HasTimerName = HasEquivalence = true;
-                    TimerName = Map.Timers.FirstOrDefault()?.Name;
+                    TimerName = map.Timers.FirstOrDefault()?.Name;
                     TimeInSeconds = 0;
                     break;
                 case Enums.RuleCondition.UnitFlagTexture:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name;
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name;
                     HasFlagType = true;
                     FlagType = AppSettings.FlagTextures.FirstOrDefault();
                     BoolValue = true;
@@ -327,16 +327,16 @@ namespace TPMapEditor.Data
                 case Enums.RuleCondition.UnitFromGroupEntersTriggerVolumeOncePerUnit:
                     SetDefaults();
                     HasGroupName = HasVolumeName = HasTeamName = true;
-                    GroupName = Map.Groups.FirstOrDefault()?.Name;
-                    VolumeName = Map.WorldPolygons.FirstOrDefault()?.Name;
-                    TeamName = Map.Teams.FirstOrDefault()?.RealName;
+                    GroupName = map.Groups.FirstOrDefault()?.Name;
+                    VolumeName = map.WorldPolygons.FirstOrDefault()?.Name;
+                    TeamName = map.Teams.FirstOrDefault()?.RealName;
                     NumberOfObjectsThatHaveAlreadyEnteredWaitingToReport = 0;
                     ObjectThatHaveAlreadyEntered = 0; //not used, must be 0 for now
                     break;
                 case Enums.RuleCondition.UnitIsWithinAnyNebula:
                     SetDefaults();
                     IsGroupUnitNameUnit = false;
-                    GroupUnitName = Map.Groups.FirstOrDefault()?.Name; //might need to be a unit
+                    GroupUnitName = map.Groups.FirstOrDefault()?.Name; //might need to be a unit
                     break;
                 default:
                     break;

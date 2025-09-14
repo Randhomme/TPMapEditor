@@ -49,6 +49,7 @@ namespace TPMapEditor.Data
         public IList<SpeechEvent> SpeechEvents { get; }
         public IList<WorldRule> WorldRules { get; }
         public IList<ShipUnit> ShipUnits { get; }
+        //public IList<EtheriumCurrent> EtheriumCurrents { get; }
 
         public WorldMap()
         {
@@ -70,6 +71,7 @@ namespace TPMapEditor.Data
             SpeechEvents = new ObservableCollection<SpeechEvent>();
             WorldRules = new ObservableCollection<WorldRule>();
             ShipUnits = new ObservableCollection<ShipUnit>();
+            //EtheriumCurrents = new ObservableCollection<EtheriumCurrent>();
         }
     }
 }
