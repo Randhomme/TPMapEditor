@@ -1,315 +1,310 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TPMapEditor.Enums
 {
     public enum RuleAction
     {
-        [Description("*State Init* Setup Etherium Current")]
+        [Display(Name = "*State Init* Setup Etherium Current")]
         StateInitSetupEtheriumCurrent,
 
-        [Description("*State Init* Setup Island")]
+        [Display(Name = "*State Init* Setup Island")]
         StateInitSetupIsland,
 
-        [Description("*State Init* Setup Nebula")]
+        [Display(Name = "*State Init* Setup Nebula")]
         StateInitSetupNebula,
 
-        [Description("*State Init* Setup Ship")]
+        [Display(Name = "*State Init* Setup Ship")]
         StateInitSetupShip,
 
-        [Description("Add Victory Points for SinglePlayer")]
+        [Display(Name = "Add Victory Points for SinglePlayer")]
         AddVictoryPointsForSinglePlayer,
 
-        [Description("Break Tow")]
+        [Display(Name = "Break Tow")]
         BreakTow,
 
-        [Description("Clear Group/Unit Border Zone")]
+        [Display(Name = "Clear Group/Unit Border Zone")]
         ClearGroupUnitBorderZone,
 
-        [Description("Clear all AI commands")]
+        [Display(Name = "Clear all AI commands")]
         ClearAllAICommands,
 
-        [Description("Close HUD Texture Overlay")]
+        [Display(Name = "Close HUD Texture Overlay")]
         CloseHUDTextureOverlay,
 
-        [Description("Create/Release Event Effect")]
+        [Display(Name = "Create/Release Event Effect")]
         CreateReleaseEventEffect,
 
-        [Description("Crew Speech - Helm Off Course")]
+        [Display(Name = "Crew Speech - Helm Off Course")]
         CrewSpeechHelmOffCourse,
 
-        [Description("Crew Speech - Toggle On Off")]
+        [Display(Name = "Crew Speech - Toggle On Off")]
         CrewSpeechToggleOnOff,
 
-        [Description("Damage Group/Unit by X percent")]
+        [Display(Name = "Damage Group/Unit by X percent")]
         DamageGroupUnitByXPercent,
 
-        [Description("Destroy Group/Unit")]
+        [Display(Name = "Destroy Group/Unit")]
         DestroyGroupUnit,
 
-        [Description("Dock Ships")]
+        [Display(Name = "Dock Ships")]
         DockShips,
 
-        [Description("Dragon - Set AI Stance")]
+        [Display(Name = "Dragon - Set AI Stance")]
         DragonSetAIStance,
 
-        [Description("Dragon - Set Damage Threshold")]
+        [Display(Name = "Dragon - Set Damage Threshold")]
         DragonSetDamageThreshold,
 
-        [Description("End Game")]
+        [Display(Name = "End Game")]
         EndGame,
 
-        [Description("Focus Camera On Group")]
+        [Display(Name = "Focus Camera On Group")]
         FocusCameraOnGroup,
 
-        [Description("Goto Next Level")]
+        [Display(Name = "Goto Next Level")]
         GotoNextLevel,
 
-        [Description("Grant Team X Points")]
+        [Display(Name = "Grant Team X Points")]
         GrantTeamXPoints,
 
-        [Description("Group to follow path")]
+        [Display(Name = "Group to follow path")]
         GroupToFollowPath,
 
-        [Description("GroupA to Ram GroupB")]
+        [Display(Name = "GroupA to Ram GroupB")]
         GroupAToRamGroupB,
 
-        [Description("GroupA to attack GroupB")]
+        [Display(Name = "GroupA to attack GroupB")]
         GroupAToAttackGroupB,
 
-        [Description("Mission 9 - Do Dark Matter Explosion")]
+        [Display(Name = "Mission 9 - Do Dark Matter Explosion")]
         Mission9DoDarkMatterExplosion,
 
-        [Description("Mission 9 - Teleport Longboat")]
+        [Display(Name = "Mission 9 - Teleport Longboat")]
         Mission9TeleportLongboat,
 
-        [Description("NIS Attach Camera")]
+        [Display(Name = "NIS Attach Camera")]
         NISAttachCamera,
 
-        [Description("NIS End")]
+        [Display(Name = "NIS End")]
         NISEnd,
 
-        [Description("NIS Focus camera on Group/Unit")]
+        [Display(Name = "NIS Focus camera on Group/Unit")]
         NISFocusCameraOnGroupUnit,
 
-        [Description("NIS Focus camera on Point")]
+        [Display(Name = "NIS Focus camera on Point")]
         NISFocusCameraOnPoint,
 
-        [Description("NIS Focus on Main Ship")]
+        [Display(Name = "NIS Focus on Main Ship")]
         NISFocusOnMainShip,
 
-        [Description("NIS Position Camera Relative to Object")]
+        [Display(Name = "NIS Position Camera Relative to Object")]
         NISPositionCameraRelativeToObject,
 
-        [Description("NIS Set Camera Path")]
+        [Display(Name = "NIS Set Camera Path")]
         NISSetCameraPath,
 
-        [Description("NIS Set Camera Speed")]
+        [Display(Name = "NIS Set Camera Speed")]
         NISSetCameraSpeed,
 
-        [Description("NIS Set Transition Camera Speed")]
+        [Display(Name = "NIS Set Transition Camera Speed")]
         NISSetTransitionCameraSpeed,
 
-        [Description("NIS Start")]
+        [Display(Name = "NIS Start")]
         NISStart,
 
-        [Description("NIS Toggle All Objects Visibility")]
+        [Display(Name = "NIS Toggle All Objects Visibility")]
         NISToggleAllObjectsVisibility,
 
-        [Description("NIS Toggle NIS mode Gun Accuracy")]
+        [Display(Name = "NIS Toggle NIS mode Gun Accuracy")]
         NISToggleNISModeGunAccuracy,
 
-        [Description("NIS Zoom")]
+        [Display(Name = "NIS Zoom")]
         NISZoom,
 
-        [Description("Open Crew and Arms Screens")]
+        [Display(Name = "Open Crew and Arms Screens")]
         OpenCrewAndArmsScreens,
 
-        [Description("Open HUD Texture Overlay")]
+        [Display(Name = "Open HUD Texture Overlay")]
         OpenHUDTextureOverlay,
 
-        [Description("Open Weapon Bar")]
+        [Display(Name = "Open Weapon Bar")]
         OpenWeaponBar,
 
-        [Description("Play Music Track")]
+        [Display(Name = "Play Music Track")]
         PlayMusicTrack,
 
-        [Description("Play Special Effect")]
+        [Display(Name = "Play Special Effect")]
         PlaySpecialEffect,
 
-        [Description("Play speech event")]
+        [Display(Name = "Play speech event")]
         PlaySpeechEvent,
 
-        [Description("Remaining Team Wins")]
+        [Display(Name = "Remaining Team Wins")]
         RemainingTeamWins,
 
-        [Description("Reset Hit Count")]
+        [Display(Name = "Reset Hit Count")]
         ResetHitCount,
 
-        [Description("Reset Shots Fired Count")]
+        [Display(Name = "Reset Shots Fired Count")]
         ResetShotsFiredCount,
 
-        [Description("Set Current Objective Point")]
+        [Display(Name = "Set Current Objective Point")]
         SetCurrentObjectivePoint,
 
-        [Description("Set Current Objective Point On Ship")]
+        [Display(Name = "Set Current Objective Point On Ship")]
         SetCurrentObjectivePointOnShip,
 
-        [Description("Set Current Objective Point Visible On Starmap")]
+        [Display(Name = "Set Current Objective Point Visible On Starmap")]
         SetCurrentObjectivePointVisibleOnStarmap,
 
-        [Description("Set Dock Time")]
+        [Display(Name = "Set Dock Time")]
         SetDockTime,
 
-        [Description("Set Flag Action")]
+        [Display(Name = "Set Flag Action")]
         SetFlagAction,
 
-        [Description("Set Fleet Hold Fire")]
+        [Display(Name = "Set Fleet Hold Fire")]
         SetFleetHoldFire,
 
-        [Description("Set Fleet Hold Formation")]
+        [Display(Name = "Set Fleet Hold Formation")]
         SetFleetHoldFormation,
 
-        [Description("Set Fleet Primary Ship")]
+        [Display(Name = "Set Fleet Primary Ship")]
         SetFleetPrimaryShip,
 
-        [Description("Set FleetFormation Type")]
+        [Display(Name = "Set FleetFormation Type")]
         SetFleetFormationType,
 
-        [Description("Set Group Space Objects velocity")]
+        [Display(Name = "Set Group Space Objects velocity")]
         SetGroupSpaceObjectsVelocity,
 
-        [Description("Set Group Throttle Percent")]
+        [Display(Name = "Set Group Throttle Percent")]
         SetGroupThrottlePercent,
 
-        [Description("Set Group/Unit AI Captain")]
+        [Display(Name = "Set Group/Unit AI Captain")]
         SetGroupUnitAICaptain,
 
-        [Description("Set Group/Unit AI Stance")]
+        [Display(Name = "Set Group/Unit AI Stance")]
         SetGroupUnitAIStance,
 
-        [Description("Set Group/Unit Boardable")]
+        [Display(Name = "Set Group/Unit Boardable")]
         SetGroupUnitBoardable,
 
-        [Description("Set Group/Unit Border Zone")]
+        [Display(Name = "Set Group/Unit Border Zone")]
         SetGroupUnitBorderZone,
 
-        [Description("Set Group/Unit Border Zone Return Point")]
+        [Display(Name = "Set Group/Unit Border Zone Return Point")]
         SetGroupUnitBorderZoneReturnPoint,
 
-        [Description("Set Group/Unit Cloak State")]
+        [Display(Name = "Set Group/Unit Cloak State")]
         SetGroupUnitCloakState,
 
-        [Description("Set Group/Unit Dockable")]
+        [Display(Name = "Set Group/Unit Dockable")]
         SetGroupUnitDockable,
 
-        [Description("Set Group/Unit Hold Position")]
+        [Display(Name = "Set Group/Unit Hold Position")]
         SetGroupUnitHoldPosition,
 
-        [Description("Set Group/Unit Mission Essential")]
+        [Display(Name = "Set Group/Unit Mission Essential")]
         SetGroupUnitMissionEssential,
 
-        [Description("Set Group/Unit Movable")]
+        [Display(Name = "Set Group/Unit Movable")]
         SetGroupUnitMovable,
 
-        [Description("Set Group/Unit Owner")]
+        [Display(Name = "Set Group/Unit Owner")]
         SetGroupUnitOwner,
 
-        [Description("Set Group/Unit Towable")]
+        [Display(Name = "Set Group/Unit Towable")]
         SetGroupUnitTowable,
 
-        [Description("Set Group/Unit Visibility")]
+        [Display(Name = "Set Group/Unit Visibility")]
         SetGroupUnitVisibility,
 
-        [Description("Set Group/Unit Vulnerability")]
+        [Display(Name = "Set Group/Unit Vulnerability")]
         SetGroupUnitVulnerability,
 
-        [Description("Set Group/Unit Warning Shot Mode")]
+        [Display(Name = "Set Group/Unit Warning Shot Mode")]
         SetGroupUnitWarningShotMode,
 
-        [Description("Set Is In Calyan Abyss")]
+        [Display(Name = "Set Is In Calyan Abyss")]
         SetIsInCalyanAbyss,
 
-        [Description("Set Lifeboat Creation State")]
+        [Display(Name = "Set Lifeboat Creation State")]
         SetLifeboatCreationState,
 
-        [Description("Set Map Text Visibility")]
+        [Display(Name = "Set Map Text Visibility")]
         SetMapTextVisibility,
 
-        [Description("Set Max Throttle Percent (Max user settable)")]
+        [Display(Name = "Set Max Throttle Percent (Max user settable)")]
         SetMaxThrottlePercent,
 
-        [Description("Set Nebula Fadeout Distance")]
+        [Display(Name = "Set Nebula Fadeout Distance")]
         SetNebulaFadeoutDistance,
 
-        [Description("Set Nebula to Lock Objects")]
+        [Display(Name = "Set Nebula to Lock Objects")]
         SetNebulaToLockObjects,
 
-        [Description("Set Objective Task Active State")]
+        [Display(Name = "Set Objective Task Active State")]
         SetObjectiveTaskActiveState,
 
-        [Description("Set Objective Task Complete State")]
+        [Display(Name = "Set Objective Task Complete State")]
         SetObjectiveTaskCompleteState,
 
-        [Description("Set Objective Task Failed State")]
+        [Display(Name = "Set Objective Task Failed State")]
         SetObjectiveTaskFailedState,
 
-        [Description("Set Radar Active State")]
+        [Display(Name = "Set Radar Active State")]
         SetRadarActiveState,
 
-        [Description("Set Ship Banner Type")]
+        [Display(Name = "Set Ship Banner Type")]
         SetShipBannerType,
 
-        [Description("Set Ship Name")]
+        [Display(Name = "Set Ship Name")]
         SetShipName,
 
-        [Description("Set Ship Top Speed Percentage")]
+        [Display(Name = "Set Ship Top Speed Percentage")]
         SetShipTopSpeedPercentage,
 
-        [Description("Set Ships Flag Texture")]
+        [Display(Name = "Set Ships Flag Texture")]
         SetShipsFlagTexture,
 
-        [Description("Set alliance between PlayerA and PlayerB to TRUE/FALSE")]
+        [Display(Name = "Set alliance between PlayerA and PlayerB to TRUE/FALSE")]
         SetAllianceBetweenPlayerAToTRUEFALSE,
 
-        [Description("SetCollidable")]
+        [Display(Name = "SetCollidable")]
         SetCollidable,
 
-        [Description("Setup Asteroid Belt")]
+        [Display(Name = "Setup Asteroid Belt")]
         SetupAsteroidBelt,
 
-        [Description("Setup Space Animal Flock")]
+        [Display(Name = "Setup Space Animal Flock")]
         SetupSpaceAnimalFlock,
 
-        [Description("Setup Team Objective")]
+        [Display(Name = "Setup Team Objective")]
         SetupTeamObjective,
 
-        [Description("Start Timer")]
+        [Display(Name = "Start Timer")]
         StartTimer,
 
-        [Description("Stop Timer")]
+        [Display(Name = "Stop Timer")]
         StopTimer,
 
-        [Description("TUTORIAL - Pause when starmap opens?")]
+        [Display(Name = "TUTORIAL - Pause when starmap opens?")]
         TutorialPauseWhenStarmapOpens,
 
-        [Description("Team X Wins")]
+        [Display(Name = "Team X Wins")]
         TeamXWins,
 
-        [Description("Teleport Group/Unit")]
+        [Display(Name = "Teleport Group/Unit")]
         TeleportGroupUnit,
 
-        [Description("Toggle Island Repair When Docked")]
+        [Display(Name = "Toggle Island Repair When Docked")]
         ToggleIslandRepairWhenDocked,
 
-        [Description("Tow Ship")]
+        [Display(Name = "Tow Ship")]
         TowShip,
 
-        [Description("Transfer Group/Unit to Group")]
+        [Display(Name = "Transfer Group/Unit to Group")]
         TransferGroupUnitToGroup
     }
 }
