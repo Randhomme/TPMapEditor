@@ -32,6 +32,8 @@ namespace TPMapEditor.Dialogs
         private GameHeadersFile? selectedSpeakerNamesHeaderFile;
         [ObservableProperty]
         private GameHeadersFile? selectedShipNamesHeaderFile;
+        [ObservableProperty]
+        private GameHeadersFile? selectedInGameMessagesHeaderFile;
         public AppSettings AppSettings { get; }
         public GameStringsHeadersDialog(Window owner, AppSettings appSettings) : base(owner)
         {
@@ -67,6 +69,13 @@ namespace TPMapEditor.Dialogs
             AppSettings.TPShipNames.Add(new GameHeadersFile(fileName));
         }
 
+        [RelayCommand]
+        private void OnAddInGameMessagesHeaderFile()
+        {
+            string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
+            AppSettings.TPInGameMessages.Add(new GameHeadersFile(fileName));
+        }
+
         private void RemoveTeamNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
         {
             if(SelectedTeamNamesHeaderFile != null)
@@ -80,7 +89,7 @@ namespace TPMapEditor.Dialogs
         {
             if (SelectedSpeechEventsHeaderFile != null)
             {
-                AppSettings.TPTeamNames.Remove(SelectedSpeechEventsHeaderFile);
+                AppSettings.TPSpeechEvents.Remove(SelectedSpeechEventsHeaderFile);
                 SelectedSpeechEventsHeaderFile = null;
             }
         }
@@ -98,8 +107,17 @@ namespace TPMapEditor.Dialogs
         {
             if (SelectedShipNamesHeaderFile != null)
             {
-                AppSettings.TPSpeakerNames.Remove(SelectedShipNamesHeaderFile);
+                AppSettings.TPShipNames.Remove(SelectedShipNamesHeaderFile);
                 SelectedShipNamesHeaderFile = null;
+            }
+        }
+
+        private void RemoveInGameMessagesHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedInGameMessagesHeaderFile != null)
+            {
+                AppSettings.TPInGameMessages.Remove(SelectedInGameMessagesHeaderFile);
+                SelectedInGameMessagesHeaderFile = null;
             }
         }
     }

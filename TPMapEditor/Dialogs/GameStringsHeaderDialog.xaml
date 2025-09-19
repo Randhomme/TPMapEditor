@@ -130,6 +130,35 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
+            <TabItem Header="In game messages">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="15">
+                        <Button MinWidth="85" Content="Add" Command="{Binding AddInGameMessagesHeaderFileCommand}"/>
+                    </StackPanel>
+                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,15,15,15" ItemsSource="{Binding AppSettings.TPInGameMessages}" SelectedItem="{Binding SelectedInGameMessagesHeaderFile}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Header file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn MinWidth="85">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Remove" Click="RemoveInGameMessagesHeaderFileButton_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
         </TabControl>
         <StackPanel Margin="0,15,0,0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>

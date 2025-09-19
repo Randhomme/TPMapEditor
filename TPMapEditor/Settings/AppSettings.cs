@@ -22,6 +22,7 @@ namespace TPMapEditor.Settings
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
         public ObservableCollection<GameHeadersFile> TPShipNames { get; }
+        public ObservableCollection<GameHeadersFile> TPInGameMessages { get; }
         [XmlIgnore]
         public string GameHeadersFiles { get; set; }
         [XmlIgnore]
@@ -43,6 +44,7 @@ namespace TPMapEditor.Settings
             TPSpeechEvents = new ObservableCollection<GameHeadersFile>();
             TPSpeakerNames = new ObservableCollection<GameHeadersFile>();
             TPShipNames = new ObservableCollection<GameHeadersFile>();
+            TPInGameMessages = new ObservableCollection<GameHeadersFile>();
             GameHeadersFiles = "";
             GameStringsEnglish = "";
             SoundDirectory = "";
@@ -60,12 +62,7 @@ namespace TPMapEditor.Settings
             UpdateFaceTexturesList();
             UpdateFlagTexturesList();
             UpdateEffectsList();
-            var gameStrings = new Dictionary<string, string>();
-            UpdateGameStringsDictionary(gameStrings);
-            UpdateTeamNamesDictionary(gameStrings);
-            UpdateSpeechEventDictionnary(gameStrings);
-            UpdateSpeakersDictionnary(gameStrings);
-            UpdateShipNamesDictionnary(gameStrings);
+            UpdateStringsDictionnaries();
             UpdateWorldObjectTypeList();
         }
 
@@ -74,6 +71,10 @@ namespace TPMapEditor.Settings
             var gameStrings = new Dictionary<string, string>();
             UpdateGameStringsDictionary(gameStrings);
             UpdateTeamNamesDictionary(gameStrings);
+            UpdateSpeechEventDictionnary(gameStrings);
+            UpdateSpeakersDictionnary(gameStrings);
+            UpdateShipNamesDictionnary(gameStrings);
+            UpdateInGameMessagesDictionary(gameStrings);
         }
 
         private void UpdateAppSettingsStrings()
@@ -392,7 +393,7 @@ namespace TPMapEditor.Settings
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error reading speech events file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -433,7 +434,7 @@ namespace TPMapEditor.Settings
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error reading speaker names file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -474,7 +475,44 @@ namespace TPMapEditor.Settings
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error reading ship names file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateInGameMessagesDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                WorldMap.InGameMessages.Clear();
+                foreach (var file in this.TPInGameMessages)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var message = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(message, out var messageString))
+                                    {
+                                        WorldMap.InGameMessages[message] = messageString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -553,6 +591,7 @@ namespace TPMapEditor.Settings
             TPShipNames.Add(new("TPSHIPNAMEPIRATE01_GameStrings.h"));
             TPShipNames.Add(new("TPSHIPNAMEPROCYON00_GameStrings.h"));
             TPShipNames.Add(new("TPSHIPNAMEPROCYON01_GameStrings.h"));
+            TPInGameMessages.Add(new("TPINGAMEMESSAGE_GameStrings.h"));
         }
 
         public AppSettings Load()
