@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="GroupDialog" Height="450" Width="800" MinWidth="480">
@@ -29,7 +30,7 @@
                         <DataGridTemplateColumn MinWidth="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Remove" Click="RemoveGroup_Click"/>
+                                    <Button Content="Remove" Click="RemoveGroup_Click" IsEnabled="{Binding CanBeRemoved}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -38,8 +39,8 @@
                 <Button Margin="10" Grid.Row="1" MinWidth="85" Content="Add Group" Command="{Binding AddGroupCommand}"/>
             </Grid>
             <GridSplitter Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10">
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedGroup!=null'}">
+                <StackPanel Margin="10" Visibility="{c:Binding 'SelectedGroup.CanBeRemoved'}">
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedGroup.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Color"/>

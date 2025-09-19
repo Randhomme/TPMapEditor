@@ -9,12 +9,15 @@ namespace TPMapEditor.Data
     {
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
+        [ObservableProperty]
+        private bool canBeRemoved; //used for Player0 Group
         public ObservableCollection<WorldObject> WorldObjects { get; }
 
-        public Group(string name, WorldMap map) : base(map, name)
+        public Group(WorldMap map, string name) : base(map, name)
         {
             Color = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
+            CanBeRemoved = true;
         }
 
         public void ClearWot()

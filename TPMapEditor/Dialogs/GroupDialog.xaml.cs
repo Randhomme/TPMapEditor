@@ -37,7 +37,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddGroup()
         {
-            Map.Groups.Add(new Group(NamedElement.GenerateName("Group", Map.Groups), Map));
+            Map.Groups.Add(new Group(Map, NamedElement.GenerateName("Group", Map.Groups)));
         }
 
         private void RemoveGroup_Click(object sender, RoutedEventArgs e)
