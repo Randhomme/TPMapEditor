@@ -10,6 +10,8 @@ namespace TPMapEditor.Data
 {
     public partial class WorldMap : ObservableObject
     {
+        public static Dictionary<string, string> InGameMessages = new Dictionary<string, string>();
+
         [ObservableProperty]
         private int size;
         [ObservableProperty]
@@ -49,7 +51,6 @@ namespace TPMapEditor.Data
         public IList<SpeechEvent> SpeechEvents { get; }
         public IList<WorldRule> WorldRules { get; }
         public IList<ShipUnit> ShipUnits { get; }
-        //public IList<EtheriumCurrent> EtheriumCurrents { get; }
 
         public WorldMap()
         {
@@ -72,6 +73,9 @@ namespace TPMapEditor.Data
             WorldRules = new ObservableCollection<WorldRule>();
             ShipUnits = new ObservableCollection<ShipUnit>();
             //EtheriumCurrents = new ObservableCollection<EtheriumCurrent>();
+
+            Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
+            ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
         }
     }
 }
