@@ -15,23 +15,17 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Enums.RuleAction type;
         [ObservableProperty]
-        private WorldObject? worldObject; //reference to object in case its id changesa after reordering
-        [ObservableProperty]
         private ShipUnit? shipUnit; //for ship unit creation/edition
         [ObservableProperty]
-        private NamedElement? towerGroupA, towerGroupB, groupUnit, dockingGroup, targetToDockTo; //group/unit
+        private NamedElement? nebulaCloudPointSet, solarStormPointSet, meteorShowerPointSet, shipPath, pointSet;
         [ObservableProperty]
-        private NamedElement? group; //group
+        private bool hasCrewSkillLevel, hasAiStance, hasLightningOnOff, lightningOnOff, hasMeteorsOnOff, meteorsOnOff, hasHasNebulaCloudEffect, hasNebulaCloudEffect, hasHasSolarStormEffect, hasSolarStormEffect, hasHasMeteorShowerEffect, hasMeteorShowerEffect, hasRotationalWindsOnOff, rotationalWindsOnOff, hasShipPath, hasFollowMode, hasLocalizedShipName, hasPointSet, hasEffect, hasUseCustomMessage, useCustomMessage;
         [ObservableProperty]
-        private NamedElement? etheriumPath, playerOwner, polygon, nebulaCloudPointSet, solarStormPointSet, meteorShowerPointSet, shipPath, pointSet;
+        private bool? nebulaCloudDrainEnergyOnOff, nebulaOcclusionOnOff, isPrimaryShip, isBoardable, state, crewSpeechState, showStatsScreen, useTransition; //null if not used
         [ObservableProperty]
-        private bool hasWorldObject, hasEtheriumPath, hasHasPlayerOwner, hasPlayerOwner, hasCrewSkillLevel, hasAiStance, hasPolygon, hasLightningOnOff, lightningOnOff, hasMeteorsOnOff, meteorsOnOff, hasHasNebulaCloudEffect, hasNebulaCloudEffect, hasHasSolarStormEffect, hasSolarStormEffect, hasHasMeteorShowerEffect, hasMeteorShowerEffect, hasRotationalWindsOnOff, rotationalWindsOnOff, hasShipPath, hasFollowMode, hasLocalizedShipName, hasPointSet, hasEffect, hasGroup, hasUseCustomMessage, useCustomMessage;
+        private string? nebulaCloudEffectName, solarStormEffectName, meteorShowerEffectName, localizedShipName, effectName, winnerCustomMessageStringId, loserCustomMessageStringId;
         [ObservableProperty]
-        private bool? nebulaCloudDrainEnergyOnOff, nebulaOcclusionOnOff, isPrimaryShip, isBoardable, isTowerGroupAUnit, isTowerGroupBUnit, isGroupUnitUnit, state, crewSpeechState, isDockingGroupUnit, isTargetToDockToUnit, showStatsScreen, useTransition; //null if not used
-        [ObservableProperty]
-        private string? etheriumName, nebulaName, nebulaCloudEffectName, solarStormEffectName, meteorShowerEffectName, localizedShipName, effectName, winnerCustomMessageStringId, loserCustomMessageStringId;
-        [ObservableProperty]
-        private int? combatStrength, victoryPointsToBeAdded;
+        private int? victoryPointsToBeAdded;
         [ObservableProperty]
         private double? lightningBlastRechargeTime, meteorStrikeRechargeTime, windMagnitude, windDamageFrequency, ambientSoundMaxDistance, percent, damageThreshold, distance, relativeAngle;
         [ObservableProperty]
@@ -40,6 +34,21 @@ namespace TPMapEditor.Data
         private AiStance aiStance;
         [ObservableProperty]
         private FollowMode followMode;
+
+        [ObservableProperty]
+        private bool? isGroupUnit1Unit, isGroupUnit2Unit, hasOptionalPlayer1;
+        [ObservableProperty]
+        private bool hasWorldObject1, hasGroup1, hasPath1, hasPolygon1;
+        [ObservableProperty]
+        private string? worldObject1Label, groupUnit1Label, groupUnit2Label, group1Label, path1Label, optionalPlayer1Label, polygon1Label, string1Label, int1Label;
+        [ObservableProperty]
+        private WorldObject? worldObject1; //reference to object in case its id changes after reordering
+        [ObservableProperty]
+        private NamedElement? groupUnit1, groupUnit2, group1, path1, optionalPlayer1, polygon1;
+        [ObservableProperty]
+        private string? string1;
+        [ObservableProperty]
+        private int? int1;
 
         public RuleAction(WorldMap map)
         {
@@ -50,8 +59,9 @@ namespace TPMapEditor.Data
         private void SetDefaults()
         {
             //objects
-            WorldObject = null;
-            EtheriumPath = PlayerOwner = Polygon = NebulaCloudPointSet = SolarStormPointSet = MeteorShowerPointSet = ShipPath = TowerGroupA = TowerGroupB = GroupUnit = PointSet = Group = null;
+            WorldObject1 = null;
+            GroupUnit1 = GroupUnit2 = Group1 = Path1 = OptionalPlayer1 = Polygon1 = null;
+            NebulaCloudPointSet = SolarStormPointSet = MeteorShowerPointSet = ShipPath = PointSet = null;
             if (ShipUnit != null)
             {
                 map.ShipUnits.Remove(ShipUnit);
@@ -59,17 +69,21 @@ namespace TPMapEditor.Data
             }
 
             //strings
-            EtheriumName = NebulaName = NebulaCloudEffectName = SolarStormEffectName = MeteorShowerEffectName = LocalizedShipName = EffectName = WinnerCustomMessageStringId = LoserCustomMessageStringId = null;
+            WorldObject1Label = GroupUnit1Label = GroupUnit2Label = Group1Label = Path1Label = OptionalPlayer1Label = Polygon1Label = String1Label = string.Empty;
+            String1 = null;
+            NebulaCloudEffectName = SolarStormEffectName = MeteorShowerEffectName = LocalizedShipName = EffectName = WinnerCustomMessageStringId = LoserCustomMessageStringId = null;
 
             //ints
-            CombatStrength = VictoryPointsToBeAdded = null;
+            Int1 = VictoryPointsToBeAdded = null;
 
             //doubles (float in the map file)
             LightningBlastRechargeTime = MeteorStrikeRechargeTime = WindMagnitude = WindDamageFrequency = AmbientSoundMaxDistance = Percent = DamageThreshold = Distance = RelativeAngle = null;
 
             //bools
-            HasWorldObject = HasEtheriumPath = HasHasPlayerOwner = HasPlayerOwner = HasCrewSkillLevel = HasPolygon = HasLightningOnOff = LightningOnOff = HasMeteorsOnOff = MeteorsOnOff = HasHasNebulaCloudEffect = HasNebulaCloudEffect = HasHasSolarStormEffect = HasSolarStormEffect = HasHasMeteorShowerEffect = HasMeteorShowerEffect = HasRotationalWindsOnOff = RotationalWindsOnOff = HasShipPath = HasFollowMode = HasLocalizedShipName = HasPointSet = HasEffect = HasGroup = HasUseCustomMessage = UseCustomMessage = false;
-            NebulaCloudDrainEnergyOnOff = NebulaOcclusionOnOff = IsPrimaryShip = IsBoardable = IsTowerGroupAUnit = IsTowerGroupBUnit = IsGroupUnitUnit = State = CrewSpeechState = IsDockingGroupUnit = IsTargetToDockToUnit = ShowStatsScreen = UseTransition = null;
+            IsGroupUnit1Unit = IsGroupUnit2Unit = HasOptionalPlayer1 = null;
+            HasWorldObject1 = HasGroup1 = HasPath1 = HasPolygon1 = false;
+            HasCrewSkillLevel = HasLightningOnOff = LightningOnOff = HasMeteorsOnOff = MeteorsOnOff = HasHasNebulaCloudEffect = HasNebulaCloudEffect = HasHasSolarStormEffect = HasSolarStormEffect = HasHasMeteorShowerEffect = HasMeteorShowerEffect = HasRotationalWindsOnOff = RotationalWindsOnOff = HasShipPath = HasFollowMode = HasLocalizedShipName = HasPointSet = HasEffect = HasUseCustomMessage = UseCustomMessage = false;
+            NebulaCloudDrainEnergyOnOff = NebulaOcclusionOnOff = IsPrimaryShip = IsBoardable = State = CrewSpeechState = ShowStatsScreen = UseTransition = null;
 
             //enums
             CrewSkillLevel = CrewSkillLevel.CREWSKILLLEVEL;
@@ -83,25 +97,33 @@ namespace TPMapEditor.Data
             {
                 case Enums.RuleAction.StateInitSetupEtheriumCurrent:
                     SetDefaults();
-                    HasWorldObject = HasEtheriumPath = true;
-                    WorldObject = map.WorldObjects.FirstOrDefault();
-                    EtheriumName = "Etherium Current";
-                    EtheriumPath = map.WaypointPaths.FirstOrDefault();
+                    WorldObject1Label = "World object";
+                    Path1Label = "Etherium current path";
+                    String1Label = "Etherium current name";
+                    HasWorldObject1 = HasPath1 = true;
+                    WorldObject1 = map.WorldObjects.FirstOrDefault();
+                    String1 = "Etherium Current";
+                    Path1 = map.WaypointPaths.FirstOrDefault();
                     break;
                 case Enums.RuleAction.StateInitSetupIsland:
                     SetDefaults();
-                    HasWorldObject = HasHasPlayerOwner = HasCrewSkillLevel = HasAiStance = true;
-                    WorldObject = map.WorldObjects.FirstOrDefault();
-                    CombatStrength = 0;
-                    HasPlayerOwner = false;
+                    WorldObject1Label = "World object";
+                    OptionalPlayer1Label = "Player/Owner";
+                    Int1Label = "Combat strength";
+                    HasOptionalPlayer1 = HasWorldObject1 = HasCrewSkillLevel = HasAiStance = true;
+                    WorldObject1 = map.WorldObjects.FirstOrDefault();
+                    Int1 = 0;
                     break;
                 case Enums.RuleAction.StateInitSetupNebula:
                     SetDefaults();
-                    HasWorldObject = HasPolygon = HasLightningOnOff = HasMeteorsOnOff = HasNebulaCloudEffect = HasHasNebulaCloudEffect = HasHasSolarStormEffect = HasHasMeteorShowerEffect = HasRotationalWindsOnOff = true;
+                    WorldObject1Label = "World object";
+                    Polygon1Label = "Polygon";
+                    String1Label = "Nebula name";
+                    HasWorldObject1 = HasPolygon1 = HasLightningOnOff = HasMeteorsOnOff = HasNebulaCloudEffect = HasHasNebulaCloudEffect = HasHasSolarStormEffect = HasHasMeteorShowerEffect = HasRotationalWindsOnOff = true;
                     NebulaCloudDrainEnergyOnOff = NebulaOcclusionOnOff = LightningOnOff = MeteorsOnOff = RotationalWindsOnOff = HasSolarStormEffect = HasMeteorShowerEffect = false;
-                    WorldObject = map.WorldObjects.FirstOrDefault();
-                    NebulaName = "Nebula";
-                    Polygon = map.WorldPolygons.FirstOrDefault();
+                    WorldObject1 = map.WorldObjects.FirstOrDefault();
+                    String1 = "Nebula";
+                    Polygon1 = map.WorldPolygons.FirstOrDefault();
                     LightningBlastRechargeTime = MeteorStrikeRechargeTime = WindMagnitude = WindDamageFrequency = AmbientSoundMaxDistance = 0;
                     NebulaCloudEffectName = SolarStormEffectName = MeteorShowerEffectName = AppSettings.Effects.FirstOrDefault();
                     NebulaCloudPointSet = SolarStormPointSet = MeteorShowerPointSet = map.WorldPoints.FirstOrDefault();
@@ -110,7 +132,9 @@ namespace TPMapEditor.Data
                     SetDefaults();
                     ShipUnit = new(map, NamedElement.GenerateName("Ship", map.ShipUnits));
 					map.ShipUnits.Add(ShipUnit);
-                    HasWorldObject = HasShipPath = HasFollowMode = HasAiStance = HasHasPlayerOwner = HasCrewSkillLevel = HasLocalizedShipName = true;
+                    WorldObject1Label = "World object";
+                    OptionalPlayer1Label = "Player/Owner";
+                    HasOptionalPlayer1 = HasWorldObject1 = HasShipPath = HasFollowMode = HasAiStance = HasCrewSkillLevel = HasLocalizedShipName = true;
                     IsPrimaryShip = IsBoardable = false;
                     ShipPath = map.WaypointPaths.FirstOrDefault();
                     LocalizedShipName = ShipUnit.ShipNamesDictionnary.Keys.FirstOrDefault();
@@ -121,18 +145,22 @@ namespace TPMapEditor.Data
                     break;
                 case Enums.RuleAction.BreakTow:
                     SetDefaults();
-                    IsTowerGroupAUnit = IsTowerGroupBUnit = false;
-                    TowerGroupA = TowerGroupB = map.Groups.FirstOrDefault();
+                    GroupUnit1Label = "Tower group A";
+                    GroupUnit2Label = "Tower group B";
+                    IsGroupUnit1Unit = IsGroupUnit2Unit = false;
+                    GroupUnit1 = GroupUnit2 = map.Groups.FirstOrDefault();
                     break;
                 case Enums.RuleAction.ClearGroupUnitBorderZone:
                     SetDefaults();
-                    IsGroupUnitUnit = false;
-                    GroupUnit = map.Groups.FirstOrDefault();
+                    GroupUnit1Label = "Group/Unit";
+                    IsGroupUnit1Unit = false;
+                    GroupUnit1 = map.Groups.FirstOrDefault();
                     break;
                 case Enums.RuleAction.ClearAllAICommands:
                     SetDefaults();
-                    IsGroupUnitUnit = false;
-                    GroupUnit = map.Groups.FirstOrDefault();
+                    GroupUnit1Label = "Group/Unit";
+                    IsGroupUnit1Unit = false;
+                    GroupUnit1 = map.Groups.FirstOrDefault();
                     break;
                 case Enums.RuleAction.CloseHUDTextureOverlay:
                     SetDefaults();
@@ -152,29 +180,35 @@ namespace TPMapEditor.Data
                     break;
                 case Enums.RuleAction.DamageGroupUnitByXPercent:
                     SetDefaults();
-                    IsGroupUnitUnit = false;
-                    GroupUnit = map.Groups.FirstOrDefault();
+                    GroupUnit1Label = "Group/Unit";
+                    IsGroupUnit1Unit = false;
+                    GroupUnit1 = map.Groups.FirstOrDefault();
                     Percent = 0;
                     break;
                 case Enums.RuleAction.DestroyGroupUnit:
                     SetDefaults();
-                    IsGroupUnitUnit = false;
-                    GroupUnit = map.Groups.FirstOrDefault();
+                    GroupUnit1Label = "Group/Unit";
+                    IsGroupUnit1Unit = false;
+                    GroupUnit1 = map.Groups.FirstOrDefault();
                     break;
                 case Enums.RuleAction.DockShips:
                     SetDefaults();
-                    IsDockingGroupUnit = IsTargetToDockToUnit = false;
-                    DockingGroup = TargetToDockTo = map.Groups.FirstOrDefault();
+                    GroupUnit1Label = "Docking group/unit";
+                    GroupUnit2Label = "Target to dock to";
+                    IsGroupUnit1Unit = IsGroupUnit2Unit = false;
+                    GroupUnit1 = GroupUnit2 = map.Groups.FirstOrDefault();
                     break;
                 case Enums.RuleAction.DragonSetAIStance:
                     SetDefaults();
-                    HasGroup = HasAiStance = true;
-                    Group = map.Groups.FirstOrDefault();
+                    Group1Label = "Dragon group";
+                    HasGroup1 = HasAiStance = true;
+                    Group1 = map.Groups.FirstOrDefault();
                     break;
                 case Enums.RuleAction.DragonSetDamageThreshold:
                     SetDefaults();
-                    HasGroup = true;
-                    Group = map.Groups.FirstOrDefault();
+                    Group1Label = "Dragon group";
+                    HasGroup1 = true;
+                    Group1 = map.Groups.FirstOrDefault();
                     DamageThreshold = 0;
                     break;
                 case Enums.RuleAction.EndGame:
@@ -184,7 +218,9 @@ namespace TPMapEditor.Data
                     break;
                 case Enums.RuleAction.FocusCameraOnGroup:
                     SetDefaults();
-                    IsGroupUnitUnit = UseTransition = false;
+                    GroupUnit1Label = "Group/Unit";
+                    IsGroupUnit1Unit = UseTransition = false;
+                    GroupUnit1 = map.Groups.FirstOrDefault();
                     Distance = RelativeAngle = 0;
                     break;
                 case Enums.RuleAction.GotoNextLevel:
