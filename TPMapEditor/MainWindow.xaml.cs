@@ -206,7 +206,7 @@ namespace TPMapEditor
         {
             var wotControl = new WotControl
             (
-                new(WotGridSelectedItem, (float)(Canvas.GetLeft(wotPreview) + wotPreview.ActualWidth / 2), (float)(Canvas.GetTop(wotPreview) + wotPreview.ActualHeight / 2), (float)sliderRotate.Value)
+                new(WotGridSelectedItem!, (float)(Canvas.GetLeft(wotPreview) + wotPreview.ActualWidth / 2), (float)(Canvas.GetTop(wotPreview) + wotPreview.ActualHeight / 2), (float)sliderRotate.Value)
             );
             wotControl.MouseLeftButtonDown += (s, e1) =>
             {
@@ -872,7 +872,7 @@ namespace TPMapEditor
         private void RadioButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             var radioButton = sender as RadioButton;
-            if (radioButton.IsChecked == true && e.ChangedButton == MouseButton.Left)
+            if (radioButton!.IsChecked == true && e.ChangedButton == MouseButton.Left)
             {
                 radioButton.IsChecked = false;
                 e.Handled = true;

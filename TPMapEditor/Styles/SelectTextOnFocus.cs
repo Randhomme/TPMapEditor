@@ -17,23 +17,23 @@ namespace TPMapEditor.Styles
         {
             if (d is TextBox)
             {
-                TextBox textBox = d as TextBox;
+                TextBox? textBox = d as TextBox;
                 if ((e.NewValue as bool?).GetValueOrDefault(false))
                 {
-                    textBox.GotKeyboardFocus += OnKeyboardFocusSelectText;
-                    textBox.PreviewMouseLeftButtonDown += OnMouseLeftButtonDown;
+                    textBox!.GotKeyboardFocus += OnKeyboardFocusSelectText;
+                    textBox!.PreviewMouseLeftButtonDown += OnMouseLeftButtonDown;
                 }
                 else
                 {
-                    textBox.GotKeyboardFocus -= OnKeyboardFocusSelectText;
-                    textBox.PreviewMouseLeftButtonDown -= OnMouseLeftButtonDown;
+                    textBox!.GotKeyboardFocus -= OnKeyboardFocusSelectText;
+                    textBox!.PreviewMouseLeftButtonDown -= OnMouseLeftButtonDown;
                 }
             }
         }
 
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DependencyObject dependencyObject = GetParentFromVisualTree(e.OriginalSource);
+            DependencyObject? dependencyObject = GetParentFromVisualTree(e.OriginalSource);
 
             if (dependencyObject == null)
             {
@@ -48,9 +48,9 @@ namespace TPMapEditor.Styles
             }
         }
 
-        private static DependencyObject GetParentFromVisualTree(object source)
+        private static DependencyObject? GetParentFromVisualTree(object source)
         {
-            DependencyObject parent = source as UIElement;
+            DependencyObject? parent = source as UIElement;
             while (parent != null && parent is not TextBox)
             {
                 parent = VisualTreeHelper.GetParent(parent);
