@@ -35,7 +35,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddSpeechEvent()
         {
-            Map.SpeechEvents.Add(new(Map, NamedElement.GenerateName("SE", Map.SpeechEvents)));
+            Map.SpeechEvents.Add(new(Map, NamedElement.GenerateName("SpeechEvent", Map.SpeechEvents)));
         }
 
         private void RemoveSpeechEvent_Click(object sender, RoutedEventArgs e)

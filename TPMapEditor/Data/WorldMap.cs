@@ -10,7 +10,7 @@ namespace TPMapEditor.Data
 {
     public partial class WorldMap : ObservableObject
     {
-        public static Dictionary<string, string> InGameMessages = new Dictionary<string, string>();
+        public static Dictionary<string, string> InGameMessagesDictionnary = new Dictionary<string, string>();
 
         [ObservableProperty]
         private int size;
@@ -51,6 +51,9 @@ namespace TPMapEditor.Data
         public IList<SpeechEvent> SpeechEvents { get; }
         public IList<WorldRule> WorldRules { get; }
         public IList<ShipUnit> ShipUnits { get; }
+        public IList<ObjectivePoint> ObjectivePoints { get; }
+        public IList<ObjectiveTask> ObjectiveTasks { get; }
+        public IList<MapTextPoint> MapTextPoints { get; }
 
         public WorldMap()
         {
@@ -72,6 +75,9 @@ namespace TPMapEditor.Data
             SpeechEvents = new ObservableCollection<SpeechEvent>();
             WorldRules = new ObservableCollection<WorldRule>();
             ShipUnits = new ObservableCollection<ShipUnit>();
+            ObjectivePoints = new ObservableCollection<ObjectivePoint>();
+            ObjectiveTasks = new ObservableCollection<ObjectiveTask>();
+            MapTextPoints = new ObservableCollection<MapTextPoint>();
             //EtheriumCurrents = new ObservableCollection<EtheriumCurrent>();
 
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });

@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TPMapEditor.Enums
 {
     public enum VitalSection
     {
-        [Description("vitalToMission")]
+        [Display(Name = "vitalToMission")]
         VitalToMission,
-        [Description("vitalToShip")]
+        [Display(Name = "vitalToShip")]
         VitalToShip,
-        [Description("vitalToMaxVelocity")]
+        [Display(Name = "vitalToMaxVelocity")]
         VitalToMaxVelocity,
-        [Description("vitalToManeuverability")]
+        [Display(Name = "vitalToManeuverability")]
         VitalToManeuverability,
     }
 }

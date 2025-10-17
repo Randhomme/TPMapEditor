@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TPMapEditor.Enums
 {
     public enum Equivalence
     {
-        [Description("Equal To")]
+        [Display(Name = "Equal To")]
         EqualTo,
-        [Description("Greater Than")]
+        [Display(Name = "Greater Than")]
         GreaterThan,
-        [Description("Less Than")]
+        [Display(Name = "Less Than")]
         LessThan
     }
 }

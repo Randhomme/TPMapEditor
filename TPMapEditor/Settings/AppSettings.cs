@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
@@ -18,23 +19,30 @@ namespace TPMapEditor.Settings
         private string tpGamePath;
         public static IList<string> FlagTextures { get; } = new List<string>();
         public static IList<string> Effects { get; } = new List<string>();
+        public static IList<string> SinglePlayerMissions { get; } = new List<string>();
+        public static IList<string> GuiTextures { get; } = new List<string>();
+        public static IList<string> Musics { get; } = new List<string>();
         public ObservableCollection<GameHeadersFile> TPTeamNames { get; }
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
         public ObservableCollection<GameHeadersFile> TPShipNames { get; }
         public ObservableCollection<GameHeadersFile> TPInGameMessages { get; }
         [XmlIgnore]
+        public string EffectsDirectory { get; set; }
+        [XmlIgnore]
+        public string FlagTexturesDirectory { get; set; }
+        [XmlIgnore]
         public string GameHeadersFiles { get; set; }
         [XmlIgnore]
         public string GameStringsEnglish { get; set; }
         [XmlIgnore]
+        public string GuiTexturesDirectory { get; set; }
+        [XmlIgnore]
         public string SoundDirectory { get; set; }
         [XmlIgnore]
+        public string WorldFilesDirectory { get; set; }
+        [XmlIgnore]
         public string WorldObjectFilesDirectory { get; set; }
-        [XmlIgnore]
-        public string FlagTexturesDirectory { get; set; }
-        [XmlIgnore]
-        public string EffectsDirectory { get; set; }
 
         public AppSettings()
         {
@@ -51,9 +59,11 @@ namespace TPMapEditor.Settings
             WorldObjectFilesDirectory = "";
             FlagTexturesDirectory = "";
             EffectsDirectory = "";
+            WorldFilesDirectory = "";
+            GuiTexturesDirectory = "";
         }
 
-        partial void OnTpGamePathChanged(string value)
+        partial void OnTpGamePathChanged(string? old, string newv)
         {
             UpdateAppSettingsStrings();
             UpdateAppSettingsFolders();
@@ -64,6 +74,9 @@ namespace TPMapEditor.Settings
             UpdateEffectsList();
             UpdateStringsDictionnaries();
             UpdateWorldObjectTypeList();
+            UpdateSinglePlayerMissionsList();
+            UpdateGuiTexturesList();
+            UpdateMusicsList();
         }
 
         public void UpdateStringsDictionnaries()
@@ -141,6 +154,14 @@ namespace TPMapEditor.Settings
                             {
                                 EffectsDirectory = Path.Combine(TpGamePath, line.Substring("EFFECTS DIRECTORY:".Length).Trim());
                             }
+                            else if (line.StartsWith("WORLD FILES:"))
+                            {
+                                WorldFilesDirectory = Path.Combine(TpGamePath, line.Substring("WORLD FILES:".Length).Trim());
+                            }
+                            else if (line.StartsWith("GUI TEXTURES:"))
+                            {
+                                GuiTexturesDirectory = Path.Combine(TpGamePath, line.Substring("GUI TEXTURES::".Length).Trim());
+                            }
                         }
                     }
                 }
@@ -175,15 +196,95 @@ namespace TPMapEditor.Settings
             }
         }
 
+        private void UpdateMusicsList()
+        {
+            Musics.Clear();
+            var directory = Path.Combine(SoundDirectory, "Music");
+            if (Directory.Exists(directory))
+            {
+                foreach (var file in Directory.GetFiles(directory, "*.ogg"))
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        Musics.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Directory '{directory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateGuiTexturesList()
+        {
+            GuiTextures.Clear();
+            if (Directory.Exists(GuiTexturesDirectory))
+            {
+                var invalidTextureNames = new List<string>();
+                foreach (var file in Directory.GetFiles(GuiTexturesDirectory, "*.tga"))
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        if (Regex.IsMatch(fileName, @"_\d_\d$"))
+                        {
+                            var baseTextureName = Regex.Replace(fileName, @"_\d_\d$", "");
+                            if (!GuiTextures.Contains(baseTextureName))
+                                GuiTextures.Add(baseTextureName);
+                        }
+                        else
+                        {
+                            invalidTextureNames.Add(fileName);
+                        }
+                    }
+                }
+                foreach(var invalidTextureName in invalidTextureNames)
+                {
+                    for (int i = GuiTextures.Count - 1; i >= 0; i--)
+                    {
+                        if (invalidTextureName.StartsWith(GuiTextures[i]))
+                            GuiTextures.RemoveAt(i);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Directory '{GuiTexturesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateSinglePlayerMissionsList()
+        {
+            SinglePlayerMissions.Clear();
+            var directory = Path.Combine(WorldFilesDirectory, "SinglePlayer");
+            if (Directory.Exists(directory))
+            {
+                foreach (var file in Directory.GetFiles(directory, "*.twt"))
+                {
+                    var fileName = Path.GetFileName(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        SinglePlayerMissions.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Directory '{directory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
         private void UpdateDialogueFilesList()
         {
+            SpeechEvent.DialogueFilesList.Clear();
             var dialogueDirectory = Path.Combine(SoundDirectory, "Dialogue");
             if (Directory.Exists(dialogueDirectory))
             {
-                SpeechEvent.DialogueFilesList.Clear();
                 foreach (var file in Directory.GetFiles(dialogueDirectory, "*.ogg"))
                 {
-                    var fileName = Path.GetFileName(file);
+                    var fileName = Path.GetFileNameWithoutExtension(file);
                     if (!string.IsNullOrEmpty(fileName))
                     {
                         SpeechEvent.DialogueFilesList.Add(fileName);
@@ -489,7 +590,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                WorldMap.InGameMessages.Clear();
+                WorldMap.InGameMessagesDictionnary.Clear();
                 foreach (var file in this.TPInGameMessages)
                 {
                     try
@@ -504,7 +605,7 @@ namespace TPMapEditor.Settings
                                     var message = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
                                     if (gameStrings.TryGetValue(message, out var messageString))
                                     {
-                                        WorldMap.InGameMessages[message] = messageString;
+                                        WorldMap.InGameMessagesDictionnary[message] = messageString;
                                     }
                                 }
                             }

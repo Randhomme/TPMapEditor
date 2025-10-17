@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Enums
 {
-    public enum CrewSkillLevel
+    public enum BannerType
     {
-        [Display(Name = "CREW SKILL LEVEL")]
-        CREWSKILLLEVEL,
-        Green,
-        Average,
-        Elite,
-        Players,
-        M01JimTBoat
+        [Display(Name = "No Banner")]
+        NoBanner,
+        RedTeam,
+        BlueTeam,
+        BlackTeam
     }
 }

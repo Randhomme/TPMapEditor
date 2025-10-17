@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TPMapEditor.Data;
+using TPMapEditor.Data.Rule;
 
 namespace TPMapEditor.Dialogs
 {
@@ -83,6 +84,15 @@ namespace TPMapEditor.Dialogs
             {
                 SelectedWorldRule.Actions.Remove(SelectedRuleAction);
                 SelectedRuleAction = null;
+            }
+        }
+
+        private void GroupUnitComboBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            var combo = (ComboBox)sender;
+            if (combo.SelectedIndex == -1 && combo.Items.Count > 0)
+            {
+                combo.SelectedIndex = 0;
             }
         }
     }

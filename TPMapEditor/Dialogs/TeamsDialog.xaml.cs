@@ -28,7 +28,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand(CanExecute = nameof(CanAddTeam))]
         private void OnAddTeam()
         {
-            Map.Teams.Add(new Team() { RealName = Team.TeamNames.Keys.First(), Race = Enums.Race.Navy });
+            Map.Teams.Add(new Team(Team.TeamNames.Keys.First()) { Race = Enums.Race.Navy });
             AddTeamCommand.NotifyCanExecuteChanged();
         }
 

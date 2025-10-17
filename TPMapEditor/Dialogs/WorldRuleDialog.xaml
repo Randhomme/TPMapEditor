@@ -9,11 +9,312 @@
         xmlns:converter="clr-namespace:TPMapEditor.Converter"
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
         xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:datarule="clr-namespace:TPMapEditor.Data.Rule"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="WorldRuleDialog" Height="450" Width="800">
     <Window.Resources>
         <converter:EnumToNameConverter x:Key="EnumToNameConverter"/>
+
+        <!--RuleField-->
+        <ControlTemplate x:Key="RuleFieldTemplate" TargetType="ContentControl">
+            <StackPanel>
+                <StackPanel Visibility="{c:Binding 'IsOptional'}">
+                    <Label Margin="-5,5,0,0" Content="{Binding OptionalLabel}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
+                    <CheckBox IsChecked="{Binding IsShown}" Content="{Binding IsShown}"/>
+                </StackPanel>
+                <StackPanel Visibility="{c:Binding 'IsShown'}">
+                    <Label Margin="-5,5,0,0" Content="{Binding Label}" Visibility="{c:Binding 'Label!=null'}"/>
+                    <ContentPresenter/>
+                </StackPanel>
+            </StackPanel>
+        </ControlTemplate>
+
+        <!--AiStance-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldAiStance}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:AiStance}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--BannerType-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldBannerType}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:BannerType}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+
+        <!--Bool-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldBool}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <CheckBox IsChecked="{Binding Value}" Content="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--CrewSkillLevel-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldCrewSkillLevel}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:CrewSkillLevel}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Dialogue-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldDialogueAudio}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static data:SpeechEvent.DialogueFilesList}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Double-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldDouble}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <Slider Value="{Binding Value}" IsSnapToTickEnabled="True" TickFrequency="0.001" LargeChange="0.001" SmallChange="0.001" Minimum="{Binding Min}" Maximum="{Binding Max}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Effect-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldEffect}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Equivalence-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldEquivalence}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:Equivalence}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Flag-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldFlag}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.Flags, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--FlagTexture-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldFlagTexture}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.FlagTextures}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--FollowMode-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldFollowMode}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:FollowMode}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--AiStance-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldFormationType}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:FormationType}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Group-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldGroup}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.Groups, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupFieldTemplate">
+            <ComboBox ItemsSource="{Binding Map.Groups, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+        </DataTemplate>
+
+        <!--Unit-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldUnit}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.ShipUnits, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnitFieldTemplate">
+            <ComboBox ItemsSource="{Binding Map.ShipUnits, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+        </DataTemplate>
+
+        <!--GroupUnit-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldGroupUnit}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <StackPanel>
+                    <ComboBox x:Name="TypeSelector" SelectedIndex="{Binding IsGroupUnitUnit}">
+                        <ComboBoxItem Content="Group"/>
+                        <ComboBoxItem Content="Unit"/>
+                    </ComboBox>
+                    <ContentControl Margin="0,5,0,0">
+                        <ContentControl.Style>
+                            <Style TargetType="ContentControl">
+                                <Style.Triggers>
+                                    <!--Group-->
+                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=TypeSelector}" Value="0">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource GroupFieldTemplate}"/>
+                                    </DataTrigger>
+                                    <!--Unit-->
+                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=TypeSelector}" Value="1">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource UnitFieldTemplate}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentControl.Style>
+                        <ContentControl.Content>
+                            <Binding Path="." />
+                        </ContentControl.Content>
+                    </ContentControl>
+                </StackPanel>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Effect-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldGuiTexture}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--InGameMessage-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldInGameMessage}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static data:WorldMap.InGameMessagesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Int-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldInt}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <Slider Value="{Binding Value}" IsSnapToTickEnabled="True" TickFrequency="1" LargeChange="1" SmallChange="1" Minimum="{Binding Min}" Maximum="{Binding Max}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--MapTextPoint-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldMapTextPoint}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.MapTextPoints, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Music-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldMusic}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.Musics}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--ObjectivePoint-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldObjectivePoint}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.ObjectivePoints, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--ObjectivePoint-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldObjectiveTask}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.ObjectiveTasks, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Player-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldPlayer}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.Players, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--ShipName-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldShipName}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static data:ShipUnit.ShipNamesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+            </ContentControl>
+        </DataTemplate>
+        
+        <!--SinglePlayerMission-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldSinglePlayerMission}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.SinglePlayerMissions}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--SpeechEvent-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldSpeechEvent}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.SpeechEvents, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--String-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldString}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <TextBox Text="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Team-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldTeam}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.Teams, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--Timer-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldTimer}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.Timers, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--VitalSection-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldVitalSection}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:VitalSection}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--WaypointPath-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldWaypointPath}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.WaypointPaths, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--WorldObject-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObject}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.WorldObjects, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--WorldObjectType-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectType}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:WorldObjectType}" SelectedValue="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--WorldPoint-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPoint}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.WorldPoints, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--WorldPolygon-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPolygon}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ComboBox ItemsSource="{Binding Map.WorldPolygons, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            </ContentControl>
+        </DataTemplate>
+
+        <!--ObservableCollection-->
+        <DataTemplate DataType="{x:Type datarule:RuleFieldObservableCollection}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ItemsControl ItemsSource="{Binding Value}"/>
+            </ContentControl>
+        </DataTemplate>
+
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -91,133 +392,7 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                
-                                <!-- Group/Unit -->
-                                
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnit1Unit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.GroupUnit1Label}"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupUnit1Unit, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="Group"/>
-                                        <ComboBoxItem Content="Unit"/>
-                                    </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupUnit1Unit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupUnit1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnit1Unit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupUnit1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnit2Unit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.GroupUnit2Label}"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleCondition.IsGroupUnit2Unit, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="Group"/>
-                                        <ComboBoxItem Content="Unit"/>
-                                    </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleCondition.IsGroupUnit2Unit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.GroupUnit2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleCondition.IsGroupUnit2Unit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleCondition.GroupUnit2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-
-                                <!-- Group -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasGroup1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Group1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleCondition.Group1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Volume -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasVolume1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Volume1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleCondition.Volume1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Player -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayer1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Player1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.Player1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasPlayer2'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Player2Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleCondition.Player2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Flag -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasFlag1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Flag1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.Flags}" SelectedValue="{Binding SelectedRuleCondition.Flag1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Equivalence -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasEquivalence1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Equivalence1Label}"/>
-                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:Equivalence}" SelectedValue="{Binding SelectedRuleCondition.Equivalence1, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-
-                                <!-- Vital section -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasVitalSection1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.VitalSection1Label}"/>
-                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:VitalSection}" SelectedValue="{Binding SelectedRuleCondition.VitalSection1, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-
-                                <!-- World object type -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasWorldObjectType1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.WorldObjectType1Label}"/>
-                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:WorldObjectType}" SelectedValue="{Binding SelectedRuleCondition.WorldObjectType1, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-
-                                <!-- Speech event -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasSpeechEvent1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.SpeechEvent1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.SpeechEvents}" SelectedValue="{Binding SelectedRuleCondition.SpeechEvent1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Team -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasTeam1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Team1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.Teams}" SelectedValue="{Binding SelectedRuleCondition.Team1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Timer -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasTimer1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Timer1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.Timers}" SelectedValue="{Binding SelectedRuleCondition.Timer1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Flag texture -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.HasFlagType1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.FlagType1Label}"/>
-                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.FlagTextures}" SelectedValue="{Binding SelectedRuleCondition.FlagType1, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-
-                                <!-- Bools -->
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.Bool1!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Bool1Label}"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleCondition.Bool1}" Content="{Binding SelectedRuleCondition.Bool1}"/>
-                                </StackPanel>
-
-                                <!-- Ints -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.Int1!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Int1Label}"/>
-                                    <Slider Value="{Binding SelectedRuleCondition.Int1}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.Int2!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Int2Label}"/>
-                                    <Slider Value="{Binding SelectedRuleCondition.Int2}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
-                                </StackPanel>
-
-                                <!-- Doubles (floats in game) -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleCondition.Double1!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleCondition.Double1Label}"/>
-                                    <Slider Value="{Binding SelectedRuleCondition.Double1}" IsSnapToTickEnabled="True" TickFrequency="0.001" LargeChange="0.001" SmallChange="0.001" Minimum="0" Maximum="1"/>
-                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding SelectedRuleCondition.RuleFields}"/>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
@@ -259,241 +434,7 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-
-                                <!-- Group/Unit -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsGroupUnit1Unit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.GroupUnit1Label}"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleAction.IsGroupUnit1Unit, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="Group"/>
-                                        <ComboBoxItem Content="Unit"/>
-                                    </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleAction.IsGroupUnit1Unit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleAction.GroupUnit1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleAction.IsGroupUnit1Unit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleAction.GroupUnit1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsGroupUnit2Unit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.GroupUnit2Label}"/>
-                                    <ComboBox SelectedIndex="{Binding SelectedRuleAction.IsGroupUnit2Unit, UpdateSourceTrigger=PropertyChanged}">
-                                        <ComboBoxItem Content="Group"/>
-                                        <ComboBoxItem Content="Unit"/>
-                                    </ComboBox>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding '!SelectedRuleAction.IsGroupUnit2Unit'}" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleAction.GroupUnit2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                    <ComboBox Margin="0,5,0,0" Visibility="{c:Binding 'SelectedRuleAction.IsGroupUnit2Unit'}" ItemsSource="{Binding Map.ShipUnits}" SelectedValue="{Binding SelectedRuleAction.GroupUnit2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                
-                                <!-- Group -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasGroup1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.Group1Label}"/>
-                                    <ComboBox Margin="0,5,0,0" ItemsSource="{Binding Map.Groups}" SelectedValue="{Binding SelectedRuleAction.Group1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-
-                                <!-- Path -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPath1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.Path1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.Path1}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                
-                                <!-- Optional player -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasOptionalPlayer1!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Has player"/>
-                                    <CheckBox Content="{Binding SelectedRuleAction.HasOptionalPlayer1}" IsChecked="{Binding SelectedRuleAction.HasOptionalPlayer1}"/>
-                                    <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasOptionalPlayer1'}">
-                                        <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.OptionalPlayer1Label}"/>
-                                        <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding SelectedRuleAction.OptionalPlayer1}" DisplayMemberPath="Name"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                
-                                <!-- Polygon -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPolygon1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.Polygon1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding SelectedRuleAction.Polygon1}"/>
-                                </StackPanel>
-                                
-                                <!-- World object -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasWorldObject1'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.WorldObject1Label}"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldObjects}" SelectedItem="{Binding SelectedRuleAction.WorldObject1, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-                                
-                                <!-- Strings -->
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.String1!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.String1Label}"/>
-                                    <TextBox Text="{Binding SelectedRuleAction.String1}"/>
-                                </StackPanel>
-                                <!--<StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsString2Optional'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.String2OptionalLabel}"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasString2}" Content="{Binding SelectedRuleAction.HasString2}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasString2'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.String2Label}"/>
-                                    <TextBox Text="{Binding SelectedRuleAction.String2}"/>
-                                </StackPanel>-->
-                                
-                                <!-- Ints -->
-                                
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.Int1!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="{Binding SelectedRuleAction.Int1Label}"/>
-                                    <Slider Value="{Binding SelectedRuleAction.Int1}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                
-
-
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasCrewSkillLevel'}">
-                                    <Label Margin="-5,5,0,0" Content="Gunnery level"/>
-                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:CrewSkillLevel}" SelectedValue="{Binding SelectedRuleAction.CrewSkillLevel}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasLightningOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Lightning On/Off"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.LightningOnOff}" Content="{Binding SelectedRuleAction.LightningOnOff}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.LightningOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Ligthning blast recharge time"/>
-                                    <Slider Value="{Binding SelectedRuleAction.LightningBlastRechargeTime}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasMeteorsOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Meteors On/Off"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.MeteorsOnOff}" Content="{Binding SelectedRuleAction.MeteorsOnOff}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.MeteorsOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Meteor strike recharge time"/>
-                                    <Slider Value="{Binding SelectedRuleAction.MeteorStrikeRechargeTime}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasNebulaCloudEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Has nebula cloud effect"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasNebulaCloudEffect}" Content="{Binding SelectedRuleAction.HasNebulaCloudEffect}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasNebulaCloudEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Nebula cloud effect"/>
-                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudEffectName}"/>
-                                    <Label Margin="-5,5,0,0" Content="Nebula clound point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.NebulaCloudPointSet}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasSolarStormEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Has solar storm effect"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasSolarStormEffect}" Content="{Binding SelectedRuleAction.HasSolarStormEffect}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasSolarStormEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Solar storm effect"/>
-                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.SolarStormEffectName}"/>
-                                    <Label Margin="-5,5,0,0" Content="Solar storm point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.SolarStormPointSet}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasHasMeteorShowerEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Has meteor shower effect"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.HasMeteorShowerEffect}" Content="{Binding SelectedRuleAction.HasMeteorShowerEffect}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasMeteorShowerEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Meteor shower effect"/>
-                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerEffectName}"/>
-                                    <Label Margin="-5,5,0,0" Content="Meteor shower point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.MeteorShowerPointSet}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasRotationalWindsOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Rotational winds On/Off"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.RotationalWindsOnOff}" Content="{Binding SelectedRuleAction.RotationalWindsOnOff}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.RotationalWindsOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Wind magnitude"/>
-                                    <Slider Value="{Binding SelectedRuleAction.WindMagnitude}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.RotationalWindsOnOff'}">
-                                    <Label Margin="-5,5,0,0" Content="Wind damage frequency"/>
-                                    <Slider Value="{Binding SelectedRuleAction.WindDamageFrequency}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.NebulaCloudDrainEnergyOnOff!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Nebula energy drain"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.NebulaCloudDrainEnergyOnOff}" Content="{Binding SelectedRuleAction.NebulaCloudDrainEnergyOnOff}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.NebulaOcclusionOnOff!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Nebula occlusion"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.NebulaOcclusionOnOff}" Content="{Binding SelectedRuleAction.NebulaOcclusionOnOff}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.AmbientSoundMaxDistance!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Ambient sound max distance"/>
-                                    <Slider Value="{Binding SelectedRuleAction.AmbientSoundMaxDistance}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.ShipUnit!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Ship name"/>
-                                    <TextBox Text="{Binding SelectedRuleAction.ShipUnit.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasShipPath'}">
-                                    <Label Margin="-5,5,0,0" Content="Ship path"/>
-                                    <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding SelectedRuleAction.ShipPath}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasFollowMode'}">
-                                    <Label Margin="-5,5,0,0" Content="Follow mode"/>
-                                    <ComboBox ItemsSource="{enums:EnumBindingSource enums:FollowMode}" SelectedValue="{Binding SelectedRuleAction.FollowMode}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsPrimaryShip!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Is primary ship"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.IsPrimaryShip}" Content="{Binding SelectedRuleAction.IsPrimaryShip}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.IsBoardable!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Is boardable"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.IsBoardable}" Content="{Binding SelectedRuleAction.IsBoardable}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasLocalizedShipName'}">
-                                    <Label Margin="-5,5,0,0" Content="Localized ship name"/>
-                                    <ComboBox  ItemsSource="{x:Static data:ShipUnit.ShipNamesDictionnary}" SelectedValue="{Binding SelectedRuleAction.LocalizedShipName}" SelectedValuePath="Key" DisplayMemberPath="Value" IsEditable="True"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.VictoryPointsToBeAdded!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Victory points to be added"/>
-                                    <Slider Value="{Binding SelectedRuleAction.VictoryPointsToBeAdded}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasPointSet'}">
-                                    <Label Margin="-5,5,0,0" Content="Point set"/>
-                                    <ComboBox ItemsSource="{Binding Map.WorldPoints}" SelectedValue="{Binding SelectedRuleAction.PointSet}" DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasEffect'}">
-                                    <Label Margin="-5,5,0,0" Content="Effect"/>
-                                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding SelectedRuleAction.EffectName}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.State!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="State"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.State}" Content="{Binding SelectedRuleAction.State}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.Percent!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Percent"/>
-                                    <Slider Value="{Binding SelectedRuleAction.Percent}" IsSnapToTickEnabled="True" TickFrequency="0.001" LargeChange="0.001" SmallChange="0.001" Minimum="0" Maximum="1"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.DamageThreshold!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Percent"/>
-                                    <Slider Value="{Binding SelectedRuleAction.DamageThreshold}" IsSnapToTickEnabled="True" TickFrequency="0.001" LargeChange="0.001" SmallChange="0.001" Minimum="0" Maximum="1"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.HasUseCustomMessage'}">
-                                    <Label Margin="-5,5,0,0" Content="Use custom message"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.UseCustomMessage}" Content="{Binding SelectedRuleAction.UseCustomMessage}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.UseCustomMessage'}">
-                                    <Label Margin="-5,5,0,0" Content="Winner custom message"/>
-                                    <ComboBox ItemsSource="{x:Static data:WorldMap.InGameMessages}" SelectedValue="{Binding SelectedRuleAction.WinnerCustomMessageStringId}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.UseCustomMessage'}">
-                                    <Label Margin="-5,5,0,0" Content="Loser custom message"/>
-                                    <ComboBox ItemsSource="{x:Static data:WorldMap.InGameMessages}" SelectedValue="{Binding SelectedRuleAction.LoserCustomMessageStringId}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.ShowStatsScreen!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Show stats screen"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.ShowStatsScreen}" Content="{Binding SelectedRuleAction.ShowStatsScreen}"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.Distance!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Distance"/>
-                                    <Slider Value="{Binding SelectedRuleAction.Distance}" Minimum="0" Maximum="9999"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.RelativeAngle!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Relative angle"/>
-                                    <Slider Value="{Binding SelectedRuleAction.RelativeAngle}" Minimum="0" Maximum="360"/>
-                                </StackPanel>
-                                <StackPanel Visibility="{c:Binding 'SelectedRuleAction.UseTransition!=null'}">
-                                    <Label Margin="-5,5,0,0" Content="Use transition"/>
-                                    <CheckBox IsChecked="{Binding SelectedRuleAction.UseTransition}" Content="{Binding SelectedRuleAction.UseTransition}"/>
-                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding SelectedRuleAction.RuleFields}"/>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>

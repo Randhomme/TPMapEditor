@@ -13,6 +13,13 @@ namespace TPMapEditor.Data
         private bool status;
         [ObservableProperty]
         private float startTime;
+
+        public Timer(string name, WorldMap map, bool status, float startTime) : base(map, name)
+        {
+            Status = status;
+            StartTime = startTime;
+        }
+
         protected override bool IsNameTaken(string name)
         {
             foreach (var item in map.Timers)
@@ -23,10 +30,5 @@ namespace TPMapEditor.Data
             return false;
         }
 
-        public Timer(string name, WorldMap map, bool status, float startTime) : base(map, name)
-        {
-            Status = status;
-            StartTime = startTime;
-        }
     }
 }

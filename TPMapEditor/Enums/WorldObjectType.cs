@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace TPMapEditor.Enums
 {
     /// <summary>
-    /// Used by Player Killed A Object condition
+    /// Used by "Player Killed A Object" rule condition
     /// </summary>
     public enum WorldObjectType
     {
-        Ship,
         Asteroid,
+        Ship,
         // nothing else is killable anyway
     }
 }

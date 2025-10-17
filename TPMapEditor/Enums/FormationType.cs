@@ -9,6 +9,12 @@ namespace TPMapEditor.Enums
     public enum FormationType
     {
         Column,
-        LineAbreast
+        Convoy,
+        Custom,
+        Diamond,
+        EchelonLeft,
+        EchelonRight,
+        LineAbreast,
+        None,
     }
 }
