@@ -12,8 +12,11 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private double x, y, z;
 
-        public ObjectivePoint(WorldMap map, string name) : base(map, name)
+        public ObjectivePoint(WorldMap map, string name, double x, double y, double z = 0) : base(map, name)
         {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
         protected override bool IsNameTaken(string name)

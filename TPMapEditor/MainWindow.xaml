@@ -42,6 +42,7 @@
                 <MenuItem Header="Timers" Command="{Binding TimersEditCommand}"/>
                 <MenuItem Header="Speech events" Command="{Binding SpeechEventsEditCommand}"/>
                 <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
+                <MenuItem Header="Objective tasks" Command="{Binding ObjectiveTasksEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
@@ -56,30 +57,33 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox x:Name="selectRadioButton" ToolTip="Select" Margin="0" Width="25" Style="{StaticResource {x:Type ToggleButton}}" IsChecked="True">
+                    <CheckBox x:Name="selectCheckBox" ToolTip="Select" Margin="0" Width="25" Style="{StaticResource {x:Type ToggleButton}}" IsChecked="True">
                         <Image Margin="2.5" Source="/Images/Default.png"/>
                     </CheckBox>
-                    <CheckBox x:Name="moveRadioButton" ToolTip="Move" Margin="-1,0,0,0" Width="25" Style="{StaticResource {x:Type ToggleButton}}">
+                    <CheckBox x:Name="moveCheckBox" ToolTip="Move" Margin="-1,0,0,0" Width="25" Style="{StaticResource {x:Type ToggleButton}}">
                         <Image Margin="2.5" Source="/Images/Move.png"/>
                     </CheckBox>
-                    <Button x:Name="deleteRadioButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25" Content="X" Foreground="Red"/>
+                    <Button x:Name="deleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25" Content="X" Foreground="Red"/>
                     <Rectangle Width="1" Fill="Gray" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
-                    <RadioButton x:Name="wotRadioButton" Width="95" Height="25" Margin="0" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked" Unchecked="RadioButton_Unchecked">
+                    <RadioButton x:Name="wotRadioButton" Width="95" Height="25" Margin="0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WotRadioButton_Checked" Unchecked="WotRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World object"/>
                     </RadioButton>
-                    <RadioButton x:Name="playerRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked_1" Unchecked="RadioButton_Unchecked_1">
+                    <RadioButton x:Name="playerRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PlayerRadioButton_Checked" Unchecked="PlayerRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Player"/>
                     </RadioButton>
-                    <RadioButton x:Name="pathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked_2" Unchecked="RadioButton_Unchecked_2">
+                    <RadioButton x:Name="pathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PathRadioButton_Checked" Unchecked="PathRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Waypoint path"/>
                     </RadioButton>
-                    <RadioButton x:Name="polygonRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked_3" Unchecked="RadioButton_Unchecked_3">
+                    <RadioButton x:Name="polygonRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PolygonRadioButton_Checked" Unchecked="PolygonRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World polygon"/>
                     </RadioButton>
-                    <RadioButton x:Name="pointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked_4" Unchecked="RadioButton_Unchecked_4">
+                    <RadioButton x:Name="pointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PointRadioButton_Checked" Unchecked="PointRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World point"/>
+                    </RadioButton>
+                    <RadioButton x:Name="objectivePointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="ObjectivePointRadioButton_Checked" Unchecked="ObjectivePointRadioButton_Unchecked">
+                        <TextBlock Margin="5,0,5,0" Text="Objective point"/>
                     </RadioButton>
                 </StackPanel>
             </Grid>
@@ -106,7 +110,7 @@
                                 </Border>
                             </Canvas>
                             <Canvas x:Name="playerCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Border x:Name="playerPreview" Visibility="{c:Binding ElementName=addPlayerRadioButton, Mode=TwoWay, Path=IsChecked}" BorderThickness="2.5" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="PlayerPreview_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreview_MouseRightButtonDown" Panel.ZIndex="1">
+                                <Border x:Name="playerPreview" Visibility="{c:Binding ElementName=addPlayerCheckBox, Mode=TwoWay, Path=IsChecked}" BorderThickness="2.5" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="PlayerPreview_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreview_MouseRightButtonDown" Panel.ZIndex="1">
                                     <Border.RenderTransform>
                                         <RotateTransform Angle="{Binding Value, ElementName=sliderRotate}"/>
                                     </Border.RenderTransform>
@@ -120,11 +124,16 @@
                                 <Border x:Name="polygonPointPreview" Width="30" Height="30" Background="Black" BorderThickness="5" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="1" MouseRightButtonDown="PolygonPointPreview_MouseRightButtonDown"/>
                             </Canvas>
                             <Canvas x:Name="pointCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Border x:Name="worldPointPreview" Visibility="{c:Binding ElementName=addWorldPointRadioButton, Mode=TwoWay, Path=IsChecked}" Background="Black" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="1" MouseRightButtonDown="WorldPointPreview_MouseRightButtonDown" MouseLeftButtonDown="WorldPointPreview_MouseLeftButtonDown">
+                                <Border x:Name="worldPointPreview" Visibility="{c:Binding ElementName=addWorldPointCheckBox, Mode=TwoWay, Path=IsChecked}" Background="Black" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="1" MouseRightButtonDown="WorldPointPreview_MouseRightButtonDown" MouseLeftButtonDown="WorldPointPreview_MouseLeftButtonDown">
                                     <Border.RenderTransform>
                                         <RotateTransform Angle="{Binding Value, ElementName=sliderRotate}"/>
                                     </Border.RenderTransform>
                                     <Image Source="/Images/Arrow.png"/>
+                                </Border>
+                            </Canvas>
+                            <Canvas x:Name="objectivePointCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Border x:Name="objectivePointPreview" Visibility="{c:Binding ElementName=addObjectivePointCheckBox, Mode=TwoWay, Path=IsChecked}" Panel.ZIndex="1" RenderTransformOrigin="0.5,0.5" MouseRightButtonDown="ObjectivePointPreview_MouseRightButtonDown" MouseLeftButtonDown="ObjectivePointPreview_MouseLeftButtonDown">
+                                    <Image Source="/Images/ObjectivePoint.png"/>
                                 </Border>
                             </Canvas>
                         </Grid>
@@ -162,6 +171,7 @@
                                         <RowDefinition x:Name="pathGridRow" Height="auto"/>
                                         <RowDefinition x:Name="polygonGridRow" Height="auto"/>
                                         <RowDefinition x:Name="pointGridRow" Height="auto"/>
+                                        <RowDefinition x:Name="objectivePointGridRow" Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <GroupBox Grid.Column="1" Header="Rotation">
                                         <Slider x:Name="sliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
@@ -182,24 +192,29 @@
                                     </GroupBox>
                                     <GroupBox Header="Players" Grid.Column="1" Grid.Row="2" Visibility="{c:Binding ElementName=playerRadioButton,Path=IsChecked}">
                                         <StackPanel>
-                                            <CheckBox x:Name="addPlayerRadioButton" Content="Player" Margin="5" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                            <CheckBox x:Name="addPlayerCheckBox" Content="Player" Margin="5" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="Waypoint path" Grid.Column="1" Grid.Row="3" Visibility="{c:Binding ElementName=pathRadioButton,Path=IsChecked}">
                                         <StackPanel>
-                                            <RadioButton x:Name="newPathRadioButton" Margin="5" Content="New path" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked_6" Unchecked="RadioButton_Unchecked_6"/>
-                                            <RadioButton x:Name="addPointPathRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" IsEnabled="{c:Binding 'SelectedPath!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged" Checked="RadioButton_Checked_8" Unchecked="RadioButton_Unchecked_8"/>
+                                            <RadioButton x:Name="newPathRadioButton" Margin="5" Content="New path" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" Checked="RadioButton_Checked_6" Unchecked="RadioButton_Unchecked_6"/>
+                                            <RadioButton x:Name="addPointPathRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedPath!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged" Checked="RadioButton_Checked_8" Unchecked="RadioButton_Unchecked_8"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="World polygon" Grid.Column="1" Grid.Row="4" Visibility="{c:Binding ElementName=polygonRadioButton,Path=IsChecked}">
                                         <StackPanel>
-                                            <RadioButton x:Name="newPolygonRadioButton" Margin="5" Content="New polygon" Style="{StaticResource {x:Type ToggleButton}}" Checked="RadioButton_Checked_10" Unchecked="RadioButton_Unchecked_10"/>
-                                            <RadioButton x:Name="addPointPolygonRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" IsEnabled="{c:Binding 'SelectedPolygon!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged" Checked="RadioButton_Checked_11" Unchecked="RadioButton_Unchecked_11"/>
+                                            <RadioButton x:Name="newPolygonRadioButton" Margin="5" Content="New polygon" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" Checked="RadioButton_Checked_10" Unchecked="RadioButton_Unchecked_10"/>
+                                            <RadioButton x:Name="addPointPolygonRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedPolygon!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged" Checked="RadioButton_Checked_11" Unchecked="RadioButton_Unchecked_11"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="World point" Grid.Column="1" Grid.Row="5" Visibility="{c:Binding ElementName=pointRadioButton,Path=IsChecked}">
                                         <StackPanel>
-                                            <CheckBox x:Name="addWorldPointRadioButton" Margin="5" Content="New world point" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                            <CheckBox x:Name="addWorldPointCheckBox" Margin="5" Content="New world point" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Objective point" Grid.Column="1" Grid.Row="6" Visibility="{c:Binding ElementName=objectivePointRadioButton,Path=IsChecked}">
+                                        <StackPanel>
+                                            <CheckBox x:Name="addObjectivePointCheckBox" Margin="5" Content="New objetive point" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>
                                 </Grid>
@@ -216,13 +231,13 @@
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider x:Name="selectedWotX" Value="{Binding SelectedWot.WorldObject.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Value="{Binding SelectedWot.WorldObject.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider x:Name="selectedWotY" Value="{Binding SelectedWot.WorldObject.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Value="{Binding SelectedWot.WorldObject.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Z">
-                                                                <Slider x:Name="selectedWotZ" Value="{Binding SelectedWot.WorldObject.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Value="{Binding SelectedWot.WorldObject.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
@@ -230,13 +245,13 @@
                                                     <GroupBox Header="Rotation (Euler XYZ)">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider x:Name="selectedWotRotX" Grid.Column="1" Value="{Binding SelectedWot.WorldObject.XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWot.WorldObject.XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider x:Name="selectedWotRotY" Grid.Column="1" Value="{Binding SelectedWot.WorldObject.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWot.WorldObject.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Z">
-                                                                <Slider x:Name="selectedWotRotZ" Grid.Column="1" Value="{Binding SelectedWot.WorldObject.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWot.WorldObject.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
@@ -245,7 +260,6 @@
                                                             <CheckBox x:Name="wotIsInGroup" Margin="0,5,0,10" Content="Is in group ?" IsChecked="{c:Binding Mode=OneWay, Path=SelectedWot.WorldObject.Group !\= null, UpdateSourceTrigger=PropertyChanged}"/>
                                                             <!--<Label Margin="-5,5,0,0" Content="Group"/>-->
                                                             <ComboBox
-                                                                x:Name="wotGroup"
                                                                 SelectedItem="{Binding SelectedWot.WorldObject.Group}"
                                                                 ItemsSource="{Binding Map.Groups}"
                                                                 IsEnabled="{Binding IsChecked, ElementName=wotIsInGroup}"
@@ -275,7 +289,7 @@
                                                     </GroupBox>
                                                     <GroupBox Header="Rotation (Z only)" >
                                                         <StackPanel>
-                                                            <Slider x:Name="selectedPlayerRotZ" Grid.Column="1" Value="{Binding SelectedPlayer.Player.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                                            <Slider Grid.Column="1" Value="{Binding SelectedPlayer.Player.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                                         </StackPanel>
                                                     </GroupBox>
                                                     <GroupBox Header="Color">
@@ -304,7 +318,6 @@
                                                         <StackPanel>
                                                             <CheckBox x:Name="playerHasTeamCheckBox" Margin="0,5,0,10" Content="Has team ?" IsChecked="{c:Binding Mode=OneWay, Path=SelectedPlayer.Player.Team !\= null, UpdateSourceTrigger=PropertyChanged}"/>
                                                             <ComboBox
-                                                                x:Name="teamComboBox"
                                                                 SelectedItem="{Binding SelectedPlayer.Player.Team}"
                                                                 ItemsSource="{Binding Map.Teams}"
                                                                 IsEnabled="{Binding IsChecked, ElementName=playerHasTeamCheckBox}"
@@ -348,13 +361,13 @@
                                             <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedPathPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="X">
-                                                        <Slider Grid.Column="1" x:Name="selectedPathPointX" Value="{Binding SelectedPathPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Y">
-                                                        <Slider Grid.Column="1" x:Name="selectedPathPointY" Value="{Binding SelectedPathPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Z">
-                                                        <Slider Grid.Column="1" x:Name="selectedPathPointZ" Value="{Binding SelectedPathPoint.Point.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
@@ -387,10 +400,10 @@
                                             <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'SelectedPolygonPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="X">
-                                                        <Slider Grid.Column="1" x:Name="selectedPolygonPointX" Value="{Binding SelectedPolygonPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPolygonPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Y">
-                                                        <Slider Grid.Column="1" x:Name="selectedPolygonPointY" Value="{Binding SelectedPolygonPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPolygonPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
@@ -421,39 +434,56 @@
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider Grid.Column="1" x:Name="selectedPointX" Value="{Binding SelectedWorldPoint.WorldPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider Grid.Column="1" x:Name="selectedPointY" Value="{Binding SelectedWorldPoint.WorldPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Z">
-                                                                <Slider Grid.Column="1" x:Name="selectedPointZ" Value="{Binding SelectedWorldPoint.WorldPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
                                                     <GroupBox Header="Rotation (Euler XYZ)" Padding="5,0,5,5" Margin="0,0,0,5">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider x:Name="selectedPointRotX" Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" SmallChange="1" LargeChange="15"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" SmallChange="1" LargeChange="15"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider x:Name="selectedPointRotY" Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" SmallChange="1" LargeChange="15"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" SmallChange="1" LargeChange="15"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Z">
-                                                                <Slider x:Name="selectedPointRotZ" Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedWorldPoint.WorldPoint.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
                                         </Grid>
+                                        <StackPanel Visibility="{c:Binding ElementName=objectivePointRadioButton, Path=IsChecked}">
+                                            <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedObjectivePoint!=null'}">
+                                                <StackPanel Margin="5">
+                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedObjectivePoint.ObjectivePoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                                    <GroupBox Header="Position">
+                                                        <StackPanel>
+                                                            <GroupBox Header="X">
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.ObjectivePoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                            </GroupBox>
+                                                            <GroupBox Header="Y">
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.ObjectivePoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                            </GroupBox>
+                                                        </StackPanel>
+                                                    </GroupBox>
+                                                </StackPanel>
+                                            </GroupBox>
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
                             </TabItem>
                         </TabControl>
-                        <GroupBox Grid.Row="1" Header="Mini map">
-                            
-                        </GroupBox>
+                        <!--<GroupBox Grid.Row="1" Header="Mini map">
+
+                        </GroupBox>-->
                     </Grid>
                 </Grid>
             </Expander>
