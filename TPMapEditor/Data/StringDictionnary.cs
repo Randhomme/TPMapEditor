@@ -10,7 +10,8 @@ namespace TPMapEditor.Data
     {
         public static Dictionary<string, string> ObjectiveTasksDictionnary { get; } = new();
         public static Dictionary<string, string> ShipNamesDictionnary { get; } = new ();
-        public static Dictionary<string, string> SpeechEventDictionnary { get; } = new();
+        public static Dictionary<string, string> SpeechEventsDictionnary { get; } = new();
+        public static Dictionary<string, string> SpeechEventsJournalsDictionnary { get; } = new();
         public static Dictionary<string, string> SpeakerNamesDictionnary { get; } = new();
         public static Dictionary<string, string> TeamNames { get; } = new();
     }

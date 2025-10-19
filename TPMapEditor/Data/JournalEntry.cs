@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
@@ -14,6 +15,9 @@ namespace TPMapEditor.Data
 
         public JournalEntry(WorldMap map, string name, string textStringId, string speechEventFileName, string pictureTexture) : base(map, name)
         {
+            this.textStringId = textStringId;
+            this.speechEventFileName = speechEventFileName;
+            this.pictureTexture = pictureTexture;
         }
 
         protected override bool IsNameTaken(string name)
