@@ -48,6 +48,8 @@
                 <StackPanel Margin="10,0,0,0">
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedPlayer.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                    <Label Margin="-5,5,0,0" Content="Is playable"/>
+                    <CheckBox Content="{Binding SelectedPlayer.IsPlayable}" IsChecked="{Binding SelectedPlayer.IsPlayable}" IsEnabled="{c:Binding 'Map.PlayerPlayableCount less 8 or SelectedPlayer.IsPlayable'}"/>
                     <Label Margin="-5,5,0,0" Content="Color"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
