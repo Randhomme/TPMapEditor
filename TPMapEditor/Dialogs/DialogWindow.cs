@@ -1,10 +1,11 @@
-﻿using System.Windows;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows;
 
 namespace TPMapEditor.Dialogs
 {
-    public class DialogWindow : Window
+    [ObservableObject]
+    public partial class DialogWindow : Window
     {
-        public DialogWindow() { }
         public DialogWindow(Window owner)
         {
             Owner = owner;

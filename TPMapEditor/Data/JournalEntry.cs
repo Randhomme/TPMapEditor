@@ -7,21 +7,18 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Data
 {
-    public partial class ObjectiveTask : NamedElement
+    public partial class JournalEntry : NamedElement
     {
         [ObservableProperty]
-        private string textStringId;
-        [ObservableProperty]
-        private bool active, completed, failed;
+        private string textStringId, speechEventFileName, pictureTexture;
 
-        public ObjectiveTask(WorldMap map, string name, string textStringId) : base(map, name)
+        public JournalEntry(WorldMap map, string name, string textStringId, string speechEventFileName, string pictureTexture) : base(map, name)
         {
-            this.textStringId = textStringId;
         }
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.ObjectiveTasks)
+            foreach (var item in map.JournalEntries)
             {
                 if (item.Name == name && item != this)
                     return true;

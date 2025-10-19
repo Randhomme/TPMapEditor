@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:enums="clr-namespace:TPMapEditor.Enums"
-        xmlns:team="clr-namespace:TPMapEditor.Data"
+        xmlns:data="clr-namespace:TPMapEditor.Data"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="TeamsDialog" Height="361" Width="642">
+        Title="TeamsDialog" Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -23,7 +23,7 @@
                 <DataGridTemplateColumn Header="Team name" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox IsSynchronizedWithCurrentItem="False" SelectedValue="{Binding RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static team:Team.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                            <ComboBox IsSynchronizedWithCurrentItem="False" SelectedValue="{Binding RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

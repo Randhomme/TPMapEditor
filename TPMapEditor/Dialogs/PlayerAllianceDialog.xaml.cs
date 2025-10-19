@@ -20,7 +20,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for PlayerAllianceWindow.xaml
     /// </summary>
-    [ObservableObject]
     public partial class PlayerAllianceDialog : DialogWindow
     {
         [ObservableProperty]

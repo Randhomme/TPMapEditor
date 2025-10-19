@@ -22,7 +22,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for PlayerDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class PlayerDialog : DialogWindow
     {
         public WorldMap Map { get; }
@@ -55,6 +54,7 @@ namespace TPMapEditor.Dialogs
                 SelectedPlayer.Remove?.Invoke();
                 Map.Players.Remove(SelectedPlayer);
                 AddPlayerCommand.NotifyCanExecuteChanged();
+                SelectedPlayer = null;
             }
         }
 

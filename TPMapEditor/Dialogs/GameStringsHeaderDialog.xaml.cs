@@ -21,7 +21,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for GameHeadersDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class GameStringsHeadersDialog : DialogWindow
     {
         [ObservableProperty]
@@ -34,6 +33,8 @@ namespace TPMapEditor.Dialogs
         private GameHeadersFile? selectedShipNamesHeaderFile;
         [ObservableProperty]
         private GameHeadersFile? selectedInGameMessagesHeaderFile;
+        [ObservableProperty]
+        private GameHeadersFile? selectedObjectiveTasksHeaderFile;
         public AppSettings AppSettings { get; }
         public GameStringsHeadersDialog(Window owner, AppSettings appSettings) : base(owner)
         {
@@ -74,6 +75,13 @@ namespace TPMapEditor.Dialogs
         {
             string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
             AppSettings.TPInGameMessages.Add(new GameHeadersFile(fileName));
+        }
+
+        [RelayCommand]
+        private void OnAddObjectiveTasksHeaderFile()
+        {
+            string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
+            AppSettings.TPObjectiveTasks.Add(new GameHeadersFile(fileName));
         }
 
         private void RemoveTeamNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
@@ -118,6 +126,15 @@ namespace TPMapEditor.Dialogs
             {
                 AppSettings.TPInGameMessages.Remove(SelectedInGameMessagesHeaderFile);
                 SelectedInGameMessagesHeaderFile = null;
+            }
+        }
+
+        private void RemoveObjectiveTasksHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedObjectiveTasksHeaderFile != null)
+            {
+                AppSettings.TPObjectiveTasks.Remove(SelectedObjectiveTasksHeaderFile);
+                SelectedObjectiveTasksHeaderFile = null;
             }
         }
     }

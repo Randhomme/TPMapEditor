@@ -21,7 +21,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for WorldRuleDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class WorldRuleDialog : DialogWindow
     {
         public WorldMap Map { get; }

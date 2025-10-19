@@ -20,7 +20,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for SpeechEventDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class SpeechEventDialog : DialogWindow
     {
         [ObservableProperty]

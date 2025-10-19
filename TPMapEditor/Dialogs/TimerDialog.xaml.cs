@@ -20,7 +20,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for TimerDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class TimerDialog : DialogWindow
     {
         [ObservableProperty]

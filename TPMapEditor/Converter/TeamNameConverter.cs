@@ -10,7 +10,7 @@ namespace TPMapEditor.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Team.TeamNames.TryGetValue(value.ToString(), out var displayedName) ? displayedName : value;
+            return StringDictionnary.TeamNames.TryGetValue(value.ToString(), out var displayedName) ? displayedName : value;
         }
 
         //We'll never get here because we don't go from the displayed name to the real name.

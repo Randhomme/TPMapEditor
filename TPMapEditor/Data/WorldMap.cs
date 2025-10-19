@@ -54,6 +54,7 @@ namespace TPMapEditor.Data
         public IList<ObjectivePoint> ObjectivePoints { get; }
         public IList<ObjectiveTask> ObjectiveTasks { get; }
         public IList<MapTextPoint> MapTextPoints { get; }
+        public IList<JournalEntry> JournalEntries { get; }
 
         public WorldMap()
         {
@@ -78,8 +79,7 @@ namespace TPMapEditor.Data
             ObjectivePoints = new ObservableCollection<ObjectivePoint>();
             ObjectiveTasks = new ObservableCollection<ObjectiveTask>();
             MapTextPoints = new ObservableCollection<MapTextPoint>();
-            //EtheriumCurrents = new ObservableCollection<EtheriumCurrent>();
-
+            JournalEntries = new ObservableCollection<JournalEntry>();
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
             ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
         }

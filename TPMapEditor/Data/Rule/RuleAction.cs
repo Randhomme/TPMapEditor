@@ -171,7 +171,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldShipName(string? label, string? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= ShipUnit.ShipNamesDictionnary.Keys.FirstOrDefault();
+            value ??= StringDictionnary.ShipNamesDictionnary.Keys.FirstOrDefault();
             RuleFields.Add(new RuleFieldShipName(label, value, isOptional, optionalLabel, isShown));
         }
 

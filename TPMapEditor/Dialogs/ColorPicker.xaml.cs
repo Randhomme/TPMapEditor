@@ -10,7 +10,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for ColorPicker.xaml
     /// </summary>
-    [ObservableObject]
     public partial class ColorPicker : DialogWindow
     {
         private bool mouseDownedOnColorCanvas = false;

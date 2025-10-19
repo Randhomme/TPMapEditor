@@ -22,13 +22,13 @@ namespace TPMapEditor.Dialogs
 
         private bool CanAddTeam()
         {
-            return Map.Teams.Count < 8 && Team.TeamNames.Count > 0;
+            return Map.Teams.Count < 8 && StringDictionnary.TeamNames.Count > 0;
         }
 
         [RelayCommand(CanExecute = nameof(CanAddTeam))]
         private void OnAddTeam()
         {
-            Map.Teams.Add(new Team(Team.TeamNames.Keys.First()) { Race = Enums.Race.Navy });
+            Map.Teams.Add(new Team(StringDictionnary.TeamNames.Keys.First()) { Race = Enums.Race.Navy });
             AddTeamCommand.NotifyCanExecuteChanged();
         }
 

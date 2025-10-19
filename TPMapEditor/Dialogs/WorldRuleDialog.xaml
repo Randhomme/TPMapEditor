@@ -227,7 +227,7 @@
         <!--ShipName-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldShipName}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{x:Static data:ShipUnit.ShipNamesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                <ComboBox ItemsSource="{x:Static data:StringDictionnary.ShipNamesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
             </ContentControl>
         </DataTemplate>
         
@@ -441,5 +441,8 @@
                 </TabItem>
             </TabControl>
         </Grid>
+        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
+            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+        </StackPanel>
     </Grid>
 </local:DialogWindow>

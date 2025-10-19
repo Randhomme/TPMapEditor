@@ -20,7 +20,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for GroupDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class GroupDialog : DialogWindow
     {
         [ObservableProperty]

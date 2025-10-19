@@ -27,6 +27,7 @@ namespace TPMapEditor.Settings
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
         public ObservableCollection<GameHeadersFile> TPShipNames { get; }
         public ObservableCollection<GameHeadersFile> TPInGameMessages { get; }
+        public ObservableCollection<GameHeadersFile> TPObjectiveTasks { get; }
         [XmlIgnore]
         public string EffectsDirectory { get; set; }
         [XmlIgnore]
@@ -53,6 +54,7 @@ namespace TPMapEditor.Settings
             TPSpeakerNames = new ObservableCollection<GameHeadersFile>();
             TPShipNames = new ObservableCollection<GameHeadersFile>();
             TPInGameMessages = new ObservableCollection<GameHeadersFile>();
+            TPObjectiveTasks = new ObservableCollection<GameHeadersFile>();
             GameHeadersFiles = "";
             GameStringsEnglish = "";
             SoundDirectory = "";
@@ -88,6 +90,7 @@ namespace TPMapEditor.Settings
             UpdateSpeakersDictionnary(gameStrings);
             UpdateShipNamesDictionnary(gameStrings);
             UpdateInGameMessagesDictionary(gameStrings);
+            UpdateObjectiveTasksDictionary(gameStrings);
         }
 
         private void UpdateAppSettingsStrings()
@@ -430,7 +433,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                Team.TeamNames.Clear();
+                StringDictionnary.TeamNames.Clear();
                 foreach (var file in this.TPTeamNames)
                 {
                     try
@@ -445,7 +448,7 @@ namespace TPMapEditor.Settings
                                     var teamName = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
                                     if (gameStrings.TryGetValue(teamName, out var teamString))
                                     {
-                                        Team.TeamNames[teamName] = teamString;
+                                        StringDictionnary.TeamNames[teamName] = teamString;
                                     }
                                 }
                             }
@@ -467,7 +470,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                SpeechEvent.SpeechEventDictionnary.Clear();
+                StringDictionnary.SpeechEventDictionnary.Clear();
                 foreach (var file in this.TPSpeechEvents)
                 {
                     try
@@ -485,7 +488,7 @@ namespace TPMapEditor.Settings
                                         var eventName = parts[0];
                                         if (gameStrings.TryGetValue(eventName, out var eventText))
                                         {
-                                            SpeechEvent.SpeechEventDictionnary[eventName] = eventText;
+                                            StringDictionnary.SpeechEventDictionnary[eventName] = eventText;
                                         }
                                     }
                                 }
@@ -508,7 +511,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                SpeechEvent.SpeakerNamesDictionnary.Clear();
+                StringDictionnary.SpeakerNamesDictionnary.Clear();
                 foreach (var file in this.TPSpeakerNames)
                 {
                     try
@@ -526,7 +529,7 @@ namespace TPMapEditor.Settings
                                         var speakerName = parts[0];
                                         if (gameStrings.TryGetValue(speakerName, out var speakerText))
                                         {
-                                            SpeechEvent.SpeakerNamesDictionnary[speakerName] = speakerText;
+                                            StringDictionnary.SpeakerNamesDictionnary[speakerName] = speakerText;
                                         }
                                     }
                                 }
@@ -549,7 +552,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                ShipUnit.ShipNamesDictionnary.Clear();
+                StringDictionnary.ShipNamesDictionnary.Clear();
                 foreach (var file in this.TPShipNames)
                 {
                     try
@@ -567,7 +570,7 @@ namespace TPMapEditor.Settings
                                         var shipName = parts[0];
                                         if (gameStrings.TryGetValue(shipName, out var shipDisplayName))
                                         {
-                                            ShipUnit.ShipNamesDictionnary[shipName] = shipDisplayName;
+                                            StringDictionnary.ShipNamesDictionnary[shipName] = shipDisplayName;
                                         }
                                     }
                                 }
@@ -602,10 +605,47 @@ namespace TPMapEditor.Settings
                                 var line = reader.ReadLine();
                                 if (line.StartsWith("#define"))
                                 {
-                                    var message = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
-                                    if (gameStrings.TryGetValue(message, out var messageString))
+                                    var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(defineString, out var gameString))
                                     {
-                                        WorldMap.InGameMessagesDictionnary[message] = messageString;
+                                        WorldMap.InGameMessagesDictionnary[defineString] = gameString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateObjectiveTasksDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                StringDictionnary.ObjectiveTasksDictionnary.Clear();
+                foreach (var file in this.TPObjectiveTasks)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(defineString, out var gameString))
+                                    {
+                                        StringDictionnary.ObjectiveTasksDictionnary[defineString] = gameString;
                                     }
                                 }
                             }
@@ -693,6 +733,8 @@ namespace TPMapEditor.Settings
             TPShipNames.Add(new("TPSHIPNAMEPROCYON00_GameStrings.h"));
             TPShipNames.Add(new("TPSHIPNAMEPROCYON01_GameStrings.h"));
             TPInGameMessages.Add(new("TPINGAMEMESSAGE_GameStrings.h"));
+            TPObjectiveTasks.Add(new("TPOBJECTIVES_GameStrings.h"));
+            TPObjectiveTasks.Add(new("TPOBJECTIVES2_GameStrings.h"));
         }
 
         public AppSettings Load()

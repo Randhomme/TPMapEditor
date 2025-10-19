@@ -13,8 +13,7 @@ namespace TPMapEditor.Data
     {
         public static IList<string> DialogueFilesList { get; } = new List<string>();
         public static IList<string> FaceTexturesList { get; } = new List<string>();
-        public static Dictionary<string, string> SpeechEventDictionnary { get; } = new Dictionary<string, string>();
-        public static Dictionary<string, string> SpeakerNamesDictionnary { get; } = new Dictionary<string, string>();
+
         [ObservableProperty]
         private string soundFileName, faceTexture, textStringID, speakerID;
         [ObservableProperty]
@@ -30,8 +29,8 @@ namespace TPMapEditor.Data
         {
             soundFileName = DialogueFilesList.FirstOrDefault() ?? string.Empty;
             faceTexture = FaceTexturesList.FirstOrDefault() ?? string.Empty;
-            textStringID = SpeechEventDictionnary.FirstOrDefault().Key ?? string.Empty;
-            speakerID = SpeakerNamesDictionnary.FirstOrDefault().Key ?? string.Empty;
+            textStringID = StringDictionnary.SpeechEventDictionnary.FirstOrDefault().Key ?? string.Empty;
+            speakerID = StringDictionnary.SpeakerNamesDictionnary.FirstOrDefault().Key ?? string.Empty;
             textColor = Colors.White;
         }
 

@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition MinWidth="200"/>
             </Grid.ColumnDefinitions>
-            <Grid Margin="0">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
@@ -45,7 +45,7 @@
             </Grid>
             <GridSplitter Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10">
+                <StackPanel Margin="10,0,0,0">
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedPlayer.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Color"/>

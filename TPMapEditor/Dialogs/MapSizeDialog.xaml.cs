@@ -7,7 +7,6 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for MapSizeDialog.xaml
     /// </summary>
-    [ObservableObject]
     public partial class MapSizeDialog : DialogWindow
     {
         [ObservableProperty]

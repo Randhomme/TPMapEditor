@@ -11,7 +11,6 @@ namespace TPMapEditor.Data
     /// </summary>
     public class ShipUnit : NamedElement
     {
-        public static Dictionary<string, string> ShipNamesDictionnary = new Dictionary<string, string>();
         public ShipUnit(WorldMap map, string name) : base(map, name)
         {
         }
