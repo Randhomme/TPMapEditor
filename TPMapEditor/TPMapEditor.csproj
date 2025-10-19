@@ -15,6 +15,7 @@
     <None Remove="Images\bg.png" />
     <None Remove="Images\Default.png" />
     <None Remove="Images\Move.png" />
+    <None Remove="Images\ObjectivePoint.png" />
     <None Remove="Images\Player.png" />
     <None Remove="Images\WotPlaceholder.png" />
   </ItemGroup>
@@ -41,6 +42,7 @@
     <Resource Include="Images\bg.png" />
     <Resource Include="Images\Default.png" />
     <Resource Include="Images\Move.png" />
+    <Resource Include="Images\ObjectivePoint.png" />
     <Resource Include="Images\Player.png" />
     <Resource Include="Images\WotPlaceholder.png" />
   </ItemGroup>
