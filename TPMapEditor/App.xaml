@@ -7,9 +7,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/TextBoxStyle.xaml"/>
-                <ResourceDictionary Source="Styles/TextGroupBoxStyle.xaml"/>
-                <ResourceDictionary Source="Styles/SliderTextBoxControl.xaml"/>
+                <ResourceDictionary Source="/Styles/TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/TextGroupBoxStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/SliderTextBoxControl.xaml"/>
+                <ResourceDictionary Source="/Styles/ScrollViewerStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
