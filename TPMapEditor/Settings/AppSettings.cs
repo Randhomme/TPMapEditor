@@ -22,29 +22,48 @@ namespace TPMapEditor.Settings
         public static IList<string> SinglePlayerMissions { get; } = new List<string>();
         public static IList<string> GuiTextures { get; } = new List<string>();
         public static IList<string> Musics { get; } = new List<string>();
-        public IList<GameHeadersFile> TPTeamNames { get; } = new ObservableCollection<GameHeadersFile>();
-        public IList<GameHeadersFile> TPSpeechEvents { get; } = new ObservableCollection<GameHeadersFile>();
-        public IList<GameHeadersFile> TPSpeakerNames { get; } = new ObservableCollection<GameHeadersFile>();
-        public IList<GameHeadersFile> TPShipNames { get; } = new ObservableCollection<GameHeadersFile>();
-        public IList<GameHeadersFile> TPInGameMessages { get; } = new ObservableCollection<GameHeadersFile>();
-        public IList<GameHeadersFile> TPObjectiveTasks { get; } = new ObservableCollection<GameHeadersFile>();
-        public IList<GameHeadersFile> TPSpeechEventsJournals { get; } = new ObservableCollection<GameHeadersFile>();
+        public ObservableCollection<GameHeadersFile> TPTeamNames { get; }
+        public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
+        public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
+        public ObservableCollection<GameHeadersFile> TPShipNames { get; }
+        public ObservableCollection<GameHeadersFile> TPInGameMessages { get; }
+        public ObservableCollection<GameHeadersFile> TPObjectiveTasks { get; }
+        public ObservableCollection<GameHeadersFile> TPSpeechEventsJournals { get; }
         [XmlIgnore]
-        public string EffectsDirectory { get; set; } = string.Empty;
+        public string EffectsDirectory { get; set; }
         [XmlIgnore]
-        public string FlagTexturesDirectory { get; set; } = string.Empty;
+        public string FlagTexturesDirectory { get; set; }
         [XmlIgnore]
-        public string GameHeadersFiles { get; set; } = string.Empty;
+        public string GameHeadersFiles { get; set; }
         [XmlIgnore]
-        public string GameStringsEnglish { get; set; } = string.Empty;
+        public string GameStringsEnglish { get; set; }
         [XmlIgnore]
-        public string GuiTexturesDirectory { get; set; } = string.Empty;
+        public string GuiTexturesDirectory { get; set; }
         [XmlIgnore]
-        public string SoundDirectory { get; set; } = string.Empty;
+        public string SoundDirectory { get; set; }
         [XmlIgnore]
-        public string WorldFilesDirectory { get; set; } = string.Empty;
+        public string WorldFilesDirectory { get; set; }
         [XmlIgnore]
-        public string WorldObjectFilesDirectory { get; set; } = string.Empty;
+        public string WorldObjectFilesDirectory { get; set; }
+
+        public AppSettings()
+        {
+            TPTeamNames = new ObservableCollection<GameHeadersFile>();
+            TPSpeechEvents = new ObservableCollection<GameHeadersFile>();
+            TPSpeakerNames = new ObservableCollection<GameHeadersFile>();
+            TPShipNames = new ObservableCollection<GameHeadersFile>();
+            TPInGameMessages = new ObservableCollection<GameHeadersFile>();
+            TPObjectiveTasks = new ObservableCollection<GameHeadersFile>();
+            TPSpeechEventsJournals = new ObservableCollection<GameHeadersFile>();
+            EffectsDirectory = string.Empty;
+            FlagTexturesDirectory = string.Empty;
+            GameHeadersFiles = string.Empty;
+            GameStringsEnglish = string.Empty;
+            GuiTexturesDirectory = string.Empty;
+            SoundDirectory = string.Empty;
+            WorldFilesDirectory = string.Empty;
+            WorldObjectFilesDirectory = string.Empty;
+        }
 
         partial void OnTpGamePathChanged(string? old, string newv)
         {
