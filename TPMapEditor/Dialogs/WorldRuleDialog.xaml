@@ -349,7 +349,7 @@
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <TabControl Grid.Column="2" Visibility="{c:Binding 'SelectedWorldRule!=null'}">
                 <TabItem Header="Properties">
-                    <StackPanel Margin="10">
+                    <StackPanel Margin="3">
                         <Label Margin="-5,0,0,0" Content="Name"/>
                         <TextBox Text="{Binding SelectedWorldRule.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                         <CheckBox Margin="0,10" Content="Run once" IsChecked="{Binding SelectedWorldRule.RunOnce, UpdateSourceTrigger=PropertyChanged}"/>

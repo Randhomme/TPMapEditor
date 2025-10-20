@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:data="clr-namespace:TPMapEditor.Data"
         xmlns:enums="clr-namespace:TPMapEditor.Enums"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="SpeechEventDialog" Height="450" Width="800">
@@ -40,7 +41,7 @@
                 <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add speech event" Command="{Binding AddSpeechEventCommand}"/>
             </Grid>
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
-            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedSpeechEvent!=null'}">
                 <StackPanel>
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedSpeechEvent.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>

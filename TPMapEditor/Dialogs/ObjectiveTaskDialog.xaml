@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
         xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="ObjectiveTaskDialog" Height="450" Width="800">
@@ -40,7 +41,7 @@
                 <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add objective task" Command="{Binding AddObjectiveTaskCommand}"/>
             </Grid>
             <GridSplitter Margin="5,0,5,0" Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
-            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedObjectiveTask!=null'}">
                 <StackPanel>
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedObjectiveTask.Name, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>

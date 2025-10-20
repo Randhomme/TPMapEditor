@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
+        xmlns:settings="clr-namespace:TPMapEditor.Settings"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="WorldInfoDialog" Height="450" Width="800">
@@ -25,6 +26,9 @@
                     <CheckBox x:Name="mustAssembleFleetCheckBox" Margin="5" Content="Must assemble fleet" IsChecked="{Binding Map.MustAssembleFleet}"/>
                     <CheckBox x:Name="isCampaignCheckBox" Margin="5" Content="Is campaign" IsChecked="{Binding Map.IsCampaign}"/>
                 </StackPanel>
+            </GroupBox>
+            <GroupBox DockPanel.Dock="Top" Header="Star map texture">
+                <ComboBox Margin="5" ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding Map.StarmapTexture}"/>
             </GroupBox>
             <controls:TextGroupBox DockPanel.Dock="Top" Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
             <controls:TextGroupBox DockPanel.Dock="Top" Header="Map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
