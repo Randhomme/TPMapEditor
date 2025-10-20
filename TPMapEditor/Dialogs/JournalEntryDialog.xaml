@@ -4,9 +4,55 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:settings="clr-namespace:TPMapEditor.Settings"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="JournalEntryDialog" Height="450" Width="800">
     <Grid Margin="15">
-        
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0*" MinWidth="200"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.JournalEntries}" SelectedItem="{Binding SelectedJournalEntry}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
+                        <DataGridTemplateColumn MinWidth="70">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Remove" Click="RemoveJournalEntry_Click"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add journal entry" Command="{Binding AddJournalEntryCommand}"/>
+            </Grid>
+            <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedJournalEntry!=null'}">
+                <StackPanel>
+                    <Label Margin="-5,0,0,0" Content="Name"/>
+                    <TextBox Text="{Binding SelectedJournalEntry.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                    <Label Margin="-5,5,0,0" Content="Text"/>
+                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEventsJournalsDictionnary}" SelectedValue="{Binding SelectedJournalEntry.TextStringId}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                    <Label Margin="-5,5,0,0" Content="Dialogue file"/>
+                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.DialogueFilesList}" SelectedValue="{Binding SelectedJournalEntry.SpeechEventFileName}"/>
+                    <Label Margin="-5,5,0,0" Content="Picture texture"/>
+                    <ComboBox ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding SelectedJournalEntry.PictureTexture}"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </local:DialogWindow>

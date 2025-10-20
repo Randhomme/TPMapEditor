@@ -163,6 +163,12 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnJournalEntriesEdit()
+        {
+            new JournalEntryDialog(this, Map).ShowDialog();
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var asd = new AppSettingsDialog(this, settings);

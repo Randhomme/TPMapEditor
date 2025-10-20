@@ -43,6 +43,7 @@
                 <MenuItem Header="Speech events" Command="{Binding SpeechEventsEditCommand}"/>
                 <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
                 <MenuItem Header="Objective tasks" Command="{Binding ObjectiveTasksEditCommand}"/>
+                <MenuItem Header="Journal entries" Command="{Binding JournalEntriesEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
