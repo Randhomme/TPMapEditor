@@ -63,6 +63,7 @@ namespace TPMapEditor
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             settings = new AppSettings();
+            LoadSettings();
             Map = new WorldMap();
             SelectedWots = new List<WotControl>();
             SelectedPlayers = new List<PlayerControl>();
@@ -70,7 +71,6 @@ namespace TPMapEditor
             SelectedPolygonPoints = new List<PolygonPointControl>();
             SelectedWorldPoints = new List<WorldPointControl>();
             SelectedObjectivePoints = new List<ObjectivePointControl>();
-            LoadSettings();
             InitializeComponent();
             wotPreview.Visibility = pathPointPreview.Visibility = polygonPointPreview.Visibility = Visibility.Hidden;
             wotRadioButton.IsChecked = true;
