@@ -8,17 +8,17 @@
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="Map size" Height="210" Width="430">
-    <Grid x:Name="grid" Margin="15">
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="Size" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <TextBox Grid.Row="0" x:Name="TextSize" Margin="3,30,0,0" Height="22" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <Slider Grid.Row="0" x:Name="SliderSize" Value="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Margin="3,60,3,0" VerticalAlignment="Top" Maximum="6000" SmallChange="1" TickFrequency="2" ValueChanged="SliderSize_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
+        <Label Content="Size" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBox x:Name="TextSize" Margin="3,30,0,0" Height="22" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Slider x:Name="SliderSize" Value="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Margin="3,60,3,0" VerticalAlignment="Top" Maximum="6000" SmallChange="1" TickFrequency="2" ValueChanged="SliderSize_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="SaveButton" Content="Save" Margin="0,0,15,0" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
-            <Button x:Name="CancelButton" Content="Cancel" MinWidth="85" IsCancel="True" Click="CancelButton_Click"/>
+            <Button Content="Save" Margin="0,0,15,0" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+            <Button Content="Cancel" MinWidth="85" IsCancel="True" Click="CancelButton_Click"/>
         </StackPanel>
     </Grid>
 </local:DialogWindow>

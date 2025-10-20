@@ -20,12 +20,12 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition MinWidth="200"/>
             </Grid.ColumnDefinitions>
-            <Grid Margin="0">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <DataGrid Margin="10" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.SpeechEvents}" SelectedItem="{Binding SelectedSpeechEvent}">
+                <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.SpeechEvents}" SelectedItem="{Binding SelectedSpeechEvent}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
                         <DataGridTemplateColumn MinWidth="70">
@@ -37,11 +37,11 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Margin="10" Grid.Row="1" MinWidth="85" Content="Add speech event" Command="{Binding AddSpeechEventCommand}"/>
+                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add speech event" Command="{Binding AddSpeechEventCommand}"/>
             </Grid>
-            <GridSplitter Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+            <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10">
+                <StackPanel>
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedSpeechEvent.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Sound file name"/>
@@ -82,5 +82,8 @@
                 </StackPanel>
             </ScrollViewer>
         </Grid>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
+            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+        </StackPanel>
     </Grid>
 </local:DialogWindow>

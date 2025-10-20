@@ -8,15 +8,15 @@
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="WorldInfoDialog" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <DockPanel x:Name="stackPanel" Margin="15" VerticalAlignment="Stretch" LastChildFill="False">
+        <DockPanel x:Name="stackPanel" VerticalAlignment="Stretch" LastChildFill="False">
             <GroupBox Header="World settings" DockPanel.Dock="Top">
                 <StackPanel>
-                    <ComboBox x:Name="mapTypeComboBox" Margin="5" SelectionChanged="mapTypeComboBox_SelectionChanged">
+                    <ComboBox x:Name="mapTypeComboBox" SelectionChanged="MapTypeComboBox_SelectionChanged" Margin="5">
                         <ComboBoxItem Content="Historical map"/>
                         <ComboBoxItem Content="Open map"/>
                         <ComboBoxItem Content="Campaign map"/>
@@ -29,7 +29,7 @@
             <controls:TextGroupBox DockPanel.Dock="Top" Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
             <controls:TextGroupBox DockPanel.Dock="Top" Header="Map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
         </DockPanel>
-        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="15" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>
     </Grid>

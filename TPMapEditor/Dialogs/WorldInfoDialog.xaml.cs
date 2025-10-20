@@ -28,7 +28,7 @@ namespace TPMapEditor.Dialogs
             SetMapTypeComboBox();
         }
 
-        private void mapTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MapTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (mapTypeComboBox.SelectedIndex)
             {

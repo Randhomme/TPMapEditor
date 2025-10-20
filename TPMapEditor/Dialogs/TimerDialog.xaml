@@ -49,7 +49,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Grid.Column="0" Margin="0,0,15,0">
+        <StackPanel Grid.Column="0" Margin="0,0,5,0">
             <Button MinWidth="85" Content="Add timer" Command="{Binding AddTimerCommand}"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">

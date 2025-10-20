@@ -19,6 +19,9 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        <StackPanel Margin="0,0,5,0">
+            <Button MinWidth="85" Content="Add player alliance" Command="{Binding AddPlayerAllianceCommand}"/>
+        </StackPanel>
         <DataGrid x:Name="dataGrid" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedPlayerAlliance}" ItemsSource="{Binding Map.PlayerAlliances}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Player 1" Width="*">
@@ -44,9 +47,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Grid.Column="0" Margin="0,0,15,0">
-            <Button MinWidth="85" Content="Add player alliance" Command="{Binding AddPlayerAllianceCommand}"/>
-        </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>

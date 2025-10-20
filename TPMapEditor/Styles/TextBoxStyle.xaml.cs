@@ -23,6 +23,7 @@ namespace TPMapEditor.Styles
 
                 BindingExpression binding = BindingOperations.GetBindingExpression(tBox, prop);
                 if (binding != null) { binding.UpdateSource(); }
+                e.Handled = true;
             }
         }
     }

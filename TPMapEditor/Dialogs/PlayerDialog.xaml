@@ -29,7 +29,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <DataGrid Margin="10" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.Players}" SelectedItem="{Binding SelectedPlayer}">
+                <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.Players}" SelectedItem="{Binding SelectedPlayer}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
                         <DataGridTemplateColumn MinWidth="70">
@@ -41,11 +41,11 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Margin="10" Grid.Row="1" MinWidth="85" Content="Add Player" Command="{Binding AddPlayerCommand}"/>
+                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add Player" Command="{Binding AddPlayerCommand}"/>
             </Grid>
-            <GridSplitter Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+            <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="10,0,0,0">
+                <StackPanel>
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedPlayer.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Is playable"/>
