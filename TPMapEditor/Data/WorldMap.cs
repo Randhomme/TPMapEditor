@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
@@ -20,6 +21,8 @@ namespace TPMapEditor.Data
         private bool isCampaign;
         [ObservableProperty]
         private int playerPlayableCount;
+        [ObservableProperty]
+        private string starmapTexture;
 
         private string customName;
 
@@ -62,6 +65,7 @@ namespace TPMapEditor.Data
             isCampaign = false;
             customName = "My new map";
             customDescription = "The map description.";
+            starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
             size = 3500;
             WorldObjects = new List<WorldObject>();
             Teams = new ObservableCollection<Team>();
