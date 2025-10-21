@@ -27,15 +27,13 @@ namespace TPMapEditor.Dialogs
         public WorldMap Map { get; }
         [ObservableProperty]
         private Player? selectedPlayer;
-        private readonly Action<Player> clearSelectedPlayerOnRemove;
 
         public RelayCommand AddPlayerCommand { get; }
 
-        public PlayerDialog(Window owner, WorldMap map, Action createPlayer, Action<Player> clearSelectedPlayerOnRemove) : base(owner)
+        public PlayerDialog(Window owner, WorldMap map, Action createPlayer) : base(owner)
         {
             Map = map;
             AddPlayerCommand = new(createPlayer);
-            this.clearSelectedPlayerOnRemove = clearSelectedPlayerOnRemove;
             InitializeComponent();
             this.selectedPlayerX.Minimum = this.selectedPlayerY.Minimum =  -map.Size / 2 - 150;
             this.selectedPlayerX.Maximum = this.selectedPlayerY.Maximum = map.Size / 2 + 150;
@@ -45,7 +43,6 @@ namespace TPMapEditor.Dialogs
         {
             if(SelectedPlayer != null)
             {
-                clearSelectedPlayerOnRemove(SelectedPlayer);
                 SelectedPlayer.Remove?.Invoke();
                 Map.Players.Remove(SelectedPlayer);
                 SelectedPlayer = null;

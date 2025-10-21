@@ -9,7 +9,7 @@
         xmlns:enums="clr-namespace:TPMapEditor.Enums"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="PlayerDialog" Height="510" Width="500">
+        Title="PlayerDialog" Height="450" Width="800">
     <Window.Resources>
         <converter:TeamNameConverter x:Key="teamNameConverter"/>
         
@@ -42,7 +42,7 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add Player" Command="{Binding AddPlayerCommand}"/>
+                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add player" Command="{Binding AddPlayerCommand}"/>
             </Grid>
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedPlayer!=null'}">
@@ -69,12 +69,12 @@
                         </Rectangle>
                         <Button Width="70" Content="Edit" Grid.Column="1" Click="EditPlayerColor_Click"/>
                     </Grid>
-                    <Label Margin="-5,5,0,0" Content="X"/>
+                    <Label Margin="-5,5,0,0" Content="Position X"/>
                     <Slider x:Name="selectedPlayerX" Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1"/>
-                    <Label Margin="-5,5,0,0" Content="Y"/>
+                    <Label Margin="-5,5,0,0" Content="Position Y"/>
                     <Slider x:Name="selectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1"/>
                     <Label Margin="-5,5,0,0" Content="Rotation"/>
-                    <Slider Value="{Binding SelectedPlayer.ZRotation}" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                    <Slider Value="{Binding SelectedPlayer.Rotation}" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <Label Margin="-5,5,0,0" Content="Formation type"/>
                     <ComboBox SelectedItem="{Binding SelectedPlayer.FormationType}" ItemsSource="{enums:EnumBindingSource enums:FormationType}"/>
                     <CheckBox x:Name="playerHasTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.Team != null', Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>

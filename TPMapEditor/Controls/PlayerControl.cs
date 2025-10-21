@@ -33,7 +33,7 @@ namespace TPMapEditor.Controls
             childGrid.Children.Add(new Image() { Source = source, Margin = new System.Windows.Thickness(5) });
             RenderTransform = new RotateTransform();
             RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
-            BindingOperations.SetBinding(RenderTransform, RotateTransform.AngleProperty, new Binding("ZRotation") { Source = Player });
+            BindingOperations.SetBinding(RenderTransform, RotateTransform.AngleProperty, new Binding("Rotation") { Source = Player });
             Child = childGrid;
             Loaded += PlayerControl_Loaded;
         }

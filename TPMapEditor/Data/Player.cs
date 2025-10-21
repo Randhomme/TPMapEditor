@@ -9,7 +9,7 @@ namespace TPMapEditor.Data
     public partial class Player : NamedElement
     {
         [ObservableProperty]
-        private double x, y, z, xRotation, yRotation, zRotation;
+        private double x, y, z, rotation;
         [ObservableProperty]
         private Color color;
         [ObservableProperty]
@@ -45,14 +45,13 @@ namespace TPMapEditor.Data
             return false;
         }
 
-        public Player(string name, WorldMap map, double x, double y, double z, Color playerColor, double zRotation) : base(map, name)
+        public Player(string name, WorldMap map, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
         {
             X = x;
             Y = y;
             Z = z;
+            Rotation = rotation;
             Color = playerColor;
-            XRotation = YRotation = 0;
-            ZRotation = zRotation;
             FormationType = FormationType.Column;
             IsPlayable = true;
         }
