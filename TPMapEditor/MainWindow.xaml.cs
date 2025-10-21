@@ -105,7 +105,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnPlayersEdit()
         {
-            new PlayerDialog(this, Map, CreatePlayer, ClearSelectedPlayerOnRemove).ShowDialog();
+            new PlayerDialog(this, Map, () => CreatePlayer(), ClearSelectedPlayerOnRemove).ShowDialog();
         }
 
         [RelayCommand]
@@ -825,7 +825,7 @@ namespace TPMapEditor
             SelectedPlayer.BorderBrush = Brushes.Orange;
         }
 
-        private void CreatePlayer(float x, float y)
+        private void CreatePlayer(float x = 0, float y = 0)
         {
             var playerControl = new PlayerControl
             (
