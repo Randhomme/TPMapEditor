@@ -19,19 +19,19 @@
         <StackPanel Grid.Column="0" Margin="0,0,5,0">
             <Button MinWidth="85" Content="Add flag" Command="{Binding AddFlagCommand}"/>
         </StackPanel>
-        <DataGrid HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedFlag}" ItemsSource="{Binding Map.Flags}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedFlag}" ItemsSource="{Binding Map.Flags}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name" Width="*" SortMemberPath="Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Value" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Value}"/>
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Value}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

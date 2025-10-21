@@ -22,7 +22,7 @@
         <StackPanel Margin="0,0,5,0">
             <Button MinWidth="85" Content="Add player alliance" Command="{Binding AddPlayerAllianceCommand}"/>
         </StackPanel>
-        <DataGrid x:Name="dataGrid" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedPlayerAlliance}" ItemsSource="{Binding Map.PlayerAlliances}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedPlayerAlliance}" ItemsSource="{Binding Map.PlayerAlliances}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Player 1" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

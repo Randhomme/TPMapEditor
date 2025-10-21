@@ -17,12 +17,12 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="dataGrid" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedTimer}" ItemsSource="{Binding Map.Timers}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" x:Name="dataGrid" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedTimer}" ItemsSource="{Binding Map.Timers}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name" Width="*" SortMemberPath="Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                            <TextBox Background="Transparent" Text="{Binding Name, UpdateSourceTrigger=LostFocus, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -36,7 +36,7 @@
                 <DataGridTemplateColumn Header="Start time" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding StartTime}"/>
+                            <TextBox Background="Transparent" Text="{Binding StartTime, UpdateSourceTrigger=LostFocus}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

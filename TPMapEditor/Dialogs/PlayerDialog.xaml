@@ -12,6 +12,7 @@
         Title="PlayerDialog" Height="510" Width="500">
     <Window.Resources>
         <converter:TeamNameConverter x:Key="teamNameConverter"/>
+        
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -94,7 +95,7 @@
             </ScrollViewer>
         </Grid>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
-            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+            <Button Content="Close" MinWidth="85" Click="SaveButton_Click"/>
         </StackPanel>
     </Grid>
 </local:DialogWindow>

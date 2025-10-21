@@ -23,7 +23,7 @@
                     <StackPanel Margin="5">
                         <Button MinWidth="85" Content="Add" Command="{Binding AddTeamNamesHeaderFileCommand}"/>
                     </StackPanel>
-                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPTeamNames}" SelectedItem="{Binding SelectedTeamNamesHeaderFile}">
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPTeamNames}" SelectedItem="{Binding SelectedTeamNamesHeaderFile}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Header file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -52,7 +52,7 @@
                     <StackPanel Margin="5">
                         <Button MinWidth="85" Content="Add" Command="{Binding AddSpeechEventsHeaderFileCommand}"/>
                     </StackPanel>
-                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeechEvents}" SelectedItem="{Binding SelectedSpeechEventsHeaderFile}">
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeechEvents}" SelectedItem="{Binding SelectedSpeechEventsHeaderFile}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Header file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -81,7 +81,7 @@
                     <StackPanel Margin="5">
                         <Button MinWidth="85" Content="Add" Command="{Binding AddSpeakerNamesHeaderFileCommand}"/>
                     </StackPanel>
-                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeakerNames}" SelectedItem="{Binding SelectedSpeakerNamesHeaderFile}">
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeakerNames}" SelectedItem="{Binding SelectedSpeakerNamesHeaderFile}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Header file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -110,7 +110,7 @@
                     <StackPanel Margin="5">
                         <Button MinWidth="85" Content="Add" Command="{Binding AddShipNamesHeaderFileCommand}"/>
                     </StackPanel>
-                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPShipNames}" SelectedItem="{Binding SelectedShipNamesHeaderFile}">
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPShipNames}" SelectedItem="{Binding SelectedShipNamesHeaderFile}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Header file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -139,7 +139,7 @@
                     <StackPanel Margin="5">
                         <Button MinWidth="85" Content="Add" Command="{Binding AddInGameMessagesHeaderFileCommand}"/>
                     </StackPanel>
-                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPInGameMessages}" SelectedItem="{Binding SelectedInGameMessagesHeaderFile}">
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPInGameMessages}" SelectedItem="{Binding SelectedInGameMessagesHeaderFile}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Header file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -168,7 +168,7 @@
                     <StackPanel Margin="5">
                         <Button MinWidth="85" Content="Add" Command="{Binding AddObjectiveTasksHeaderFileCommand}"/>
                     </StackPanel>
-                    <DataGrid AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPObjectiveTasks}" SelectedItem="{Binding SelectedObjectiveTasksHeaderFile}">
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPObjectiveTasks}" SelectedItem="{Binding SelectedObjectiveTasksHeaderFile}">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Header file" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>

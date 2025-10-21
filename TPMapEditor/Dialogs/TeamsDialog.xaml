@@ -18,7 +18,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <DataGrid HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedTeam}" ItemsSource="{Binding Map.Teams}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedTeam}" ItemsSource="{Binding Map.Teams}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Team name" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
