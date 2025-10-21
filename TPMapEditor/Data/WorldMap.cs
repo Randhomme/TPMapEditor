@@ -67,13 +67,13 @@ namespace TPMapEditor.Data
             customDescription = "The map description.";
             starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
             size = 3500;
-            WorldObjects = new List<WorldObject>();
+            WorldObjects = new ObservableCollection<WorldObject>();
             Teams = new ObservableCollection<Team>();
             Players = new ObservableCollection<Player>();
             Groups = new ObservableCollection<Group>();
-            WaypointPaths = new List<WaypointPath>();
-            WorldPolygons = new List<WorldPolygon>();
-            WorldPoints = new List<WorldPoint>();
+            WaypointPaths = new ObservableCollection<WaypointPath>();
+            WorldPolygons = new ObservableCollection<WorldPolygon>();
+            WorldPoints = new ObservableCollection<WorldPoint>();
             Flags = new ObservableCollection<Flag>();
             PlayerAlliances = new ObservableCollection<PlayerAlliance>();
             Timers = new ObservableCollection<Timer>();

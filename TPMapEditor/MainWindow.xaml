@@ -34,8 +34,9 @@
             <MenuItem Header="Map Settings">
                 <MenuItem Header="World info" Command="{Binding WorldInfoEditCommand}"/>
                 <MenuItem Header="Map size" Command="{Binding MapSizeEditCommand}"/>
-                <MenuItem Header="Players" Command="{Binding PlayersEditCommand}"/>
                 <MenuItem Header="Teams" Command="{Binding TeamsEditCommand}"/>
+                <MenuItem Header="Players" Command="{Binding PlayersEditCommand}"/>
+                <MenuItem Header="World objects" Command="{Binding WorldObjectsEditCommand}"/>
                 <MenuItem Header="Groups" Command="{Binding GroupsEditCommand}"/>
                 <MenuItem Header="Flags" Command="{Binding FlagsEditCommand}"/>
                 <MenuItem Header="Player alliances" Command="{Binding PlayerAlliancesEditCommand}"/>
@@ -259,7 +260,6 @@
                                                     <GroupBox Header="Group">
                                                         <StackPanel>
                                                             <CheckBox x:Name="wotIsInGroup" Margin="0,5,0,10" Content="Is in group ?" IsChecked="{c:Binding Mode=OneWay, Path=SelectedWot.WorldObject.Group !\= null, UpdateSourceTrigger=PropertyChanged}"/>
-                                                            <!--<Label Margin="-5,5,0,0" Content="Group"/>-->
                                                             <ComboBox
                                                                 SelectedItem="{Binding SelectedWot.WorldObject.Group}"
                                                                 ItemsSource="{Binding Map.Groups}"
@@ -276,7 +276,7 @@
                                                 <StackPanel Margin="5">
                                                     <controls:TextGroupBox Header="Name" Text="{Binding SelectedPlayer.Player.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                                     <GroupBox Header="Is playable">
-                                                        <CheckBox Content="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" IsChecked="{Binding SelectedPlayer.Player.IsPlayable}" IsEnabled="{c:Binding 'Map.PlayerPlayableCount less 8 or SelectedPlayer.Player.IsPlayable'}"/>
+                                                        <CheckBox Margin="0,5,0,0" Content="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" IsChecked="{Binding SelectedPlayer.Player.IsPlayable}" IsEnabled="{c:Binding 'Map.PlayerPlayableCount less 8 or SelectedPlayer.Player.IsPlayable'}"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
@@ -290,7 +290,7 @@
                                                     </GroupBox>
                                                     <GroupBox Header="Rotation (Z only)" >
                                                         <StackPanel>
-                                                            <Slider Grid.Column="1" Value="{Binding SelectedPlayer.Player.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                                            <Slider Grid.Column="1" Value="{Binding SelectedPlayer.Player.Rotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                                         </StackPanel>
                                                     </GroupBox>
                                                     <GroupBox Header="Color">

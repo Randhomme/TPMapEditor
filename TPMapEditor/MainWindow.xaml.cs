@@ -1,22 +1,24 @@
-﻿using Microsoft.Win32;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using TPMapEditor.Controls;
-using TPMapEditor.Dialogs;
-using TPMapEditor.Settings;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using TPMapEditor.Data;
-using CommunityToolkit.Mvvm.Input;
-using System.Windows.Media.Imaging;
-using System;
 using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows.Input;
+using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using TPMapEditor.Controls;
 using TPMapEditor.Converter;
+using TPMapEditor.Data;
+using TPMapEditor.Dialogs;
+using TPMapEditor.Settings;
 
 namespace TPMapEditor
 {
@@ -105,7 +107,13 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnPlayersEdit()
         {
-            new PlayerDialog(this, Map, () => CreatePlayer(), ClearSelectedPlayerOnRemove).ShowDialog();
+            new PlayerDialog(this, Map, () => CreatePlayer(0,0,0)).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnWorldObjectsEdit()
+        {
+            new WorldObjectDialog(this, Map, () => CreateWorldObject(0, 0, 0)).ShowDialog();
         }
 
         [RelayCommand]
@@ -653,12 +661,11 @@ namespace TPMapEditor
             SelectedWot.BorderBrush = Brushes.Orange;
         }
 
-        //wot preview mouse left
-        private void WotPreview_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CreateWorldObject(float x, float y, float zRotation)
         {
             var wotControl = new WotControl
             (
-                new(WotGridSelectedItem!, (float)(Canvas.GetLeft(wotPreview) + wotPreview.ActualWidth / 2), (float)(Canvas.GetTop(wotPreview) + wotPreview.ActualHeight / 2), (float)sliderRotate.Value)
+                new(WotGridSelectedItem ?? WotGridItem.WotTypes.FirstOrDefault(), x, y, zRotation)
             );
             wotControl.MouseLeftButtonDown += (s, e1) =>
             {
@@ -691,8 +698,20 @@ namespace TPMapEditor
                         e1.Handled = true;
                 }
             };
+            wotControl.WorldObject.Remove = () =>
+            {
+                wotCanvas.Children.Remove(wotControl);
+                if (SelectedWot != null && SelectedWot.WorldObject == wotControl.WorldObject)
+                    SelectedWot = null;
+            };
             Map.WorldObjects.Add(wotControl.WorldObject);
             wotCanvas.Children.Add(wotControl);
+        }
+
+        //wot preview mouse left
+        private void WotPreview_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            CreateWorldObject((float)(Canvas.GetLeft(wotPreview) + wotPreview.ActualWidth / 2), (float)(Canvas.GetTop(wotPreview) + wotPreview.ActualHeight / 2), (float)sliderRotate.Value);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -797,7 +816,7 @@ namespace TPMapEditor
         //player preview mouse left
         private void PlayerPreview_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            CreatePlayer((float)(Canvas.GetLeft(playerPreview) + playerPreview.ActualWidth / 2), (float)(Canvas.GetTop(playerPreview) + playerPreview.ActualHeight / 2));
+            CreatePlayer((float)(Canvas.GetLeft(playerPreview) + playerPreview.ActualWidth / 2), (float)(Canvas.GetTop(playerPreview) + playerPreview.ActualHeight / 2), (float)sliderRotate.Value);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -825,11 +844,11 @@ namespace TPMapEditor
             SelectedPlayer.BorderBrush = Brushes.Orange;
         }
 
-        private void CreatePlayer(float x = 0, float y = 0)
+        private void CreatePlayer(float x, float y, float rotation)
         {
             var playerControl = new PlayerControl
             (
-                new(NamedElement.GenerateName("Player", Map.Players), Map, x, y, 0, Colors.Red, (float)sliderRotate.Value),
+                new(NamedElement.GenerateName("Player", Map.Players), Map, x, y, 0, rotation, Colors.Red),
                 playerPreviewImage.Source
             );
             playerControl.MouseLeftButtonDown += (s, e1) =>
@@ -866,6 +885,8 @@ namespace TPMapEditor
             playerControl.Player.Remove = () =>
             {
                 playerCanvas.Children.Remove(playerControl);
+                if (SelectedPlayer != null && SelectedPlayer.Player == playerControl.Player)
+                    SelectedPlayer = null;
             };
             Map.Players.Add(playerControl.Player);
             playerCanvas.Children.Add(playerControl);
@@ -954,12 +975,6 @@ namespace TPMapEditor
                 Map.Players.Remove(selectedPlayer.Player);
             }
             SelectedPlayer = null;
-        }
-
-        private void ClearSelectedPlayerOnRemove(Player player)
-        {
-            if (SelectedPlayer != null && SelectedPlayer.Player == player)
-                SelectedPlayer = null;
         }
 
         #endregion Player
