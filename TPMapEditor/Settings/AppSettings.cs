@@ -22,48 +22,30 @@ namespace TPMapEditor.Settings
         public static IList<string> SinglePlayerMissions { get; } = new List<string>();
         public static IList<string> GuiTextures { get; } = new List<string>();
         public static IList<string> Musics { get; } = new List<string>();
-        public ObservableCollection<GameHeadersFile> TPTeamNames { get; }
-        public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; }
-        public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; }
-        public ObservableCollection<GameHeadersFile> TPShipNames { get; }
-        public ObservableCollection<GameHeadersFile> TPInGameMessages { get; }
-        public ObservableCollection<GameHeadersFile> TPObjectiveTasks { get; }
-        public ObservableCollection<GameHeadersFile> TPSpeechEventsJournals { get; }
+        public ObservableCollection<GameHeadersFile> TPTeamNames { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPShipNames { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPInGameMessages { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPObjectiveTasks { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPSpeechEventsJournals { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPMapTextItems { get; } = new();
         [XmlIgnore]
-        public string EffectsDirectory { get; set; }
+        public string EffectsDirectory { get; set; } = string.Empty;
         [XmlIgnore]
-        public string FlagTexturesDirectory { get; set; }
+        public string FlagTexturesDirectory { get; set; } = string.Empty;
         [XmlIgnore]
-        public string GameHeadersFiles { get; set; }
+        public string GameHeadersFiles { get; set; } = string.Empty;
         [XmlIgnore]
-        public string GameStringsEnglish { get; set; }
+        public string GameStringsEnglish { get; set; } = string.Empty;
         [XmlIgnore]
-        public string GuiTexturesDirectory { get; set; }
+        public string GuiTexturesDirectory { get; set; } = string.Empty;
         [XmlIgnore]
-        public string SoundDirectory { get; set; }
+        public string SoundDirectory { get; set; } = string.Empty;
         [XmlIgnore]
-        public string WorldFilesDirectory { get; set; }
+        public string WorldFilesDirectory { get; set; } = string.Empty;
         [XmlIgnore]
-        public string WorldObjectFilesDirectory { get; set; }
-
-        public AppSettings()
-        {
-            TPTeamNames = new ObservableCollection<GameHeadersFile>();
-            TPSpeechEvents = new ObservableCollection<GameHeadersFile>();
-            TPSpeakerNames = new ObservableCollection<GameHeadersFile>();
-            TPShipNames = new ObservableCollection<GameHeadersFile>();
-            TPInGameMessages = new ObservableCollection<GameHeadersFile>();
-            TPObjectiveTasks = new ObservableCollection<GameHeadersFile>();
-            TPSpeechEventsJournals = new ObservableCollection<GameHeadersFile>();
-            EffectsDirectory = string.Empty;
-            FlagTexturesDirectory = string.Empty;
-            GameHeadersFiles = string.Empty;
-            GameStringsEnglish = string.Empty;
-            GuiTexturesDirectory = string.Empty;
-            SoundDirectory = string.Empty;
-            WorldFilesDirectory = string.Empty;
-            WorldObjectFilesDirectory = string.Empty;
-        }
+        public string WorldObjectFilesDirectory { get; set; } = string.Empty;
 
         partial void OnTpGamePathChanged(string? old, string newv)
         {
@@ -92,6 +74,7 @@ namespace TPMapEditor.Settings
             UpdateInGameMessagesDictionary(gameStrings);
             UpdateObjectiveTasksDictionary(gameStrings);
             UpdateSpeechEventsJournalsDictionary(gameStrings);
+            UpdateMapTextItemsDictionary(gameStrings);
         }
 
         private void UpdateAppSettingsStrings()
@@ -701,6 +684,43 @@ namespace TPMapEditor.Settings
             }
         }
 
+        private void UpdateMapTextItemsDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                StringDictionnary.MapTextItemsDictionnary.Clear();
+                foreach (var file in this.TPMapTextItems)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(defineString, out var gameString))
+                                    {
+                                        StringDictionnary.MapTextItemsDictionnary[defineString] = gameString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
         private void UpdateWorldObjectTypeList()
         {
             if (Directory.Exists(WorldObjectFilesDirectory))
@@ -775,6 +795,7 @@ namespace TPMapEditor.Settings
             TPObjectiveTasks.Add(new("TPOBJECTIVES_GameStrings.h"));
             TPObjectiveTasks.Add(new("TPOBJECTIVES2_GameStrings.h"));
             TPSpeechEventsJournals.Add(new("TPSPEECHEVENTSJOURNALS_GameStrings.h"));
+            TPMapTextItems.Add(new("TPMAPTEXTITEMS_GameStrings.h"));
         }
 
         public AppSettings Load()

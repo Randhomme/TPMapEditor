@@ -8,6 +8,7 @@ namespace TPMapEditor.Data
 {
     public static class StringDictionnary
     {
+        public static Dictionary<string, string> MapTextItemsDictionnary { get; } = new();
         public static Dictionary<string, string> ObjectiveTasksDictionnary { get; } = new();
         public static Dictionary<string, string> ShipNamesDictionnary { get; } = new ();
         public static Dictionary<string, string> SpeechEventsDictionnary { get; } = new();
