@@ -22,6 +22,7 @@ namespace TPMapEditor.Settings
         public static IList<string> SinglePlayerMissions { get; } = new List<string>();
         public static IList<string> GuiTextures { get; } = new List<string>();
         public static IList<string> Musics { get; } = new List<string>();
+        public static IList<string> Meshes { get; } = new List<string>();
         public ObservableCollection<GameHeadersFile> TPTeamNames { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; } = new();
@@ -40,6 +41,8 @@ namespace TPMapEditor.Settings
         public string GameStringsEnglish { get; set; } = string.Empty;
         [XmlIgnore]
         public string GuiTexturesDirectory { get; set; } = string.Empty;
+        [XmlIgnore]
+        public string MeshesDirectory { get; set; } = string.Empty;
         [XmlIgnore]
         public string SoundDirectory { get; set; } = string.Empty;
         [XmlIgnore]
@@ -61,6 +64,7 @@ namespace TPMapEditor.Settings
             UpdateSinglePlayerMissionsList();
             UpdateGuiTexturesList();
             UpdateMusicsList();
+            UpdateMeshesList();
         }
 
         public void UpdateStringsDictionnaries()
@@ -147,7 +151,11 @@ namespace TPMapEditor.Settings
                             }
                             else if (line.StartsWith("GUI TEXTURES:"))
                             {
-                                GuiTexturesDirectory = Path.Combine(TpGamePath, line.Substring("GUI TEXTURES::".Length).Trim());
+                                GuiTexturesDirectory = Path.Combine(TpGamePath, line.Substring("GUI TEXTURES:".Length).Trim());
+                            }
+                            else if (line.StartsWith("MESH DATA:"))
+                            {
+                                MeshesDirectory = Path.Combine(TpGamePath, line.Substring("MESH DATA::".Length).Trim());
                             }
                         }
                     }
@@ -180,6 +188,26 @@ namespace TPMapEditor.Settings
             else
             {
                 MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateMeshesList()
+        {
+            Meshes.Clear();
+            if (Directory.Exists(MeshesDirectory))
+            {
+                foreach (var file in Directory.GetFiles(MeshesDirectory, "*.mdb"))
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        Meshes.Add(fileName);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Directory '{MeshesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

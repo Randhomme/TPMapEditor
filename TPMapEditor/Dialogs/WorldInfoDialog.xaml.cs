@@ -75,5 +75,26 @@ namespace TPMapEditor.Dialogs
                 mapTypeComboBox.SelectedIndex = 3;
             }
         }
+
+        private void EditMapAmbientLightColor_Click(object sender, RoutedEventArgs e)
+        {
+            var cp = new ColorPicker(this, Map.AmbientLightColor, 255);
+            if (cp.ShowDialog() == true)
+                Map.AmbientLightColor = cp.NewColor;
+        }
+
+        private void EditMapRoofLightColor_Click(object sender, RoutedEventArgs e)
+        {
+            var cp = new ColorPicker(this, Map.RoofLightColor, 255);
+            if (cp.ShowDialog() == true)
+                Map.RoofLightColor = cp.NewColor;
+        }
+
+        private void EditMapFloorLightColor_Click(object sender, RoutedEventArgs e)
+        {
+            var cp = new ColorPicker(this, Map.FloorLightColor, 255);
+            if (cp.ShowDialog() == true)
+                Map.FloorLightColor = cp.NewColor;
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
@@ -14,15 +15,15 @@ namespace TPMapEditor.Data
         public static Dictionary<string, string> InGameMessagesDictionnary = new Dictionary<string, string>();
 
         [ObservableProperty]
-        private int size;
-        [ObservableProperty]
         private bool mustAssembleFleet;
         [ObservableProperty]
         private bool isCampaign;
         [ObservableProperty]
-        private int playerPlayableCount;
+        private int size, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
         [ObservableProperty]
-        private string starmapTexture;
+        private string starmapTexture, skybox;
+        [ObservableProperty]
+        private Color ambientLightColor = Colors.Khaki, roofLightColor = Colors.DarkKhaki, floorLightColor = Colors.DarkKhaki;
 
         private string customName;
 
@@ -65,6 +66,7 @@ namespace TPMapEditor.Data
             isCampaign = false;
             customName = "My new map";
             customDescription = "The map description.";
+            skybox = AppSettings.Meshes.FirstOrDefault();
             starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
             size = 3500;
             WorldObjects = new ObservableCollection<WorldObject>();

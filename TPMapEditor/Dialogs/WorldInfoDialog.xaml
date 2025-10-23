@@ -14,25 +14,95 @@
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <DockPanel x:Name="stackPanel" VerticalAlignment="Stretch" LastChildFill="False">
-            <GroupBox Header="World settings" DockPanel.Dock="Top">
-                <StackPanel>
-                    <ComboBox x:Name="mapTypeComboBox" SelectionChanged="MapTypeComboBox_SelectionChanged" Margin="5">
-                        <ComboBoxItem Content="Historical map"/>
-                        <ComboBoxItem Content="Open map"/>
-                        <ComboBoxItem Content="Campaign map"/>
-                        <ComboBoxItem Content="Custom map"/>
-                    </ComboBox>
-                    <CheckBox x:Name="mustAssembleFleetCheckBox" Margin="5" Content="Must assemble fleet" IsChecked="{Binding Map.MustAssembleFleet}"/>
-                    <CheckBox x:Name="isCampaignCheckBox" Margin="5" Content="Is campaign" IsChecked="{Binding Map.IsCampaign}"/>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox DockPanel.Dock="Top" Header="Star map texture">
-                <ComboBox Margin="5" ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding Map.StarmapTexture}"/>
-            </GroupBox>
-            <controls:TextGroupBox DockPanel.Dock="Top" Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
-            <controls:TextGroupBox DockPanel.Dock="Top" Header="Map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-        </DockPanel>
+        <ScrollViewer>
+            <StackPanel>
+                <GroupBox Header="World settings">
+                    <StackPanel>
+                        <ComboBox x:Name="mapTypeComboBox" SelectionChanged="MapTypeComboBox_SelectionChanged" Margin="5">
+                            <ComboBoxItem Content="Historical map"/>
+                            <ComboBoxItem Content="Open map"/>
+                            <ComboBoxItem Content="Campaign map"/>
+                            <ComboBoxItem Content="Custom map"/>
+                        </ComboBox>
+                        <CheckBox x:Name="mustAssembleFleetCheckBox" Margin="5" Content="Must assemble fleet" IsChecked="{Binding Map.MustAssembleFleet}"/>
+                        <CheckBox x:Name="isCampaignCheckBox" Margin="5" Content="Is campaign" IsChecked="{Binding Map.IsCampaign}"/>
+                    </StackPanel>
+                </GroupBox>
+                <controls:TextGroupBox Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                <controls:TextGroupBox Header="Map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="False" VerticalScrollBarVisibility="Auto"/>
+                <GroupBox Padding="5" Header="Skybox">
+                    <ComboBox ItemsSource="{x:Static settings:AppSettings.Meshes}" SelectedValue="{Binding Map.Skybox}"/>
+                </GroupBox>
+                <GroupBox Padding="5" Header="Star map texture">
+                    <ComboBox ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding Map.StarmapTexture}"/>
+                </GroupBox>
+                <GroupBox Padding="5" Header="Ambient light color">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding Map.AmbientLightColor}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Button Width="70" Content="Edit" Grid.Column="1" Click="EditMapAmbientLightColor_Click"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Padding="5" Header="Roof light color">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding Map.RoofLightColor}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Button Width="70" Content="Edit" Grid.Column="1" Click="EditMapRoofLightColor_Click"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Padding="5" Header="Floor light color">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding Map.FloorLightColor}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Button Width="70" Content="Edit" Grid.Column="1" Click="EditMapFloorLightColor_Click"/>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Roof light orientation">
+                    <StackPanel>
+                        <Label Margin="-5,0,0,0" Content="Yaw"/>
+                        <Slider Value="{Binding Map.RoofLightOrientationYaw}" Minimum="-180" Maximum="180"/>
+                        <Label Margin="-5,5,0,0" Content="Pitch"/>
+                        <Slider Value="{Binding Map.RoofLightOrientationPitch}" Minimum="-90" Maximum="90"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>
