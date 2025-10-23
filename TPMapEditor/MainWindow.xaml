@@ -87,6 +87,9 @@
                     <RadioButton x:Name="objectivePointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="ObjectivePointRadioButton_Checked" Unchecked="ObjectivePointRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Objective point"/>
                     </RadioButton>
+                    <RadioButton x:Name="mapTextPointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="MapTextPointRadioButton_Checked" Unchecked="MapTextPointRadioButton_Unchecked">
+                        <TextBlock Margin="5,0,5,0" Text="Map text point"/>
+                    </RadioButton>
                 </StackPanel>
             </Grid>
         </ScrollViewer>
@@ -106,7 +109,7 @@
                             <Canvas x:Name="wotCanvas" Background="Transparent" Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Border x:Name="wotPreview" BorderThickness="2.5" MouseLeftButtonDown="WotPreview_MouseLeftButtonDown" MouseRightButtonDown="WotPreview_MouseRightButtonDown" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="1">
                                     <Border.RenderTransform>
-                                        <RotateTransform Angle="{Binding Value, ElementName=sliderRotate}"/>
+                                        <RotateTransform Angle="{Binding Value, ElementName=wotSliderRotate}"/>
                                     </Border.RenderTransform>
                                     <Image x:Name="wotPreviewImage"/>
                                 </Border>
@@ -114,7 +117,7 @@
                             <Canvas x:Name="playerCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Border x:Name="playerPreview" Visibility="{c:Binding ElementName=addPlayerCheckBox, Mode=TwoWay, Path=IsChecked}" BorderThickness="2.5" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="PlayerPreview_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreview_MouseRightButtonDown" Panel.ZIndex="1">
                                     <Border.RenderTransform>
-                                        <RotateTransform Angle="{Binding Value, ElementName=sliderRotate}"/>
+                                        <RotateTransform Angle="{Binding Value, ElementName=playerSliderRotate}"/>
                                     </Border.RenderTransform>
                                     <Image x:Name="playerPreviewImage" Source="/Images/Player.png" Stretch="None"/>
                                 </Border>
@@ -128,7 +131,7 @@
                             <Canvas x:Name="pointCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Border x:Name="worldPointPreview" Visibility="{c:Binding ElementName=addWorldPointCheckBox, Mode=TwoWay, Path=IsChecked}" Background="Black" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="1" MouseRightButtonDown="WorldPointPreview_MouseRightButtonDown" MouseLeftButtonDown="WorldPointPreview_MouseLeftButtonDown">
                                     <Border.RenderTransform>
-                                        <RotateTransform Angle="{Binding Value, ElementName=sliderRotate}"/>
+                                        <RotateTransform Angle="{Binding Value, ElementName=worldPointSliderRotate}"/>
                                     </Border.RenderTransform>
                                     <Image Source="/Images/Arrow.png"/>
                                 </Border>
@@ -136,6 +139,11 @@
                             <Canvas x:Name="objectivePointCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Border x:Name="objectivePointPreview" Visibility="{c:Binding ElementName=addObjectivePointCheckBox, Mode=TwoWay, Path=IsChecked}" Panel.ZIndex="1" RenderTransformOrigin="0.5,0.5" MouseRightButtonDown="ObjectivePointPreview_MouseRightButtonDown" MouseLeftButtonDown="ObjectivePointPreview_MouseLeftButtonDown">
                                     <Image Source="/Images/ObjectivePoint.png"/>
+                                </Border>
+                            </Canvas>
+                            <Canvas x:Name="mapTextPointCanvas" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Border x:Name="mapTextPointPreview" Visibility="{c:Binding ElementName=addMapTextPointCheckBox, Mode=TwoWay, Path=IsChecked}" Panel.ZIndex="1" RenderTransformOrigin="0.5,0.5" MouseRightButtonDown="MapTextPointPreview_MouseRightButtonDown" MouseLeftButtonDown="MapTextPointPreview_MouseLeftButtonDown">
+                                    <Label Content="Displayed text" Foreground="White" FontSize="30"/>
                                 </Border>
                             </Canvas>
                         </Grid>
@@ -167,56 +175,77 @@
                             <TabItem Header="Actions">
                                 <Grid Grid.Column="1">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
                                         <RowDefinition x:Name="wotGridRow" Height="auto"/>
                                         <RowDefinition x:Name="playerGridRow" Height="auto"/>
                                         <RowDefinition x:Name="pathGridRow" Height="auto"/>
                                         <RowDefinition x:Name="polygonGridRow" Height="auto"/>
                                         <RowDefinition x:Name="pointGridRow" Height="auto"/>
                                         <RowDefinition x:Name="objectivePointGridRow" Height="auto"/>
+                                        <RowDefinition x:Name="mapTextPointGridRow" Height="auto"/>
                                     </Grid.RowDefinitions>
-                                    <GroupBox Grid.Column="1" Header="Rotation">
-                                        <Slider x:Name="sliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
-                                    </GroupBox>
-                                    <GroupBox Grid.Column="1" Grid.Row="1" Header="World objects" Visibility="{c:Binding ElementName=wotRadioButton,Path=IsChecked}">
-                                        <DataGrid x:Name="wotDataGrid" Margin="5" ItemsSource="{x:Static data:WotGridItem.WotTypes}" SelectedItem="{Binding WotGridSelectedItem}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionChanged="WotDataGrid_SelectionChanged">
-                                            <DataGrid.Columns>
-                                                <DataGridTemplateColumn Width="60">
-                                                    <DataGridTemplateColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <Image Source="{Binding Image}" Stretch="Fill" Width="50" Height="50"/>
-                                                        </DataTemplate>
-                                                    </DataGridTemplateColumn.CellTemplate>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTextColumn Binding="{Binding Type}" Header="Object type" Width="*"/>
-                                            </DataGrid.Columns>
-                                        </DataGrid>
-                                    </GroupBox>
-                                    <GroupBox Header="Players" Grid.Column="1" Grid.Row="2" Visibility="{c:Binding ElementName=playerRadioButton,Path=IsChecked}">
-                                        <StackPanel>
-                                            <CheckBox x:Name="addPlayerCheckBox" Content="Player" Margin="5" Style="{StaticResource {x:Type ToggleButton}}"/>
-                                        </StackPanel>
-                                    </GroupBox>
-                                    <GroupBox Header="Waypoint path" Grid.Column="1" Grid.Row="3" Visibility="{c:Binding ElementName=pathRadioButton,Path=IsChecked}">
+                                    <Grid Visibility="{c:Binding ElementName=wotRadioButton,Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <GroupBox Header="Rotation">
+                                            <Slider x:Name="wotSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                        </GroupBox>
+                                        <GroupBox Header="World objects" Grid.Row="1">
+                                            <DataGrid x:Name="wotDataGrid" Margin="5" ItemsSource="{x:Static data:WotGridItem.WotTypes}" SelectedItem="{Binding WotGridSelectedItem}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionChanged="WotDataGrid_SelectionChanged">
+                                                <DataGrid.Columns>
+                                                    <DataGridTemplateColumn Width="60">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <Image Source="{Binding Image}" Stretch="Fill" Width="50" Height="50"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTextColumn Binding="{Binding Type}" Header="Object type" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </GroupBox>
+                                    </Grid>
+                                    <StackPanel Grid.Row="1" Visibility="{c:Binding ElementName=playerRadioButton,Path=IsChecked}">
+                                        <GroupBox Header="Rotation">
+                                            <Slider x:Name="playerSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                        </GroupBox>
+                                        <GroupBox Header="Player">
+                                            <StackPanel>
+                                                <CheckBox x:Name="addPlayerCheckBox" Content="Player" Margin="5" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                    </StackPanel>
+                                    <GroupBox Header="Waypoint path" Grid.Row="2" Visibility="{c:Binding ElementName=pathRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="newPathRadioButton" Margin="5" Content="New path" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" Checked="RadioButton_Checked_6" Unchecked="RadioButton_Unchecked_6"/>
                                             <RadioButton x:Name="addPointPathRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedPath!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged" Checked="RadioButton_Checked_8" Unchecked="RadioButton_Unchecked_8"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="World polygon" Grid.Column="1" Grid.Row="4" Visibility="{c:Binding ElementName=polygonRadioButton,Path=IsChecked}">
+                                    <GroupBox Header="World polygon" Grid.Row="3" Visibility="{c:Binding ElementName=polygonRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="newPolygonRadioButton" Margin="5" Content="New polygon" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" Checked="RadioButton_Checked_10" Unchecked="RadioButton_Unchecked_10"/>
                                             <RadioButton x:Name="addPointPolygonRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedPolygon!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged" Checked="RadioButton_Checked_11" Unchecked="RadioButton_Unchecked_11"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="World point" Grid.Column="1" Grid.Row="5" Visibility="{c:Binding ElementName=pointRadioButton,Path=IsChecked}">
-                                        <StackPanel>
-                                            <CheckBox x:Name="addWorldPointCheckBox" Margin="5" Content="New world point" Style="{StaticResource {x:Type ToggleButton}}"/>
-                                        </StackPanel>
-                                    </GroupBox>
-                                    <GroupBox Header="Objective point" Grid.Column="1" Grid.Row="6" Visibility="{c:Binding ElementName=objectivePointRadioButton,Path=IsChecked}">
+                                    <StackPanel Grid.Row="4" Visibility="{c:Binding ElementName=pointRadioButton,Path=IsChecked}">
+                                        <GroupBox Header="Rotation">
+                                            <Slider x:Name="worldPointSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                                        </GroupBox>
+                                        <GroupBox Header="World point">
+                                            <StackPanel>
+                                                <CheckBox x:Name="addWorldPointCheckBox" Margin="5" Content="New world point" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                    </StackPanel>
+                                    <GroupBox Header="Objective point" Grid.Row="5" Visibility="{c:Binding ElementName=objectivePointRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <CheckBox x:Name="addObjectivePointCheckBox" Margin="5" Content="New objetive point" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Map text point" Grid.Row="6" Visibility="{c:Binding ElementName=mapTextPointRadioButton,Path=IsChecked}">
+                                        <StackPanel>
+                                            <CheckBox x:Name="addMapTextPointCheckBox" Margin="5" Content="New objetive point" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>
                                 </Grid>
@@ -243,7 +272,6 @@
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
-                                                    <!--<Label Margin="-5,5,0,0" Content="Position"/>-->
                                                     <GroupBox Header="Rotation (Euler XYZ)">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
@@ -474,6 +502,29 @@
                                                                 <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.ObjectivePoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                         </StackPanel>
+                                                    </GroupBox>
+                                                </StackPanel>
+                                            </GroupBox>
+                                        </StackPanel>
+                                        <StackPanel Visibility="{c:Binding ElementName=mapTextPointRadioButton, Path=IsChecked}">
+                                            <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedMapTextPoint!=null'}">
+                                                <StackPanel Margin="5">
+                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedMapTextPoint.MapTextPoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                                    <GroupBox Header="Displayed text">
+                                                        <ComboBox Margin="0,5,0,0" ItemsSource="{x:Static data:StringDictionnary.MapTextItemsDictionnary}" SelectedValue="{Binding SelectedMapTextPoint.MapTextPoint.RealText}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                                                    </GroupBox>
+                                                    <GroupBox Header="Position">
+                                                        <StackPanel>
+                                                            <GroupBox Header="X">
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedMapTextPoint.MapTextPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                            </GroupBox>
+                                                            <GroupBox Header="Y">
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedMapTextPoint.MapTextPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                            </GroupBox>
+                                                        </StackPanel>
+                                                    </GroupBox>
+                                                    <GroupBox Header="Visibility">
+                                                        <CheckBox Margin="0,5,0,0" Content="{Binding SelectedMapTextPoint.MapTextPoint.Visible}" IsChecked="{Binding SelectedMapTextPoint.MapTextPoint.Visible}"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>

@@ -1,20 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TPMapEditor.Data
 {
-    public class MapTextPoint : NamedElement
+    public partial class MapTextPoint : NamedElement
     {
-        public MapTextPoint(WorldMap map, string name) : base(map, name)
+        [ObservableProperty]
+        private string realText;
+        [ObservableProperty]
+        private double x, y, z;
+        [ObservableProperty]
+        private bool visible;
+
+        public string DisplayedText
         {
+            get
+            {
+                StringDictionnary.MapTextItemsDictionnary.TryGetValue(RealText, out string displayedText);
+                return displayedText;
+            }
+        }
+
+        public MapTextPoint(WorldMap map, string name, string realText, double x = 0, double y = 0, double z = 0, bool visible = true) : base(map, name)
+        {
+            this.realText = realText;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.visible = visible;
+        }
+
+        partial void OnRealTextChanged(string value)
+        {
+            OnPropertyChanged(nameof(DisplayedText));
         }
 
         protected override bool IsNameTaken(string name)
         {
-            throw new NotImplementedException();
+            foreach (var item in map.MapTextPoints)
+            {
+                if (item.Name == name && item != this)
+                    return true;
+            }
+            return false;
         }
     }
 }

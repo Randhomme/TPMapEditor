@@ -46,12 +46,15 @@ namespace TPMapEditor
         private WorldPointControl? selectedWorldPoint;
         [ObservableProperty]
         private ObjectivePointControl? selectedObjectivePoint;
+        [ObservableProperty]
+        private MapTextPointControl? selectedMapTextPoint;
         public List<WotControl> SelectedWots { get; }
         public List<PlayerControl> SelectedPlayers { get; }
         public List<PathPointControl> SelectedPathPoints { get; }
         public List<PolygonPointControl> SelectedPolygonPoints { get; }
         public List<WorldPointControl> SelectedWorldPoints { get; }
         public List<ObjectivePointControl> SelectedObjectivePoints { get; }
+        public List<MapTextPointControl> SelectedMapTextPoints { get; }
         public WorldMap Map { get; }
         public WotGridItem? WotGridSelectedItem { get; set; }
         
@@ -73,6 +76,7 @@ namespace TPMapEditor
             SelectedPolygonPoints = new List<PolygonPointControl>();
             SelectedWorldPoints = new List<WorldPointControl>();
             SelectedObjectivePoints = new List<ObjectivePointControl>();
+            SelectedMapTextPoints = new List<MapTextPointControl>();
             InitializeComponent();
             wotPreview.Visibility = pathPointPreview.Visibility = polygonPointPreview.Visibility = Visibility.Hidden;
             wotRadioButton.IsChecked = true;
@@ -80,6 +84,8 @@ namespace TPMapEditor
             HidePathElements();
             HidePolygonElements();
             HidePointElements();
+            HideObjectivePointElements();
+            HideMapTextPointElements();
             this.selectedPlayerX.Minimum = this.selectedPlayerY.Minimum = -Map.Size / 2 - 150;
             this.selectedPlayerX.Maximum = this.selectedPlayerY.Maximum = Map.Size / 2 + 150;
         }
@@ -229,7 +235,41 @@ namespace TPMapEditor
             }
         }
 
+        private void MapGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (wotRadioButton.IsChecked == true)
+            {
+                ClearWotSelection();
+            }
+            else if (playerRadioButton.IsChecked == true)
+            {
+                ClearPlayerSelection();
+            }
+            else if (pathRadioButton.IsChecked == true)
+            {
+                ClearPathPointSelection();
+            }
+            else if (polygonRadioButton.IsChecked == true)
+            {
+                ClearPolygonPointSelection();
+            }
+            else if (pointRadioButton.IsChecked == true)
+            {
+                ClearWorldPointSelection();
+            }
+            else if (objectivePointRadioButton.IsChecked == true)
+            {
+                ClearObjectivePointSelection();
+            }
+            else if (mapTextPointRadioButton.IsChecked == true)
+            {
+                ClearMapTextPointSelection();
+            }
+        }
+
         #endregion
+
+        #region WorldObject
 
         //wot radio button checked
         private void WotRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -241,66 +281,6 @@ namespace TPMapEditor
         private void WotRadioButton_Unchecked(object sender, RoutedEventArgs e)
         {
             HideWotElements();
-        }
-
-        //player radio button checked
-        private void PlayerRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            ShowPlayerElements();
-        }
-
-        //player radio button unchecked
-        private void PlayerRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            HidePlayerElements();
-        }
-
-        //waypoint path radio button checked
-        private void PathRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            ShowPathElements();
-        }
-
-        //waypoint path radio button unchecked
-        private void PathRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            HidePathElements();
-        }
-
-        //world polygon radio button checked
-        private void PolygonRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            ShowPolygonElements();
-        }
-
-        //world polygon radio button unchecked
-        private void PolygonRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            HidePolygonElements();
-        }
-
-        //world point radio button checked
-        private void PointRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            ShowPointElements();
-        }
-
-        //world point radio button unchecked
-        private void PointRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            HidePointElements();
-        }
-
-        //objective point radio button checked
-        private void ObjectivePointRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            ShowObjectivePointElements();
-        }
-
-        //objective point radio button unchecked
-        private void ObjectivePointRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            HideObjectivePointElements();
         }
 
         private void HideWotElements()
@@ -340,284 +320,15 @@ namespace TPMapEditor
             deleteButton.Click += Button_Click_1;
         }
 
-        private void HidePlayerElements()
-        {
-            addPlayerCheckBox.IsChecked = false;
-            playerGridRow.Height = GridLength.Auto;
-            Panel.SetZIndex(playerCanvas, 0);
-            playerCanvas.Opacity = 0.5;
-            playerCanvas.IsEnabled = false;
-            for (var i = 0; i < SelectedPlayers.Count; i++)
-                SelectedPlayers[i].BorderBrush = Brushes.Transparent;
-            moveCheckBox.Checked -= RadioButton_Checked_7;
-            moveCheckBox.Unchecked -= RadioButton_Unchecked_7;
-            if (moveCheckBox.IsChecked == true)
-                MovePlayerRadioButtonUnchecked();
-            mapGrid.MouseMove -= PlayerCanvas_MouseMove;
-            deleteButton.Click -= Button_Click;
-        }
-
-        private void ShowPlayerElements()
-        {
-            playerGridRow.Height = new GridLength(1, GridUnitType.Star);
-            Panel.SetZIndex(playerCanvas, 1);
-            playerCanvas.Opacity = 1;
-            playerCanvas.IsEnabled = true;
-            for (var i = 0; i < SelectedPlayers.Count; i++)
-                SelectedPlayers[i].BorderBrush = Brushes.OrangeRed;
-            if (SelectedPlayer != null)
-                SelectedPlayer.BorderBrush = Brushes.Orange;
-            moveCheckBox.Checked += RadioButton_Checked_7;
-            moveCheckBox.Unchecked += RadioButton_Unchecked_7;
-            if (moveCheckBox.IsChecked == true)
-                MovePlayerRadioButtonChecked();
-            mapGrid.MouseMove += PlayerCanvas_MouseMove;
-            deleteButton.Click += Button_Click;
-        }
-
-        private void HidePathElements()
-        {
-            addPointPathRadioButton.IsChecked = newPathRadioButton.IsChecked = false;
-            pathGridRow.Height = GridLength.Auto;
-            Panel.SetZIndex(pathCanvas, 0);
-            pathCanvas.Opacity = 0.5;
-            pathCanvas.IsEnabled = false;
-            for (int i = 0; i < SelectedPathPoints.Count; i++)
-                SelectedPathPoints[i].BorderBrush = Brushes.Transparent;
-            if (SelectedPath != null)
-                SelectedPath.OutlinePath.Stroke = Brushes.Transparent;
-            if (moveCheckBox.IsChecked == true)
-                MovePathRadioButtonUnchecked();
-            moveCheckBox.Checked -= RadioButton_Checked_9;
-            moveCheckBox.Unchecked -= RadioButton_Unchecked_9;
-            mapGrid.MouseMove -= PathCanvas_MouseMove;
-            deleteButton.Click -= Button_Click_2;
-        }
-
-        private void ShowPathElements()
-        {
-            pathGridRow.Height = new GridLength(1, GridUnitType.Star);
-            Panel.SetZIndex(pathCanvas, 1);
-            pathCanvas.Opacity = 1;
-            pathCanvas.IsEnabled = true;
-            for (int i = 0; i < SelectedPathPoints.Count; i++)
-                SelectedPathPoints[i].BorderBrush = Brushes.OrangeRed;
-            if (SelectedPath != null)
-                SelectedPath.OutlinePath.Stroke = Brushes.OrangeRed;
-            if (SelectedPathPoint != null)
-                SelectedPathPoint.BorderBrush = Brushes.Orange;
-            if (moveCheckBox.IsChecked == true)
-                MovePathRadioButtonChecked();
-            moveCheckBox.Checked += RadioButton_Checked_9;
-            moveCheckBox.Unchecked += RadioButton_Unchecked_9;
-            mapGrid.MouseMove += PathCanvas_MouseMove;
-            deleteButton.Click += Button_Click_2;
-        }
-
-        private void HidePolygonElements()
-        {
-            addPointPolygonRadioButton.IsChecked = newPolygonRadioButton.IsChecked = false;
-            polygonGridRow.Height = GridLength.Auto;
-            Panel.SetZIndex(polygonCanvas, 0);
-            polygonCanvas.Opacity = 0.5;
-            polygonCanvas.IsEnabled = false;
-            for (int i = 0; i < SelectedPolygonPoints.Count; i++)
-                SelectedPolygonPoints[i].BorderBrush = Brushes.Transparent;
-            if (SelectedPolygon != null)
-                SelectedPolygon.OutlinePath.Stroke = Brushes.Transparent;
-            if (moveCheckBox.IsChecked == true)
-                MovePolygonRadioButtonUnchecked();
-            moveCheckBox.Checked -= RadioButton_Checked_12;
-            moveCheckBox.Unchecked -= RadioButton_Unchecked_12;
-            mapGrid.MouseMove -= PolygonCanvas_MouseMove;
-            deleteButton.Click -= Button_Click_3;
-        }
-
-        private void ShowPolygonElements()
-        {
-            polygonGridRow.Height = new GridLength(1, GridUnitType.Star);
-            Panel.SetZIndex(polygonCanvas, 1);
-            polygonCanvas.Opacity = 1;
-            polygonCanvas.IsEnabled = true;
-            for (int i = 0; i < SelectedPolygonPoints.Count; i++)
-                SelectedPolygonPoints[i].BorderBrush = Brushes.OrangeRed;
-            if (SelectedPolygon != null)
-                SelectedPolygon.OutlinePath.Stroke = Brushes.OrangeRed;
-            if (SelectedPolygonPoint != null)
-                SelectedPolygonPoint.BorderBrush = Brushes.Orange;
-            if (moveCheckBox.IsChecked == true)
-                MovePolygonRadioButtonChecked();
-            moveCheckBox.Checked += RadioButton_Checked_12;
-            moveCheckBox.Unchecked += RadioButton_Unchecked_12;
-            mapGrid.MouseMove += PolygonCanvas_MouseMove;
-            deleteButton.Click += Button_Click_3;
-        }
-
-        private void HidePointElements()
-        {
-            addWorldPointCheckBox.IsChecked = false;
-            pointGridRow.Height = GridLength.Auto;
-            Panel.SetZIndex(pointCanvas, 0);
-            pointCanvas.Opacity = 0.5;
-            pointCanvas.IsEnabled = false;
-            for (var i = 0; i < SelectedWorldPoints.Count; i++)
-                SelectedWorldPoints[i].BorderBrush = Brushes.Transparent;
-            if (moveCheckBox.IsChecked == true)
-                MoveWorldPointCheckBoxUnchecked();
-            moveCheckBox.Checked -= MoveCheckBox_Checked_WorldPoint;
-            moveCheckBox.Unchecked -= MoveCheckBox_Unchecked_WorldPoint;
-            mapGrid.MouseMove -= PointCanvas_MouseMove;
-            deleteButton.Click -= DeleteButton_Click_WorldPoint;
-        }
-
-        private void ShowPointElements()
-        {
-            pointGridRow.Height = new GridLength(1, GridUnitType.Star);
-            Panel.SetZIndex(pointCanvas, 1);
-            pointCanvas.Opacity = 1;
-            pointCanvas.IsEnabled = true;
-            for (int i = 0; i < SelectedWorldPoints.Count; i++)
-                SelectedWorldPoints[i].BorderBrush = Brushes.OrangeRed;
-            if (SelectedWorldPoint != null)
-                SelectedWorldPoint.BorderBrush = Brushes.Orange;
-            if (moveCheckBox.IsChecked == true)
-                MoveWorldPointCheckBoxChecked();
-            moveCheckBox.Checked += MoveCheckBox_Checked_WorldPoint;
-            moveCheckBox.Unchecked += MoveCheckBox_Unchecked_WorldPoint;
-            mapGrid.MouseMove += PointCanvas_MouseMove;
-            deleteButton.Click += DeleteButton_Click_WorldPoint;
-        }
-
-        private void HideObjectivePointElements()
-        {
-            addObjectivePointCheckBox.IsChecked = false;
-            objectivePointGridRow.Height = GridLength.Auto;
-            Panel.SetZIndex(objectivePointCanvas, 0);
-            objectivePointCanvas.Opacity = 0.5;
-            objectivePointCanvas.IsEnabled = false;
-            for (var i = 0; i < SelectedObjectivePoints.Count; i++)
-                SelectedObjectivePoints[i].BorderBrush = Brushes.Transparent;
-            if (moveCheckBox.IsChecked == true)
-                MoveObjectivePointCheckBoxUnchecked();
-            moveCheckBox.Checked -= MoveCheckBox_Checked_ObjectivePoint;
-            moveCheckBox.Unchecked -= MoveCheckBox_Unchecked_ObjectivePoint;
-            mapGrid.MouseMove -= ObjectivePointCanvas_MouseMove;
-            deleteButton.Click -= DeleteButton_Click_ObjectivePoint;
-        }
-
-        private void ShowObjectivePointElements()
-        {
-            objectivePointGridRow.Height = new GridLength(1, GridUnitType.Star);
-            Panel.SetZIndex(objectivePointCanvas, 1);
-            objectivePointCanvas.Opacity = 1;
-            objectivePointCanvas.IsEnabled = true;
-            for (int i = 0; i < SelectedObjectivePoints.Count; i++)
-                SelectedObjectivePoints[i].BorderBrush = Brushes.OrangeRed;
-            if (SelectedObjectivePoint != null)
-                SelectedObjectivePoint.BorderBrush = Brushes.Orange;
-            if (moveCheckBox.IsChecked == true)
-                MoveObjectivePointCheckBoxChecked();
-            moveCheckBox.Checked += MoveCheckBox_Checked_ObjectivePoint;
-            moveCheckBox.Unchecked += MoveCheckBox_Unchecked_ObjectivePoint;
-            mapGrid.MouseMove += ObjectivePointCanvas_MouseMove;
-            deleteButton.Click += DeleteButton_Click_ObjectivePoint;
-        }
-
-        private void MapGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (wotRadioButton.IsChecked == true)
-            {
-                ClearWotSelection();
-            }
-            else if (playerRadioButton.IsChecked == true)
-            {
-                ClearPlayerSelection();
-            }
-            else if (pathRadioButton.IsChecked == true)
-            {
-                ClearPathPointSelection();
-            }
-            else if (polygonRadioButton.IsChecked == true)
-            {
-                ClearPolygonPointSelection();
-            }
-            else if (pointRadioButton.IsChecked == true)
-            {
-                ClearWorldPointSelection();
-            }
-            else if (objectivePointRadioButton.IsChecked == true)
-            {
-                ClearObjectivePointSelection();
-            }
-        }
-
         private void ClearWotSelection()
         {
-            for(int i = 0; i < SelectedWots.Count; i++)
+            for (int i = 0; i < SelectedWots.Count; i++)
             {
                 SelectedWots[i].BorderBrush = Brushes.Transparent;
             }
             SelectedWots.Clear();
             SelectedWot = null;
         }
-
-        private void ClearPlayerSelection()
-        {
-            for(int i = 0; i < SelectedPlayers.Count; i++)
-            {
-                SelectedPlayers[i].BorderBrush = Brushes.Transparent;
-            }
-            SelectedPlayers.Clear();
-            SelectedPlayer = null;
-        }
-
-        private void ClearPathPointSelection()
-        {
-            for (int i = 0; i < SelectedPathPoints.Count; i++)
-            {
-                SelectedPathPoints[i].BorderBrush = Brushes.Transparent;
-            }
-            if (SelectedPath != null)
-                SelectedPath.OutlinePath.Stroke = Brushes.Transparent;
-            SelectedPathPoints.Clear();
-            SelectedPathPoint = null;
-            SelectedPath = null;
-        }
-
-        private void ClearPolygonPointSelection()
-        {
-            for (int i = 0; i < SelectedPolygonPoints.Count; i++)
-            {
-                SelectedPolygonPoints[i].BorderBrush = Brushes.Transparent;
-            }
-            if (SelectedPolygon != null)
-                SelectedPolygon.OutlinePath.Stroke = Brushes.Transparent;
-            SelectedPolygonPoints.Clear();
-            SelectedPolygonPoint = null;
-            SelectedPolygon = null;
-        }
-
-        private void ClearWorldPointSelection()
-        {
-            for (int i = 0; i < SelectedWorldPoints.Count; i++)
-            {
-                SelectedWorldPoints[i].BorderBrush = Brushes.Transparent;
-            }
-            SelectedWorldPoints.Clear();
-            SelectedWorldPoint = null;
-        }
-
-        private void ClearObjectivePointSelection()
-        {
-            for (int i = 0; i < SelectedObjectivePoints.Count; i++)
-            {
-                SelectedObjectivePoints[i].BorderBrush = Brushes.Transparent;
-            }
-            SelectedObjectivePoints.Clear();
-            SelectedObjectivePoint = null;
-        }
-
-        #region WorldObject
 
         private void WotDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -711,7 +422,7 @@ namespace TPMapEditor
         //wot preview mouse left
         private void WotPreview_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            CreateWorldObject((float)(Canvas.GetLeft(wotPreview) + wotPreview.ActualWidth / 2), (float)(Canvas.GetTop(wotPreview) + wotPreview.ActualHeight / 2), (float)sliderRotate.Value);
+            CreateWorldObject((float)(Canvas.GetLeft(wotPreview) + wotPreview.ActualWidth / 2), (float)(Canvas.GetTop(wotPreview) + wotPreview.ActualHeight / 2), (float)wotSliderRotate.Value);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -805,6 +516,63 @@ namespace TPMapEditor
 
         #region Player
 
+        //player radio button checked
+        private void PlayerRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowPlayerElements();
+        }
+
+        //player radio button unchecked
+        private void PlayerRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HidePlayerElements();
+        }
+
+        private void HidePlayerElements()
+        {
+            addPlayerCheckBox.IsChecked = false;
+            playerGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(playerCanvas, 0);
+            playerCanvas.Opacity = 0.5;
+            playerCanvas.IsEnabled = false;
+            for (var i = 0; i < SelectedPlayers.Count; i++)
+                SelectedPlayers[i].BorderBrush = Brushes.Transparent;
+            moveCheckBox.Checked -= RadioButton_Checked_7;
+            moveCheckBox.Unchecked -= RadioButton_Unchecked_7;
+            if (moveCheckBox.IsChecked == true)
+                MovePlayerRadioButtonUnchecked();
+            mapGrid.MouseMove -= PlayerCanvas_MouseMove;
+            deleteButton.Click -= Button_Click;
+        }
+
+        private void ShowPlayerElements()
+        {
+            playerGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(playerCanvas, 1);
+            playerCanvas.Opacity = 1;
+            playerCanvas.IsEnabled = true;
+            for (var i = 0; i < SelectedPlayers.Count; i++)
+                SelectedPlayers[i].BorderBrush = Brushes.OrangeRed;
+            if (SelectedPlayer != null)
+                SelectedPlayer.BorderBrush = Brushes.Orange;
+            moveCheckBox.Checked += RadioButton_Checked_7;
+            moveCheckBox.Unchecked += RadioButton_Unchecked_7;
+            if (moveCheckBox.IsChecked == true)
+                MovePlayerRadioButtonChecked();
+            mapGrid.MouseMove += PlayerCanvas_MouseMove;
+            deleteButton.Click += Button_Click;
+        }
+
+        private void ClearPlayerSelection()
+        {
+            for (int i = 0; i < SelectedPlayers.Count; i++)
+            {
+                SelectedPlayers[i].BorderBrush = Brushes.Transparent;
+            }
+            SelectedPlayers.Clear();
+            SelectedPlayer = null;
+        }
+
         //player canvas mouse move
         private void PlayerCanvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -816,7 +584,7 @@ namespace TPMapEditor
         //player preview mouse left
         private void PlayerPreview_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            CreatePlayer((float)(Canvas.GetLeft(playerPreview) + playerPreview.ActualWidth / 2), (float)(Canvas.GetTop(playerPreview) + playerPreview.ActualHeight / 2), (float)sliderRotate.Value);
+            CreatePlayer((float)(Canvas.GetLeft(playerPreview) + playerPreview.ActualWidth / 2), (float)(Canvas.GetTop(playerPreview) + playerPreview.ActualHeight / 2), (float)playerSliderRotate.Value);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -980,6 +748,70 @@ namespace TPMapEditor
         #endregion Player
 
         #region Path
+
+        //waypoint path radio button checked
+        private void PathRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowPathElements();
+        }
+
+        //waypoint path radio button unchecked
+        private void PathRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HidePathElements();
+        }
+
+        private void HidePathElements()
+        {
+            addPointPathRadioButton.IsChecked = newPathRadioButton.IsChecked = false;
+            pathGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(pathCanvas, 0);
+            pathCanvas.Opacity = 0.5;
+            pathCanvas.IsEnabled = false;
+            for (int i = 0; i < SelectedPathPoints.Count; i++)
+                SelectedPathPoints[i].BorderBrush = Brushes.Transparent;
+            if (SelectedPath != null)
+                SelectedPath.OutlinePath.Stroke = Brushes.Transparent;
+            if (moveCheckBox.IsChecked == true)
+                MovePathRadioButtonUnchecked();
+            moveCheckBox.Checked -= RadioButton_Checked_9;
+            moveCheckBox.Unchecked -= RadioButton_Unchecked_9;
+            mapGrid.MouseMove -= PathCanvas_MouseMove;
+            deleteButton.Click -= Button_Click_2;
+        }
+
+        private void ShowPathElements()
+        {
+            pathGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(pathCanvas, 1);
+            pathCanvas.Opacity = 1;
+            pathCanvas.IsEnabled = true;
+            for (int i = 0; i < SelectedPathPoints.Count; i++)
+                SelectedPathPoints[i].BorderBrush = Brushes.OrangeRed;
+            if (SelectedPath != null)
+                SelectedPath.OutlinePath.Stroke = Brushes.OrangeRed;
+            if (SelectedPathPoint != null)
+                SelectedPathPoint.BorderBrush = Brushes.Orange;
+            if (moveCheckBox.IsChecked == true)
+                MovePathRadioButtonChecked();
+            moveCheckBox.Checked += RadioButton_Checked_9;
+            moveCheckBox.Unchecked += RadioButton_Unchecked_9;
+            mapGrid.MouseMove += PathCanvas_MouseMove;
+            deleteButton.Click += Button_Click_2;
+        }
+
+        private void ClearPathPointSelection()
+        {
+            for (int i = 0; i < SelectedPathPoints.Count; i++)
+            {
+                SelectedPathPoints[i].BorderBrush = Brushes.Transparent;
+            }
+            if (SelectedPath != null)
+                SelectedPath.OutlinePath.Stroke = Brushes.Transparent;
+            SelectedPathPoints.Clear();
+            SelectedPathPoint = null;
+            SelectedPath = null;
+        }
 
         //edit path color
         private void EditWaypointPathColor_Click(object sender, RoutedEventArgs e)
@@ -1323,6 +1155,70 @@ namespace TPMapEditor
         #endregion Path
 
         #region Polygon
+
+        //world polygon radio button checked
+        private void PolygonRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowPolygonElements();
+        }
+
+        //world polygon radio button unchecked
+        private void PolygonRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HidePolygonElements();
+        }
+
+        private void HidePolygonElements()
+        {
+            addPointPolygonRadioButton.IsChecked = newPolygonRadioButton.IsChecked = false;
+            polygonGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(polygonCanvas, 0);
+            polygonCanvas.Opacity = 0.5;
+            polygonCanvas.IsEnabled = false;
+            for (int i = 0; i < SelectedPolygonPoints.Count; i++)
+                SelectedPolygonPoints[i].BorderBrush = Brushes.Transparent;
+            if (SelectedPolygon != null)
+                SelectedPolygon.OutlinePath.Stroke = Brushes.Transparent;
+            if (moveCheckBox.IsChecked == true)
+                MovePolygonRadioButtonUnchecked();
+            moveCheckBox.Checked -= RadioButton_Checked_12;
+            moveCheckBox.Unchecked -= RadioButton_Unchecked_12;
+            mapGrid.MouseMove -= PolygonCanvas_MouseMove;
+            deleteButton.Click -= Button_Click_3;
+        }
+
+        private void ShowPolygonElements()
+        {
+            polygonGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(polygonCanvas, 1);
+            polygonCanvas.Opacity = 1;
+            polygonCanvas.IsEnabled = true;
+            for (int i = 0; i < SelectedPolygonPoints.Count; i++)
+                SelectedPolygonPoints[i].BorderBrush = Brushes.OrangeRed;
+            if (SelectedPolygon != null)
+                SelectedPolygon.OutlinePath.Stroke = Brushes.OrangeRed;
+            if (SelectedPolygonPoint != null)
+                SelectedPolygonPoint.BorderBrush = Brushes.Orange;
+            if (moveCheckBox.IsChecked == true)
+                MovePolygonRadioButtonChecked();
+            moveCheckBox.Checked += RadioButton_Checked_12;
+            moveCheckBox.Unchecked += RadioButton_Unchecked_12;
+            mapGrid.MouseMove += PolygonCanvas_MouseMove;
+            deleteButton.Click += Button_Click_3;
+        }
+
+        private void ClearPolygonPointSelection()
+        {
+            for (int i = 0; i < SelectedPolygonPoints.Count; i++)
+            {
+                SelectedPolygonPoints[i].BorderBrush = Brushes.Transparent;
+            }
+            if (SelectedPolygon != null)
+                SelectedPolygon.OutlinePath.Stroke = Brushes.Transparent;
+            SelectedPolygonPoints.Clear();
+            SelectedPolygonPoint = null;
+            SelectedPolygon = null;
+        }
 
         //edit polygon color
         private void EditWorldPolygonColor_Click(object sender, RoutedEventArgs e)
@@ -1668,6 +1564,63 @@ namespace TPMapEditor
 
         #region WorldPoint
 
+        //world point radio button checked
+        private void PointRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowPointElements();
+        }
+
+        //world point radio button unchecked
+        private void PointRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HidePointElements();
+        }
+
+        private void HidePointElements()
+        {
+            addWorldPointCheckBox.IsChecked = false;
+            pointGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(pointCanvas, 0);
+            pointCanvas.Opacity = 0.5;
+            pointCanvas.IsEnabled = false;
+            for (var i = 0; i < SelectedWorldPoints.Count; i++)
+                SelectedWorldPoints[i].BorderBrush = Brushes.Transparent;
+            if (moveCheckBox.IsChecked == true)
+                MoveWorldPointCheckBoxUnchecked();
+            moveCheckBox.Checked -= MoveCheckBox_Checked_WorldPoint;
+            moveCheckBox.Unchecked -= MoveCheckBox_Unchecked_WorldPoint;
+            mapGrid.MouseMove -= PointCanvas_MouseMove;
+            deleteButton.Click -= DeleteButton_Click_WorldPoint;
+        }
+
+        private void ShowPointElements()
+        {
+            pointGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(pointCanvas, 1);
+            pointCanvas.Opacity = 1;
+            pointCanvas.IsEnabled = true;
+            for (int i = 0; i < SelectedWorldPoints.Count; i++)
+                SelectedWorldPoints[i].BorderBrush = Brushes.OrangeRed;
+            if (SelectedWorldPoint != null)
+                SelectedWorldPoint.BorderBrush = Brushes.Orange;
+            if (moveCheckBox.IsChecked == true)
+                MoveWorldPointCheckBoxChecked();
+            moveCheckBox.Checked += MoveCheckBox_Checked_WorldPoint;
+            moveCheckBox.Unchecked += MoveCheckBox_Unchecked_WorldPoint;
+            mapGrid.MouseMove += PointCanvas_MouseMove;
+            deleteButton.Click += DeleteButton_Click_WorldPoint;
+        }
+
+        private void ClearWorldPointSelection()
+        {
+            for (int i = 0; i < SelectedWorldPoints.Count; i++)
+            {
+                SelectedWorldPoints[i].BorderBrush = Brushes.Transparent;
+            }
+            SelectedWorldPoints.Clear();
+            SelectedWorldPoint = null;
+        }
+
         //point canvas mouse move
         private void PointCanvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -1711,7 +1664,7 @@ namespace TPMapEditor
         {
             var worldPointControl = new WorldPointControl
             (
-                new(NamedElement.GenerateName("Point", Map.WorldPoints), Map, (float)(Canvas.GetLeft(worldPointPreview) + worldPointPreview.ActualWidth / 2), (float)(Canvas.GetTop(worldPointPreview) + worldPointPreview.ActualHeight / 2), (float)sliderRotate.Value)
+                new(NamedElement.GenerateName("Point", Map.WorldPoints), Map, (float)(Canvas.GetLeft(worldPointPreview) + worldPointPreview.ActualWidth / 2), (float)(Canvas.GetTop(worldPointPreview) + worldPointPreview.ActualHeight / 2), (float)worldPointSliderRotate.Value)
             );
             worldPointControl.MouseLeftButtonDown += (s, e1) =>
             {
@@ -1834,6 +1787,63 @@ namespace TPMapEditor
 
         #region ObjectivePoint
 
+        //objective point radio button checked
+        private void ObjectivePointRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowObjectivePointElements();
+        }
+
+        //objective point radio button unchecked
+        private void ObjectivePointRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HideObjectivePointElements();
+        }
+
+        private void HideObjectivePointElements()
+        {
+            addObjectivePointCheckBox.IsChecked = false;
+            objectivePointGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(objectivePointCanvas, 0);
+            objectivePointCanvas.Opacity = 0.5;
+            objectivePointCanvas.IsEnabled = false;
+            for (var i = 0; i < SelectedObjectivePoints.Count; i++)
+                SelectedObjectivePoints[i].BorderBrush = Brushes.Transparent;
+            if (moveCheckBox.IsChecked == true)
+                MoveObjectivePointCheckBoxUnchecked();
+            moveCheckBox.Checked -= MoveCheckBox_Checked_ObjectivePoint;
+            moveCheckBox.Unchecked -= MoveCheckBox_Unchecked_ObjectivePoint;
+            mapGrid.MouseMove -= ObjectivePointCanvas_MouseMove;
+            deleteButton.Click -= DeleteButton_Click_ObjectivePoint;
+        }
+
+        private void ShowObjectivePointElements()
+        {
+            objectivePointGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(objectivePointCanvas, 1);
+            objectivePointCanvas.Opacity = 1;
+            objectivePointCanvas.IsEnabled = true;
+            for (int i = 0; i < SelectedObjectivePoints.Count; i++)
+                SelectedObjectivePoints[i].BorderBrush = Brushes.OrangeRed;
+            if (SelectedObjectivePoint != null)
+                SelectedObjectivePoint.BorderBrush = Brushes.Orange;
+            if (moveCheckBox.IsChecked == true)
+                MoveObjectivePointCheckBoxChecked();
+            moveCheckBox.Checked += MoveCheckBox_Checked_ObjectivePoint;
+            moveCheckBox.Unchecked += MoveCheckBox_Unchecked_ObjectivePoint;
+            mapGrid.MouseMove += ObjectivePointCanvas_MouseMove;
+            deleteButton.Click += DeleteButton_Click_ObjectivePoint;
+        }
+
+        private void ClearObjectivePointSelection()
+        {
+            for (int i = 0; i < SelectedObjectivePoints.Count; i++)
+            {
+                SelectedObjectivePoints[i].BorderBrush = Brushes.Transparent;
+            }
+            SelectedObjectivePoints.Clear();
+            SelectedObjectivePoint = null;
+        }
+
         //objective canvas mouse move
         private void ObjectivePointCanvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -1915,13 +1925,13 @@ namespace TPMapEditor
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
-        //move world point action radio button checked
+        //move objective point action radio button checked
         private void MoveCheckBox_Checked_ObjectivePoint(object sender, RoutedEventArgs e)
         {
             MoveObjectivePointCheckBoxChecked();
         }
 
-        //move world point action radio button unchecked
+        //move objective point action radio button unchecked
         private void MoveCheckBox_Unchecked_ObjectivePoint(object sender, RoutedEventArgs e)
         {
             MoveObjectivePointCheckBoxUnchecked();
@@ -1987,6 +1997,219 @@ namespace TPMapEditor
         }
 
         #endregion ObjectivePoint
+
+        #region MapTextPoint
+
+        //map text point radio button checked
+        private void MapTextPointRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowMapTextPointElements();
+        }
+
+        //map text point radio button unchecked
+        private void MapTextPointRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HideMapTextPointElements();
+        }
+
+        private void HideMapTextPointElements()
+        {
+            addMapTextPointCheckBox.IsChecked = false;
+            mapTextPointGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(mapTextPointCanvas, 0);
+            mapTextPointCanvas.Opacity = 0.5;
+            mapTextPointCanvas.IsEnabled = false;
+            for (var i = 0; i < SelectedMapTextPoints.Count; i++)
+                SelectedMapTextPoints[i].BorderBrush = Brushes.Transparent;
+            if (moveCheckBox.IsChecked == true)
+                MoveMapTextPointCheckBoxUnchecked();
+            moveCheckBox.Checked -= MoveCheckBox_Checked_MapTextPoint;
+            moveCheckBox.Unchecked -= MoveCheckBox_Unchecked_MapTextPoint;
+            mapGrid.MouseMove -= MapTextPointCanvas_MouseMove;
+            deleteButton.Click -= DeleteButton_Click_MapTextPoint;
+        }
+
+        private void ShowMapTextPointElements()
+        {
+            mapTextPointGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(mapTextPointCanvas, 1);
+            mapTextPointCanvas.Opacity = 1;
+            mapTextPointCanvas.IsEnabled = true;
+            for (int i = 0; i < SelectedMapTextPoints.Count; i++)
+                SelectedMapTextPoints[i].BorderBrush = Brushes.OrangeRed;
+            if (SelectedMapTextPoint != null)
+                SelectedMapTextPoint.BorderBrush = Brushes.Orange;
+            if (moveCheckBox.IsChecked == true)
+                MoveMapTextPointCheckBoxChecked();
+            moveCheckBox.Checked += MoveCheckBox_Checked_MapTextPoint;
+            moveCheckBox.Unchecked += MoveCheckBox_Unchecked_MapTextPoint;
+            mapGrid.MouseMove += MapTextPointCanvas_MouseMove;
+            deleteButton.Click += DeleteButton_Click_MapTextPoint;
+        }
+
+        private void ClearMapTextPointSelection()
+        {
+            for (int i = 0; i < SelectedMapTextPoints.Count; i++)
+            {
+                SelectedMapTextPoints[i].BorderBrush = Brushes.Transparent;
+            }
+            SelectedMapTextPoints.Clear();
+            SelectedMapTextPoint = null;
+        }
+
+        //objective canvas mouse move
+        private void MapTextPointCanvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var mousePos = e.GetPosition(mapTextPointCanvas);
+            Canvas.SetLeft(mapTextPointPreview, mousePos.X - mapTextPointPreview.ActualWidth / 2);
+            Canvas.SetTop(mapTextPointPreview, mousePos.Y - mapTextPointPreview.ActualHeight / 2);
+        }
+
+        //map text point preview mouse right
+        private void MapTextPointPreview_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            addMapTextPointCheckBox.IsChecked = false;
+        }
+
+        private void AddMapTextPointControlToSelection(MapTextPointControl mapTextPointControl)
+        {
+            if (SelectedMapTextPoint != null)
+                SelectedMapTextPoint.BorderBrush = Brushes.OrangeRed;
+            SelectedMapTextPoint = mapTextPointControl;
+            SelectedMapTextPoints.Add(mapTextPointControl);
+            SelectedMapTextPoint.BorderBrush = Brushes.Orange;
+        }
+
+        private void RemoveMapTextPointControlFromSelection(MapTextPointControl mapTextPointControl)
+        {
+            mapTextPointControl.BorderBrush = Brushes.Transparent;
+            SelectedMapTextPoints.Remove(mapTextPointControl);
+            SelectedMapTextPoint = null;
+        }
+
+        private void SelectMapTextPointControlFromSelection(MapTextPointControl mapTextPointControl)
+        {
+            if (SelectedMapTextPoint != null)
+                SelectedMapTextPoint.BorderBrush = Brushes.OrangeRed;
+            SelectedMapTextPoint = mapTextPointControl;
+            SelectedMapTextPoint.BorderBrush = Brushes.Orange;
+        }
+
+        //map text point preview mouse left
+        private void MapTextPointPreview_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var mapTextPointControl = new MapTextPointControl
+            (
+                new(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItemsDictionnary.Keys.FirstOrDefault(), (float)(Canvas.GetLeft(mapTextPointPreview) + mapTextPointPreview.ActualWidth / 2), (float)(Canvas.GetTop(mapTextPointPreview) + mapTextPointPreview.ActualHeight / 2))
+            );
+            mapTextPointControl.MouseLeftButtonDown += (s, e1) =>
+            {
+                if (selectCheckBox.IsChecked == true)
+                {
+                    if (Keyboard.Modifiers == ModifierKeys.Control)
+                    {
+                        //if not selected yet
+                        if (mapTextPointControl.BorderBrush == Brushes.Transparent)
+                        {
+                            AddMapTextPointControlToSelection(mapTextPointControl);
+                        }
+                        //if already selected and current selected
+                        else if (mapTextPointControl.BorderBrush == Brushes.Orange)
+                        {
+                            RemoveMapTextPointControlFromSelection(mapTextPointControl);
+                        }
+                        //if selected but not last selected
+                        else
+                        {
+                            SelectMapTextPointControlFromSelection(mapTextPointControl);
+                        }
+                    }
+                    else
+                    {
+                        ClearMapTextPointSelection();
+                        AddMapTextPointControlToSelection(mapTextPointControl);
+                    }
+                    if (moveCheckBox.IsChecked == false)
+                        e1.Handled = true;
+                }
+            };
+            Map.MapTextPoints.Add(mapTextPointControl.MapTextPoint);
+            mapTextPointCanvas.Children.Add(mapTextPointControl);
+            e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
+        }
+
+        //move map text point action radio button checked
+        private void MoveCheckBox_Checked_MapTextPoint(object sender, RoutedEventArgs e)
+        {
+            MoveMapTextPointCheckBoxChecked();
+        }
+
+        //move map text point action radio button unchecked
+        private void MoveCheckBox_Unchecked_MapTextPoint(object sender, RoutedEventArgs e)
+        {
+            MoveMapTextPointCheckBoxUnchecked();
+        }
+
+        private void MoveMapTextPointCheckBoxChecked()
+        {
+            mapGrid.MouseLeftButtonDown -= MapGrid_MouseLeftButtonDown;
+            mapGrid.MouseLeftButtonDown += MapGrid_MouseLeftButtonDown_MoveMapTextPoint;
+            mapGrid.MouseLeftButtonUp += MapGrid_MouseLeftButtonUp_MoveMapTextPoint;
+            mapGrid.Cursor = Cursors.SizeAll;
+        }
+
+        private void MoveMapTextPointCheckBoxUnchecked()
+        {
+            mapGrid.MouseLeftButtonDown += MapGrid_MouseLeftButtonDown;
+            mapGrid.MouseLeftButtonDown -= MapGrid_MouseLeftButtonDown_MoveMapTextPoint;
+            mapGrid.MouseLeftButtonUp -= MapGrid_MouseLeftButtonUp_MoveMapTextPoint;
+            mapGrid.Cursor = Cursors.Arrow;
+        }
+
+        //begin move map text point
+        private void MapGrid_MouseLeftButtonDown_MoveMapTextPoint(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(mapGrid);
+            moveActionPoint = e.GetPosition(mapTextPointCanvas);
+            mapGrid.MouseMove += MapGrid_MouseMoveMapTextPoint;
+        }
+
+        //end move map text point
+        private void MapGrid_MouseLeftButtonUp_MoveMapTextPoint(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            mapGrid.MouseMove -= MapGrid_MouseMoveMapTextPoint;
+        }
+
+        //move map text point (while mouse left down)
+        private void MapGrid_MouseMoveMapTextPoint(object sender, MouseEventArgs e)
+        {
+            var pos = e.GetPosition(mapTextPointCanvas);
+            var a = pos.X - moveActionPoint.X;
+            var b = pos.Y - moveActionPoint.Y;
+            //move map text point selection
+            for (var i = 0; i < SelectedMapTextPoints.Count; i++)
+            {
+                var selectedMapTextPoint = SelectedMapTextPoints[i];
+                Canvas.SetLeft(selectedMapTextPoint, Canvas.GetLeft(selectedMapTextPoint) + a);
+                Canvas.SetTop(selectedMapTextPoint, Canvas.GetTop(selectedMapTextPoint) + b);
+            }
+            moveActionPoint = pos;
+        }
+
+        //delete map text points
+        private void DeleteButton_Click_MapTextPoint(object sender, RoutedEventArgs e)
+        {
+            for (var i = 0; i < SelectedMapTextPoints.Count; i++)
+            {
+                var selectedMapTextPointControl = SelectedMapTextPoints[i];
+                mapTextPointCanvas.Children.Remove(selectedMapTextPointControl);
+                Map.MapTextPoints.Remove(selectedMapTextPointControl.MapTextPoint);
+            }
+            SelectedMapTextPoint = null;
+        }
+
+        #endregion MapTextPoint
 
     }
 }
