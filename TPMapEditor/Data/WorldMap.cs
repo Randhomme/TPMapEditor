@@ -17,11 +17,11 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool mustAssembleFleet;
         [ObservableProperty]
-        private bool isCampaign;
+        private bool isCampaign, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds;
         [ObservableProperty]
         private int size, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
         [ObservableProperty]
-        private string starmapTexture, skybox;
+        private string starmapTexture, skybox, journalMusic;
         [ObservableProperty]
         private Color ambientLightColor = Colors.Khaki, roofLightColor = Colors.DarkKhaki, floorLightColor = Colors.DarkKhaki;
 
@@ -68,6 +68,7 @@ namespace TPMapEditor.Data
             customDescription = "The map description.";
             skybox = AppSettings.Meshes.FirstOrDefault();
             starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
+            journalMusic = AppSettings.Musics.FirstOrDefault();
             size = 3500;
             WorldObjects = new ObservableCollection<WorldObject>();
             Teams = new ObservableCollection<Team>();
@@ -88,6 +89,47 @@ namespace TPMapEditor.Data
             JournalEntries = new ObservableCollection<JournalEntry>();
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
             ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
+        }
+
+        public void Reset()
+        {
+            Clear();
+            SetDefaultValues();
+        }
+
+        private void SetDefaultValues()
+        {
+            MustAssembleFleet = true;
+            IsCampaign = false;
+            CustomName = "My new map";
+            CustomDescription = "The map description.";
+            Skybox = AppSettings.Meshes.FirstOrDefault();
+            StarmapTexture = AppSettings.GuiTextures.FirstOrDefault();
+            JournalMusic = AppSettings.Musics.FirstOrDefault();
+            Size = 3500;
+            Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
+            ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
+        }
+
+        private void Clear()
+        {
+            WorldObjects.Clear();
+            Teams.Clear();
+            Players.Clear();
+            Groups.Clear();
+            WaypointPaths.Clear();
+            WorldPolygons.Clear();
+            WorldPoints.Clear();
+            Flags.Clear();
+            PlayerAlliances.Clear();
+            Timers.Clear();
+            SpeechEvents.Clear();
+            WorldRules.Clear();
+            ShipUnits.Clear();
+            ObjectivePoints.Clear();
+            ObjectiveTasks.Clear();
+            MapTextPoints.Clear();
+            JournalEntries.Clear();
         }
     }
 }

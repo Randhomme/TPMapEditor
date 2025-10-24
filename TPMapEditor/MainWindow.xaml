@@ -27,7 +27,7 @@
         <Menu>
             <MenuItem Header="File">
                 <MenuItem Header="Map">
-                    <MenuItem Header="Import"/>
+                    <MenuItem Header="Import" Command="{Binding MapImportCommand}"/>
                     <MenuItem Header="Export"/>
                 </MenuItem>
             </MenuItem>

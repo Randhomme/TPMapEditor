@@ -63,6 +63,31 @@ namespace TPMapEditor
             settings = settings.Load();
         }
 
+        private void ClearControls()
+        {
+            wotCanvas.Children.Clear();
+            playerCanvas.Children.Clear();
+            pathCanvas.Children.Clear();
+            polygonCanvas.Children.Clear();
+            pointCanvas.Children.Clear();
+            objectivePointCanvas.Children.Clear();
+            mapTextPointCanvas.Children.Clear();
+            SelectedWots.Clear();
+            SelectedPlayers.Clear();
+            SelectedPathPoints.Clear();
+            SelectedPolygonPoints.Clear();
+            SelectedWorldPoints.Clear();
+            SelectedObjectivePoints.Clear();
+            SelectedMapTextPoints.Clear();
+            SelectedWot = null;
+            SelectedPlayer = null;
+            SelectedPathPoint = null;
+            SelectedPolygonPoint = null;
+            SelectedWorldPoint = null;
+            SelectedObjectivePoint = null;
+            SelectedMapTextPoint = null;
+        }
+
         public MainWindow()
         {
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -91,6 +116,27 @@ namespace TPMapEditor
         }
 
         #region MenuCommand
+
+        [RelayCommand]
+        private void OnMapImport()
+        {
+            var ofd = new OpenFileDialog()
+            {
+                Multiselect = false,
+                DefaultExt = ".twt",
+                Filter = "Map file (.twt)|*.twt",
+                Title = "Select a map file",
+            };
+            if (ofd.ShowDialog(this) == true)
+            {
+                if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    ClearControls();
+                    Map.Reset();
+                    DataImport.ReadMapFileAndAddData(ofd.FileName, Map);
+                }
+            }
+        }
 
         [RelayCommand]
         private void OnWorldInfoEdit()

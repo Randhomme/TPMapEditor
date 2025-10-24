@@ -26,6 +26,8 @@
                         </ComboBox>
                         <CheckBox x:Name="mustAssembleFleetCheckBox" Margin="5" Content="Must assemble fleet" IsChecked="{Binding Map.MustAssembleFleet}"/>
                         <CheckBox x:Name="isCampaignCheckBox" Margin="5" Content="Is campaign" IsChecked="{Binding Map.IsCampaign}"/>
+                        <CheckBox Margin="5" Content="Is alliance change allowed" IsChecked="{Binding Map.IsAllianceChangeAllowed}"/>
+                        <CheckBox Margin="5" Content="Islands make sounds" IsChecked="{Binding Map.IslandsMakeSounds}"/>
                     </StackPanel>
                 </GroupBox>
                 <controls:TextGroupBox Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
@@ -101,6 +103,10 @@
                         <Slider Value="{Binding Map.RoofLightOrientationPitch}" Minimum="-90" Maximum="90"/>
                     </StackPanel>
                 </GroupBox>
+                <GroupBox Header="Journal music">
+                    <ComboBox Margin="5" ItemsSource="{x:Static settings:AppSettings.Musics}" SelectedValue="{Binding Map.JournalMusic}"/>
+                </GroupBox>
+                
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
