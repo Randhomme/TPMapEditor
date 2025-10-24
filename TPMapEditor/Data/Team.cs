@@ -8,6 +8,8 @@ namespace TPMapEditor.Data
         public string RealName { get; set; }
         public Race Race { get; set; }
 
+        public bool RaceLocked { get; set; }
+
         public Team(string realName)
         {
             RealName = realName;
