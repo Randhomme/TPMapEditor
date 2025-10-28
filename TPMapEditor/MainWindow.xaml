@@ -285,9 +285,20 @@
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
+                                                    <GroupBox Header="Player">
+                                                        <StackPanel>
+                                                            <CheckBox x:Name="wotHasPlayer" Margin="0,5,0,10" Content="Has player ?" IsChecked="{c:Binding Mode=OneWay, Path='SelectedWot.WorldObject.Player != null', UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <ComboBox
+                                                                SelectedItem="{Binding SelectedWot.WorldObject.Player}"
+                                                                ItemsSource="{Binding Map.Players}"
+                                                                IsEnabled="{Binding IsChecked, ElementName=wotHasPlayer}"
+                                                                SelectedIndex="{c:Binding ElementName=wotHasPlayer, Mode=OneWay, Path=IsChecked ? 0 : -1}"
+                                                                DisplayMemberPath="Name"/>
+                                                        </StackPanel>
+                                                    </GroupBox>
                                                     <GroupBox Header="Group">
                                                         <StackPanel>
-                                                            <CheckBox x:Name="wotIsInGroup" Margin="0,5,0,10" Content="Is in group ?" IsChecked="{c:Binding Mode=OneWay, Path=SelectedWot.WorldObject.Group !\= null, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <CheckBox x:Name="wotIsInGroup" Margin="0,5,0,10" Content="Is in group ?" IsChecked="{c:Binding Mode=OneWay, Path='SelectedWot.WorldObject.Group != null', UpdateSourceTrigger=PropertyChanged}"/>
                                                             <ComboBox
                                                                 SelectedItem="{Binding SelectedWot.WorldObject.Group}"
                                                                 ItemsSource="{Binding Map.Groups}"

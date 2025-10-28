@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using TPMapEditor.Controls;
 
 namespace TPMapEditor.Data
 {
@@ -13,6 +12,8 @@ namespace TPMapEditor.Data
         private double x, y, z, xRotation, yRotation, zRotation;
         [ObservableProperty]
         private Group? group;
+        [ObservableProperty]
+        private Player? player;
 
         public WorldObject(WotGridItem type, double x, double y, double zRotation)
         {

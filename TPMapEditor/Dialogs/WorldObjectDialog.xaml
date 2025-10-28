@@ -56,6 +56,15 @@
                     <Slider Grid.Column="1" Value="{Binding SelectedWorldObject.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <Label Margin="-5,5,0,0" Content="Rotation Z (Euler XYZ)"/>
                     <Slider Grid.Column="1" Value="{Binding SelectedWorldObject.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                    <CheckBox x:Name="wotHasPlayer" Margin="0,15,0,0" Content="Has player ?" IsChecked="{c:Binding Path='SelectedWorldObject.Player!= null', Mode=OneWay}"/>
+                    <Label Margin="-5,5,0,0" Content="Player"/>
+                    <ComboBox
+                        x:Name="teamComboBox"
+                        SelectedItem="{Binding SelectedWorldObject.Player}"
+                        ItemsSource="{Binding Map.Players}"
+                        IsEnabled="{Binding ElementName=wotHasPlayer, Path=IsChecked}"
+                        SelectedIndex="{c:Binding ElementName=wotHasPlayer, Path='IsChecked ? 0 : -1', Mode=OneWay}">
+                    </ComboBox>
                     <Label Margin="-5,5,0,0" Content="Group"/>
                     <CheckBox x:Name="wotIsInGroup" Content="Is in group ?" IsChecked="{c:Binding Mode=OneWay, Path='SelectedWorldObject.Group != null', UpdateSourceTrigger=PropertyChanged}"/>
                     <Label Margin="-5,5,0,0" Content="Group"/>
