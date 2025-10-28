@@ -75,9 +75,11 @@
                     <Slider x:Name="selectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1"/>
                     <Label Margin="-5,5,0,0" Content="Rotation"/>
                     <Slider Value="{Binding SelectedPlayer.Rotation}" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                    <Label Margin="-5,5,0,0" Content="Formation type start"/>
+                    <ComboBox SelectedItem="{Binding SelectedPlayer.FormationTypeStart}" ItemsSource="{enums:EnumBindingSource enums:FormationType}"/>
                     <Label Margin="-5,5,0,0" Content="Formation type"/>
                     <ComboBox SelectedItem="{Binding SelectedPlayer.FormationType}" ItemsSource="{enums:EnumBindingSource enums:FormationType}"/>
-                    <CheckBox x:Name="playerHasTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.Team != null', Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox x:Name="playerHasTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.Team != null', Mode=OneWay}"/>
                     <Label Margin="-5,5,0,0" Content="Team"/>
                     <ComboBox
                         x:Name="teamComboBox"
