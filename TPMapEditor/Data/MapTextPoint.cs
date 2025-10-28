@@ -15,7 +15,7 @@ namespace TPMapEditor.Data
         {
             get
             {
-                StringDictionnary.MapTextItemsDictionnary.TryGetValue(RealText, out string displayedText);
+                StringDictionnary.MapTextItems.TryGetValue(RealText, out string displayedText);
                 return displayedText;
             }
         }

@@ -50,9 +50,9 @@
                     <Label Margin="-5,5,0,0" Content="Face texture"/>
                     <ComboBox ItemsSource="{x:Static data:SpeechEvent.FaceTexturesList}" SelectedValue="{Binding SelectedSpeechEvent.FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
                     <Label Margin="-5,5,0,0" Content="Text"/>
-                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEventsDictionnary}" SelectedValue="{Binding SelectedSpeechEvent.TextStringID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEvents}" SelectedValue="{Binding SelectedSpeechEvent.TextStringID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                     <Label Margin="-5,5,0,0" Content="Speaker"/>
-                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeakerNamesDictionnary}" SelectedValue="{Binding SelectedSpeechEvent.SpeakerID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeakerNames}" SelectedValue="{Binding SelectedSpeechEvent.SpeakerID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value" />
                     <Label Margin="-5,5,0,0" Content="Text color"/>
                     <Grid>
                         <Grid.ColumnDefinitions>

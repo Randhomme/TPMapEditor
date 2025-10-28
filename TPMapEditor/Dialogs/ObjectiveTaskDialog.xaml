@@ -46,7 +46,7 @@
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedObjectiveTask.Name, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Task"/>
-                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.ObjectiveTasksDictionnary}" SelectedValue="{Binding SelectedObjectiveTask.TextStringId}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.ObjectiveTasks}" SelectedValue="{Binding SelectedObjectiveTask.TextStringId}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                     <Label Margin="-5,5,0,0" Content="Active"/>
                     <CheckBox Content="{Binding SelectedObjectiveTask.Active}" IsChecked="{Binding SelectedObjectiveTask.Active}"/>
                     <Label Margin="-5,5,0,0" Content="Completed"/>

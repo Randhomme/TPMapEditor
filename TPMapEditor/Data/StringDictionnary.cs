@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TPMapEditor.Data
 {
     public static class StringDictionnary
     {
-        public static Dictionary<string, string> MapTextItemsDictionnary { get; } = new();
-        public static Dictionary<string, string> ObjectiveTasksDictionnary { get; } = new();
-        public static Dictionary<string, string> ShipNamesDictionnary { get; } = new ();
-        public static Dictionary<string, string> SpeechEventsDictionnary { get; } = new();
-        public static Dictionary<string, string> SpeechEventsJournalsDictionnary { get; } = new();
-        public static Dictionary<string, string> SpeakerNamesDictionnary { get; } = new();
+        public static Dictionary<string, string> MapTextItems { get; } = new();
+        public static Dictionary<string, string> ObjectiveTasks { get; } = new();
+        public static Dictionary<string, string> ShipNames { get; } = new ();
+        public static Dictionary<string, string> SpeechEvents { get; } = new();
+        public static Dictionary<string, string> SpeechEventsJournals { get; } = new();
+        public static Dictionary<string, string> SpeakerNames { get; } = new();
         public static Dictionary<string, string> TeamNames { get; } = new();
+        public static Dictionary<string, string> WorldNames { get; } = new();
+        public static Dictionary<string, string> WorldDescriptions { get; } = new();
     }
 }

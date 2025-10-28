@@ -29,8 +29,8 @@ namespace TPMapEditor.Data
         {
             soundFileName = DialogueFilesList.FirstOrDefault() ?? string.Empty;
             faceTexture = FaceTexturesList.FirstOrDefault() ?? string.Empty;
-            textStringID = StringDictionnary.SpeechEventsDictionnary.FirstOrDefault().Key ?? string.Empty;
-            speakerID = StringDictionnary.SpeakerNamesDictionnary.FirstOrDefault().Key ?? string.Empty;
+            textStringID = StringDictionnary.SpeechEvents.FirstOrDefault().Key ?? string.Empty;
+            speakerID = StringDictionnary.SpeakerNames.FirstOrDefault().Key ?? string.Empty;
             textColor = Colors.White;
         }
 

@@ -31,6 +31,8 @@ namespace TPMapEditor.Settings
         public ObservableCollection<GameHeadersFile> TPObjectiveTasks { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeechEventsJournals { get; } = new();
         public ObservableCollection<GameHeadersFile> TPMapTextItems { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPWorldNames { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPWorldDescriptions { get; } = new();
         [XmlIgnore]
         public string EffectsDirectory { get; set; } = string.Empty;
         [XmlIgnore]
@@ -482,7 +484,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                StringDictionnary.SpeechEventsDictionnary.Clear();
+                StringDictionnary.SpeechEvents.Clear();
                 foreach (var file in this.TPSpeechEvents)
                 {
                     try
@@ -500,7 +502,7 @@ namespace TPMapEditor.Settings
                                         var eventName = parts[0];
                                         if (gameStrings.TryGetValue(eventName, out var eventText))
                                         {
-                                            StringDictionnary.SpeechEventsDictionnary[eventName] = eventText;
+                                            StringDictionnary.SpeechEvents[eventName] = eventText;
                                         }
                                     }
                                 }
@@ -523,7 +525,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                StringDictionnary.SpeakerNamesDictionnary.Clear();
+                StringDictionnary.SpeakerNames.Clear();
                 foreach (var file in this.TPSpeakerNames)
                 {
                     try
@@ -541,7 +543,7 @@ namespace TPMapEditor.Settings
                                         var speakerName = parts[0];
                                         if (gameStrings.TryGetValue(speakerName, out var speakerText))
                                         {
-                                            StringDictionnary.SpeakerNamesDictionnary[speakerName] = speakerText;
+                                            StringDictionnary.SpeakerNames[speakerName] = speakerText;
                                         }
                                     }
                                 }
@@ -564,7 +566,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                StringDictionnary.ShipNamesDictionnary.Clear();
+                StringDictionnary.ShipNames.Clear();
                 foreach (var file in this.TPShipNames)
                 {
                     try
@@ -582,7 +584,7 @@ namespace TPMapEditor.Settings
                                         var shipName = parts[0];
                                         if (gameStrings.TryGetValue(shipName, out var shipDisplayName))
                                         {
-                                            StringDictionnary.ShipNamesDictionnary[shipName] = shipDisplayName;
+                                            StringDictionnary.ShipNames[shipName] = shipDisplayName;
                                         }
                                     }
                                 }
@@ -642,7 +644,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                StringDictionnary.ObjectiveTasksDictionnary.Clear();
+                StringDictionnary.ObjectiveTasks.Clear();
                 foreach (var file in this.TPObjectiveTasks)
                 {
                     try
@@ -657,7 +659,7 @@ namespace TPMapEditor.Settings
                                     var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
                                     if (gameStrings.TryGetValue(defineString, out var gameString))
                                     {
-                                        StringDictionnary.ObjectiveTasksDictionnary[defineString] = gameString;
+                                        StringDictionnary.ObjectiveTasks[defineString] = gameString;
                                     }
                                 }
                             }
@@ -679,7 +681,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                StringDictionnary.SpeechEventsJournalsDictionnary.Clear();
+                StringDictionnary.SpeechEventsJournals.Clear();
                 foreach (var file in this.TPSpeechEventsJournals)
                 {
                     try
@@ -694,7 +696,7 @@ namespace TPMapEditor.Settings
                                     var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
                                     if (gameStrings.TryGetValue(defineString, out var gameString))
                                     {
-                                        StringDictionnary.SpeechEventsJournalsDictionnary[defineString] = gameString;
+                                        StringDictionnary.SpeechEventsJournals[defineString] = gameString;
                                     }
                                 }
                             }
@@ -716,7 +718,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                StringDictionnary.MapTextItemsDictionnary.Clear();
+                StringDictionnary.MapTextItems.Clear();
                 foreach (var file in this.TPMapTextItems)
                 {
                     try
@@ -731,7 +733,81 @@ namespace TPMapEditor.Settings
                                     var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
                                     if (gameStrings.TryGetValue(defineString, out var gameString))
                                     {
-                                        StringDictionnary.MapTextItemsDictionnary[defineString] = gameString;
+                                        StringDictionnary.MapTextItems[defineString] = gameString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateWorldNamesDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                StringDictionnary.WorldNames.Clear();
+                foreach (var file in this.TPWorldNames)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(defineString, out var gameString))
+                                    {
+                                        StringDictionnary.WorldNames[defineString] = gameString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void UpdateWorldDescriptionsDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                StringDictionnary.WorldDescriptions.Clear();
+                foreach (var file in this.TPWorldDescriptions)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(defineString, out var gameString))
+                                    {
+                                        StringDictionnary.WorldDescriptions[defineString] = gameString;
                                     }
                                 }
                             }

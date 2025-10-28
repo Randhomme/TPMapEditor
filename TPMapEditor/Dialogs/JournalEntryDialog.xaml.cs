@@ -35,7 +35,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddJournalEntry()
         {
-            Map.JournalEntries.Add(new(Map, NamedElement.GenerateName("JournalEntry", Map.JournalEntries), StringDictionnary.SpeechEventsJournalsDictionnary.Keys.FirstOrDefault(), SpeechEvent.DialogueFilesList.FirstOrDefault(), AppSettings.GuiTextures.FirstOrDefault()));
+            Map.JournalEntries.Add(new(Map, NamedElement.GenerateName("JournalEntry", Map.JournalEntries), StringDictionnary.SpeechEventsJournals.Keys.FirstOrDefault(), SpeechEvent.DialogueFilesList.FirstOrDefault(), AppSettings.GuiTextures.FirstOrDefault()));
         }
 
         private void RemoveJournalEntry_Click(object sender, RoutedEventArgs e)

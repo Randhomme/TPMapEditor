@@ -34,7 +34,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddObjectiveTask()
         {
-            var objectiveTask = new ObjectiveTask(Map, NamedElement.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasksDictionnary.Keys.FirstOrDefault());
+            var objectiveTask = new ObjectiveTask(Map, NamedElement.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault());
             Map.ObjectiveTasks.Add(objectiveTask);
         }
 
