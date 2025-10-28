@@ -13,7 +13,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Color color;
         [ObservableProperty]
-        private FormationType formationType;
+        private FormationType formationTypeStart, formationType;
         [ObservableProperty]
         private Team? team;
         [ObservableProperty]
@@ -52,7 +52,7 @@ namespace TPMapEditor.Data
             Z = z;
             Rotation = rotation;
             Color = playerColor;
-            FormationType = FormationType.Column;
+            FormationTypeStart = FormationType = FormationType.Column;
             IsPlayable = true;
         }
     }

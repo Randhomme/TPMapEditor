@@ -340,6 +340,9 @@
                                                             <Button Width="70" Content="Edit" Grid.Column="1" Click="EditPlayerColor_Click"/>
                                                         </Grid>
                                                     </GroupBox>
+                                                    <GroupBox Header="Formation type start">
+                                                        <ComboBox SelectedItem="{Binding SelectedPlayer.Player.FormationTypeStart}" ItemsSource="{enums:EnumBindingSource {x:Type enums:FormationType}}"/>
+                                                    </GroupBox>
                                                     <GroupBox Header="Formation type">
                                                         <ComboBox SelectedItem="{Binding SelectedPlayer.Player.FormationType}" ItemsSource="{enums:EnumBindingSource {x:Type enums:FormationType}}"/>
                                                     </GroupBox>
@@ -511,7 +514,7 @@
                                                 <StackPanel Margin="5">
                                                     <controls:TextGroupBox Header="Name" Text="{Binding SelectedMapTextPoint.MapTextPoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                                     <GroupBox Header="Displayed text">
-                                                        <ComboBox Margin="0,5,0,0" ItemsSource="{x:Static data:StringDictionnary.MapTextItemsDictionnary}" SelectedValue="{Binding SelectedMapTextPoint.MapTextPoint.RealText}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                                                        <ComboBox Margin="0,5,0,0" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValue="{Binding SelectedMapTextPoint.MapTextPoint.RealText}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
