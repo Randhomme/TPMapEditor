@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+        xmlns:data="clr-namespace:TPMapEditor.Data"
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
         mc:Ignorable="d"
@@ -27,11 +29,18 @@
                         <CheckBox x:Name="mustAssembleFleetCheckBox" Margin="5" Content="Must assemble fleet" IsChecked="{Binding Map.MustAssembleFleet}"/>
                         <CheckBox x:Name="isCampaignCheckBox" Margin="5" Content="Is campaign" IsChecked="{Binding Map.IsCampaign}"/>
                         <CheckBox Margin="5" Content="Is alliance change allowed" IsChecked="{Binding Map.IsAllianceChangeAllowed}"/>
+                        <CheckBox x:Name="isMultiplayerCheckBox" Margin="5" Content="Is multiplayer" IsChecked="{Binding Map.IsMultiplayer}" IsEnabled="{c:Binding 'Map.Players.Count > 1'}" IsEnabledChanged="IsMultiplayerCheckBox_IsEnabledChanged"/>
                         <CheckBox Margin="5" Content="Islands make sounds" IsChecked="{Binding Map.IslandsMakeSounds}"/>
                     </StackPanel>
                 </GroupBox>
-                <controls:TextGroupBox Header="Map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
-                <controls:TextGroupBox Header="Map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="False" VerticalScrollBarVisibility="Auto"/>
+                <GroupBox Header="Map name" Padding="5">
+                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.WorldNames}" SelectedValue="{Binding Map.WorldName}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                </GroupBox>
+                <controls:TextGroupBox Header="Custom map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                <GroupBox Header="Map description" Padding="5">
+                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.WorldDescriptions}" SelectedValue="{Binding Map.WorldDescription}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                </GroupBox>
+                <controls:TextGroupBox Header="Custom map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="False" VerticalScrollBarVisibility="Auto"/>
                 <GroupBox Padding="5" Header="Skybox">
                     <ComboBox ItemsSource="{x:Static settings:AppSettings.Meshes}" SelectedValue="{Binding Map.Skybox}"/>
                 </GroupBox>

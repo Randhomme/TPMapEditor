@@ -17,30 +17,13 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool mustAssembleFleet;
         [ObservableProperty]
-        private bool isCampaign, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds;
+        private bool isMultiplayer, isCampaign, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds;
         [ObservableProperty]
         private int size, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
         [ObservableProperty]
-        private string starmapTexture, skybox, journalMusic;
+        private string worldName, worldDescription, customName, customDescription, starmapTexture, skybox, journalMusic;
         [ObservableProperty]
         private Color ambientLightColor = Colors.Khaki, roofLightColor = Colors.DarkKhaki, floorLightColor = Colors.DarkKhaki;
-
-        private string customName;
-
-        public string CustomName
-        {
-            get { return customName; }
-            set 
-            {
-                if (string.IsNullOrEmpty(value))
-                    throw new ArgumentException("Value cannot be empty");
-                customName = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [ObservableProperty]
-        private string customDescription;
 
         public IList<WorldObject> WorldObjects { get; }
         public IList<Team> Teams { get; }
@@ -64,8 +47,9 @@ namespace TPMapEditor.Data
         {
             mustAssembleFleet = true;
             isCampaign = false;
-            customName = "My new map";
-            customDescription = "The map description.";
+            worldName = StringDictionnary.WorldNames.Keys.FirstOrDefault();
+            worldDescription = StringDictionnary.WorldDescriptions.Keys.FirstOrDefault();
+            customName = customDescription = string.Empty;
             skybox = AppSettings.Meshes.FirstOrDefault();
             starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
             journalMusic = AppSettings.Musics.FirstOrDefault();

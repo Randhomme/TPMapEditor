@@ -96,5 +96,11 @@ namespace TPMapEditor.Dialogs
             if (cp.ShowDialog() == true)
                 Map.FloorLightColor = cp.NewColor;
         }
+
+        private void IsMultiplayerCheckBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!isMultiplayerCheckBox.IsEnabled)
+                Map.IsMultiplayer = false; 
+        }
     }
 }
