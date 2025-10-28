@@ -81,6 +81,8 @@ namespace TPMapEditor.Settings
             UpdateObjectiveTasksDictionary(gameStrings);
             UpdateSpeechEventsJournalsDictionary(gameStrings);
             UpdateMapTextItemsDictionary(gameStrings);
+            UpdateWorldNamesDictionary(gameStrings);
+            UpdateWorldDescriptionsDictionary(gameStrings);
         }
 
         private void UpdateAppSettingsStrings()
