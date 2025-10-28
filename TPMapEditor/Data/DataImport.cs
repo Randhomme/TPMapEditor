@@ -168,6 +168,9 @@ namespace TPMapEditor.Data
                         catch(Exception ex) { throw new TPMapEditorException($"Fail to read Player section number {i} : {ex.Message}", ex); }
                     }
 
+                    //WorldObject List section
+                    ReadWorldObjectList(reader, map);
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -210,13 +213,13 @@ namespace TPMapEditor.Data
 
                     //StartPoint
                     var startPoint = reader.ReadAndParseVector3("StartPoint Vector3");
-                    player.X = startPoint.x;
-                    player.Y = startPoint.y;
-                    player.Z = startPoint.z;
+                    player.X = startPoint.X;
+                    player.Y = startPoint.Y;
+                    player.Z = startPoint.Z;
 
                     //StartPointForwardVector
                     var startPointForwardVector = reader.ReadAndParseVector3("StartPointForwardVector Vector3");
-                    player.Rotation = Math.Atan2(startPointForwardVector.x, startPointForwardVector.y) * 180 / Math.PI;
+                    player.Rotation = Math.Atan2(startPointForwardVector.X, startPointForwardVector.Y) * 180 / Math.PI;
 
                     //Race
                     reader.ReadLine(); //probably not used
@@ -297,6 +300,105 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read FleetAI section."); }
         }
 
+        private static void ReadWorldObjectList(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                //NextID (not used)
+                var line1 = reader.ReadLine();
+
+                //#World Object List (comment line)
+                reader.ReadLine();
+
+                //WorldObject (number of WorldObject)
+                var worldObjectCount = reader.ReadAndParseInt("WorldObjects Int ");
+
+                //WorldObject loop
+                for (int i = 0; i < worldObjectCount; i++)
+                {
+                    try
+                    {
+                        ReadWorldObjectSection(reader, map);
+                    }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read WorldObject section number {i} : {ex.Message}", ex); }
+                }
+
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read World Object List section."); }
+        }
+
+        private static void ReadWorldObjectSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var worldObject = new WorldObject(WotGridItem.WotTypes.FirstOrDefault(), 0, 0, 0);
+                map.WorldObjects.Add(worldObject);
+
+                //ID
+                worldObject.Id = reader.ReadAndParseInt("ID Int ");
+
+                //Type
+                var typeString = reader.ReadAndParseString("Type String ");
+                worldObject.Type = WotGridItem.WotTypes.First((t)=>t.Type == typeString);
+
+                ReadWorldObjectStateSection(reader, worldObject, map);
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read FleetAI section."); }
+        }
+
+        private static void ReadWorldObjectStateSection(StreamReader reader, WorldObject worldObject, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("State"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    //HasState (must be false for now)
+                    var hasState = reader.ReadAndParseBool("HasState Bool ");
+                    if (hasState)
+                        throw new TPMapEditorException("WorldObject cannot have a state (not yet).");
+
+                    //Position
+                    var position = reader.ReadAndParseVector3("Position Vector3");
+                    worldObject.X = position.X;
+                    worldObject.Y = position.Y;
+                    worldObject.Z = position.Z;
+
+                    //Orientation
+                    var (rotationX, rotationY, rotationZ) = reader.ReadAndParseMatrix33("Orientation Matrix33");
+                    var rotationEulerXYZ = GetEulerXYZ(rotationX, rotationY, rotationZ);
+                    worldObject.XRotation = rotationEulerXYZ.X;
+                    worldObject.YRotation = rotationEulerXYZ.Y;
+                    worldObject.ZRotation = rotationEulerXYZ.Z;
+
+                    //PlayerIndex
+                    var playerIndex = reader.ReadAndParseInt("PlayerIndex Int ");
+                    if (playerIndex >= 0)
+                    {
+                        try
+                        {
+                            worldObject.Player = map.Players[playerIndex];
+                        }
+                        catch { throw new TPMapEditorException("PlayerIndex is incorrect."); }
+                    }
+
+                    //other states
+                    for (int i = 0; i < 10; i++)
+                        reader.ReadLine();
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("State section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read FleetAI section."); }
+        }
+
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
         {
             var line = reader.ReadLine().Trim();
@@ -329,7 +431,7 @@ namespace TPMapEditor.Data
             return Color.FromScRgb(a, r, g, b);
         }
 
-        private static (float x, float y, float z) ReadAndParseVector3(this StreamReader reader, string prefix)
+        private static Vector3 ReadAndParseVector3(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
             line = line.GetSafeSubstring(prefix).Trim('(', ')');
@@ -337,7 +439,25 @@ namespace TPMapEditor.Data
             float.TryParse(values[0], out var x);
             float.TryParse(values[1], out var y);
             float.TryParse(values[2], out var z);
-            return (x, y, z);
+            return new Vector3(x, y, z);
+        }
+
+        private static (Vector3 x, Vector3 y, Vector3 z) ReadAndParseMatrix33(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            var values = line.Split(',');
+            float.TryParse(values[0], out var x1);
+            float.TryParse(values[1], out var x2);
+            float.TryParse(values[2], out var x3);
+            float.TryParse(values[0], out var y1);
+            float.TryParse(values[1], out var y2);
+            float.TryParse(values[2], out var y3);
+            float.TryParse(values[0], out var z1);
+            float.TryParse(values[1], out var z2);
+            float.TryParse(values[2], out var z3);
+            return (new Vector3(x1, x2, x3), new Vector3(y1, y2, y3), new Vector3(z1, z2, z3));
+            
         }
 
         private static string GetSafeSubstring(this string str, string val)
@@ -345,6 +465,45 @@ namespace TPMapEditor.Data
             if(str.StartsWith(val))
                 return str.Substring(val.Length);
             return string.Empty;
+        }
+
+        private static Vector3 GetEulerXYZ(Vector3 X, Vector3 Y, Vector3 Z)
+        {
+            // Build the rotation matrix from basis vectors
+            // Columns correspond to local X, Y, Z axes
+            Matrix4x4 m = new Matrix4x4(
+                X.X, X.Y, X.Z, 0,
+                Y.X, Y.Y, Y.Z, 0,
+                Z.X, Z.Y, Z.Z, 0,
+                0, 0, 0, 1
+            );
+
+            // Extract angles (in radians)
+            double sy = -m.M13;
+            double cy = Math.Sqrt(1 - sy * sy);
+
+            double x, y, z; // Euler angles in radians
+
+            if (cy > 1e-6)
+            {
+                x = Math.Atan2(m.M23, m.M33);  // rotation around X
+                y = Math.Asin(-m.M13);         // rotation around Y
+                z = Math.Atan2(m.M12, m.M11);  // rotation around Z
+            }
+            else
+            {
+                // Gimbal lock case
+                x = 0;
+                y = Math.Asin(-m.M13);
+                z = Math.Atan2(-m.M21, m.M22);
+            }
+
+            // Convert to degrees
+            return new Vector3(
+                (float)Math.Round(x * 180.0 / Math.PI),
+                (float)Math.Round(y * 180.0 / Math.PI),
+                (float)Math.Round(z * 180.0 / Math.PI)
+            );
         }
     }
 }

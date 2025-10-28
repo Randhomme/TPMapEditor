@@ -9,7 +9,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private WotGridItem type;
         [ObservableProperty]
-        private double x, y, z, xRotation, yRotation, zRotation;
+        private double x, y, z, xRotation, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)
         [ObservableProperty]
         private Group? group;
         [ObservableProperty]
