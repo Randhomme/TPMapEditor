@@ -2146,7 +2146,7 @@ namespace TPMapEditor
         {
             var mapTextPointControl = new MapTextPointControl
             (
-                new(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItemsDictionnary.Keys.FirstOrDefault(), (float)(Canvas.GetLeft(mapTextPointPreview) + mapTextPointPreview.ActualWidth / 2), (float)(Canvas.GetTop(mapTextPointPreview) + mapTextPointPreview.ActualHeight / 2))
+                new(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault(), (float)(Canvas.GetLeft(mapTextPointPreview) + mapTextPointPreview.ActualWidth / 2), (float)(Canvas.GetTop(mapTextPointPreview) + mapTextPointPreview.ActualHeight / 2))
             );
             mapTextPointControl.MouseLeftButtonDown += (s, e1) =>
             {
