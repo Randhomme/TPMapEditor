@@ -23,7 +23,7 @@
                 <DataGridTemplateColumn Header="Team name" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox IsSynchronizedWithCurrentItem="False" SelectedValue="{Binding RealName}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                            <ComboBox SelectedValue="{Binding RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
