@@ -1,23 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 using TPMapEditor.Enums;
 
 namespace TPMapEditor.Data
 {
-    public class Team
+    public partial class Team : ObservableObject
     {
-        public string RealName { get; set; }
-        public Race Race { get; set; }
-
-        public bool RaceLocked { get; set; }
+        [ObservableProperty]
+        private string realName;
+        [ObservableProperty]
+        private Race race;
+        [ObservableProperty]
+        private bool raceLocked;
 
         public Team(string realName)
         {
-            RealName = realName;
-        }
-
-        public override string ToString()
-        {
-            return RealName;
+            this.realName = realName;
         }
     }
 }
