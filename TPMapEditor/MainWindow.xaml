@@ -354,9 +354,6 @@
                                                     <GroupBox Header="Formation type start">
                                                         <ComboBox SelectedItem="{Binding SelectedPlayer.Player.FormationTypeStart}" ItemsSource="{enums:EnumBindingSource {x:Type enums:FormationType}}"/>
                                                     </GroupBox>
-                                                    <GroupBox Header="Formation type">
-                                                        <ComboBox SelectedItem="{Binding SelectedPlayer.Player.FormationType}" ItemsSource="{enums:EnumBindingSource {x:Type enums:FormationType}}"/>
-                                                    </GroupBox>
                                                     <GroupBox Header="Team">
                                                         <StackPanel>
                                                             <CheckBox x:Name="playerHasTeamCheckBox" Margin="0,5,0,10" Content="Has team ?" IsChecked="{c:Binding Mode=OneWay, Path=SelectedPlayer.Player.Team !\= null, UpdateSourceTrigger=PropertyChanged}"/>

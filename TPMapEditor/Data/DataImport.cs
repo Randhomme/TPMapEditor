@@ -234,7 +234,7 @@ namespace TPMapEditor.Data
                     var formationTypeStart = (FormationType)reader.ReadAndParseInt("FormationType Int ");
 
                     //FleetAI section
-                    ReadFleetAISection(reader, map);
+                    ReadFleetAISection(reader, player);
 
                     //FlagIndex
                     reader.ReadLine(); //probably not used
@@ -248,7 +248,7 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read Player section."); }
         }
 
-        private static void ReadFleetAISection(StreamReader reader, WorldMap map)
+        private static void ReadFleetAISection(StreamReader reader, Player player)
         {
             try
             {
@@ -276,7 +276,7 @@ namespace TPMapEditor.Data
                     //FORMATIONTYPE
                     reader.ReadLine();
                     reader.ReadLine();
-                    var formationType = Enum.Parse(typeof(FormationType), reader.ReadAndParseString("FORMATIONTYPE String "));
+                    player.FormationType = (FormationType)Enum.Parse(typeof(FormationType), reader.ReadAndParseString("FORMATIONTYPE String "));
                     reader.ReadLine();
 
                     //SHIP INFO SIZE
