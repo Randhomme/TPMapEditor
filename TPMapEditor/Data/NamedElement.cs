@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TPMapEditor.Data
 {
-    public abstract class NamedElement : DefaultElement
+    public abstract class NamedElement : ObservableObject
     {
         private string name;
         protected WorldMap map;

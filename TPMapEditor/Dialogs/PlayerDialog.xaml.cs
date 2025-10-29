@@ -28,22 +28,24 @@ namespace TPMapEditor.Dialogs
         [ObservableProperty]
         private Player? selectedPlayer;
 
-        public RelayCommand AddPlayerCommand { get; }
-
-        public PlayerDialog(Window owner, WorldMap map, Action createPlayer) : base(owner)
+        public PlayerDialog(Window owner, WorldMap map) : base(owner)
         {
             Map = map;
-            AddPlayerCommand = new(createPlayer);
             InitializeComponent();
             this.selectedPlayerX.Minimum = this.selectedPlayerY.Minimum =  -map.Size / 2 - 150;
             this.selectedPlayerX.Maximum = this.selectedPlayerY.Maximum = map.Size / 2 + 150;
+        }
+
+        [RelayCommand]
+        private void OnAddPlayer()
+        {
+            Map.Players.Add(new(NamedElement.GenerateName("Player", Map.Players), Map, 0, 0, 0, 0, Colors.White));
         }
 
         private void RemovePlayer_Click(object sender, RoutedEventArgs e)
         {
             if(SelectedPlayer != null)
             {
-                SelectedPlayer.Remove?.Invoke();
                 Map.Players.Remove(SelectedPlayer);
                 SelectedPlayer = null;
             }

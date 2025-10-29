@@ -25,19 +25,22 @@ namespace TPMapEditor.Dialogs
         [ObservableProperty]
         private WorldObject? selectedWorldObject;
         public WorldMap Map { get; }
-        public RelayCommand AddWorldObjectCommand { get; }
-        public WorldObjectDialog(Window owner, WorldMap map, Action addWorldObject) : base(owner)
+        public WorldObjectDialog(Window owner, WorldMap map) : base(owner)
         {
             Map = map;
-            AddWorldObjectCommand = new RelayCommand(addWorldObject);
             InitializeComponent();
+        }
+
+        [RelayCommand]
+        private void OnAddWorldObject()
+        {
+            Map.WorldObjects.Add(new(WotGridItem.WotTypes.FirstOrDefault(), 0, 0, 0));
         }
 
         private void RemoveWorldObject_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedWorldObject != null)
             {
-                SelectedWorldObject.Remove?.Invoke();
                 Map.WorldObjects.Remove(SelectedWorldObject);
                 SelectedWorldObject = null;
             }

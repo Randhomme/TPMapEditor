@@ -2,7 +2,7 @@
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldObject : DefaultElement
+    public partial class WorldObject : ObservableObject
     {
         [ObservableProperty]
         private int id;
