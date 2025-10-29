@@ -31,6 +31,8 @@ namespace TPMapEditor
     {
         private Point moveActionPoint;
         private AppSettings settings;
+        [ObservableProperty]
+        private object? selectedObject;
         
         public WorldMap Map { get; }
         public WotGridItem? WotGridSelectedItem { get; set; }
@@ -214,22 +216,145 @@ namespace TPMapEditor
             }
         }
 
-
-
-        #endregion
-
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            if (!ctrlPressed)
+                return;
             double zoomSpeed = 0.1;
             double zoom = e.Delta > 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
 
             ZoomTransform.ScaleX *= zoom;
             ZoomTransform.ScaleY *= zoom;
+
+            e.Handled = true;
+        }
+
+        #endregion
+
+        #region WorldObject
+
+        //wot radio button checked
+        private void WotRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowWotElements();
+        }
+
+        //wot radio button unchecked
+        private void WotRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HideWotElements();
+        }
+
+        private void ShowWotElements()
+        {
+            WotGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(WorldObjectItemsControl, 1);
+            WorldObjectItemsControl.Opacity = 1;
+            WorldObjectItemsControl.IsEnabled = true;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].BorderBrush = Brushes.OrangeRed;
+            //if (SelectedWot != null)
+            //    SelectedWot.BorderBrush = Brushes.Orange;
+            //MoveCheckBox.Checked += RadioButton_Checked_5;
+            //MoveCheckBox.Unchecked += RadioButton_Unchecked_5;
+            //if (MoveCheckBox.IsChecked == true)
+            //    MoveWotRadioButtonChecked();
+            //MapGrid.MouseMove += WotCanvas_MouseMove;
+            //DeleteButton.Click += Button_Click_1;
+        }
+
+        private void HideWotElements()
+        {
+            //wotPreview.Visibility = Visibility.Collapsed;
+            WotDataGrid.SelectedItems.Clear();
+            WotGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(WorldObjectItemsControl, 0);
+            WorldObjectItemsControl.Opacity = 0.5;
+            WorldObjectItemsControl.IsEnabled = false;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].BorderBrush = Brushes.Transparent;
+            //MoveCheckBox.Checked -= RadioButton_Checked_5;
+            //MoveCheckBox.Unchecked -= RadioButton_Unchecked_5;
+            //if (MoveCheckBox.IsChecked == true)
+            //    MoveWotRadioButtonUnchecked();
+            //MapGrid.MouseMove -= WotCanvas_MouseMove;
+            //DeleteButton.Click -= Button_Click_1;
+        }
+
+        #endregion
+
+        #region Player
+
+        //player radio button checked
+        private void PlayerRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowPlayerElements();
+        }
+
+        //player radio button unchecked
+        private void PlayerRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            HidePlayerElements();
+        }
+
+        private void ShowPlayerElements()
+        {
+            PlayerGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(PlayerItemsControl, 1);
+            PlayerItemsControl.Opacity = 1;
+            PlayerItemsControl.IsEnabled = true;
+            //for (var i = 0; i < SelectedPlayers.Count; i++)
+            //    SelectedPlayers[i].BorderBrush = Brushes.OrangeRed;
+            //if (SelectedPlayer != null)
+            //    SelectedPlayer.BorderBrush = Brushes.Orange;
+            //MoveCheckBox.Checked += RadioButton_Checked_7;
+            //MoveCheckBox.Unchecked += RadioButton_Unchecked_7;
+            //if (MoveCheckBox.IsChecked == true)
+            //    MovePlayerRadioButtonChecked();
+            //MapGrid.MouseMove += PlayerCanvas_MouseMove;
+            //DeleteButton.Click += Button_Click;
+        }
+
+        private void HidePlayerElements()
+        {
+            AddPlayerCheckBox.IsChecked = false;
+            PlayerGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(PlayerItemsControl, 0);
+            PlayerItemsControl.Opacity = 0.5;
+            PlayerItemsControl.IsEnabled = false;
+            //for (var i = 0; i < SelectedPlayers.Count; i++)
+            //    SelectedPlayers[i].BorderBrush = Brushes.Transparent;
+            //MoveCheckBox.Checked -= RadioButton_Checked_7;
+            //MoveCheckBox.Unchecked -= RadioButton_Unchecked_7;
+            //if (MoveCheckBox.IsChecked == true)
+            //    MovePlayerRadioButtonUnchecked();
+            //MapGrid.MouseMove -= PlayerCanvas_MouseMove;
+            //DeleteButton.Click -= Button_Click;
+        }
+
+        #endregion
+
+        private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
+            {
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                if (!ctrlPressed)
+                {
+                    foreach (var p in Map.WorldObjects)
+                        p.IsSelected = false;
+                }
+
+                clickedObject.IsSelected = !clickedObject.IsSelected;
+                e.Handled = true;
+            }
         }
 
         private void OnPlayerClicked(object sender, MouseButtonEventArgs e)
         {
-            if (sender is FrameworkElement element && element.DataContext is Player clickedPlayer)
+            if (sender is FrameworkElement element && element.DataContext is Player clickedObject)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
@@ -239,7 +364,7 @@ namespace TPMapEditor
                         p.IsSelected = false;
                 }
 
-                clickedPlayer.IsSelected = !clickedPlayer.IsSelected;
+                clickedObject.IsSelected = !clickedObject.IsSelected;
                 e.Handled = true;
             }
         }

@@ -15,6 +15,7 @@
         Title="TPMapEditor" Height="500" Width="1000" Closing="Window_Closing" Closed="Window_Closed" WindowState="Maximized" UseLayoutRounding="True" ContentRendered="Window_ContentRendered">
     <Window.Resources>
         <converter:TeamNameConverter x:Key="teamNameConverter"/>
+        <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -69,10 +70,10 @@
                     <Rectangle Width="1" Fill="Gray" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
-                    <RadioButton x:Name="WotRadioButton" Width="95" Height="25" Margin="0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="WotRadioButton" Width="95" Height="25" Margin="0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WotRadioButton_Checked" Unchecked="WotRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World object"/>
                     </RadioButton>
-                    <RadioButton x:Name="PlayerRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="PlayerRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PlayerRadioButton_Checked" Unchecked="PlayerRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Player"/>
                     </RadioButton>
                     <RadioButton x:Name="PathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
@@ -106,35 +107,117 @@
                 <Grid x:Name="MapGrid" Background="DarkGray">
                     <Viewbox Stretch="Uniform" StretchDirection="Both" MouseWheel="Viewbox_MouseWheel">
                         <Grid Margin="150" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
-                            <Grid.RenderTransform>
+                            <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
-                            </Grid.RenderTransform>
-                            <ItemsControl ItemsSource="{Binding Map.Players}">
+                            </Grid.LayoutTransform>
+
+                            <!-- WorldObjects -->
+                            <ItemsControl x:Name="WorldObjectItemsControl" ItemsSource="{Binding Map.WorldObjects}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
-
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
-                                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                        <Setter Property="Canvas.Left">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                    <Binding Path="X" />
+                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Canvas.Top">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                    <Binding Path="Y" />
+                                                    <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
                                     </Style>
                                 </ItemsControl.ItemContainerStyle>
-
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border x:Name="border"
-                                            Width="30" Height="30"
-                                            BorderThickness="2"
+                                            Padding="0"
+                                            BorderThickness="5"
                                             BorderBrush="Transparent"
-                                            Background="LightGray"
-                                            CornerRadius="5"
-                                            MouseLeftButtonDown="OnPlayerClicked">
-                                            <Ellipse Fill="Red"/>
+                                            RenderTransformOrigin="0.5,0.5"
+                                            MouseLeftButtonDown="OnWorldObjectClicked">
+                                            <Border.RenderTransform>
+                                                <RotateTransform Angle="{Binding ZRotation}"/>
+                                            </Border.RenderTransform>
+                                            <Border BorderThickness="2.5">
+                                                <Border.BorderBrush>
+                                                    <SolidColorBrush Color="{Binding Group.Color}"/>
+                                                </Border.BorderBrush>
+                                                <Image Source="{Binding Type.Image}"/>
+                                            </Border>
                                         </Border>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
+                            <!-- Players -->
+                            <ItemsControl x:Name="PlayerItemsControl" ItemsSource="{Binding Map.Players}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="Canvas.Left">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                    <Binding Path="X" />
+                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Canvas.Top">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                    <Binding Path="Y" />
+                                                    <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="border"
+                                            Padding="0"
+                                            BorderThickness="2.5"
+                                            BorderBrush="Transparent"
+                                            CornerRadius="90"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            MouseLeftButtonDown="OnPlayerClicked">
+                                            <Border.RenderTransform>
+                                                <RotateTransform Angle="{Binding Rotation}"/>
+                                            </Border.RenderTransform>
+                                            <Grid>
+                                                <Ellipse>
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                                <Ellipse>
+                                                    <Ellipse.Fill>
+                                                        <SolidColorBrush Color="{Binding Color}"/>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                                <Image Source="/Images/Player.png"/>
+                                            </Grid>
+                                        </Border>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                 <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
