@@ -197,13 +197,12 @@
                                         <Border x:Name="border"
                                             BorderThickness="5"
                                             BorderBrush="Transparent"
-                                            CornerRadius="90"
                                             RenderTransformOrigin="0.5,0.5"
                                             MouseLeftButtonDown="OnPlayerClicked">
                                             <Border.RenderTransform>
                                                 <RotateTransform Angle="{Binding Rotation}"/>
                                             </Border.RenderTransform>
-                                            <Grid Margin="5">
+                                            <Grid>
                                                 <Ellipse>
                                                     <Ellipse.Fill>
                                                         <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
@@ -214,7 +213,7 @@
                                                         <SolidColorBrush Color="{Binding Color}"/>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
-                                                <Image Source="/Images/Player.png"/>
+                                                <Image Source="/Images/Player.png" Margin="5"/>
                                             </Grid>
                                         </Border>
                                         <DataTemplate.Triggers>
