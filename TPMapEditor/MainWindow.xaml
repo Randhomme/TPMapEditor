@@ -195,8 +195,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border x:Name="border"
-                                            Padding="0"
-                                            BorderThickness="2.5"
+                                            BorderThickness="5"
                                             BorderBrush="Transparent"
                                             CornerRadius="90"
                                             RenderTransformOrigin="0.5,0.5"
@@ -204,7 +203,7 @@
                                             <Border.RenderTransform>
                                                 <RotateTransform Angle="{Binding Rotation}"/>
                                             </Border.RenderTransform>
-                                            <Grid>
+                                            <Grid Margin="5">
                                                 <Ellipse>
                                                     <Ellipse.Fill>
                                                         <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
