@@ -14,6 +14,8 @@ namespace TPMapEditor.Data
         private Group? group;
         [ObservableProperty]
         private Player? player;
+        [ObservableProperty]
+        private bool isSelected;
 
         public WorldObject(WotGridItem type, double x, double y, double zRotation)
         {
