@@ -171,6 +171,9 @@ namespace TPMapEditor.Data
                     //WorldObject List section
                     ReadWorldObjectList(reader, map);
 
+                    //GameSpecific section
+                    ReadGameSpecificSection(reader, map);
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -399,6 +402,26 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read FleetAI section."); }
         }
 
+        private static void ReadGameSpecificSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("GameSpecific"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("GameSpecific section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read GameSpecific section."); }
+        }
+
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
         {
             var line = reader.ReadLine().Trim();
@@ -470,7 +493,7 @@ namespace TPMapEditor.Data
         private static Vector3 GetEulerXYZ(Vector3 X, Vector3 Y, Vector3 Z)
         {
             // Build the rotation matrix from basis vectors
-            // Columns correspond to local X, Y, Z axes
+            // Lines correspond to local X, Y, Z axes
             Matrix4x4 m = new Matrix4x4(
                 X.X, X.Y, X.Z, 0,
                 Y.X, Y.Y, Y.Z, 0,
