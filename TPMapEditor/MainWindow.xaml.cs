@@ -84,10 +84,11 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnMapSizeEdit()
         {
-            var msd = new MapSizeDialog(this, Map.Size);
+            var msd = new MapSizeDialog(this, Map.Size, Map.ZSize);
             if (msd.ShowDialog() == true)
             {
                 Map.Size = msd.Size;
+                Map.ZSize = msd.ZSize;
             }
         }
 
@@ -232,7 +233,7 @@ namespace TPMapEditor
 
             double absoluteX = MapScrollViewer.HorizontalOffset + mousePos.X;
             double absoluteY = MapScrollViewer.VerticalOffset + mousePos.Y;
-            double realScale = MapViewBox.ActualWidth / (Map.Size + 300);
+            double realScale = MapViewBox.ActualWidth / MapGrid.ActualWidth;
             double newScale = realScale * scale;
 
             ZoomTransform.ScaleX = newScale;
