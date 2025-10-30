@@ -104,7 +104,7 @@
             
             <!-- Column 0 -->
             <ScrollViewer x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both" SizeChanged="MapGridInside_SizeChanged">
+                <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
                     <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel">
                         <Grid.LayoutTransform>
                             <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />

@@ -221,32 +221,26 @@ namespace TPMapEditor
             bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
             if (!ctrlPressed)
                 return;
+
             if (e.Delta < 0 && MapScrollViewer.ScrollableHeight == 0 && MapScrollViewer.ScrollableWidth == 0)
                 return;
+
             const double zoomFactor = 1.1;
             double scale = (e.Delta > 0) ? zoomFactor : 1 / zoomFactor;
 
-            // Position du pointeur dans le ScrollViewer
             Point mousePos = e.GetPosition(MapScrollViewer);
 
-            // Position relative au contenu (avant zoom)
             double absoluteX = MapScrollViewer.HorizontalOffset + mousePos.X;
             double absoluteY = MapScrollViewer.VerticalOffset + mousePos.Y;
-
-            // Appliquer le zoom
             double realScale = MapViewBox.ActualWidth / (Map.Size + 300);
             double newScale = realScale * scale;
-            //if (newScale < 0.1)
-            //    return;
 
             ZoomTransform.ScaleX = newScale;
             ZoomTransform.ScaleY = newScale;
 
-            // Calculer les nouvelles positions après zoom
             double newAbsoluteX = absoluteX * scale;
             double newAbsoluteY = absoluteY * scale;
 
-            // Déplacer le ScrollViewer pour garder le point sous la souris fixe
             MapScrollViewer.ScrollToHorizontalOffset(newAbsoluteX - mousePos.X);
             MapScrollViewer.ScrollToVerticalOffset(newAbsoluteY - mousePos.Y);
 
