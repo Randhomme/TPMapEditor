@@ -153,8 +153,25 @@ namespace TPMapEditor.Data
                 var line = reader.ReadLine().Trim();
                 if (line.EndsWith("World"))
                 {
-                    for (int i = 0; i < 6; i++)
-                        reader.ReadLine();
+                    reader.ReadLine(); //start of section
+
+                    //WorldName and Random Seed (both unused)
+                    reader.ReadLine();
+                    reader.ReadLine();
+
+                    //World Size - Min Vector3
+                    var worldSizeMin = reader.ReadAndParseVector3("World Size - Min Vector3");
+
+                    //World Size - Max Vector3
+                    var worldSizeMax = reader.ReadAndParseVector3("World Size - Max Vector3");
+
+                    var size = (int)(worldSizeMax.X - worldSizeMin.X);
+                    map.Size = size < 0 ? -size : size;
+                    var zSize = (int)(worldSizeMax.Z - worldSizeMin.Z);
+                    map.ZSize = zSize < 0 ? -zSize : zSize;
+
+                    //Player List Comment
+                    reader.ReadLine();
 
                     //Player List Size
                     var playerListSize = reader.ReadAndParseInt("PlayerList Int ");
@@ -452,7 +469,7 @@ namespace TPMapEditor.Data
                     {
                         try
                         {
-
+                            ReadWaypointPathInfoVectorElementSection(reader, map);
                         }
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read Waypoint Path Info section number {i} : {ex.Message}", ex); }
                     }
@@ -475,7 +492,18 @@ namespace TPMapEditor.Data
                 {
                     reader.ReadLine(); //start of section
 
-                    
+                    var waypointPath = new WaypointPath(reader.ReadAndParseString("Waypoint Path Name String "), map);
+
+                    //Waypoint Path Points - Size
+                    var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
+
+                    for(int i = 0; i < waypointPathPointsCount; i++)
+                    {
+                        var vector = reader.ReadAndParseVector3("Waypoint Path Points - Element Vector3");
+                        waypointPath.Points.Add(new(vector.X, vector.Y, vector.Z));
+                    }
+
+                    map.WaypointPaths.Add(waypointPath);
 
                     reader.ReadLine(); //end of section
                 }
