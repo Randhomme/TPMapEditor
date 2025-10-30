@@ -7,16 +7,21 @@
         xmlns:TPMapEditor="clr-namespace:TPMapEditor"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="Map size" Height="210" Width="430">
+        Title="Map size" Height="250" Width="430">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Content="Size" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <TextBox x:Name="TextSize" Margin="3,30,0,0" Height="22" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <Slider x:Name="SliderSize" Value="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Margin="3,60,3,0" VerticalAlignment="Top" Maximum="6000" SmallChange="1" TickFrequency="2" ValueChanged="SliderSize_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel>
+            <Label Margin="-5,0,0,0" Content="Size" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <TextBox x:Name="TextSize" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Slider Margin="0,5,0,0" x:Name="SliderSize" Value="{Binding Size, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Maximum="6000" SmallChange="1" TickFrequency="2" ValueChanged="SliderSize_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
+            <Label Margin="-5,5,0,0" Content="Z Size" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <TextBox x:Name="TextZSize" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Slider Margin="0,5,0,0" x:Name="SliderZSize" Value="{Binding ZSize, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Maximum="6000" SmallChange="1" TickFrequency="2" ValueChanged="SliderZSize_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button Content="Save" Margin="0,0,15,0" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
             <Button Content="Cancel" MinWidth="85" IsCancel="True" Click="CancelButton_Click"/>
         </StackPanel>

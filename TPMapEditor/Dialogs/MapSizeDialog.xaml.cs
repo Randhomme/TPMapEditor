@@ -10,11 +10,12 @@ namespace TPMapEditor.Dialogs
     public partial class MapSizeDialog : DialogWindow
     {
         [ObservableProperty]
-        private int size;
+        private int size, zSize;
 
-        public MapSizeDialog(Window owner, int size) : base(owner)
+        public MapSizeDialog(Window owner, int size, int zSize) : base(owner)
         {
             this.size = size;
+            this.zSize = zSize;
             InitializeComponent();
             DataContext = this;
         }
@@ -23,6 +24,12 @@ namespace TPMapEditor.Dialogs
         {
             var sliderValue = SliderSize.Value;
             TextSize.Text = sliderValue + " x " + sliderValue;
+        }
+
+        private void SliderZSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var sliderZValue = SliderZSize.Value;
+            TextZSize.Text = sliderZValue + " x " + sliderZValue;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isMultiplayer, isCampaign, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds;
         [ObservableProperty]
-        private int size, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
+        private int size, zSize, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
         [ObservableProperty]
         private string worldName, worldDescription, customName, customDescription, starmapTexture, skybox, journalMusic;
         [ObservableProperty]
@@ -54,6 +54,7 @@ namespace TPMapEditor.Data
             starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
             journalMusic = AppSettings.Musics.FirstOrDefault();
             size = 2500;
+            zSize = 1500;
             WorldObjects = new ObservableCollection<WorldObject>();
             Teams = new ObservableCollection<Team>();
             Players = new ObservableCollection<Player>();
