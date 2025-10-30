@@ -221,11 +221,34 @@ namespace TPMapEditor
             bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
             if (!ctrlPressed)
                 return;
-            double zoomSpeed = 0.1;
-            double zoom = e.Delta > 0 ? 1 + zoomSpeed : 1 - zoomSpeed;
+            if (e.Delta < 0 && MapScrollViewer.ScrollableHeight == 0 && MapScrollViewer.ScrollableWidth == 0)
+                return;
+            const double zoomFactor = 1.1;
+            double scale = (e.Delta > 0) ? zoomFactor : 1 / zoomFactor;
 
-            ZoomTransform.ScaleX *= zoom;
-            ZoomTransform.ScaleY *= zoom;
+            // Position du pointeur dans le ScrollViewer
+            Point mousePos = e.GetPosition(MapScrollViewer);
+
+            // Position relative au contenu (avant zoom)
+            double absoluteX = MapScrollViewer.HorizontalOffset + mousePos.X;
+            double absoluteY = MapScrollViewer.VerticalOffset + mousePos.Y;
+
+            // Appliquer le zoom
+            double realScale = MapViewBox.ActualWidth / (Map.Size + 300);
+            double newScale = realScale * scale;
+            //if (newScale < 0.1)
+            //    return;
+
+            ZoomTransform.ScaleX = newScale;
+            ZoomTransform.ScaleY = newScale;
+
+            // Calculer les nouvelles positions après zoom
+            double newAbsoluteX = absoluteX * scale;
+            double newAbsoluteY = absoluteY * scale;
+
+            // Déplacer le ScrollViewer pour garder le point sous la souris fixe
+            MapScrollViewer.ScrollToHorizontalOffset(newAbsoluteX - mousePos.X);
+            MapScrollViewer.ScrollToVerticalOffset(newAbsoluteY - mousePos.Y);
 
             e.Handled = true;
         }
@@ -282,6 +305,23 @@ namespace TPMapEditor
             //DeleteButton.Click -= Button_Click_1;
         }
 
+        private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
+            {
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                if (!ctrlPressed)
+                {
+                    foreach (var p in Map.WorldObjects)
+                        p.IsSelected = false;
+                }
+
+                clickedObject.IsSelected = !clickedObject.IsSelected;
+                e.Handled = true;
+            }
+        }
+
         #endregion
 
         #region Player
@@ -333,25 +373,6 @@ namespace TPMapEditor
             //DeleteButton.Click -= Button_Click;
         }
 
-        #endregion
-
-        private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
-            {
-                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-                if (!ctrlPressed)
-                {
-                    foreach (var p in Map.WorldObjects)
-                        p.IsSelected = false;
-                }
-
-                clickedObject.IsSelected = !clickedObject.IsSelected;
-                e.Handled = true;
-            }
-        }
-
         private void OnPlayerClicked(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement element && element.DataContext is Player clickedObject)
@@ -368,5 +389,7 @@ namespace TPMapEditor
                 e.Handled = true;
             }
         }
+
+        #endregion
     }
 }

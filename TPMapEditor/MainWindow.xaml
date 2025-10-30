@@ -103,13 +103,13 @@
             </Grid.ColumnDefinitions>
             
             <!-- Column 0 -->
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Grid x:Name="MapGrid" Background="DarkGray">
-                    <Viewbox Stretch="Uniform" StretchDirection="Both" MouseWheel="Viewbox_MouseWheel">
-                        <Grid Margin="150" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
-                            <Grid.LayoutTransform>
-                                <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
-                            </Grid.LayoutTransform>
+            <ScrollViewer x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both" SizeChanged="MapGridInside_SizeChanged">
+                    <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel">
+                        <Grid.LayoutTransform>
+                            <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
+                        </Grid.LayoutTransform>
+                        <Grid Name="MapGridInside" Margin="150" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}" >
 
                             <!-- WorldObjects -->
                             <ItemsControl x:Name="WorldObjectItemsControl" ItemsSource="{Binding Map.WorldObjects}">
@@ -128,7 +128,7 @@
                                                 </MultiBinding>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="Canvas.Top">
+                                        <Setter Property="Canvas.Bottom">
                                             <Setter.Value>
                                                 <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
                                                     <Binding Path="Y" />
@@ -141,7 +141,6 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border x:Name="border"
-                                            Padding="0"
                                             BorderThickness="5"
                                             BorderBrush="Transparent"
                                             RenderTransformOrigin="0.5,0.5"
@@ -182,7 +181,7 @@
                                                 </MultiBinding>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="Canvas.Top">
+                                        <Setter Property="Canvas.Bottom">
                                             <Setter.Value>
                                                 <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
                                                     <Binding Path="Y" />
@@ -225,8 +224,8 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Grid>
-                    </Viewbox>
-                </Grid>
+                    </Grid>
+                </Viewbox>
             </ScrollViewer>
 
             <!-- Column 1 (right) -->
