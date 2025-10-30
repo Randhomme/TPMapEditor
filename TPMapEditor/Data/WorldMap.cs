@@ -53,7 +53,7 @@ namespace TPMapEditor.Data
             skybox = AppSettings.Meshes.FirstOrDefault();
             starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
             journalMusic = AppSettings.Musics.FirstOrDefault();
-            size = 3500;
+            size = 2500;
             WorldObjects = new ObservableCollection<WorldObject>();
             Teams = new ObservableCollection<Team>();
             Players = new ObservableCollection<Player>();
