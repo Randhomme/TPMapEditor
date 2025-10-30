@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using TPMapEditor.Enums;
 using TPMapEditor.Exceptions;
+using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
@@ -411,7 +412,96 @@ namespace TPMapEditor.Data
                 {
                     reader.ReadLine(); //start of section
 
+                    //World Description
+                    reader.ReadLine();
+
+                    //World Name
+                    reader.ReadLine();
+
+                    //Effect Event Keeper section
+                    ReadEffectEventKeeperSection(reader, map);
+
+                    //Skybox mesh
+                    var skyboxMeshString = reader.ReadAndParseString("Skybox mesh name String ");
+                    map.Skybox = AppSettings.Meshes.FirstOrDefault((meshString) => meshString == skyboxMeshString);
+
+                    //Ambient Light
+                    map.AmbientLightColor = reader.ReadAndParseColor("Ambient Light Colour");
+
+                    var roofLightOrientationVector = reader.ReadAndParseVector3("Vector for roof light orientation ");
+                    (int rloYaw, int rloPitch) = GetYawPitch(roofLightOrientationVector);
+                    map.RoofLightOrientationYaw = rloYaw;
+                    map.RoofLightOrientationPitch = rloPitch;
+
+                    //Hemispherical floor light color
+                    map.FloorLightColor = reader.ReadAndParseColor("Hemispherical floor light color Colour");
+
+                    //Hemispherical roof light color
+                    map.RoofLightColor = reader.ReadAndParseColor("Hemispherical roof light color Colour");
+
+                    //World Initialized State (skip for now)
+                    reader.ReadLine();
+
+                    //World Buffer (skip for now, no idea how it's used)
+                    reader.ReadLine();
+
+                    //Waypoint Path Info Vector - Size Int 
+                    var waypointPathCount = reader.ReadAndParseInt("Waypoint Path Info Vector - Size Int ");
+
+                    for(int i = 0; i < waypointPathCount; i++)
+                    {
+                        try
+                        {
+
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Waypoint Path Info section number {i} : {ex.Message}", ex); }
+                    }
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("GameSpecific section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read GameSpecific section."); }
+        }
+
+        private static void ReadWaypointPathInfoVectorElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Waypoint Path Info Vector - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
                     
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Waypoint Path Info Vector - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Waypoint Path Info Vector - Element section."); }
+        }
+
+        private static void ReadEffectEventKeeperSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Effect Event Keeper"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    //NumEffectEventInfoChunks
+                    var numEffectEvent = reader.ReadAndParseInt("NumEffectEventInfoChunks Int ");
+
+                    //EffectEventInfo (skip for now)
+                    for (int i = 0; i < numEffectEvent; i++)
+                        for (int j = 0; j < 5; j++)
+                            reader.ReadLine();
 
                     reader.ReadLine(); //end of section
                 }
@@ -451,7 +541,7 @@ namespace TPMapEditor.Data
             float.TryParse(values[1], out var g);
             float.TryParse(values[2], out var b);
             float.TryParse(values[3], out var a);
-            return Color.FromScRgb(a, r, g, b);
+            return Color.FromArgb((byte)(a * 255f), (byte)(r * 255f), (byte)(g * 255f), (byte)(b * 255f));
         }
 
         private static Vector3 ReadAndParseVector3(this StreamReader reader, string prefix)
@@ -527,6 +617,37 @@ namespace TPMapEditor.Data
                 (float)Math.Round(y * 180.0 / Math.PI),
                 (float)Math.Round(z * 180.0 / Math.PI)
             );
+        }
+
+        /// <summary>
+        /// Y forward and Z up (just to remember)
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        private static (int yaw, int pitch) GetYawPitch(Vector3 dir)
+        {
+            dir = Vector3.Normalize(dir);
+
+            double yaw = Math.Atan2(dir.X, dir.Y);  // rotate around Z (horizontal)
+            double pitch = Math.Asin(-dir.Z);         // rotate around X (vertical)
+
+            yaw *= 180f / Math.PI;
+            pitch *= 180f / Math.PI;
+
+            yaw = NormalizeAngle(yaw);
+
+            int yawInt = (int)Math.Round(yaw);
+            int pitchInt = (int)Math.Round(pitch);
+
+            return (yawInt, pitchInt);
+        }
+
+        private static double NormalizeAngle(double angle)
+        {
+            angle = angle % 360f;
+            if (angle >= 180f) angle -= 360f;
+            if (angle < -180f) angle += 360f;
+            return angle;
         }
     }
 }
