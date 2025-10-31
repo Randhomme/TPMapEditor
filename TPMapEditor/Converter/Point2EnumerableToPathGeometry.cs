@@ -4,32 +4,32 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using TPMapEditor.Data;
 
 namespace TPMapEditor.Converter
 {
-    public class WaypointPathPointsToPathGeometry : IValueConverter
+    public class Point2EnumerableToPathGeometry : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is ObservableCollection<WaypointPathPoint> points && points.Count > 0)
+            if (value is IEnumerable<Point2> points)
             {
+                var count = points.Count();
                 var pathGeometry = new PathGeometry();
+                if (count == 0)
+                    return pathGeometry;
 
                 var pathFigure = new PathFigure();
                 pathGeometry.Figures.Add(pathFigure);
 
-                BindingOperations.SetBinding(pathFigure, PathFigure.StartPointProperty, new Binding("Point") { Source = points[0].Point });
+                BindingOperations.SetBinding(pathFigure, PathFigure.StartPointProperty, new Binding("Point") { Source = points.First() });
 
-                for (int i = 1; i < points.Count; i++)
+                foreach(var p in points.Skip(1))
                 {
                     var lineSegment = new LineSegment();
-                    BindingOperations.SetBinding(lineSegment, LineSegment.PointProperty, new Binding("Point") { Source = points[i].Point });
+                    BindingOperations.SetBinding(lineSegment, LineSegment.PointProperty, new Binding("Point") { Source = p });
                     pathFigure.Segments.Add(lineSegment);
                 }
 

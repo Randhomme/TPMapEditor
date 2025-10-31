@@ -7,19 +7,16 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Data
 {
-    public partial class WaypointPathPoint : ObservableObject
+    public partial class WaypointPathPoint : Point3
     {
-        [ObservableProperty]
-        private Point3 point;
         [ObservableProperty]
         private bool isSelected;
         [ObservableProperty]
         private WaypointPath parent;
 
-        public WaypointPathPoint(WaypointPath parent, double x, double y, double z)
+        public WaypointPathPoint(WaypointPath parent, double x, double y, double z) : base(x, y, z)
         {
-            this.parent = parent;
-            this.point = new(x, y, z);
+            this.parent = parent;   
         }
     }
 }
