@@ -474,6 +474,17 @@ namespace TPMapEditor.Data
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read Waypoint Path Info section number {i} : {ex.Message}", ex); }
                     }
 
+                    //World Polygons Vectors - Size
+                    var worldPolygonCount = reader.ReadAndParseInt("World Polygons Vectors - Size Int ");
+                    for(int i = 0; i < worldPolygonCount; i++)
+                    {
+                        try
+                        {
+                            ReadWorldPolygonVectorsSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Polygon section number {i} : {ex.Message}", ex); }
+                    }
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -481,37 +492,6 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read GameSpecific section."); }
-        }
-
-        private static void ReadWaypointPathInfoVectorElementSection(StreamReader reader, WorldMap map)
-        {
-            try
-            {
-                var line = reader.ReadLine().Trim();
-                if (line.EndsWith("Waypoint Path Info Vector - Element"))
-                {
-                    reader.ReadLine(); //start of section
-
-                    var waypointPath = new WaypointPath(reader.ReadAndParseString("Waypoint Path Name String "), map);
-
-                    //Waypoint Path Points - Size
-                    var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
-
-                    for(int i = 0; i < waypointPathPointsCount; i++)
-                    {
-                        var vector = reader.ReadAndParseVector3("Waypoint Path Points - Element Vector3");
-                        waypointPath.Points.Add(new(waypointPath, vector.X, vector.Y, vector.Z));
-                    }
-
-                    map.WaypointPaths.Add(waypointPath);
-
-                    reader.ReadLine(); //end of section
-                }
-                else
-                    throw new TPMapEditorException("Waypoint Path Info Vector - Element section not found at the exepected position.");
-            }
-            catch (TPMapEditorException) { throw; }
-            catch { throw new Exception("Fail to read Waypoint Path Info Vector - Element section."); }
         }
 
         private static void ReadEffectEventKeeperSection(StreamReader reader, WorldMap map)
@@ -538,6 +518,68 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read GameSpecific section."); }
+        }
+
+        private static void ReadWaypointPathInfoVectorElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Waypoint Path Info Vector - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var waypointPath = new WaypointPath(reader.ReadAndParseString("Waypoint Path Name String "), map);
+
+                    //Waypoint Path Points - Size
+                    var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
+
+                    for (int i = 0; i < waypointPathPointsCount; i++)
+                    {
+                        var vector = reader.ReadAndParseVector3("Waypoint Path Points - Element Vector3");
+                        waypointPath.Points.Add(new(waypointPath, vector.X, vector.Y, vector.Z));
+                    }
+
+                    map.WaypointPaths.Add(waypointPath);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Waypoint Path Info Vector - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Waypoint Path Info Vector - Element section."); }
+        }
+
+        private static void ReadWorldPolygonVectorsSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("World Polygons Vectors - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var worldPolygon = new WorldPolygon(reader.ReadAndParseString("Name String "), map);
+
+                    //Points
+                    var worldPolygonPointsCount = reader.ReadAndParseInt("Points Int ");
+
+                    for (int i = 0; i < worldPolygonPointsCount; i++)
+                    {
+                        var vector = reader.ReadAndParseVector2("Points Coord");
+                        worldPolygon.Points.Add(new(worldPolygon, vector.X, vector.Y));
+                    }
+
+                    map.WorldPolygons.Add(worldPolygon);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("World Polygons Vectors - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read World Polygons Vectors - Element section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
@@ -581,6 +623,16 @@ namespace TPMapEditor.Data
             float.TryParse(values[1], out var y);
             float.TryParse(values[2], out var z);
             return new Vector3(x, y, z);
+        }
+
+        private static Vector2 ReadAndParseVector2(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            var values = line.Split(',');
+            float.TryParse(values[0], out var x);
+            float.TryParse(values[1], out var y);
+            return new Vector2(x, y);
         }
 
         private static (Vector3 x, Vector3 y, Vector3 z) ReadAndParseMatrix33(this StreamReader reader, string prefix)

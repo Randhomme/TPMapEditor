@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace TPMapEditor.Data
@@ -8,10 +9,10 @@ namespace TPMapEditor.Data
     {
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
-        public List<Point2> Points { get; set; }
+        public ObservableCollection<WorldPolygonPoint> Points { get; set; }
         public WorldPolygon(string name, WorldMap map) : base(map, name)
         {
-            Points = new List<Point2>();
+            Points = new ObservableCollection<WorldPolygonPoint>();
             this.color = Colors.Black;
         }
 
