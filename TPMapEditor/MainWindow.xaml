@@ -16,7 +16,7 @@
     <Window.Resources>
         <converter:TeamNameConverter x:Key="teamNameConverter"/>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
-        <converter:WaypointPathPointsToPathGeometry x:Key="PathGeometryConverter"/>
+        <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -258,7 +258,7 @@
                                                         <Setter Property="Canvas.Left">
                                                             <Setter.Value>
                                                                 <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                                    <Binding Path="Point.X" />
+                                                                    <Binding Path="X" />
                                                                     <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
                                                                 </MultiBinding>
                                                             </Setter.Value>
@@ -266,7 +266,7 @@
                                                         <Setter Property="Canvas.Bottom">
                                                             <Setter.Value>
                                                                 <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                                    <Binding Path="Point.Y" />
+                                                                    <Binding Path="Y" />
                                                                     <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
                                                                 </MultiBinding>
                                                             </Setter.Value>
@@ -548,13 +548,13 @@
                                             <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedPathPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="X">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Y">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Z">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
