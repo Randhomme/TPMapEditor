@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,23 +25,23 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Color ambientLightColor = Colors.Khaki, roofLightColor = Colors.DarkKhaki, floorLightColor = Colors.DarkKhaki;
 
-        public ObservableCollection<WorldObject> WorldObjects { get; }
-        public ObservableCollection<Team> Teams { get; }
-        public ObservableCollection<Player> Players { get; }
-        public ObservableCollection<Group> Groups { get; }
-        public ObservableCollection<WaypointPath> WaypointPaths { get; }
-        public ObservableCollection<WorldPolygon> WorldPolygons { get; }
-        public ObservableCollection<WorldPoint> WorldPoints { get; }
-        public ObservableCollection<Flag> Flags { get; }
-        public ObservableCollection<PlayerAlliance> PlayerAlliances { get; }
-        public ObservableCollection<Timer> Timers { get; }
-        public ObservableCollection<SpeechEvent> SpeechEvents { get; }
-        public ObservableCollection<WorldRule> WorldRules { get; }
-        public ObservableCollection<ShipUnit> ShipUnits { get; }
-        public ObservableCollection<ObjectivePoint> ObjectivePoints { get; }
-        public ObservableCollection<ObjectiveTask> ObjectiveTasks { get; }
-        public ObservableCollection<MapTextPoint> MapTextPoints { get; }
-        public ObservableCollection<JournalEntry> JournalEntries { get; }
+        public IList<WorldObject> WorldObjects { get; }
+        public IList<Team> Teams { get; }
+        public IList<Player> Players { get; }
+        public IList<Group> Groups { get; }
+        public IList<WaypointPath> WaypointPaths { get; }
+        public IList<WorldPolygon> WorldPolygons { get; }
+        public IList<WorldPoint> WorldPoints { get; }
+        public IList<Flag> Flags { get; }
+        public IList<PlayerAlliance> PlayerAlliances { get; }
+        public IList<Timer> Timers { get; }
+        public IList<SpeechEvent> SpeechEvents { get; }
+        public IList<WorldRule> WorldRules { get; }
+        public IList<ShipUnit> ShipUnits { get; }
+        public IList<ObjectivePoint> ObjectivePoints { get; }
+        public IList<ObjectiveTask> ObjectiveTasks { get; }
+        public IList<MapTextPoint> MapTextPoints { get; }
+        public IList<JournalEntry> JournalEntries { get; }
 
         public WorldMap()
         {
@@ -75,36 +74,6 @@ namespace TPMapEditor.Data
             JournalEntries = new ObservableCollection<JournalEntry>();
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
             ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
-
-            WaypointPaths.CollectionChanged += OnWaypointPathsChanged;
-        }
-
-        private void OnWaypointPathsChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (WaypointPath path in e.NewItems)
-                {
-                    path.Points.CollectionChanged += (_, __) => OnPointsChanged(path);
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (WaypointPath path in e.OldItems)
-                {
-                    path.Points.CollectionChanged -= (_, __) => OnPointsChanged(path);
-                }
-            }
-        }
-
-        private void OnPointsChanged(WaypointPath path)
-        {
-            // S’il n’y a plus aucun point, on retire le path
-            if (path.Points.Count == 0)
-            {
-                WaypointPaths.Remove(path);
-            }
         }
 
         public void Reset()
