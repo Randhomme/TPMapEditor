@@ -16,7 +16,7 @@
     <Window.Resources>
         <converter:TeamNameConverter x:Key="teamNameConverter"/>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
-        <converter:WaypointPathPointToPointCollectionConverter x:Key="Point3DToPointCollectionConverter"/>
+        <converter:WaypointPathPointsToPathGeometry x:Key="PathGeometryConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -67,7 +67,7 @@
                     <CheckBox x:Name="MoveCheckBox" ToolTip="Move" Margin="-1,0,0,0" Width="25" Style="{StaticResource {x:Type ToggleButton}}">
                         <Image Margin="2.5" Source="/Images/Move.png"/>
                     </CheckBox>
-                    <Button x:Name="DeleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25" Content="X" Foreground="Red"/>
+                    <Button x:Name="DeleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25" Content="X" Foreground="Red" Click="DeleteWaypointPathPointButton_Click"/>
                     <Rectangle Width="1" Fill="Gray" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
@@ -236,14 +236,15 @@
                                     <DataTemplate>
                                         <Canvas>
                                             <!-- Path -->
-                                            <Polyline
-                                                StrokeThickness="5"
-                                                Points="{Binding Points, Converter={StaticResource Point3DToPointCollectionConverter}}">
-                                                <Polyline.Stroke>
+                                            <Path StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleY="-1" CenterY="0" />
+                                                </Path.RenderTransform>
+                                                <Path.Stroke>
                                                     <SolidColorBrush Color="{Binding Color}"/>
-                                                </Polyline.Stroke>
-                                            </Polyline>
-                                            
+                                                </Path.Stroke>
+                                            </Path>
+
                                             <!-- Points -->
                                             <ItemsControl ItemsSource="{Binding Points}">
                                                 <ItemsControl.ItemsPanel>
@@ -257,7 +258,7 @@
                                                         <Setter Property="Canvas.Left">
                                                             <Setter.Value>
                                                                 <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                                    <Binding Path="X" />
+                                                                    <Binding Path="Point.X" />
                                                                     <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
                                                                 </MultiBinding>
                                                             </Setter.Value>
@@ -265,7 +266,7 @@
                                                         <Setter Property="Canvas.Bottom">
                                                             <Setter.Value>
                                                                 <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                                    <Binding Path="Y" />
+                                                                    <Binding Path="Point.Y" />
                                                                     <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
                                                                 </MultiBinding>
                                                             </Setter.Value>
@@ -275,7 +276,7 @@
 
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Border x:Name="border1" Width="20" Height="20" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWaypointPathPointClicked">
+                                                        <Border x:Name="border1" Width="30" Height="30" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWaypointPathPointClicked">
                                                             <Border.Background>
                                                                 <SolidColorBrush Color="{Binding DataContext.Color, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                                                             </Border.Background>
@@ -547,13 +548,13 @@
                                             <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedPathPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="X">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Y">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Z">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Point.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>

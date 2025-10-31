@@ -421,6 +421,11 @@ namespace TPMapEditor
             }
         }
 
+        private void DeleteWaypointPathPointButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedPathPoint?.Parent.Points.Remove(SelectedPathPoint);
+        }
+
         #endregion
     }
 }

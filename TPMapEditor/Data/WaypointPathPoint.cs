@@ -10,7 +10,7 @@ namespace TPMapEditor.Data
     public partial class WaypointPathPoint : ObservableObject
     {
         [ObservableProperty]
-        private double x, y, z;
+        private Point3 point;
         [ObservableProperty]
         private bool isSelected;
         [ObservableProperty]
@@ -19,9 +19,7 @@ namespace TPMapEditor.Data
         public WaypointPathPoint(WaypointPath parent, double x, double y, double z)
         {
             this.parent = parent;
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.point = new(x, y, z);
         }
     }
 }

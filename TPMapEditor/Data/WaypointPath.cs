@@ -13,6 +13,10 @@ namespace TPMapEditor.Data
         public WaypointPath(string name, WorldMap map) : base(map, name)
         {
             Points = new ObservableCollection<WaypointPathPoint>();
+            Points.CollectionChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(Points));
+            };
             Color = Colors.Black;
         }
 
