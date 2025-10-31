@@ -32,7 +32,11 @@ namespace TPMapEditor
         private Point moveActionPoint;
         private AppSettings settings;
         [ObservableProperty]
-        private object? selectedObject;
+        private WorldObject? selectedWorldObject;
+        [ObservableProperty]
+        private Player? selectedPlayer;
+        [ObservableProperty]
+        private WaypointPathPoint? selectedPathPoint;
         
         public WorldMap Map { get; }
         public WotGridItem? WotGridSelectedItem { get; set; }
@@ -378,6 +382,38 @@ namespace TPMapEditor
                 {
                     foreach (var p in Map.Players)
                         p.IsSelected = false;
+                }
+
+                clickedObject.IsSelected = !clickedObject.IsSelected;
+                e.Handled = true;
+            }
+        }
+
+        private void EditPlayerColor_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedPlayer != null)
+            {
+                var cp = new ColorPicker(this, SelectedPlayer.Color);
+                if (cp.ShowDialog() == true)
+                    SelectedPlayer.Color = cp.NewColor;
+            }
+        }
+
+        #endregion
+
+        #region WaypointPath
+
+        private void OnWaypointPathPointClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is WaypointPathPoint clickedObject)
+            {
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                if (!ctrlPressed)
+                {
+                    foreach (var p in clickedObject.Parent.Points)
+                        p.IsSelected = false;
+                    SelectedPathPoint = clickedObject;
                 }
 
                 clickedObject.IsSelected = !clickedObject.IsSelected;
