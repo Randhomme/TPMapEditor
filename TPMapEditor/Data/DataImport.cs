@@ -500,7 +500,7 @@ namespace TPMapEditor.Data
                     for(int i = 0; i < waypointPathPointsCount; i++)
                     {
                         var vector = reader.ReadAndParseVector3("Waypoint Path Points - Element Vector3");
-                        waypointPath.Points.Add(new(vector.X, vector.Y, vector.Z));
+                        waypointPath.Points.Add(new(waypointPath, vector.X, vector.Y, vector.Z));
                     }
 
                     map.WaypointPaths.Add(waypointPath);

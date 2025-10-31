@@ -11,9 +11,14 @@ namespace TPMapEditor.Data
     {
         [ObservableProperty]
         private double x, y, z;
+        [ObservableProperty]
+        private bool isSelected;
+        [ObservableProperty]
+        private WaypointPath parent;
 
-        public WaypointPathPoint(double x, double y, double z)
+        public WaypointPathPoint(WaypointPath parent, double x, double y, double z)
         {
+            this.parent = parent;
             this.x = x;
             this.y = y;
             this.z = z;
