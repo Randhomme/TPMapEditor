@@ -31,7 +31,7 @@ namespace TPMapEditor.Data
         public IList<Group> Groups { get; }
         public IList<WaypointPath> WaypointPaths { get; }
         public IList<WorldPolygon> WorldPolygons { get; }
-        public IList<WorldPoint> WorldPoints { get; }
+        public IList<WorldPointSet> WorldPointSets { get; }
         public IList<Flag> Flags { get; }
         public IList<PlayerAlliance> PlayerAlliances { get; }
         public IList<Timer> Timers { get; }
@@ -61,7 +61,7 @@ namespace TPMapEditor.Data
             Groups = new ObservableCollection<Group>();
             WaypointPaths = new ObservableCollection<WaypointPath>();
             WorldPolygons = new ObservableCollection<WorldPolygon>();
-            WorldPoints = new ObservableCollection<WorldPoint>();
+            WorldPointSets = new ObservableCollection<WorldPointSet>();
             Flags = new ObservableCollection<Flag>();
             PlayerAlliances = new ObservableCollection<PlayerAlliance>();
             Timers = new ObservableCollection<Timer>();
@@ -104,7 +104,7 @@ namespace TPMapEditor.Data
             Groups.Clear();
             WaypointPaths.Clear();
             WorldPolygons.Clear();
-            WorldPoints.Clear();
+            WorldPointSets.Clear();
             Flags.Clear();
             PlayerAlliances.Clear();
             Timers.Clear();

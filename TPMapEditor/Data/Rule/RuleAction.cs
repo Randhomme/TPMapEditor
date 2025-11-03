@@ -220,10 +220,10 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldWorldObjectType(label, worldObjectType, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldWorldPoint(string? label = null, WorldPoint? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldWorldPointSet(string? label = null, WorldPointSet? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= map.WorldPoints.FirstOrDefault();
-            RuleFields.Add(new RuleFieldWorldPoint(label, value, isOptional, optionalLabel, isShown));
+            value ??= map.WorldPointSets.FirstOrDefault();
+            RuleFields.Add(new RuleFieldWorldPointSet(label, value, isOptional, optionalLabel, isShown));
         }
 
         partial void OnTypeChanged(Enums.RuleAction value)
@@ -260,17 +260,17 @@ namespace TPMapEditor.Data.Rule
                     AddRuleFieldObservableCollection("Has nebula cloud effect", new()
                     {
                         new RuleFieldEffect("Nebula cloud effect", AppSettings.Effects.FirstOrDefault()),
-                        new RuleFieldWorldPoint("Nebula cloud point set", map.WorldPoints.FirstOrDefault())
+                        new RuleFieldWorldPointSet("Nebula cloud point set", map.WorldPointSets.FirstOrDefault())
                     });
                     AddRuleFieldObservableCollection("Has solar storm effect", new()
                     {
                         new RuleFieldEffect("Solar storm effect", AppSettings.Effects.FirstOrDefault()),
-                        new RuleFieldWorldPoint("Solar storm point set", map.WorldPoints.FirstOrDefault())
+                        new RuleFieldWorldPointSet("Solar storm point set", map.WorldPointSets.FirstOrDefault())
                     });
                     AddRuleFieldObservableCollection("Has meteor shower effect", new()
                     {
                         new RuleFieldEffect("Meteor shower effect", AppSettings.Effects.FirstOrDefault()),
-                        new RuleFieldWorldPoint("Meteor shower point set", map.WorldPoints.FirstOrDefault())
+                        new RuleFieldWorldPointSet("Meteor shower point set", map.WorldPointSets.FirstOrDefault())
                     });
                     AddRuleFieldObservableCollection("Has rotational winds", new()
                     {
@@ -326,7 +326,7 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.CreateReleaseEventEffect:
                     RuleFields.Clear();
-                    AddRuleFieldWorldPoint("Point set");
+                    AddRuleFieldWorldPointSet("Point set");
                     AddRuleFieldEffect("Effect");
                     AddRuleFieldBool("State");
                     break;
@@ -428,7 +428,7 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.NISFocusCameraOnPoint:
                     RuleFields.Clear();
-                    AddRuleFieldWorldPoint("Point set");
+                    AddRuleFieldWorldPointSet("Point set");
                     break;
                 case Enums.RuleAction.NISFocusOnMainShip:
                     RuleFields.Clear();
@@ -588,7 +588,7 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.SetGroupUnitBorderZoneReturnPoint:
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit");
-                    AddRuleFieldWorldPoint("Return point");
+                    AddRuleFieldWorldPointSet("Return point");
                     break;
                 case Enums.RuleAction.SetGroupUnitCloakState:
                     RuleFields.Clear();
@@ -762,7 +762,7 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.TeleportGroupUnit:
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit");
-                    AddRuleFieldWorldPoint("Point set");
+                    AddRuleFieldWorldPointSet("Point set");
                     break;
                 case Enums.RuleAction.ToggleIslandRepairWhenDocked:
                     RuleFields.Clear();

@@ -295,7 +295,7 @@
         </DataTemplate>
 
         <!--WorldPoint-->
-        <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPoint}">
+        <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPointSet}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
                 <ComboBox ItemsSource="{Binding Map.WorldPoints, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
             </ContentControl>
@@ -369,7 +369,7 @@
                             </Grid.RowDefinitions>
                             <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding SelectedWorldRule.Conditions}" SelectedItem="{Binding SelectedRuleCondition}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn  Binding="{Binding Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
+                                    <DataGridTextColumn Binding="{Binding Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
                                     <DataGridTemplateColumn MinWidth="70">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
