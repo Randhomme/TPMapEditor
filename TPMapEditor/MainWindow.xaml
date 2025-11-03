@@ -48,6 +48,7 @@
                 <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
                 <MenuItem Header="Objective tasks" Command="{Binding ObjectiveTasksEditCommand}"/>
                 <MenuItem Header="Journal entries" Command="{Binding JournalEntriesEditCommand}"/>
+                <MenuItem Header="Waypoint paths" Command="{Binding WaypointPathsEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
@@ -78,19 +79,19 @@
                     <RadioButton x:Name="PlayerRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PlayerRadioButton_Checked" Unchecked="PlayerRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Player"/>
                     </RadioButton>
-                    <RadioButton x:Name="PathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="PathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PathRadioButton_Checked" Unchecked="PathRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Waypoint path"/>
                     </RadioButton>
-                    <RadioButton x:Name="PolygonRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="PolygonRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PolygonRadioButton_Checked" Unchecked="PolygonRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World polygon"/>
                     </RadioButton>
-                    <RadioButton x:Name="PointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="PointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PointRadioButton_Checked" Unchecked="PointRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World point"/>
                     </RadioButton>
-                    <RadioButton x:Name="ObjectivePointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="ObjectivePointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="ObjectivePointRadioButton_Checked" Unchecked="ObjectivePointRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Objective point"/>
                     </RadioButton>
-                    <RadioButton x:Name="MapTextPointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}">
+                    <RadioButton x:Name="MapTextPointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="MapTextPointRadioButton_Checked" Unchecked="MapTextPointRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Map text point"/>
                     </RadioButton>
                 </StackPanel>
@@ -111,8 +112,28 @@
                         <Grid.LayoutTransform>
                             <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
                         </Grid.LayoutTransform>
-                        <Grid Name="MapGridInside" Margin="150" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}" >
-
+                        <Grid Name="MapGridInside" Margin="150" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                            
+                            <!-- Preview Canvas -->
+                            <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                
+                                <!-- Preview WorldObject -->
+                                <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding 'SelectedWotGridItem!=null and WotRadioButton.IsChecked==true'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
+                                    <Border.RenderTransform>
+                                        <RotateTransform Angle="{Binding ElementName=WotSliderRotate, Path=Value}"/>
+                                    </Border.RenderTransform>
+                                    <Image Source="{Binding SelectedWotGridItem.Image}"/>
+                                </Border>
+                                
+                                <!-- Preview Player -->
+                                <Border x:Name="PlayerPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding ElementName=AddPlayerCheckBox, Path=IsChecked}" MouseLeftButtonDown="PlayerPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreviewControl_MouseRightButtonDown">
+                                    <Border.RenderTransform>
+                                        <RotateTransform Angle="{Binding ElementName=PlayerSliderRotate, Path=Value}"/>
+                                    </Border.RenderTransform>
+                                    <Image Source="/Images/Player.png"/>
+                                </Border>
+                            </Canvas>
+                            
                             <!-- WorldObjects -->
                             <ItemsControl x:Name="WorldObjectItemsControl" ItemsSource="{Binding Map.WorldObjects}">
                                 <ItemsControl.ItemsPanel>
@@ -412,7 +433,7 @@
                                             <Slider x:Name="WotSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" IsSnapToTickEnabled="True" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                         </GroupBox>
                                         <GroupBox Header="World objects" Grid.Row="1">
-                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{x:Static data:WotGridItem.WotTypes}" SelectedItem="{Binding WotGridSelectedItem}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{x:Static data:WotGridItem.WotTypes}" SelectedItem="{Binding SelectedWotGridItem}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single">
                                                 <DataGrid.Columns>
                                                     <DataGridTemplateColumn Width="60">
                                                         <DataGridTemplateColumn.CellTemplate>
