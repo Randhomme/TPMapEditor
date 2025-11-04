@@ -15,7 +15,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Player? player;
         [ObservableProperty]
-        private bool isSelected;
+        private bool isSelected, isLastSelected;
 
         public WorldObject(WotGridItem type, double x, double y, double zRotation)
         {
