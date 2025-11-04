@@ -344,7 +344,7 @@ namespace TPMapEditor
                 EnableMoveWorldObject();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
-            //DeleteButton.Click += Button_Click_1;
+            DeleteButton.Click += DeleteWorldObjectPointButton_Click;
         }
 
         private void HideWotElements()
@@ -361,7 +361,7 @@ namespace TPMapEditor
                 DisableMoveWorldObject();
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldObjectPreview_MouseMove;
-            //DeleteButton.Click -= Button_Click_1;
+            DeleteButton.Click -= DeleteWorldObjectPointButton_Click;
         }
 
         private void MapGridOutsideWorldObjectPreview_MouseMove(object sender, MouseEventArgs e)
@@ -543,16 +543,17 @@ namespace TPMapEditor
             Panel.SetZIndex(PlayerItemsControl, 1);
             PlayerItemsControl.Opacity = 1;
             PlayerItemsControl.IsEnabled = true;
-            //for (var i = 0; i < SelectedPlayers.Count; i++)
-            //    SelectedPlayers[i].BorderBrush = Brushes.OrangeRed;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].IsSelected = true;
             //if (SelectedPlayer != null)
-            //    SelectedPlayer.BorderBrush = Brushes.Orange;
-            //MoveCheckBox.Checked += RadioButton_Checked_7;
-            //MoveCheckBox.Unchecked += RadioButton_Unchecked_7;
-            //if (MoveCheckBox.IsChecked == true)
-            //    MovePlayerRadioButtonChecked();
-            MapGrid.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
-            //DeleteButton.Click += Button_Click;
+            //    SelectedPlayer.IsLastSelected = true;
+            MoveCheckBox.Checked += MovePlayerCheckBox_Checked;
+            MoveCheckBox.Unchecked += MovePlayerCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMovePlayer();
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
+            MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
+            DeleteButton.Click += DeletePlayerPointButton_Click;
         }
 
         private void HidePlayerElements()
@@ -562,30 +563,49 @@ namespace TPMapEditor
             Panel.SetZIndex(PlayerItemsControl, 0);
             PlayerItemsControl.Opacity = 0.5;
             PlayerItemsControl.IsEnabled = false;
-            //for (var i = 0; i < SelectedPlayers.Count; i++)
-            //    SelectedPlayers[i].BorderBrush = Brushes.Transparent;
-            //MoveCheckBox.Checked -= RadioButton_Checked_7;
-            //MoveCheckBox.Unchecked -= RadioButton_Unchecked_7;
-            //if (MoveCheckBox.IsChecked == true)
-            //    MovePlayerRadioButtonUnchecked();
-            MapGrid.MouseMove -= MapGridOutsidePlayerPreview_MouseMove;
-            //DeleteButton.Click -= Button_Click;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].IsSelected = false;
+            MoveCheckBox.Checked -= MovePlayerCheckBox_Checked;
+            MoveCheckBox.Unchecked -= MovePlayerCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                DisableMovePlayer();
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsidePlayer_MouseLeftButtonDown;
+            MapGridOutside.MouseMove -= MapGridOutsidePlayerPreview_MouseMove;
+            DeleteButton.Click -= DeletePlayerPointButton_Click;
         }
 
         private void OnPlayerClicked(object sender, MouseButtonEventArgs e)
         {
-            if (sender is FrameworkElement element && element.DataContext is Player clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is Player clickedObject)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
-                if (!ctrlPressed)
+                if (ctrlPressed)
                 {
-                    foreach (var p in Map.Players)
-                        p.IsSelected = false;
+                    //if already selected and current selected
+                    if (clickedObject.IsLastSelected)
+                    {
+                        RemovePlayerFromSelection(clickedObject);
+                    }
+                    //if already selected but not current selected
+                    else if (clickedObject.IsSelected)
+                    {
+                        SelectPlayerFromSelection(clickedObject);
+                    }
+                    //if not selected
+                    else
+                    {
+                        AddPlayerToSelection(clickedObject);
+                    }
+                }
+                else
+                {
+                    ClearPlayerSelection();
+                    AddPlayerToSelection(clickedObject);
                 }
 
-                clickedObject.IsSelected = !clickedObject.IsSelected;
-                e.Handled = true;
+                if (MoveCheckBox.IsChecked == false)
+                    e.Handled = true;
             }
         }
 
@@ -615,6 +635,112 @@ namespace TPMapEditor
         private void PlayerPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddPlayerCheckBox.IsChecked = false;
+        }
+
+        private void MapGridOutsidePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ClearPlayerSelection();
+        }
+
+        private void AddPlayerToSelection(Player player)
+        {
+            if (SelectedPlayer != null)
+                SelectedPlayer.IsLastSelected = false;
+            player.IsSelected = player.IsLastSelected = true;
+            SelectedPlayers.Add(player);
+            SelectedPlayer = player;
+        }
+
+        private void SelectPlayerFromSelection(Player player)
+        {
+            if (SelectedPlayer != null)
+                SelectedPlayer.IsLastSelected = false;
+            player.IsLastSelected = true;
+            SelectedPlayer = player;
+        }
+
+        private void RemovePlayerFromSelection(Player player)
+        {
+            player.IsSelected = player.IsLastSelected = false;
+            if (SelectedPlayer != null)
+                SelectedPlayers.Remove(SelectedPlayer);
+            SelectedPlayer = null;
+        }
+
+        private void ClearPlayerSelection()
+        {
+            foreach (var v in SelectedPlayers)
+            {
+                v.IsSelected = v.IsLastSelected = false;
+            }
+            SelectedPlayers.Clear();
+            SelectedPlayer = null;
+        }
+
+        private void MovePlayerCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableMovePlayer();
+        }
+
+        private void MovePlayerCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DisableMovePlayer();
+        }
+
+        private void EnableMovePlayer()
+        {
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsidePlayer_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMovePlayer_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMovePlayer_MouseLeftButtonDown;
+            MapGridOutside.Cursor = Cursors.SizeAll;
+        }
+
+        private void DisableMovePlayer()
+        {
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMovePlayer_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMovePlayer_MouseLeftButtonDown;
+            MapGridOutside.Cursor = Cursors.Arrow;
+        }
+
+        private void MapGridOutsideBeginMovePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(MapGridOutside);
+            moveActionPoint = e.GetPosition(MapGridInside);
+            MapGridOutside.MouseMove += MapGridOutsideMovePlayer_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideEndMovePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            MapGridOutside.MouseMove -= MapGridOutsideMovePlayer_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideMovePlayer_MouseMove(object sender, MouseEventArgs e)
+        {
+            var pos = e.GetPosition(MapGridInside);
+            var x = pos.X - moveActionPoint.X;
+            var y = pos.Y - moveActionPoint.Y;
+            //move wot selection
+            for (var i = 0; i < SelectedPlayers.Count; i++)
+            {
+                var selectedWot = SelectedPlayers[i];
+                selectedWot.X += x;
+                selectedWot.Y -= y;
+            }
+            moveActionPoint = pos;
+        }
+
+        private void DeletePlayerPointButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var worldObject in SelectedPlayers)
+            {
+                Map.Players.Remove(worldObject);
+            }
+            SelectedPlayers.Clear();
+            SelectedPlayer = null;
         }
 
         #endregion

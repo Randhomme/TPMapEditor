@@ -107,13 +107,13 @@
             
             <!-- Column 0 -->
             <ScrollViewer x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Grid x:Name="MapGridOutside" Background="Transparent">
+                <Grid x:Name="MapGridOutside" Background="Transparent" ClipToBounds="True">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
-                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel">
+                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="False">
                             <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
                             </Grid.LayoutTransform>
-                            <Grid Name="MapGridInside" Margin="150" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                            <Grid Name="MapGridInside" Margin="1000" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
 
                                 <!-- Preview Canvas -->
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -575,10 +575,10 @@
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider Grid.Column="1" x:Name="selectedPlayerX" Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1"/>
+                                                                <Slider Grid.Column="1" x:Name="SelectedPlayerX" Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1" Maximum="{c:Binding 'Map.Size/2'}" Minimum="{c:Binding '-Map.Size/2'}"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider Grid.Column="1" x:Name="selectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1"/>
+                                                                <Slider Grid.Column="1" x:Name="SelectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1" Maximum="{c:Binding 'Map.Size/2'}" Minimum="{c:Binding '-Map.Size/2'}"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>

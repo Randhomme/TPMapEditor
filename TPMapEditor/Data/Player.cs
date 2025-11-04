@@ -17,7 +17,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Team? team;
         [ObservableProperty]
-        private bool isPlayable, isSelected;
+        private bool isPlayable, isSelected, isLastSelected;
 
         partial void OnIsPlayableChanged(bool value)
         {
