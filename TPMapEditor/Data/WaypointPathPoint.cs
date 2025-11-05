@@ -10,7 +10,7 @@ namespace TPMapEditor.Data
     public partial class WaypointPathPoint : Point3
     {
         [ObservableProperty]
-        private bool isSelected;
+        private bool isSelected, isLastSelected;
         [ObservableProperty]
         private WaypointPath parent;
 

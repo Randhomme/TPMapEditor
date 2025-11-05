@@ -9,10 +9,16 @@ namespace TPMapEditor.Data
     {
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
+        [ObservableProperty]
+        private bool isSelected, isLastSelected;
         public ObservableCollection<WorldPolygonPoint> Points { get; set; }
         public WorldPolygon(string name, WorldMap map) : base(map, name)
         {
             Points = new ObservableCollection<WorldPolygonPoint>();
+            Points.CollectionChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(Points));
+            };
             this.color = Colors.Black;
         }
 

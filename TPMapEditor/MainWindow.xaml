@@ -107,19 +107,19 @@
             
             <!-- Column 0 -->
             <ScrollViewer x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Grid x:Name="MapGridOutside" Background="Transparent" ClipToBounds="True">
+                <Grid x:Name="MapGridOutside" Background="Transparent">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
-                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="False">
+                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="True">
                             <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
                             </Grid.LayoutTransform>
-                            <Grid Name="MapGridInside" Margin="1000" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                            <Grid Name="MapGridInside" Margin="2000" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
 
                                 <!-- Preview Canvas -->
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                     <!-- Preview WorldObject -->
-                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding 'SelectedWotGridItem!=null and WotRadioButton.IsChecked==true'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
+                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding 'SelectedWotGridItem!=null'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{Binding ElementName=WotSliderRotate, Path=Value}"/>
                                         </Border.RenderTransform>
@@ -137,6 +137,13 @@
                                     <!-- Preview Path -->
                                     <Border x:Name="PathPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewPathRadioButton, Path=IsChecked}" MouseLeftButtonDown="PathPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="PathPreviewControl_MouseRightButtonDown"/>
                                     <Border x:Name="PathPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddPointPathRadioButton, Path=IsChecked}" MouseLeftButtonDown="PathPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="PathPointPreviewControl_MouseRightButtonDown"/>
+                                    
+                                    <!-- Preview Polygon -->
+                                    <Border x:Name="WorldPolygonPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewPolygonRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown"/>
+                                    <Border x:Name="WorldPolygonPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddPointPolygonRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown"/>
+                                    
+                                    <!-- Preview Polygon -->
+                                    <Border x:Name="WorldPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewPolygonRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown"/>
                                 </Canvas>
 
                                 <!-- WorldObjects -->
@@ -169,10 +176,10 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                            BorderThickness="5"
-                            BorderBrush="Transparent"
-                            RenderTransformOrigin="0.5,0.5"
-                            MouseLeftButtonDown="OnWorldObjectClicked">
+                                                BorderThickness="5"
+                                                BorderBrush="Transparent"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                MouseLeftButtonDown="OnWorldObjectClicked">
                                                 <Border.RenderTransform>
                                                     <RotateTransform Angle="{Binding ZRotation}"/>
                                                 </Border.RenderTransform>
@@ -225,10 +232,10 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                            BorderThickness="5"
-                            BorderBrush="Transparent"
-                            RenderTransformOrigin="0.5,0.5"
-                            MouseLeftButtonDown="OnPlayerClicked">
+                                                BorderThickness="5"
+                                                BorderBrush="Transparent"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                MouseLeftButtonDown="OnPlayerClicked">
                                                 <Border.RenderTransform>
                                                     <RotateTransform Angle="{Binding Rotation}"/>
                                                 </Border.RenderTransform>
@@ -248,6 +255,9 @@
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="border" Property="BorderBrush" Value="OrangeRed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
@@ -266,12 +276,12 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Path -->
-                                                <Path StrokeThickness="20" Stroke="Orange" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}" MouseLeftButtonDown="Path_MouseLeftButtonDown">
+                                                <Path x:Name="OutlinePath" StrokeThickness="20" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="Path_MouseLeftButtonDown">
+                                                <Path StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWaypointPathClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -311,20 +321,31 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border1" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWaypointPathPointClicked">
+                                                            <Border x:Name="border" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWaypointPathPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding DataContext.Color, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                                                                 </Border.Background>
                                                             </Border>
                                                             <DataTemplate.Triggers>
                                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                    <Setter TargetName="border1" Property="BorderBrush" Value="Orange"/>
+                                                                    <Setter TargetName="border" Property="BorderBrush" Value="OrangeRed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
+                                                                    <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
                                                                 </DataTrigger>
                                                             </DataTemplate.Triggers>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
                                             </Canvas>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="OutlinePath" Property="Stroke" Value="OrangeRed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
+                                                    <Setter TargetName="OutlinePath" Property="Stroke" Value="Orange"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -340,7 +361,12 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Path -->
-                                                <Path StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}">
+                                                <Path x:Name="OutlinePath" StrokeThickness="20" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleY="-1" CenterY="0" />
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                                <Path StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWorldPolygonClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -383,20 +409,31 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border1" Width="30" Height="30" BorderBrush="Transparent" BorderThickness="5">
+                                                            <Border x:Name="border" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWorldPolygonPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding DataContext.Color, RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
                                                                 </Border.Background>
                                                             </Border>
                                                             <DataTemplate.Triggers>
                                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                                    <Setter TargetName="border1" Property="BorderBrush" Value="Orange"/>
+                                                                    <Setter TargetName="border" Property="BorderBrush" Value="OrangeRed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
+                                                                    <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
                                                                 </DataTrigger>
                                                             </DataTemplate.Triggers>
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
                                             </Canvas>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="OutlinePath" Property="Stroke" Value="OrangeRed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
+                                                    <Setter TargetName="OutlinePath" Property="Stroke" Value="Orange"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -474,13 +511,13 @@
                                     <GroupBox Header="Waypoint path" Grid.Row="2" Visibility="{c:Binding ElementName=PathRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="NewPathRadioButton" Margin="5" Content="New path" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
-                                            <RadioButton x:Name="AddPointPathRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedPath!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
+                                            <RadioButton x:Name="AddPointPathRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedWaypointPath!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="World polygon" Grid.Row="3" Visibility="{c:Binding ElementName=PolygonRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="NewPolygonRadioButton" Margin="5" Content="New polygon" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
-                                            <RadioButton x:Name="AddPointPolygonRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedPolygon!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
+                                            <RadioButton x:Name="AddPointPolygonRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedWorldPolygon!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <StackPanel Grid.Row="4" Visibility="{c:Binding ElementName=PointRadioButton,Path=IsChecked}">
@@ -575,10 +612,10 @@
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider Grid.Column="1" x:Name="SelectedPlayerX" Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1" Maximum="{c:Binding 'Map.Size/2'}" Minimum="{c:Binding '-Map.Size/2'}"/>
+                                                                <Slider Grid.Column="1" x:Name="SelectedPlayerX" Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1" Maximum="{c:Binding 'ActualWidth/2', ElementName=MapGrid, Mode=OneWay}" Minimum="{c:Binding '-ActualWidth/2', ElementName=MapGrid, Mode=OneWay}"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider Grid.Column="1" x:Name="SelectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1" Maximum="{c:Binding 'Map.Size/2'}" Minimum="{c:Binding '-Map.Size/2'}"/>
+                                                                <Slider Grid.Column="1" x:Name="SelectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1" Maximum="{c:Binding 'ActualWidth/2', ElementName=MapGrid, Mode=OneWay}" Minimum="{c:Binding '-ActualWidth/2', ElementName=MapGrid, Mode=OneWay}"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
@@ -629,9 +666,9 @@
                                             </GroupBox>
                                         </Grid>
                                         <StackPanel Visibility="{c:Binding ElementName=PathRadioButton, Path=IsChecked}">
-                                            <!--<GroupBox Header="Selected path" Visibility="{c:Binding 'SelectedPath!=null'}">
+                                            <GroupBox Header="Selected path" Visibility="{c:Binding 'SelectedWaypointPath!=null'}">
                                                 <StackPanel Margin="5">
-                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedPath.WaypointPath.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedWaypointPath.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                                     <GroupBox Header="Color">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
@@ -645,32 +682,32 @@
                                                             </Rectangle>
                                                             <Rectangle>
                                                                 <Rectangle.Fill>
-                                                                    <SolidColorBrush Color="{Binding SelectedPath.WaypointPath.Color}"/>
+                                                                    <SolidColorBrush Color="{Binding SelectedWaypointPath.Color}"/>
                                                                 </Rectangle.Fill>
                                                             </Rectangle>
                                                             <Button Width="70" Content="Edit" Grid.Column="1" Click="EditWaypointPathColor_Click"/>
                                                         </Grid>
                                                     </GroupBox>
                                                 </StackPanel>
-                                            </GroupBox>-->
-                                            <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedPathPoint!=null'}">
+                                            </GroupBox>
+                                            <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedWaypointPathPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="X">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedWaypointPathPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Y">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedWaypointPathPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Z">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPathPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedWaypointPathPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
                                         </StackPanel>
-                                        <!--<StackPanel Visibility="{c:Binding ElementName=polygonRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected polygon" Visibility="{c:Binding 'SelectedPolygon!=null'}">
+                                        <StackPanel Visibility="{c:Binding ElementName=PolygonRadioButton, Path=IsChecked}">
+                                            <GroupBox Header="Selected polygon" Visibility="{c:Binding 'SelectedWorldPolygon!=null'}">
                                                 <StackPanel Margin="5">
-                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedPolygon.WorldPolygon.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedWorldPolygon.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                                     <GroupBox Header="Color">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
@@ -684,7 +721,7 @@
                                                             </Rectangle>
                                                             <Rectangle>
                                                                 <Rectangle.Fill>
-                                                                    <SolidColorBrush Color="{Binding SelectedPolygon.WorldPolygon.Color}"/>
+                                                                    <SolidColorBrush Color="{Binding SelectedWorldPolygon.Color}"/>
                                                                 </Rectangle.Fill>
                                                             </Rectangle>
                                                             <Button Width="70" Content="Edit" Grid.Column="1" Click="EditWorldPolygonColor_Click"/>
@@ -692,18 +729,18 @@
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
-                                            <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'SelectedPolygonPoint!=null'}">
+                                            <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'SelectedWorldPolygonPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="X">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPolygonPoint.Point.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedWorldPolygonPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Y">
-                                                        <Slider Grid.Column="1" Value="{Binding SelectedPolygonPoint.Point.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                        <Slider Grid.Column="1" Value="{Binding SelectedWorldPolygonPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
                                         </StackPanel>
-                                        <Grid Visibility="{c:Binding ElementName=pointRadioButton, Path=IsChecked}">
+                                        <!--<Grid Visibility="{c:Binding ElementName=pointRadioButton, Path=IsChecked}">
                                             <GroupBox Header="Selected world point" Visibility="{c:Binding 'SelectedWorldPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <controls:TextGroupBox Header="Name" Text="{Binding SelectedWorldPoint.WorldPoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>

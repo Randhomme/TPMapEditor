@@ -10,7 +10,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
         [ObservableProperty]
-        private bool isSelected;
+        private bool isSelected, isLastSelected;
         public ObservableCollection<WaypointPathPoint> Points { get; set; }
         public WaypointPath(string name, WorldMap map) : base(map, name)
         {
