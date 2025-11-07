@@ -34,7 +34,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddTimer()
         {
-            Map.Timers.Add(new Timer(NamedElement.GenerateName("Timer", Map.Timers), Map, false, 0));
+            Map.Timers.Add(new Timer(Map, NamedElement.GenerateName("Timer", Map.Timers), false, 0));
         }
 
         private void RemoveTimer_Click(object sender, RoutedEventArgs e)

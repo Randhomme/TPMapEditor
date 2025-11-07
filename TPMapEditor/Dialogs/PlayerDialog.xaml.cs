@@ -39,7 +39,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddPlayer()
         {
-            Map.Players.Add(new(NamedElement.GenerateName("Player", Map.Players), Map, 0, 0, 0, 0, Colors.White));
+            Map.Players.Add(new(Map, NamedElement.GenerateName("Player", Map.Players), 0, 0, 0, 0, Colors.White));
         }
 
         private void RemovePlayer_Click(object sender, RoutedEventArgs e)

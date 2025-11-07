@@ -20,7 +20,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddFlag()
         {
-            Map.Flags.Add(new Flag(NamedElement.GenerateName("Flag", Map.Flags), Map));
+            Map.Flags.Add(new Flag(Map, NamedElement.GenerateName("Flag", Map.Flags)));
         }
 
         private void RemoveFlag_Click(object sender, RoutedEventArgs e)
