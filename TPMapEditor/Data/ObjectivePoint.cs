@@ -11,6 +11,8 @@ namespace TPMapEditor.Data
     {
         [ObservableProperty]
         private double x, y, z;
+        [ObservableProperty]
+        private bool isSelected, isLastSelected;
 
         public ObjectivePoint(WorldMap map, string name, double x, double y, double z = 0) : base(map, name)
         {

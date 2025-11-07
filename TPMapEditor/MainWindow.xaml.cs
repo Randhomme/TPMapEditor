@@ -1836,15 +1836,230 @@ namespace TPMapEditor
 
         #endregion
 
+        #region ObjectivePoint
+
         private void ObjectivePointRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-
+            ShowObjectivePointElements();
         }
 
         private void ObjectivePointRadioButton_Unchecked(object sender, RoutedEventArgs e)
         {
-
+            HideObjectivePointElements();
         }
+
+        private void ShowObjectivePointElements()
+        {
+            ObjectivePointGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(ObjectivePointItemsControl, 1);
+            ObjectivePointItemsControl.Opacity = 1;
+            ObjectivePointItemsControl.IsEnabled = true;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].BorderBrush = Brushes.OrangeRed;
+            //if (SelectedWot != null)
+            //    SelectedWot.BorderBrush = Brushes.Orange;
+            MoveCheckBox.Checked += MoveObjectivePointCheckBox_Checked;
+            MoveCheckBox.Unchecked += MoveObjectivePointCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveObjectivePoint();
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
+            DeleteButton.Click += DeleteObjectivePointButton_Click;
+        }
+
+        private void HideObjectivePointElements()
+        {
+            //wotPreview.Visibility = Visibility.Collapsed;
+            WaypointPathGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(ObjectivePointItemsControl, 0);
+            ObjectivePointItemsControl.Opacity = 0.5;
+            ObjectivePointItemsControl.IsEnabled = false;
+            AddObjectivePointCheckBox.IsChecked = false;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].BorderBrush = Brushes.Transparent;
+            MoveCheckBox.Checked -= MoveObjectivePointCheckBox_Checked;
+            MoveCheckBox.Unchecked -= MoveObjectivePointCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                DisableMoveObjectivePoint();
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.MouseMove -= MapGridOutsideObjectivePointPreview_MouseMove;
+            DeleteButton.Click -= DeleteObjectivePointButton_Click;
+        }
+
+        private void OnObjectivePointClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is ObjectivePoint clickedObject)
+            {
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                if (ctrlPressed)
+                {
+                    CtrlSelectObjectivePoint(clickedObject);
+                }
+                else
+                {
+                    ClearObjectivePointSelection();
+                    SelectAndMakeObjectivePointLastSelected(clickedObject);
+                }
+
+                if (MoveCheckBox.IsChecked == false)
+                    e.Handled = true;
+            }
+        }
+
+        private void MapGridOutsideObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ClearObjectivePointSelection();
+        }
+
+        private void CtrlSelectObjectivePoint(ObjectivePoint waypointPathPoint)
+        {
+            if (waypointPathPoint.IsLastSelected)
+            {
+                RemoveObjectivePointFromSelection(waypointPathPoint);
+            }
+            else
+            {
+                SelectAndMakeObjectivePointLastSelected(waypointPathPoint);
+            }
+        }
+
+        private void SelectObjectivePoint(ObjectivePoint waypointPathPoint)
+        {
+            if (!waypointPathPoint.IsSelected)
+                AddObjectivePointToSelection(waypointPathPoint);
+        }
+
+        private void SelectAndMakeObjectivePointLastSelected(ObjectivePoint waypointPathPoint)
+        {
+            SelectObjectivePoint(waypointPathPoint);
+            MakeObjectivePointLastSelected(waypointPathPoint);
+        }
+
+        private void AddObjectivePointToSelection(ObjectivePoint waypointPathPoint)
+        {
+            waypointPathPoint.IsSelected = true;
+            SelectedObjectivePoints.Add(waypointPathPoint);
+        }
+
+        private void MakeObjectivePointLastSelected(ObjectivePoint waypointPathPoint)
+        {
+            if (SelectedObjectivePoint != null)
+            {
+                SelectedObjectivePoint.IsLastSelected = false;
+            }
+            waypointPathPoint.IsLastSelected = true;
+            SelectedObjectivePoint = waypointPathPoint;
+        }
+
+        private void RemoveObjectivePointFromSelection(ObjectivePoint waypointPathPoint)
+        {
+            waypointPathPoint.IsSelected = false;
+            SelectedObjectivePoints.Remove(waypointPathPoint);
+            if (waypointPathPoint.IsLastSelected)
+            {
+                waypointPathPoint.IsLastSelected = false;
+                SelectedObjectivePoint = null;
+            }
+        }
+
+        private void ClearObjectivePointSelection()
+        {
+            foreach (var v in SelectedObjectivePoints)
+            {
+                v.IsSelected = v.IsLastSelected = false;
+            }
+            SelectedObjectivePoints.Clear();
+            SelectedObjectivePoint = null;
+        }
+
+        private void MoveObjectivePointCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableMoveObjectivePoint();
+        }
+
+        private void MoveObjectivePointCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DisableMoveObjectivePoint();
+        }
+
+        private void EnableMoveObjectivePoint()
+        {
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.Cursor = Cursors.SizeAll;
+        }
+
+        private void DisableMoveObjectivePoint()
+        {
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.Cursor = Cursors.Arrow;
+        }
+
+        private void MapGridOutsideBeginMoveObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(MapGridOutside);
+            moveActionPoint = e.GetPosition(MapGridInside);
+            MapGridOutside.MouseMove += MapGridOutsideMoveObjectivePoint_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideEndMoveObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            MapGridOutside.MouseMove -= MapGridOutsideMoveObjectivePoint_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideMoveObjectivePoint_MouseMove(object sender, MouseEventArgs e)
+        {
+            var pos = e.GetPosition(MapGridInside);
+            var x = pos.X - moveActionPoint.X;
+            var y = pos.Y - moveActionPoint.Y;
+            //move wot selection
+            for (var i = 0; i < SelectedObjectivePoints.Count; i++)
+            {
+                var selectedObject = SelectedObjectivePoints[i];
+                selectedObject.X += x;
+                selectedObject.Y -= y;
+            }
+            moveActionPoint = pos;
+        }
+
+        private void DeleteObjectivePointButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var p in SelectedObjectivePoints)
+            {
+                Map.ObjectivePoints.Remove(p);
+            }
+            SelectedObjectivePoints.Clear();
+            SelectedObjectivePoint = null;
+        }
+
+        private void MapGridOutsideObjectivePointPreview_MouseMove(object sender, MouseEventArgs e)
+        {
+            var mousePos = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(ObjectivePointPreviewControl, mousePos.X - ObjectivePointPreviewControl.ActualWidth / 2);
+            Canvas.SetTop(ObjectivePointPreviewControl, mousePos.Y - ObjectivePointPreviewControl.ActualHeight / 2);
+        }
+
+        private void ObjectivePointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var point = new ObjectivePoint(Map, NamedElement.GenerateName("ObjectivePoint", Map.ObjectivePoints), Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2, -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2);
+            SelectAndMakeObjectivePointLastSelected(point);
+            Map.ObjectivePoints.Add(point);
+            e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
+        }
+
+        private void ObjectivePointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddObjectivePointCheckBox.IsChecked = false;
+        }
+
+        #endregion
 
         private void MapTextPointRadioButton_Checked(object sender, RoutedEventArgs e)
         {

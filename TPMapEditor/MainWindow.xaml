@@ -142,9 +142,16 @@
                                     <Border x:Name="WorldPolygonPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewWorldPolygonRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown"/>
                                     <Border x:Name="WorldPolygonPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddWorldPolygonPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown"/>
                                     
-                                    <!-- Preview Point Set -->
+                                    <!-- Preview PointSet -->
                                     <Border x:Name="WorldPointSetPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewWorldPointSetRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown"/>
                                     <Border x:Name="WorldPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointPreviewControl_MouseRightButtonDown"/>
+
+                                    <!-- Preview ObjectivePoint -->
+                                    <Border x:Name="ObjectivePointPreviewControl" Visibility="{c:Binding ElementName=AddObjectivePointCheckBox, Path=IsChecked}" MouseLeftButtonDown="ObjectivePointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="ObjectivePointPreviewControl_MouseRightButtonDown">
+                                        <Image Source="/Images/ObjectivePoint.png"/>
+                                    </Border>
+
+
                                 </Canvas>
 
                                 <!-- WorldObjects -->
@@ -509,6 +516,53 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+
+                                <!-- ObjectivePoints -->
+                                <ItemsControl x:Name="ObjectivePointItemsControl" ItemsSource="{Binding Map.ObjectivePoints}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Canvas.Left">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="X" />
+                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Canvas.Bottom">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="Y" />
+                                                        <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="border"
+                                                BorderThickness="5"
+                                                BorderBrush="Transparent"
+                                                MouseLeftButtonDown="OnObjectivePointClicked">
+                                                <Image Source="/Images/ObjectivePoint.png"/>
+                                            </Border>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="border" Property="BorderBrush" Value="OrangeRed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
+                                                    <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Grid>
                         </Grid>
                     </Viewbox>
@@ -869,24 +923,24 @@
                                                 </StackPanel>
                                             </GroupBox>
                                         </StackPanel>
-                                        <!--<StackPanel Visibility="{c:Binding ElementName=objectivePointRadioButton, Path=IsChecked}">
+                                        <StackPanel Visibility="{c:Binding ElementName=ObjectivePointRadioButton, Path=IsChecked}">
                                             <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedObjectivePoint!=null'}">
                                                 <StackPanel Margin="5">
-                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedObjectivePoint.ObjectivePoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedObjectivePoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.ObjectivePoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.ObjectivePoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedObjectivePoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
                                         </StackPanel>
-                                        <StackPanel Visibility="{c:Binding ElementName=mapTextPointRadioButton, Path=IsChecked}">
+                                        <!--<StackPanel Visibility="{c:Binding ElementName=mapTextPointRadioButton, Path=IsChecked}">
                                             <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedMapTextPoint!=null'}">
                                                 <StackPanel Margin="5">
                                                     <controls:TextGroupBox Header="Name" Text="{Binding SelectedMapTextPoint.MapTextPoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
