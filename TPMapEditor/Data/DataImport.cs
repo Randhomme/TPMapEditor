@@ -94,7 +94,7 @@ namespace TPMapEditor.Data
                         //PlayerInfo - TeamIndex
                         var playerTeam = reader.ReadAndParseInt("PlayerInfo - TeamIndex Int ");
 
-                        map.Players.Add(new(playerName, map, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, Team = map.Teams[playerTeam] });
+                        map.Players.Add(new(map, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, Team = map.Teams[playerTeam] });
                     }
 
                     //IsCampaign
@@ -216,7 +216,7 @@ namespace TPMapEditor.Data
                     var player = map.Players.FirstOrDefault((p) => p.Name == playerName);
                     if(player is null)
                     {
-                        player = new(playerName, map, 0, 0, 0, 0, Colors.White);
+                        player = new(map, playerName, 0, 0, 0, 0, Colors.White);
                         map.Players.Add(player);
                     }
 
@@ -529,7 +529,7 @@ namespace TPMapEditor.Data
                 {
                     reader.ReadLine(); //start of section
 
-                    var waypointPath = new WaypointPath(reader.ReadAndParseString("Waypoint Path Name String "), map);
+                    var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "));
 
                     //Waypoint Path Points - Size
                     var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
@@ -560,7 +560,7 @@ namespace TPMapEditor.Data
                 {
                     reader.ReadLine(); //start of section
 
-                    var worldPolygon = new WorldPolygon(reader.ReadAndParseString("Name String "), map);
+                    var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "));
 
                     //Points
                     var worldPolygonPointsCount = reader.ReadAndParseInt("Points Int ");

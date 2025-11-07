@@ -8,6 +8,8 @@ namespace TPMapEditor.Data
         private double xRotation, yRotation, zRotation, magnitude; // still have to figure out the purpose of magnitude
         [ObservableProperty]
         private WorldPointSet parent;
+        [ObservableProperty]
+        private bool isSelected, isLastSelected;
 
         public WorldPoint(WorldPointSet parent, double x, double y, double z, double zRotation) : base(x, y, z)
         {

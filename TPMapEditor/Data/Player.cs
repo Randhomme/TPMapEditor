@@ -45,7 +45,7 @@ namespace TPMapEditor.Data
             return false;
         }
 
-        public Player(string name, WorldMap map, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
+        public Player(WorldMap map, string name, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
         {
             X = x;
             Y = y;

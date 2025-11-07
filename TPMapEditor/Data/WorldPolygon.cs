@@ -12,7 +12,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected;
         public ObservableCollection<WorldPolygonPoint> Points { get; set; }
-        public WorldPolygon(string name, WorldMap map) : base(map, name)
+        public WorldPolygon(WorldMap map, string name) : base(map, name)
         {
             Points = new ObservableCollection<WorldPolygonPoint>();
             Points.CollectionChanged += (s, e) =>

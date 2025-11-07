@@ -7,7 +7,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool value;
 
-        public Flag(string name, WorldMap map, bool value = false) : base(map, name)
+        public Flag(WorldMap map, string name, bool value = false) : base(map, name)
         {
             Value = value;
         }

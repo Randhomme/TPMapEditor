@@ -12,7 +12,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected;
         public ObservableCollection<WaypointPathPoint> Points { get; set; }
-        public WaypointPath(string name, WorldMap map) : base(map, name)
+        public WaypointPath(WorldMap map, string name) : base(map, name)
         {
             Points = new ObservableCollection<WaypointPathPoint>();
             Points.CollectionChanged += (s, e) =>
