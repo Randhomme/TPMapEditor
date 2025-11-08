@@ -779,7 +779,6 @@ namespace TPMapEditor
 
         private void HidePathElements()
         {
-            //wotPreview.Visibility = Visibility.Collapsed;
             WaypointPathGridRow.Height = GridLength.Auto;
             Panel.SetZIndex(WaypointPathItemsControl, 0);
             WaypointPathItemsControl.Opacity = 0.5;
@@ -1869,8 +1868,7 @@ namespace TPMapEditor
 
         private void HideObjectivePointElements()
         {
-            //wotPreview.Visibility = Visibility.Collapsed;
-            WaypointPathGridRow.Height = GridLength.Auto;
+            ObjectivePointGridRow.Height = GridLength.Auto;
             Panel.SetZIndex(ObjectivePointItemsControl, 0);
             ObjectivePointItemsControl.Opacity = 0.5;
             ObjectivePointItemsControl.IsEnabled = false;
@@ -1912,53 +1910,53 @@ namespace TPMapEditor
             ClearObjectivePointSelection();
         }
 
-        private void CtrlSelectObjectivePoint(ObjectivePoint waypointPathPoint)
+        private void CtrlSelectObjectivePoint(ObjectivePoint objectivePoint)
         {
-            if (waypointPathPoint.IsLastSelected)
+            if (objectivePoint.IsLastSelected)
             {
-                RemoveObjectivePointFromSelection(waypointPathPoint);
+                RemoveObjectivePointFromSelection(objectivePoint);
             }
             else
             {
-                SelectAndMakeObjectivePointLastSelected(waypointPathPoint);
+                SelectAndMakeObjectivePointLastSelected(objectivePoint);
             }
         }
 
-        private void SelectObjectivePoint(ObjectivePoint waypointPathPoint)
+        private void SelectObjectivePoint(ObjectivePoint objectivePoint)
         {
-            if (!waypointPathPoint.IsSelected)
-                AddObjectivePointToSelection(waypointPathPoint);
+            if (!objectivePoint.IsSelected)
+                AddObjectivePointToSelection(objectivePoint);
         }
 
-        private void SelectAndMakeObjectivePointLastSelected(ObjectivePoint waypointPathPoint)
+        private void SelectAndMakeObjectivePointLastSelected(ObjectivePoint objectivePoint)
         {
-            SelectObjectivePoint(waypointPathPoint);
-            MakeObjectivePointLastSelected(waypointPathPoint);
+            SelectObjectivePoint(objectivePoint);
+            MakeObjectivePointLastSelected(objectivePoint);
         }
 
-        private void AddObjectivePointToSelection(ObjectivePoint waypointPathPoint)
+        private void AddObjectivePointToSelection(ObjectivePoint objectivePoint)
         {
-            waypointPathPoint.IsSelected = true;
-            SelectedObjectivePoints.Add(waypointPathPoint);
+            objectivePoint.IsSelected = true;
+            SelectedObjectivePoints.Add(objectivePoint);
         }
 
-        private void MakeObjectivePointLastSelected(ObjectivePoint waypointPathPoint)
+        private void MakeObjectivePointLastSelected(ObjectivePoint objectivePoint)
         {
             if (SelectedObjectivePoint != null)
             {
                 SelectedObjectivePoint.IsLastSelected = false;
             }
-            waypointPathPoint.IsLastSelected = true;
-            SelectedObjectivePoint = waypointPathPoint;
+            objectivePoint.IsLastSelected = true;
+            SelectedObjectivePoint = objectivePoint;
         }
 
-        private void RemoveObjectivePointFromSelection(ObjectivePoint waypointPathPoint)
+        private void RemoveObjectivePointFromSelection(ObjectivePoint objectivePoint)
         {
-            waypointPathPoint.IsSelected = false;
-            SelectedObjectivePoints.Remove(waypointPathPoint);
-            if (waypointPathPoint.IsLastSelected)
+            objectivePoint.IsSelected = false;
+            SelectedObjectivePoints.Remove(objectivePoint);
+            if (objectivePoint.IsLastSelected)
             {
-                waypointPathPoint.IsLastSelected = false;
+                objectivePoint.IsLastSelected = false;
                 SelectedObjectivePoint = null;
             }
         }
@@ -2061,14 +2059,229 @@ namespace TPMapEditor
 
         #endregion
 
+        #region MapTextPoint
+
         private void MapTextPointRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-
+            ShowMapTextPointElements();
         }
 
         private void MapTextPointRadioButton_Unchecked(object sender, RoutedEventArgs e)
         {
-
+            HideMapTextPointElements();
         }
+
+        private void ShowMapTextPointElements()
+        {
+            MapTextPointGridRow.Height = new GridLength(1, GridUnitType.Star);
+            Panel.SetZIndex(MapTextPointItemsControl, 1);
+            MapTextPointItemsControl.Opacity = 1;
+            MapTextPointItemsControl.IsEnabled = true;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].BorderBrush = Brushes.OrangeRed;
+            //if (SelectedWot != null)
+            //    SelectedWot.BorderBrush = Brushes.Orange;
+            MoveCheckBox.Checked += MoveMapTextPointCheckBox_Checked;
+            MoveCheckBox.Unchecked += MoveMapTextPointCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveMapTextPoint();
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
+            DeleteButton.Click += DeleteMapTextPointButton_Click;
+        }
+
+        private void HideMapTextPointElements()
+        {
+            MapTextPointGridRow.Height = GridLength.Auto;
+            Panel.SetZIndex(MapTextPointItemsControl, 0);
+            MapTextPointItemsControl.Opacity = 0.5;
+            MapTextPointItemsControl.IsEnabled = false;
+            AddMapTextPointCheckBox.IsChecked = false;
+            //for (int i = 0; i < SelectedWots.Count; i++)
+            //    SelectedWots[i].BorderBrush = Brushes.Transparent;
+            MoveCheckBox.Checked -= MoveMapTextPointCheckBox_Checked;
+            MoveCheckBox.Unchecked -= MoveMapTextPointCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                DisableMoveMapTextPoint();
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseMove -= MapGridOutsideMapTextPointPreview_MouseMove;
+            DeleteButton.Click -= DeleteMapTextPointButton_Click;
+        }
+
+        private void OnMapTextPointClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is MapTextPoint clickedObject)
+            {
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                if (ctrlPressed)
+                {
+                    CtrlSelectMapTextPoint(clickedObject);
+                }
+                else
+                {
+                    ClearMapTextPointSelection();
+                    SelectAndMakeMapTextPointLastSelected(clickedObject);
+                }
+
+                if (MoveCheckBox.IsChecked == false)
+                    e.Handled = true;
+            }
+        }
+
+        private void MapGridOutsideMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ClearMapTextPointSelection();
+        }
+
+        private void CtrlSelectMapTextPoint(MapTextPoint mapTextPoint)
+        {
+            if (mapTextPoint.IsLastSelected)
+            {
+                RemoveMapTextPointFromSelection(mapTextPoint);
+            }
+            else
+            {
+                SelectAndMakeMapTextPointLastSelected(mapTextPoint);
+            }
+        }
+
+        private void SelectMapTextPoint(MapTextPoint mapTextPoint)
+        {
+            if (!mapTextPoint.IsSelected)
+                AddMapTextPointToSelection(mapTextPoint);
+        }
+
+        private void SelectAndMakeMapTextPointLastSelected(MapTextPoint mapTextPoint)
+        {
+            SelectMapTextPoint(mapTextPoint);
+            MakeMapTextPointLastSelected(mapTextPoint);
+        }
+
+        private void AddMapTextPointToSelection(MapTextPoint mapTextPoint)
+        {
+            mapTextPoint.IsSelected = true;
+            SelectedMapTextPoints.Add(mapTextPoint);
+        }
+
+        private void MakeMapTextPointLastSelected(MapTextPoint mapTextPoint)
+        {
+            if (SelectedMapTextPoint != null)
+            {
+                SelectedMapTextPoint.IsLastSelected = false;
+            }
+            mapTextPoint.IsLastSelected = true;
+            SelectedMapTextPoint = mapTextPoint;
+        }
+
+        private void RemoveMapTextPointFromSelection(MapTextPoint mapTextPoint)
+        {
+            mapTextPoint.IsSelected = false;
+            SelectedMapTextPoints.Remove(mapTextPoint);
+            if (mapTextPoint.IsLastSelected)
+            {
+                mapTextPoint.IsLastSelected = false;
+                SelectedMapTextPoint = null;
+            }
+        }
+
+        private void ClearMapTextPointSelection()
+        {
+            foreach (var v in SelectedMapTextPoints)
+            {
+                v.IsSelected = v.IsLastSelected = false;
+            }
+            SelectedMapTextPoints.Clear();
+            SelectedMapTextPoint = null;
+        }
+
+        private void MoveMapTextPointCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableMoveMapTextPoint();
+        }
+
+        private void MoveMapTextPointCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DisableMoveMapTextPoint();
+        }
+
+        private void EnableMoveMapTextPoint()
+        {
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.Cursor = Cursors.SizeAll;
+        }
+
+        private void DisableMoveMapTextPoint()
+        {
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.Cursor = Cursors.Arrow;
+        }
+
+        private void MapGridOutsideBeginMoveMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(MapGridOutside);
+            moveActionPoint = e.GetPosition(MapGridInside);
+            MapGridOutside.MouseMove += MapGridOutsideMoveMapTextPoint_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideEndMoveMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.Capture(null);
+            MapGridOutside.MouseMove -= MapGridOutsideMoveMapTextPoint_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideMoveMapTextPoint_MouseMove(object sender, MouseEventArgs e)
+        {
+            var pos = e.GetPosition(MapGridInside);
+            var x = pos.X - moveActionPoint.X;
+            var y = pos.Y - moveActionPoint.Y;
+            //move wot selection
+            for (var i = 0; i < SelectedMapTextPoints.Count; i++)
+            {
+                var selectedObject = SelectedMapTextPoints[i];
+                selectedObject.X += x;
+                selectedObject.Y -= y;
+            }
+            moveActionPoint = pos;
+        }
+
+        private void DeleteMapTextPointButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var p in SelectedMapTextPoints)
+            {
+                Map.MapTextPoints.Remove(p);
+            }
+            SelectedMapTextPoints.Clear();
+            SelectedMapTextPoint = null;
+        }
+
+        private void MapGridOutsideMapTextPointPreview_MouseMove(object sender, MouseEventArgs e)
+        {
+            var mousePos = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(MapTextPointPreviewControl, mousePos.X - MapTextPointPreviewControl.ActualWidth / 2);
+            Canvas.SetTop(MapTextPointPreviewControl, mousePos.Y - MapTextPointPreviewControl.ActualHeight / 2);
+        }
+
+        private void MapTextPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var text = StringDictionnary.MapTextItems.Keys.ElementAt(MapTextPointPreviewTextComboBox.SelectedIndex);
+            var point = new MapTextPoint(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), text, Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2);
+            SelectAndMakeMapTextPointLastSelected(point);
+            Map.MapTextPoints.Add(point);
+            e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
+        }
+
+        private void MapTextPointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            AddMapTextPointCheckBox.IsChecked = false;
+        }
+
+        #endregion
     }
 }

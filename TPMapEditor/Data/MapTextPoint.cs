@@ -9,7 +9,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private double x, y, z;
         [ObservableProperty]
-        private bool visible;
+        private bool visible, isSelected, isLastSelected;
 
         public string DisplayedText
         {

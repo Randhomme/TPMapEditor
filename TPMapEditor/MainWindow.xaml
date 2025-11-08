@@ -150,8 +150,11 @@
                                     <Border x:Name="ObjectivePointPreviewControl" Visibility="{c:Binding ElementName=AddObjectivePointCheckBox, Path=IsChecked}" MouseLeftButtonDown="ObjectivePointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="ObjectivePointPreviewControl_MouseRightButtonDown">
                                         <Image Source="/Images/ObjectivePoint.png"/>
                                     </Border>
-
-
+                                    
+                                    <!-- Preview MapTextPoint -->
+                                    <Border x:Name="MapTextPointPreviewControl" Visibility="{c:Binding ElementName=AddMapTextPointCheckBox, Path=IsChecked}" MouseLeftButtonDown="MapTextPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="MapTextPointPreviewControl_MouseRightButtonDown">
+                                        <TextBlock x:Name="MapTextPointPreviewTextBlock" Text="{Binding ElementName=MapTextPointPreviewTextComboBox, Path=SelectedValue}" FontSize="40"/>
+                                    </Border>
                                 </Canvas>
 
                                 <!-- WorldObjects -->
@@ -563,6 +566,53 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+
+                                <!-- MapTextPoints -->
+                                <ItemsControl x:Name="MapTextPointItemsControl" ItemsSource="{Binding Map.MapTextPoints}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Canvas.Left">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="X" />
+                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Canvas.Bottom">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="Y" />
+                                                        <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="border"
+                                                BorderThickness="5"
+                                                BorderBrush="Transparent"
+                                                MouseLeftButtonDown="OnMapTextPointClicked">
+                                                <TextBlock Text="{Binding DisplayedText}" FontSize="40"/>
+                                            </Border>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="border" Property="BorderBrush" Value="OrangeRed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
+                                                    <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Grid>
                         </Grid>
                     </Viewbox>
@@ -664,7 +714,8 @@
                                     </GroupBox>
                                     <GroupBox Header="Map text point" Grid.Row="6" Visibility="{c:Binding ElementName=MapTextPointRadioButton,Path=IsChecked}">
                                         <StackPanel>
-                                            <CheckBox x:Name="AddMapTextPointCheckBox" Margin="5" Content="New objetive point" Style="{StaticResource {x:Type ToggleButton}}"/>
+                                            <ComboBox x:Name="MapTextPointPreviewTextComboBox" Margin="5" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValuePath="Value" DisplayMemberPath="Value" SelectedIndex="0"/>
+                                            <CheckBox x:Name="AddMapTextPointCheckBox" Margin="5" Content="New map text point" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>
                                 </Grid>
@@ -940,29 +991,29 @@
                                                 </StackPanel>
                                             </GroupBox>
                                         </StackPanel>
-                                        <!--<StackPanel Visibility="{c:Binding ElementName=mapTextPointRadioButton, Path=IsChecked}">
+                                        <StackPanel Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}">
                                             <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedMapTextPoint!=null'}">
                                                 <StackPanel Margin="5">
-                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedMapTextPoint.MapTextPoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                                                    <controls:TextGroupBox Header="Name" Text="{Binding SelectedMapTextPoint.Name, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                                                     <GroupBox Header="Displayed text">
-                                                        <ComboBox Margin="0,5,0,0" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValue="{Binding SelectedMapTextPoint.MapTextPoint.RealText}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                                                        <ComboBox Margin="0,5,0,0" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValue="{Binding SelectedMapTextPoint.RealText}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
                                                             <GroupBox Header="X">
-                                                                <Slider Grid.Column="1" Value="{Binding SelectedMapTextPoint.MapTextPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedMapTextPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                             <GroupBox Header="Y">
-                                                                <Slider Grid.Column="1" Value="{Binding SelectedMapTextPoint.MapTextPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                                                                <Slider Grid.Column="1" Value="{Binding SelectedMapTextPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                                             </GroupBox>
                                                         </StackPanel>
                                                     </GroupBox>
                                                     <GroupBox Header="Visibility">
-                                                        <CheckBox Margin="0,5,0,0" Content="{Binding SelectedMapTextPoint.MapTextPoint.Visible}" IsChecked="{Binding SelectedMapTextPoint.MapTextPoint.Visible}"/>
+                                                        <CheckBox Margin="0,5,0,0" Content="{Binding SelectedMapTextPoint.Visible}" IsChecked="{Binding SelectedMapTextPoint.Visible}"/>
                                                     </GroupBox>
                                                 </StackPanel>
                                             </GroupBox>
-                                        </StackPanel>-->
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
                             </TabItem>
