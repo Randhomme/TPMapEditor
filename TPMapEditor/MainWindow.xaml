@@ -52,6 +52,7 @@
                 <MenuItem Header="World polygons" Command="{Binding WorldPolygonsEditCommand}"/>
                 <MenuItem Header="World point sets" Command="{Binding WorldPointSetsEditCommand}"/>
                 <MenuItem Header="Objective points" Command="{Binding ObjectivePointsEditCommand}"/>
+                <MenuItem Header="Map text points" Command="{Binding MapTextPointsEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
@@ -603,7 +604,7 @@
                                                 BorderThickness="5"
                                                 BorderBrush="Transparent"
                                                 MouseLeftButtonDown="OnMapTextPointClicked">
-                                                <TextBlock Text="{Binding DisplayedText}" FontSize="40"/>
+                                                <TextBlock x:Name="DisplayedTextBlock" Text="{Binding DisplayedText}" FontSize="40"/>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
@@ -611,6 +612,15 @@
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Visible}" Value="False">
+                                                    <Setter TargetName="DisplayedTextBlock" Property="TextDecorations">
+                                                        <Setter.Value>
+                                                            <TextDecorationCollection>
+                                                                <TextDecoration Location="Strikethrough" PenOffsetUnit="Pixel" PenOffset="-1"/>
+                                                            </TextDecorationCollection>
+                                                        </Setter.Value>
+                                                    </Setter>
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>

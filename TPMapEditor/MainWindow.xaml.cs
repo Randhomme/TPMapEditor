@@ -114,6 +114,7 @@ namespace TPMapEditor
                 if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     Map.Reset();
+                    ClearSelections();
                     DataImport.ReadMapFileAndAddData(ofd.FileName, Map);
                 }
             }
@@ -284,6 +285,17 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnMapTextPointsEdit()
+        {
+            new MapTextPointDialog(this, Map).ShowDialog();
+            if (SelectedMapTextPoint != null)
+            {
+                if (!Map.MapTextPoints.Contains(SelectedMapTextPoint))
+                    SelectedMapTextPoint = null;
+            }
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var asd = new AppSettingsDialog(this, settings);
@@ -365,6 +377,30 @@ namespace TPMapEditor
             MapScrollViewer.ScrollToVerticalOffset(newAbsoluteY - mousePos.Y);
 
             e.Handled = true;
+        }
+
+        private void ClearSelections()
+        {
+            SelectedWorldObjects.Clear();
+            SelectedPlayers.Clear();
+            SelectedWaypointPathPoints.Clear();
+            SelectedWaypointPaths.Clear();
+            SelectedWorldPolygonPoints.Clear();
+            SelectedWorldPolygons.Clear();
+            SelectedWorldPoints.Clear();
+            SelectedWorldPointSets.Clear();
+            SelectedObjectivePoints.Clear();
+            SelectedMapTextPoints.Clear();
+            SelectedWorldObject = null;
+            SelectedPlayer = null;
+            SelectedWaypointPathPoint = null;
+            SelectedWaypointPath = null;
+            SelectedWorldPolygonPoint = null;
+            SelectedWorldPolygon = null;
+            SelectedWorldPoint = null;
+            SelectedWorldPointSet = null;
+            SelectedObjectivePoint = null;
+            SelectedMapTextPoint = null;
         }
 
         #endregion
