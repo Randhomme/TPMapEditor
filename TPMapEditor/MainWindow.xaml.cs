@@ -273,6 +273,17 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnObjectivePointsEdit()
+        {
+            new ObjectivePointDialog(this, Map).ShowDialog();
+            if (SelectedObjectivePoint != null)
+            {
+                if (!Map.ObjectivePoints.Contains(SelectedObjectivePoint))
+                    SelectedObjectivePoint = null;
+            }
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var asd = new AppSettingsDialog(this, settings);
