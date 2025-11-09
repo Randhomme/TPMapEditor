@@ -39,11 +39,11 @@
                 <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add world polygon" Command="{Binding AddWorldPolygonCommand}"/>
             </Grid>
             <GridSplitter Margin="5,0,5,0" Grid.Column="1" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
-            <TabControl Grid.Column="2" Visibility="{c:Binding 'SelectedWaypointPath!=null'}">
+            <TabControl Grid.Column="2" Visibility="{c:Binding 'SelectedWorldPolygon!=null'}">
                 <TabItem Header="Properties">
                     <StackPanel Margin="3">
                         <Label Margin="-5,0,0,0" Content="Name"/>
-                        <TextBox Text="{Binding SelectedWaypointPath.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                        <TextBox Text="{Binding SelectedWorldPolygon.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                         <Label Margin="-5,5,0,0" Content="Color"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -57,10 +57,10 @@
                             </Rectangle>
                             <Rectangle>
                                 <Rectangle.Fill>
-                                    <SolidColorBrush Color="{Binding SelectedWaypointPath.Color}"/>
+                                    <SolidColorBrush Color="{Binding SelectedWorldPolygon.Color}"/>
                                 </Rectangle.Fill>
                             </Rectangle>
-                            <Button Width="70" Content="Edit" Grid.Column="1" Click="EditWaypointPathColor_Click"/>
+                            <Button Width="70" Content="Edit" Grid.Column="1" Click="EditWorldPolygonColor_Click"/>
                         </Grid>
                     </StackPanel>
                 </TabItem>
@@ -80,7 +80,6 @@
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Binding="{Binding X}" Header="X" Width="*"/>
                                     <DataGridTextColumn Binding="{Binding Y}" Header="Y" Width="*"/>
-                                    <DataGridTextColumn Binding="{Binding Z}" Header="Z" Width="*"/>
                                     <DataGridTemplateColumn MinWidth="70">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
@@ -99,8 +98,6 @@
                                 <Slider Value="{Binding SelectedWorldPolygonPoint.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                                 <Label Margin="-5,5,0,0" Content="Y"/>
                                 <Slider Value="{Binding SelectedWorldPolygonPoint.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
-                                <Label Margin="-5,5,0,0" Content="Z"/>
-                                <Slider Value="{Binding SelectedWorldPolygonPoint.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
