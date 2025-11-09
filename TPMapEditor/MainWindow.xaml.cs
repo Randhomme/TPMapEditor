@@ -247,6 +247,24 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnWorldPointSetsEdit()
+        {
+            new WorldPointSetDialog(this, Map).ShowDialog();
+            if (SelectedWorldPointSet != null)
+            {
+                if (!Map.WorldPointSets.Contains(SelectedWorldPointSet))
+                {
+                    SelectedWorldPoint = null;
+                    SelectedWorldPointSet = null;
+                }
+                else if(SelectedWorldPoint!=null && !SelectedWorldPointSet.Points.Contains(SelectedWorldPoint))
+                {
+                    SelectedWorldPoint = null;
+                }
+            }
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var asd = new AppSettingsDialog(this, settings);

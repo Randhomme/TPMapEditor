@@ -50,6 +50,7 @@
                 <MenuItem Header="Journal entries" Command="{Binding JournalEntriesEditCommand}"/>
                 <MenuItem Header="Waypoint paths" Command="{Binding WaypointPathsEditCommand}"/>
                 <MenuItem Header="World polygons" Command="{Binding WorldPolygonsEditCommand}"/>
+                <MenuItem Header="World point sets" Command="{Binding WorldPointSetsEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>

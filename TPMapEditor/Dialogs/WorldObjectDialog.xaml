@@ -51,11 +51,11 @@
                     <Label Margin="-5,5,0,0" Content="Position Z"/>
                     <Slider Value="{Binding SelectedWorldObject.Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                     <Label Margin="-5,5,0,0" Content="Rotation X (Euler XYZ)"/>
-                    <Slider Grid.Column="1" Value="{Binding SelectedWorldObject.XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                    <Slider Value="{Binding SelectedWorldObject.XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <Label Margin="-5,5,0,0" Content="Rotation Y (Euler XYZ)"/>
-                    <Slider Grid.Column="1" Value="{Binding SelectedWorldObject.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                    <Slider Value="{Binding SelectedWorldObject.YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <Label Margin="-5,5,0,0" Content="Rotation Z (Euler XYZ)"/>
-                    <Slider Grid.Column="1" Value="{Binding SelectedWorldObject.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                    <Slider Value="{Binding SelectedWorldObject.ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <CheckBox x:Name="wotHasPlayer" Margin="0,15,0,0" Content="Has player ?" IsChecked="{c:Binding Path='SelectedWorldObject.Player!= null', Mode=OneWay}"/>
                     <Label Margin="-5,5,0,0" Content="Player"/>
                     <ComboBox
