@@ -49,6 +49,7 @@
                 <MenuItem Header="Objective tasks" Command="{Binding ObjectiveTasksEditCommand}"/>
                 <MenuItem Header="Journal entries" Command="{Binding JournalEntriesEditCommand}"/>
                 <MenuItem Header="Waypoint paths" Command="{Binding WaypointPathsEditCommand}"/>
+                <MenuItem Header="Waypoint paths" Command="{Binding WorldPolygonsEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>

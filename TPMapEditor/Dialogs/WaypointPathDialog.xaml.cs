@@ -36,7 +36,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddWaypointPath()
         {
-            var path = new WaypointPath(Map, NamedElement.GenerateName("Path", Map.WaypointPaths));
+            var path = new WaypointPath(Map, NamedElement.GenerateName("WaypointPath", Map.WaypointPaths));
             path.Points.Add(new(path, 0, 0, 0));
             Map.WaypointPaths.Add(path);
         }

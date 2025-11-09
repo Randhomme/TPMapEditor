@@ -233,6 +233,20 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnWorldPolygonsEdit()
+        {
+            new WorldPolygonDialog(this, Map).ShowDialog();
+            if (SelectedWorldPolygon != null)
+            {
+                if (!Map.WorldPolygons.Contains(SelectedWorldPolygon))
+                {
+                    SelectedWorldPolygonPoint = null;
+                    SelectedWorldPolygon = null;
+                }
+            }
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var asd = new AppSettingsDialog(this, settings);
