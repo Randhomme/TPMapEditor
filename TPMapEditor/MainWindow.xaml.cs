@@ -229,6 +229,10 @@ namespace TPMapEditor
                     SelectedWaypointPathPoint = null;
                     SelectedWaypointPath = null;
                 }
+                else if (SelectedWaypointPathPoint != null && !SelectedWaypointPath.Points.Contains(SelectedWaypointPathPoint))
+                {
+                    SelectedWaypointPathPoint = null;
+                }
             }
         }
 
@@ -242,6 +246,10 @@ namespace TPMapEditor
                 {
                     SelectedWorldPolygonPoint = null;
                     SelectedWorldPolygon = null;
+                }
+                else if (SelectedWorldPolygonPoint != null && !SelectedWorldPolygon.Points.Contains(SelectedWorldPolygonPoint))
+                {
+                    SelectedWorldPolygonPoint = null;
                 }
             }
         }
