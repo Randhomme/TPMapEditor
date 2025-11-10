@@ -902,6 +902,9 @@ namespace TPMapEditor.Settings
             TPObjectiveTasks.Add(new("TPOBJECTIVES2_GameStrings.h"));
             TPSpeechEventsJournals.Add(new("TPSPEECHEVENTSJOURNALS_GameStrings.h"));
             TPMapTextItems.Add(new("TPMAPTEXTITEMS_GameStrings.h"));
+            TPWorldNames.Add(new("TPWORLDNAMES_GameStrings.h"));
+            TPWorldNames.Add(new("TPJOURNALSCREEN_GameStrings.h"));
+            TPWorldDescriptions.Add(new("TPWORLDDESCRIPTION_GameStrings.h"));
         }
 
         public AppSettings Load()
