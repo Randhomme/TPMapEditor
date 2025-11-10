@@ -94,7 +94,7 @@ namespace TPMapEditor.Data
                         //PlayerInfo - TeamIndex
                         var playerTeam = reader.ReadAndParseInt("PlayerInfo - TeamIndex Int ");
 
-                        map.Players.Add(new(map, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, Team = map.Teams[playerTeam] });
+                        map.Players.Add(new(map, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, Team = playerTeam < 0 ? null : map.Teams[playerTeam] });
                     }
 
                     //IsCampaign
@@ -181,7 +181,7 @@ namespace TPMapEditor.Data
                     {
                         try
                         {
-                            ReadPlayerSection(reader, map);
+                            ReadPlayerSection(reader, map, i);
                         }
                         catch(Exception ex) { throw new TPMapEditorException($"Fail to read Player section number {i} : {ex.Message}", ex); }
                     }
@@ -201,7 +201,7 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read World section."); }
         }
 
-        private static void ReadPlayerSection(StreamReader reader, WorldMap map)
+        private static void ReadPlayerSection(StreamReader reader, WorldMap map, int playerIndex)
         {
             try
             {
@@ -217,7 +217,7 @@ namespace TPMapEditor.Data
                     if(player is null)
                     {
                         player = new(map, playerName, 0, 0, 0, 0, Colors.White);
-                        map.Players.Add(player);
+                        map.Players.Insert(playerIndex, player);
                     }
 
                     //Color
@@ -485,6 +485,20 @@ namespace TPMapEditor.Data
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Polygon section number {i} : {ex.Message}", ex); }
                     }
 
+                    //World Point Sets Vector - Size
+                    var worldPointSetCount = reader.ReadAndParseInt("World Point Sets Vector - Size Int ");
+                    for (int i = 0; i < worldPointSetCount; i++)
+                    {
+                        try
+                        {
+                            ReadWorldPointSetVectorsSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point Set section number {i} : {ex.Message}", ex); }
+                    }
+
+                    //Flag List - Size
+                    var flagListCount = reader.ReadAndParseString("Flag List - Size Int ");
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -580,6 +594,109 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read World Polygons Vectors - Element section."); }
+        }
+
+        private static void ReadWorldPointSetVectorsSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("World Point Sets Vector - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "));
+
+                    //Points
+                    var worldPointsCount = reader.ReadAndParseInt("World Points - Size Int ");
+
+                    for (int i = 0; i < worldPointsCount; i++)
+                    {
+                        try
+                        {
+                            ReadWorldPointElementSection(reader, worldPointSet);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point section number {i} : {ex.Message}", ex); }
+                    }
+
+                    map.WorldPointSets.Add(worldPointSet);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("World Point Sets Vector - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read World Point Sets Vector - Element section."); }
+        }
+
+        private static void ReadWorldPointElementSection(StreamReader reader, WorldPointSet worldPointSet)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("World Points - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var worldPoint = new WorldPoint(worldPointSet, 0, 0, 0, 0);
+
+                    //world point magnitude (probably not used)
+                    reader.ReadLine();
+
+                    ReadWorldPointBasisSection(reader, worldPoint);
+
+                    worldPointSet.Points.Add(worldPoint);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("World Points - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read World Points - Element section."); }
+        }
+
+        private static void ReadWorldPointBasisSection(StreamReader reader, WorldPoint worldPoint)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("World Point Basis"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    //Position Vector3
+                    var position = reader.ReadAndParseVector3("Position Vector3");
+
+                    //LookAt Vector Length Float (probably not used)
+                    reader.ReadLine();
+
+                    //Orientation - Cross Vector3
+                    var orientationCross = reader.ReadAndParseVector3("Orientation - Cross Vector3");
+
+                    //Orientation - Forward Vector3
+                    var orientationForward = reader.ReadAndParseVector3("Orientation - Forward Vector3");
+
+                    //Orientation - Up Vector3
+                    var orientationUp = reader.ReadAndParseVector3("Orientation - Up Vector3");
+
+                    var eulerXYZ = GetEulerXYZ(orientationCross, orientationForward, orientationUp);
+
+                    worldPoint.X = position.X;
+                    worldPoint.Y = position.Y;
+                    worldPoint.Z = position.Z;
+                    worldPoint.XRotation = eulerXYZ.X;
+                    worldPoint.YRotation = eulerXYZ.Y;
+                    worldPoint.ZRotation = eulerXYZ.Z;
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("World Point Basis section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read World Point Basis section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
