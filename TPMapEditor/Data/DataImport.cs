@@ -503,6 +503,17 @@ namespace TPMapEditor.Data
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read Flag List - Element section number {i} : {ex.Message}", ex); }
                     }
 
+                    //Timer List - Size
+                    var timerListCount = reader.ReadAndParseInt("Timer List - Size Int ");
+                    for (int i = 0; i < timerListCount; i++)
+                    {
+                        try
+                        {
+                            ReadTimerListElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Timer List - Element section number {i} : {ex.Message}", ex); }
+                    }
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -725,6 +736,35 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read Flag List - Element section."); }
         }
 
+        private static void ReadTimerListElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Timer List - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var timer = new Timer(map, reader.ReadAndParseString("Timer Name String "), reader.ReadAndParseBool("Timer Status Bool "), 0);
+                    
+                    reader.ReadLine();
+                    reader.ReadLine();
+
+                    timer.StartTime = reader.ReadAndParseDouble("StartTime Double ");
+
+                    reader.ReadLine();
+
+                    map.Timers.Add(timer);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Timer List - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Timer List - Element section."); }
+        }
+
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
         {
             var line = reader.ReadLine().Trim();
@@ -736,6 +776,13 @@ namespace TPMapEditor.Data
         {
             var line = reader.ReadLine().Trim();
             int.TryParse(line.GetSafeSubstring(prefix), out var value);
+            return value;
+        }
+
+        private static double ReadAndParseDouble(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            double.TryParse(line.GetSafeSubstring(prefix), out var value);
             return value;
         }
 

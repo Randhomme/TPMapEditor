@@ -12,7 +12,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool status;
         [ObservableProperty]
-        private float startTime;
+        private double startTime;
 
         public Timer(WorldMap map, string name, bool status, float startTime) : base(map, name)
         {
