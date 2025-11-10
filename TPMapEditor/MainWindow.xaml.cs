@@ -3,20 +3,12 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using TPMapEditor.Controls;
-using TPMapEditor.Converter;
 using TPMapEditor.Data;
 using TPMapEditor.Dialogs;
 using TPMapEditor.Settings;
@@ -95,6 +87,8 @@ namespace TPMapEditor
             HidePathElements();
             HideWorldPolygonElements();
             HideWorldPointSetElements();
+            HideObjectivePointElements();
+            HideMapTextPointElements();
         }
 
         #region MenuCommand
@@ -429,11 +423,11 @@ namespace TPMapEditor
             //    SelectedWorldObject.IsLastSelected = true;
             MoveCheckBox.Checked += MoveWorldObjectCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldObjectCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveWorldObject();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveWorldObject();
         }
 
         private void HideWotElements()
@@ -638,11 +632,11 @@ namespace TPMapEditor
             //    SelectedPlayer.IsLastSelected = true;
             MoveCheckBox.Checked += MovePlayerCheckBox_Checked;
             MoveCheckBox.Unchecked += MovePlayerCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMovePlayer();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerPointButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMovePlayer();
         }
 
         private void HidePlayerElements()
@@ -857,11 +851,11 @@ namespace TPMapEditor
             //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveWaypointPathPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWaypointPathPointCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveWaypointPathPoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWaypointPathPointPreview_MouseMove;
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveWaypointPathPoint();
         }
 
         private void HidePathElements()
@@ -1131,7 +1125,7 @@ namespace TPMapEditor
 
         private void DeleteWaypointPathPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach(var p in SelectedWaypointPathPoints)
+            foreach (var p in SelectedWaypointPathPoints)
             {
                 p.Parent.Points.Remove(p);
                 //remove path if no more points
@@ -1165,6 +1159,7 @@ namespace TPMapEditor
 
         private void WaypointPathPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+
             NewWaypointPathRadioButton.IsChecked = false;
         }
 
@@ -1220,11 +1215,11 @@ namespace TPMapEditor
             //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveWorldPolygonPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldPolygonPointCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveWorldPolygonPoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldPolygonPointPreview_MouseMove;
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveWorldPolygonPoint();
         }
 
         private void HideWorldPolygonElements()
@@ -1583,11 +1578,11 @@ namespace TPMapEditor
             //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveWorldPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldPointCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveWorldPoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
             DeleteButton.Click += DeleteWorldPointButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveWorldPoint();
         }
 
         private void HideWorldPointSetElements()
@@ -1946,11 +1941,11 @@ namespace TPMapEditor
             //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveObjectivePointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveObjectivePointCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveObjectivePoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideObjectivePoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click += DeleteObjectivePointButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveObjectivePoint();
         }
 
         private void HideObjectivePointElements()
@@ -2170,11 +2165,11 @@ namespace TPMapEditor
             //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveMapTextPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveMapTextPointCheckBox_Unchecked;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveMapTextPoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideMapTextPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click += DeleteMapTextPointButton_Click;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveMapTextPoint();
         }
 
         private void HideMapTextPointElements()

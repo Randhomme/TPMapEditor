@@ -139,16 +139,18 @@
                                     </Border>
 
                                     <!-- Preview Path -->
-                                    <Border x:Name="WaypointPathPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewWaypointPathRadioButton, Path=IsChecked}" MouseLeftButtonDown="WaypointPathPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPreviewControl_MouseRightButtonDown"/>
-                                    <Border x:Name="WaypointPathPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddWaypointPathPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WaypointPathPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPointPreviewControl_MouseRightButtonDown"/>
+                                    <Border x:Name="WaypointPathPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=NewWaypointPathRadioButton, Path=IsChecked}" MouseLeftButtonDown="WaypointPathPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPreviewControl_MouseRightButtonDown"/>
+                                    <Border x:Name="WaypointPathPointPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=AddWaypointPathPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WaypointPathPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPointPreviewControl_MouseRightButtonDown"/>
                                     
                                     <!-- Preview Polygon -->
-                                    <Border x:Name="WorldPolygonPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewWorldPolygonRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown"/>
-                                    <Border x:Name="WorldPolygonPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddWorldPolygonPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown"/>
+                                    <Border x:Name="WorldPolygonPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=NewWorldPolygonRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown"/>
+                                    <Border x:Name="WorldPolygonPointPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=AddWorldPolygonPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown"/>
                                     
                                     <!-- Preview PointSet -->
-                                    <Border x:Name="WorldPointSetPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=NewWorldPointSetRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown"/>
-                                    <Border x:Name="WorldPointPreviewControl" Width="30" Height="30" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointPreviewControl_MouseRightButtonDown"/>
+                                    <Border x:Name="WorldPointSetPreviewControl" Background="Black" Visibility="{c:Binding ElementName=NewWorldPointSetRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown">
+                                        <Image Source="/Images/Arrow.png"/>
+                                    </Border>
+                                    <Border x:Name="WorldPointPreviewControl" Width="40" Height="40" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointPreviewControl_MouseRightButtonDown"/>
 
                                     <!-- Preview ObjectivePoint -->
                                     <Border x:Name="ObjectivePointPreviewControl" Visibility="{c:Binding ElementName=AddObjectivePointCheckBox, Path=IsChecked}" MouseLeftButtonDown="ObjectivePointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="ObjectivePointPreviewControl_MouseRightButtonDown">
@@ -291,12 +293,12 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Path -->
-                                                <Path x:Name="OutlinePath" StrokeThickness="20" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
+                                                <Path x:Name="OutlinePath" StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWaypointPathClicked">
+                                                <Path StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWaypointPathClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -336,7 +338,7 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWaypointPathPointClicked">
+                                                            <Border x:Name="border" Width="20" Height="20" BorderBrush="Transparent" BorderThickness="3" MouseLeftButtonDown="OnWaypointPathPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                 </Border.Background>
@@ -376,12 +378,12 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Path -->
-                                                <Path x:Name="OutlinePath" StrokeThickness="20" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
+                                                <Path x:Name="OutlinePath" StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWorldPolygonClicked">
+                                                <Path StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWorldPolygonClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -424,7 +426,7 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" Width="40" Height="40" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWorldPolygonPointClicked">
+                                                            <Border x:Name="border" Width="20" Height="20" BorderBrush="Transparent" BorderThickness="3" MouseLeftButtonDown="OnWorldPolygonPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                 </Border.Background>
@@ -494,7 +496,7 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" RenderTransformOrigin="0.5,0.5" Width="50" Height="50" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWorldPointClicked">
+                                                            <Border x:Name="border" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="5" MouseLeftButtonDown="OnWorldPointClicked">
                                                                 <Border x:Name="borderInside" BorderThickness="3">
                                                                     <Border.Background>
                                                                         <SolidColorBrush Color="{Binding Parent.Color}"/>
