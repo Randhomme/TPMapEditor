@@ -514,6 +514,28 @@ namespace TPMapEditor.Data
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read Timer List - Element section number {i} : {ex.Message}", ex); }
                     }
 
+                    //Speech Event List - Size
+                    var speechEventListCount = reader.ReadAndParseInt("Speech Event List - Size Int ");
+                    for (int i = 0; i < speechEventListCount; i++)
+                    {
+                        try
+                        {
+                            ReadSpeechEventListElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Speech Event List - Element section number {i} : {ex.Message}", ex); }
+                    }
+
+                    //PlayerAllianceInfoVector - Size
+                    var playerAllianceListCount = reader.ReadAndParseInt("PlayerAllianceInfoVector - Size Int ");
+                    for (int i = 0; i < speechEventListCount; i++)
+                    {
+                        try
+                        {
+                            ReadPlayerAllianceInfoVectorElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read PlayerAllianceInfoVector - Element section number {i} : {ex.Message}", ex); }
+                    }
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -763,6 +785,70 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read Timer List - Element section."); }
+        }
+
+        private static void ReadSpeechEventListElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Speech Event List - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var speechEvent = new SpeechEvent(map, reader.ReadAndParseString("Name String "))
+                    {
+                        SoundFileName = reader.ReadAndParseString("Sound FileName String "),
+                        TextColor = reader.ReadAndParseColor("Text Color Colour"),
+                        FaceTexture = reader.ReadAndParseString("FaceTexture String "),
+                        TalkingHeadLocation = (TalkingHeadLocation)reader.ReadAndParseInt("TalkingHeadLocation Int "),
+                        HasBeenPlayedOnce = reader.ReadAndParseBool("Has Been Played Once Bool "),
+                        IsSecondarySpeech = reader.ReadAndParseBool("Is Secondary Speech Bool "),
+                        DisplayTime = reader.ReadAndParseDouble("Display Time Float "),
+                        OpenChatBar = reader.ReadAndParseBool("Open Chat Bar Bool "),
+                        OpenTalkingHead = reader.ReadAndParseBool("Open Talking Head Bool "),
+                        HasText = reader.ReadAndParseBool("Has Text Bool "),
+                        UseSoundFileLength = reader.ReadAndParseBool("Use Sound File Length Bool "),
+                        AlwaysOpenSpeechEventBar = reader.ReadAndParseBool("Always Open Speech Event Bar Bool "),
+                    };
+                    //Valid Text StringID Bool (has to always be true, otherwise game crashes)
+                    reader.ReadLine();
+                    speechEvent.TextStringID = reader.ReadAndParseString("TextStringID String ");
+
+                    //Valid Speaker ID Bool (has to always be true, otherwise game crashes)
+                    reader.ReadLine();
+                    speechEvent.SpeakerID = reader.ReadAndParseString("SpeakerID String ");
+
+                    map.SpeechEvents.Add(speechEvent);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Speech Event List - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Speech Event List - Element section."); }
+        }
+
+        private static void ReadPlayerAllianceInfoVectorElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("PlayerAllianceInfoVector - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var playerAlliance = new PlayerAlliance(map.Players[reader.ReadAndParseInt("Player0 Int ")], map.Players[reader.ReadAndParseInt("Player1 Int ")]);
+                    map.PlayerAlliances.Add(playerAlliance);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("PlayerAllianceInfoVector - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read PlayerAllianceInfoVector - Element section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 

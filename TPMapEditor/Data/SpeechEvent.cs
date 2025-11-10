@@ -23,7 +23,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool hasBeenPlayedOnce, isSecondarySpeech, openChatBar, openTalkingHead, hasText, useSoundFileLength, alwaysOpenSpeechEventBar;
         [ObservableProperty]
-        private float displayTime;
+        private double displayTime;
 
         public SpeechEvent(WorldMap map, string name) : base(map, name)
         {
