@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using TPMapEditor.Enums;
 using TPMapEditor.Exceptions;
@@ -497,7 +493,15 @@ namespace TPMapEditor.Data
                     }
 
                     //Flag List - Size
-                    var flagListCount = reader.ReadAndParseString("Flag List - Size Int ");
+                    var flagListCount = reader.ReadAndParseInt("Flag List - Size Int ");
+                    for (int i = 0; i < flagListCount; i++)
+                    {
+                        try
+                        {
+                            ReadFlagListElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Flag List - Element section number {i} : {ex.Message}", ex); }
+                    }
 
                     reader.ReadLine(); //end of section
                 }
@@ -699,6 +703,28 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read World Point Basis section."); }
         }
 
+        private static void ReadFlagListElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Flag List - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var flag = new Flag(map, reader.ReadAndParseString("Flag Name String "), reader.ReadAndParseBool("Flag Value Bool "));
+
+                    map.Flags.Add(flag);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Flag List - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Flag List - Element section."); }
+        }
+
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
         {
             var line = reader.ReadLine().Trim();
@@ -819,8 +845,6 @@ namespace TPMapEditor.Data
         /// <summary>
         /// Y forward and Z up (just to remember)
         /// </summary>
-        /// <param name="dir"></param>
-        /// <returns></returns>
         private static (int yaw, int pitch) GetYawPitch(Vector3 dir)
         {
             dir = Vector3.Normalize(dir);
