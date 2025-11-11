@@ -15,7 +15,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private FormationType formationTypeStart, formationType;
         [ObservableProperty]
-        private Team? team;
+        private Team? selectableTeam, inGameTeam;
         [ObservableProperty]
         private bool isPlayable, isSelected, isLastSelected;
 

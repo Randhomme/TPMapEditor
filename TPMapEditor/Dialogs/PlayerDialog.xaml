@@ -70,21 +70,33 @@
                         <Button Width="70" Content="Edit" Grid.Column="1" Click="EditPlayerColor_Click"/>
                     </Grid>
                     <Label Margin="-5,5,0,0" Content="Position X"/>
-                    <Slider x:Name="selectedPlayerX" Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1"/>
+                    <Slider Value="{Binding SelectedPlayer.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                     <Label Margin="-5,5,0,0" Content="Position Y"/>
-                    <Slider x:Name="selectedPlayerY" Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1"/>
+                    <Slider Value="{Binding SelectedPlayer.Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                     <Label Margin="-5,5,0,0" Content="Rotation"/>
                     <Slider Value="{Binding SelectedPlayer.Rotation}" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <Label Margin="-5,5,0,0" Content="Formation type start"/>
                     <ComboBox SelectedItem="{Binding SelectedPlayer.FormationType}" ItemsSource="{enums:EnumBindingSource enums:FormationType}"/>
-                    <CheckBox x:Name="playerHasTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.Team != null', Mode=OneWay}"/>
-                    <Label Margin="-5,5,0,0" Content="Team"/>
+                    <CheckBox x:Name="PlayerHasSelectableTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.SelectableTeam != null', Mode=OneWay}"/>
+                    <Label Margin="-5,5,0,0" Content="Selectable team"/>
                     <ComboBox
-                        x:Name="teamComboBox"
-                        SelectedItem="{Binding SelectedPlayer.Team}"
-                        ItemsSource="{Binding Map.Teams}"
-                        IsEnabled="{Binding ElementName=playerHasTeamCheckBox, Path=IsChecked}"
-                        SelectedIndex="{c:Binding ElementName=playerHasTeamCheckBox, Path='IsChecked ? 0 : -1', Mode=OneWay}">
+                        SelectedItem="{Binding SelectedPlayer.SelectableTeam}"
+                        ItemsSource="{Binding Map.SelectableTeams}"
+                        IsEnabled="{Binding ElementName=PlayerHasSelectableTeamCheckBox, Path=IsChecked}"
+                        SelectedIndex="{c:Binding ElementName=PlayerHasSelectableTeamCheckBox, Path='IsChecked ? 0 : -1', Mode=OneWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RealName, Converter={StaticResource teamNameConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <CheckBox x:Name="PlayerHasInGameTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.InGameTeam != null', Mode=OneWay}"/>
+                    <Label Margin="-5,5,0,0" Content="In game team"/>
+                    <ComboBox
+                        SelectedItem="{Binding SelectedPlayer.InGameTeam}"
+                        ItemsSource="{Binding Map.InGameTeams}"
+                        IsEnabled="{Binding ElementName=PlayerHasInGameTeamCheckBox, Path=IsChecked}"
+                        SelectedIndex="{c:Binding ElementName=PlayerHasInGameTeamCheckBox, Path='IsChecked ? 0 : -1', Mode=OneWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding RealName, Converter={StaticResource teamNameConverter}}"/>

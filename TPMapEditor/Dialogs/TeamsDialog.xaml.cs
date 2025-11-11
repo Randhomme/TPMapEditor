@@ -12,7 +12,8 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class TeamsDialog : DialogWindow
     {
-        public Team? SelectedTeam { get; set; }
+        public Team? SelectedSelectableTeam { get; set; }
+        public Team? SelectedInGameTeam { get; set; }
         public WorldMap Map { get; }
         public TeamsDialog(Window owner, WorldMap map) : base(owner)
         {
@@ -20,39 +21,48 @@ namespace TPMapEditor.Dialogs
             InitializeComponent();
         }
 
-        private bool CanAddTeam()
+        [RelayCommand]
+        private void OnAddSelectableTeam()
         {
-            return Map.Teams.Count < 8 && StringDictionnary.TeamNames.Count > 0;
+            Map.SelectableTeams.Add(new Team(StringDictionnary.TeamNames.Keys.FirstOrDefault()) { Race = Enums.Race.Navy });
         }
 
-        [RelayCommand(CanExecute = nameof(CanAddTeam))]
-        private void OnAddTeam()
+        private void RemoveSelectedSelectableTeamButton_Click(object sender, RoutedEventArgs e)
         {
-            Map.Teams.Add(new Team(StringDictionnary.TeamNames.Keys.First()) { Race = Enums.Race.Navy });
-            AddTeamCommand.NotifyCanExecuteChanged();
-        }
-
-        //this can't be a command because the button's context is a team (in the datagrid)
-        private void RemoveTeam()
-        {
-            if (SelectedTeam != null)
+            if (SelectedSelectableTeam != null)
             {
-                Map.Teams.Remove(SelectedTeam);
-                foreach(var player in Map.Players)
+                foreach (var player in Map.Players)
                 {
-                    if (player.Team == SelectedTeam)
+                    if (player.SelectableTeam == SelectedSelectableTeam)
                     {
-                        player.Team = null;
+                        player.SelectableTeam = null;
                     }
                 }
-                AddTeamCommand.NotifyCanExecuteChanged();
-                SelectedTeam = null;
+                Map.InGameTeams.Remove(SelectedSelectableTeam);
+                SelectedSelectableTeam = null;
             }
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        [RelayCommand]
+        private void OnAddInGameTeam()
         {
-            RemoveTeam();
+            Map.InGameTeams.Add(new Team(StringDictionnary.TeamNames.Keys.FirstOrDefault()) { Race = Enums.Race.Navy });
+        }
+
+        private void RemoveSelectedInGameTeamButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedInGameTeam != null)
+            {
+                foreach (var player in Map.Players)
+                {
+                    if (player.InGameTeam == SelectedInGameTeam)
+                    {
+                        player.InGameTeam = null;
+                    }
+                }
+                Map.InGameTeams.Remove(SelectedInGameTeam);
+                SelectedInGameTeam = null;
+            }
         }
     }
 }

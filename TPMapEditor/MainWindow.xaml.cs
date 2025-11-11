@@ -156,10 +156,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnTeamsEdit()
         {
-            if (StringDictionnary.TeamNames.Count <= 0)
-                MessageBox.Show("You need to add at least one team name to create a team.");
-            var td = new TeamsDialog(this, Map);
-            td.ShowDialog();
+            new TeamsDialog(this, Map).ShowDialog();
         }
 
         [RelayCommand]

@@ -32,8 +32,6 @@ namespace TPMapEditor.Dialogs
         {
             Map = map;
             InitializeComponent();
-            this.selectedPlayerX.Minimum = this.selectedPlayerY.Minimum =  -map.Size / 2 - 150;
-            this.selectedPlayerX.Maximum = this.selectedPlayerY.Maximum = map.Size / 2 + 150;
         }
 
         [RelayCommand]

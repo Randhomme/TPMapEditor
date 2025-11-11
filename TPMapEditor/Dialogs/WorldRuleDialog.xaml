@@ -255,7 +255,7 @@
         <!--Team-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldTeam}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{Binding Map.Teams, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+                <ComboBox ItemsSource="{Binding Map.InGameTeams, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
             </ContentControl>
         </DataTemplate>
 

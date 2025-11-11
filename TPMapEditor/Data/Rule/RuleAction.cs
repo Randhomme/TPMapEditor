@@ -188,7 +188,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldTeam(string? label = null, Team? team = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            team ??= map.Teams.FirstOrDefault();
+            team ??= map.InGameTeams.FirstOrDefault();
             RuleFields.Add(new RuleFieldTeam(label, team, isOptional, optionalLabel, isShown));
         }
 

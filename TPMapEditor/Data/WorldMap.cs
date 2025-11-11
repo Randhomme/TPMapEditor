@@ -24,7 +24,8 @@ namespace TPMapEditor.Data
         private Color ambientLightColor = Colors.Khaki, roofLightColor = Colors.DarkKhaki, floorLightColor = Colors.DarkKhaki;
 
         public IList<WorldObject> WorldObjects { get; }
-        public IList<Team> Teams { get; }
+        public IList<Team> SelectableTeams { get; }
+        public IList<Team> InGameTeams { get; }
         public IList<Player> Players { get; }
         public IList<Group> Groups { get; }
         public IList<WaypointPath> WaypointPaths { get; }
@@ -54,7 +55,8 @@ namespace TPMapEditor.Data
             size = 2500;
             zSize = 1500;
             WorldObjects = new ObservableCollection<WorldObject>();
-            Teams = new ObservableCollection<Team>();
+            SelectableTeams = new ObservableCollection<Team>();
+            InGameTeams = new ObservableCollection<Team>();
             Players = new ObservableCollection<Player>();
             Groups = new ObservableCollection<Group>();
             WaypointPaths = new ObservableCollection<WaypointPath>();
@@ -97,7 +99,8 @@ namespace TPMapEditor.Data
         private void Clear()
         {
             WorldObjects.Clear();
-            Teams.Clear();
+            SelectableTeams.Clear();
+            InGameTeams.Clear();
             Players.Clear();
             Groups.Clear();
             WaypointPaths.Clear();

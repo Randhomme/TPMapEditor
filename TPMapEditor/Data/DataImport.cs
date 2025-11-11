@@ -75,7 +75,7 @@ namespace TPMapEditor.Data
 
                         reader.ReadLine(); //skip line
 
-                        map.Teams.Add(new(teamName) { Race = race, RaceLocked = raceLocked });
+                        map.SelectableTeams.Add(new(teamName) { Race = race, RaceLocked = raceLocked });
                     }
 
                     //Number of Players (playable)
@@ -90,7 +90,7 @@ namespace TPMapEditor.Data
                         //PlayerInfo - TeamIndex
                         var playerTeam = reader.ReadAndParseInt("PlayerInfo - TeamIndex Int ");
 
-                        map.Players.Add(new(map, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, Team = playerTeam < 0 ? null : map.Teams[playerTeam] });
+                        map.Players.Add(new(map, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, SelectableTeam = playerTeam < 0 ? null : map.SelectableTeams[playerTeam] });
                     }
 
                     //IsCampaign
