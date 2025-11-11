@@ -5,8 +5,6 @@ namespace TPMapEditor.Data
     public partial class WorldObject : ObservableObject
     {
         [ObservableProperty]
-        private int id;
-        [ObservableProperty]
         private WotGridItem type;
         [ObservableProperty]
         private double x, y, z, xRotation, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)
@@ -16,6 +14,8 @@ namespace TPMapEditor.Data
         private Player? player;
         [ObservableProperty]
         private bool isSelected, isLastSelected;
+
+        public int Id { get; set; } //only used for data import
 
         public WorldObject(WotGridItem type, double x, double y, double zRotation)
         {
