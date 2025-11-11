@@ -19,6 +19,8 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isPlayable, isSelected, isLastSelected;
 
+        public int TeamIndex { get; set; } //only used for data import
+
         partial void OnIsPlayableChanged(bool value)
         {
             if (value)
