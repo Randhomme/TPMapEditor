@@ -245,7 +245,7 @@ namespace TPMapEditor.Data
                     reader.ReadLine(); //probably not used
 
                     //Team Index
-                    reader.ReadLine(); //probably not used
+                    player.TeamIndex = reader.ReadAndParseInt("TeamIndex Int ");
 
                     //Formation type
                     var formationTypeStart = (FormationType)reader.ReadAndParseInt("FormationType Int ");
@@ -527,13 +527,44 @@ namespace TPMapEditor.Data
 
                     //PlayerAllianceInfoVector - Size
                     var playerAllianceListCount = reader.ReadAndParseInt("PlayerAllianceInfoVector - Size Int ");
-                    for (int i = 0; i < speechEventListCount; i++)
+                    for (int i = 0; i < playerAllianceListCount; i++)
                     {
                         try
                         {
                             ReadPlayerAllianceInfoVectorElementSection(reader, map);
                         }
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read PlayerAllianceInfoVector - Element section number {i} : {ex.Message}", ex); }
+                    }
+
+                    //Team List - Size (InGameTeams)
+                    var inGameTeamListCount = reader.ReadAndParseInt("Team List - Size Int ");
+                    for (int i = 0; i < inGameTeamListCount; i++)
+                    {
+                        try
+                        {
+                            ReadInGameTeamListElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Team List - Element section number {i} : {ex.Message}", ex); }
+                    }
+
+                    //Set the InGameTeam for each player
+                    foreach(var player in map.Players)
+                    {
+                        player.InGameTeam = player.TeamIndex < 0 ? null : map.InGameTeams[player.TeamIndex];
+                    }
+
+                    //Winning team (not used, or state maybe)
+                    reader.ReadLine();
+
+                    //Num Groups
+                    var groupCount = reader.ReadAndParseInt("Num Groups Int ");
+                    for (int i = 0; i < groupCount; i++)
+                    {
+                        try
+                        {
+                            ReadGroupSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i} : {ex.Message}", ex); }
                     }
 
                     reader.ReadLine(); //end of section
@@ -849,6 +880,62 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read PlayerAllianceInfoVector - Element section."); }
+        }
+
+        private static void ReadInGameTeamListElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Team List - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var name = reader.ReadAndParseString("Team Name ID String ");
+                    var race = (Race)reader.ReadAndParseInt("Race Int ");
+                    var raceLocked = reader.ReadAndParseBool("Race Lock Bool ");
+
+                    map.InGameTeams.Add(new(name) { Race = race, RaceLocked = raceLocked });
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Team List - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Team List - Element section."); }
+        }
+
+        private static void ReadGroupSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Group"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var group = new Group(map, reader.ReadAndParseString("Name String "));
+
+                    //World Object IDs - Size
+                    var worldObjectCount = reader.ReadAndParseInt("World Object IDs - Size Int ");
+                    for(int i = 0; i < worldObjectCount; i++)
+                    {
+                        //World Object IDs - Element
+                        var worldObjectId = reader.ReadAndParseInt("World Object IDs - Element Int ");
+                        var worldObject = map.WorldObjects.First((wot) => wot.Id == worldObjectId);
+                        worldObject.Group = group;
+                    }
+
+                    map.Groups.Add(group);
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Group section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Group section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
