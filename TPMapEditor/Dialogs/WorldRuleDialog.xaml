@@ -178,7 +178,7 @@
         <!--InGameMessage-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldInGameMessage}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{x:Static data:WorldMap.InGameMessagesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                <ComboBox ItemsSource="{x:Static data:StringDictionnary.InGameMessagesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
             </ContentControl>
         </DataTemplate>
 

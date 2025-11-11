@@ -609,7 +609,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(GameHeadersFiles))
             {
-                WorldMap.InGameMessagesDictionnary.Clear();
+                StringDictionnary.InGameMessagesDictionnary.Clear();
                 foreach (var file in this.TPInGameMessages)
                 {
                     try
@@ -624,7 +624,7 @@ namespace TPMapEditor.Settings
                                     var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
                                     if (gameStrings.TryGetValue(defineString, out var gameString))
                                     {
-                                        WorldMap.InGameMessagesDictionnary[defineString] = gameString;
+                                        StringDictionnary.InGameMessagesDictionnary[defineString] = gameString;
                                     }
                                 }
                             }

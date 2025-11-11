@@ -12,8 +12,6 @@ namespace TPMapEditor.Data
 {
     public partial class WorldMap : ObservableObject
     {
-        public static Dictionary<string, string> InGameMessagesDictionnary = new Dictionary<string, string>();
-
         [ObservableProperty]
         private bool mustAssembleFleet;
         [ObservableProperty]

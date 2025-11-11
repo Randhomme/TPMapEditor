@@ -107,7 +107,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldInGameMessage(string? label, string? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= WorldMap.InGameMessagesDictionnary.Keys.FirstOrDefault();
+            value ??= StringDictionnary.InGameMessagesDictionnary.Keys.FirstOrDefault();
             RuleFields.Add(new RuleFieldInGameMessage(label, value, isOptional, optionalLabel, isShown));
         }
 
@@ -365,8 +365,8 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     AddRuleFieldObservableCollection("Use custom message", new()
                     {
-                        new RuleFieldInGameMessage("Winner", WorldMap.InGameMessagesDictionnary.Keys.FirstOrDefault()),
-                        new RuleFieldInGameMessage("Loser", WorldMap.InGameMessagesDictionnary.Keys.FirstOrDefault())
+                        new RuleFieldInGameMessage("Winner", StringDictionnary.InGameMessagesDictionnary.Keys.FirstOrDefault()),
+                        new RuleFieldInGameMessage("Loser", StringDictionnary.InGameMessagesDictionnary.Keys.FirstOrDefault())
                     });
                     AddRuleFieldBool("Show stats screen");
                     break;
