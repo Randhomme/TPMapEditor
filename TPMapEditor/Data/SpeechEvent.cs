@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TPMapEditor.Enums;
+using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
     public partial class SpeechEvent : NamedElement
     {
-        public static IList<string> DialogueFilesList { get; } = new List<string>();
-        public static IList<string> FaceTexturesList { get; } = new List<string>();
-
         [ObservableProperty]
         private string soundFileName, faceTexture, textStringID, speakerID;
         [ObservableProperty]
@@ -27,8 +25,8 @@ namespace TPMapEditor.Data
 
         public SpeechEvent(WorldMap map, string name) : base(map, name)
         {
-            soundFileName = DialogueFilesList.FirstOrDefault() ?? string.Empty;
-            faceTexture = FaceTexturesList.FirstOrDefault() ?? string.Empty;
+            soundFileName = AppSettings.DialogueFilesList.FirstOrDefault() ?? string.Empty;
+            faceTexture = AppSettings.FaceTexturesList.FirstOrDefault() ?? string.Empty;
             textStringID = StringDictionnary.SpeechEvents.FirstOrDefault().Key ?? string.Empty;
             speakerID = StringDictionnary.SpeakerNames.FirstOrDefault().Key ?? string.Empty;
             textColor = Colors.White;

@@ -40,7 +40,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldDialogueAudio(string? label, string? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= SpeechEvent.DialogueFilesList.FirstOrDefault();
+            value ??= AppSettings.DialogueFilesList.FirstOrDefault();
             RuleFields.Add(new RuleFieldDialogueAudio(label, value, isOptional, optionalLabel, isShown));
         }
 

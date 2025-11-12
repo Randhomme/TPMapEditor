@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:settings="clr-namespace:TPMapEditor.Settings"
         xmlns:enums="clr-namespace:TPMapEditor.Enums"
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
@@ -46,9 +47,9 @@
                     <Label Margin="-5,0,0,0" Content="Name"/>
                     <TextBox Text="{Binding SelectedSpeechEvent.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                     <Label Margin="-5,5,0,0" Content="Sound file name"/>
-                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.DialogueFilesList}" SelectedValue="{Binding SelectedSpeechEvent.SoundFileName, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding SelectedSpeechEvent.SoundFileName, UpdateSourceTrigger=PropertyChanged}"/>
                     <Label Margin="-5,5,0,0" Content="Face texture"/>
-                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.FaceTexturesList}" SelectedValue="{Binding SelectedSpeechEvent.FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding SelectedSpeechEvent.FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
                     <Label Margin="-5,5,0,0" Content="Text"/>
                     <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEvents}" SelectedValue="{Binding SelectedSpeechEvent.TextStringID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                     <Label Margin="-5,5,0,0" Content="Speaker"/>

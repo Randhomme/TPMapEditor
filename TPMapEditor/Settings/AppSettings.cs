@@ -21,8 +21,11 @@ namespace TPMapEditor.Settings
         public static IList<string> Effects { get; } = new List<string>();
         public static IList<string> SinglePlayerMissions { get; } = new List<string>();
         public static IList<string> GuiTextures { get; } = new List<string>();
+        public static IList<string> GuiTexturesFull { get; } = new List<string>();
         public static IList<string> Musics { get; } = new List<string>();
         public static IList<string> Meshes { get; } = new List<string>();
+        public static IList<string> DialogueFilesList { get; } = new List<string>();
+        public static IList<string> FaceTexturesList { get; } = new List<string>();
         public ObservableCollection<GameHeadersFile> TPTeamNames { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; } = new();
@@ -245,6 +248,7 @@ namespace TPMapEditor.Settings
                 foreach (var file in Directory.GetFiles(GuiTexturesDirectory, "*.tga"))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(file);
+                    GuiTexturesFull.Add(fileName);
                     if (!string.IsNullOrEmpty(fileName))
                     {
                         if (Regex.IsMatch(fileName, @"_\d_\d$"))
@@ -297,7 +301,7 @@ namespace TPMapEditor.Settings
 
         private void UpdateDialogueFilesList()
         {
-            SpeechEvent.DialogueFilesList.Clear();
+            DialogueFilesList.Clear();
             var dialogueDirectory = Path.Combine(SoundDirectory, "Dialogue");
             if (Directory.Exists(dialogueDirectory))
             {
@@ -306,7 +310,7 @@ namespace TPMapEditor.Settings
                     var fileName = Path.GetFileNameWithoutExtension(file);
                     if (!string.IsNullOrEmpty(fileName))
                     {
-                        SpeechEvent.DialogueFilesList.Add(fileName);
+                        DialogueFilesList.Add(fileName);
                     }
                 }
             }
@@ -325,7 +329,7 @@ namespace TPMapEditor.Settings
                 {
                     using (var reader = new StreamReader(File.OpenRead(hudFilePath), Encoding.GetEncoding("Windows-1252")))
                     {
-                        SpeechEvent.FaceTexturesList.Clear();
+                        FaceTexturesList.Clear();
                         for (int i = 0; i < 185; i++)
                         {
                             if (!reader.EndOfStream)
@@ -349,7 +353,7 @@ namespace TPMapEditor.Settings
                                         var faceTextureName = lineSplit[1];
                                         if (!string.IsNullOrEmpty(faceTextureName))
                                         {
-                                            SpeechEvent.FaceTexturesList.Add(faceTextureName);
+                                            FaceTexturesList.Add(faceTextureName);
                                         }
                                     }
                                     // skip another 24 lines

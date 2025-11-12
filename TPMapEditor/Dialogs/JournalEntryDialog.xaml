@@ -17,42 +17,47 @@
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0*" MinWidth="200"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition MinWidth="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.JournalEntries}" SelectedItem="{Binding SelectedJournalEntry}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
-                        <DataGridTemplateColumn MinWidth="70">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Remove" Click="RemoveJournalEntry_Click"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add journal entry" Command="{Binding AddJournalEntryCommand}"/>
-            </Grid>
-            <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedJournalEntry!=null'}">
-                <StackPanel>
-                    <Label Margin="-5,0,0,0" Content="Name"/>
-                    <TextBox Text="{Binding SelectedJournalEntry.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
-                    <Label Margin="-5,5,0,0" Content="Text"/>
-                    <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEventsJournals}" SelectedValue="{Binding SelectedJournalEntry.TextStringId}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
-                    <Label Margin="-5,5,0,0" Content="Dialogue file"/>
-                    <ComboBox ItemsSource="{x:Static data:SpeechEvent.DialogueFilesList}" SelectedValue="{Binding SelectedJournalEntry.SpeechEventFileName}"/>
-                    <Label Margin="-5,5,0,0" Content="Picture texture"/>
-                    <ComboBox ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding SelectedJournalEntry.PictureTexture}"/>
-                </StackPanel>
-            </ScrollViewer>
+            <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedJournalEntry}" ItemsSource="{Binding Map.JournalEntries}" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Text" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox SelectedValue="{Binding TextStringId, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.SpeechEventsJournals}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Speech sound" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox SelectedValue="{Binding SpeechEventFileName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Picture texture" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox SelectedValue="{Binding PictureTexture, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.GuiTexturesFull}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="70">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Remove" Click="RemoveJournalEntry_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                <Button MinWidth="85" Content="Add journal entry" Command="{Binding AddJournalEntryCommand}"/>
+            </StackPanel>
         </Grid>
+        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
+            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+        </StackPanel>
     </Grid>
 </local:DialogWindow>

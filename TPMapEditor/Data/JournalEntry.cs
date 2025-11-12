@@ -8,26 +8,16 @@ using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
-    public partial class JournalEntry : NamedElement
+    public partial class JournalEntry : ObservableObject
     {
         [ObservableProperty]
         private string textStringId, speechEventFileName, pictureTexture;
 
-        public JournalEntry(WorldMap map, string name, string textStringId, string speechEventFileName, string pictureTexture) : base(map, name)
+        public JournalEntry(string textStringId, string speechEventFileName, string pictureTexture)
         {
             this.textStringId = textStringId;
             this.speechEventFileName = speechEventFileName;
             this.pictureTexture = pictureTexture;
-        }
-
-        protected override bool IsNameTaken(string name)
-        {
-            foreach (var item in map.JournalEntries)
-            {
-                if (item.Name == name && item != this)
-                    return true;
-            }
-            return false;
         }
     }
 }

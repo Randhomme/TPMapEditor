@@ -62,7 +62,7 @@
         <!--Dialogue-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldDialogueAudio}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{x:Static data:SpeechEvent.DialogueFilesList}" SelectedValue="{Binding Value}"/>
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding Value}"/>
             </ContentControl>
         </DataTemplate>
 
