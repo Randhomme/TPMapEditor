@@ -569,10 +569,22 @@ namespace TPMapEditor.Data
 
                     //Skip World Rules section
                     var worldRulesSectionPosition = reader.BaseStream.Position;
-                    SkipWorldRulesSection(reader);
+                    SkipNamedSection(reader, "World Rules");
 
                     //Objective System
                     ReadObjectiveSystemSection(reader, map);
+
+                    //Rope
+                    SkipNamedSection(reader, "Rope");
+
+                    //Grappled Objects
+                    SkipNamedSection(reader, "Grappled Objects");
+
+                    //Boarding Actions
+                    SkipNamedSection(reader, "Boarding Actions");
+
+                    //Journal Entry
+                    
 
                     reader.ReadLine(); //end of section
                 }
@@ -945,21 +957,21 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read Group section."); }
         }
 
-        private static void SkipWorldRulesSection(StreamReader reader)
+        private static void SkipNamedSection(StreamReader reader, string sectionName)
         {
             try
             {
                 var line = reader.ReadLine().Trim();
-                if (line.EndsWith("World Rules"))
+                if (line.EndsWith(sectionName))
                 {
                     reader.ReadLine(); //start of section
                     SkipSection(reader);
                 }
                 else
-                    throw new TPMapEditorException("World Rules section not found at the exepected position.");
+                    throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
             }
             catch (TPMapEditorException) { throw; }
-            catch { throw new Exception("Fail to read World Rules section."); }
+            catch { throw new Exception($"Fail to read {sectionName} section."); }
         }
 
         private static void SkipSection(StreamReader reader)
@@ -997,7 +1009,18 @@ namespace TPMapEditor.Data
                         {
                             ReadObjectivePointInfoElementSection(reader, map);
                         }
-                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i} : {ex.Message}", ex); }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Point Info - Element section number {i} : {ex.Message}", ex); }
+                    }
+
+                    //Objective Task Array - Size Int
+                    var objectiveTaskListCount = reader.ReadAndParseInt("Objective Task Array - Size Int ");
+                    for (int i = 0; i < objectiveTaskListCount; i++)
+                    {
+                        try
+                        {
+                            ReadObjectiveTaskArrayElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Task Array - Element section number {i} : {ex.Message}", ex); }
                     }
 
                     reader.ReadLine(); //end of section
@@ -1029,6 +1052,34 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read Objective Point Info - Element section."); }
+        }
+
+        private static void ReadObjectiveTaskArrayElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Objective Task Array - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var name = reader.ReadAndParseString("Name String ");
+                    var textStringID = reader.ReadAndParseString("TextStringID String ");
+
+                    map.ObjectiveTasks.Add(new(map, name, textStringID)
+                    {
+                        Active = reader.ReadAndParseBool("Active Bool "),
+                        Completed = reader.ReadAndParseBool("Completed Bool "),
+                        Failed = reader.ReadAndParseBool("Failed Bool "),
+                    });
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Objective Task Array - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Objective Task Array - Element section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
