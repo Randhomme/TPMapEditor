@@ -584,7 +584,7 @@ namespace TPMapEditor.Data
                     SkipNamedSection(reader, "Boarding Actions");
 
                     //Journal Entry
-                    
+                    ReadJournalEntrySection(reader, map);
 
                     reader.ReadLine(); //end of section
                 }
@@ -1080,6 +1080,59 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read Objective Task Array - Element section."); }
+        }
+
+        private static void ReadJournalEntrySection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Journal Entry"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    //Page Info - Size Int
+                    var pageInfoSize = reader.ReadAndParseInt("Page Info - Size Int ");
+                    for (int i = 0; i < pageInfoSize; i++)
+                    {
+                        try
+                        {
+                            ReadPageInfoElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Page Info - Element section number {i} : {ex.Message}", ex); }
+                    }
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Journal Entry section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Journal Entry section."); }
+        }
+
+        private static void ReadPageInfoElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Page Info - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var textStringID = reader.ReadAndParseString("TextStringID String ");
+                    var speechEventFileName = reader.ReadAndParseString("SpeechEventFileName String ");
+                    var pictureTexture = reader.ReadAndParseString("PictureTexture String ");
+
+                    map.JournalEntries.Add(new(textStringID, speechEventFileName, pictureTexture));
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Page Info - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Page Info - Element section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
