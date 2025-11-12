@@ -567,6 +567,10 @@ namespace TPMapEditor.Data
                         catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i} : {ex.Message}", ex); }
                     }
 
+                    //Skip World Rules section
+                    var worldRulesSectionPosition = reader.BaseStream.Position;
+                    SkipWorldRulesSection(reader);
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -936,6 +940,35 @@ namespace TPMapEditor.Data
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read Group section."); }
+        }
+
+        private static void SkipWorldRulesSection(StreamReader reader)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("World Rules"))
+                {
+                    reader.ReadLine(); //start of section
+                    SkipSection(reader);
+                }
+                else
+                    throw new TPMapEditorException("World Rules section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read World Rules section."); }
+        }
+
+        private static void SkipSection(StreamReader reader)
+        {
+            while(!reader.EndOfStream)
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.Equals("{"))
+                    SkipSection(reader);
+                else if (line.Equals("}"))
+                    break;
+            }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
