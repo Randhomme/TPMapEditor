@@ -571,6 +571,9 @@ namespace TPMapEditor.Data
                     var worldRulesSectionPosition = reader.BaseStream.Position;
                     SkipWorldRulesSection(reader);
 
+                    //Objective System
+                    ReadObjectiveSystemSection(reader, map);
+
                     reader.ReadLine(); //end of section
                 }
                 else
@@ -969,6 +972,63 @@ namespace TPMapEditor.Data
                 else if (line.Equals("}"))
                     break;
             }
+        }
+
+        private static void ReadObjectiveSystemSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Objective System"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    //Current Objective Point Int (skip for now)
+                    reader.ReadLine();
+
+                    //Current Point Visible On StarMap Bool (skip for now)
+                    reader.ReadLine();
+
+                    //Objective Point Info - Size Int
+                    var objectivePointListCount = reader.ReadAndParseInt("Objective Point Info - Size Int ");
+                    for(int i = 0; i < objectivePointListCount; i++)
+                    {
+                        try
+                        {
+                            ReadObjectivePointInfoElementSection(reader, map);
+                        }
+                        catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i} : {ex.Message}", ex); }
+                    }
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Objective System section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Objective System section."); }
+        }
+
+        private static void ReadObjectivePointInfoElementSection(StreamReader reader, WorldMap map)
+        {
+            try
+            {
+                var line = reader.ReadLine().Trim();
+                if (line.EndsWith("Objective Point Info - Element"))
+                {
+                    reader.ReadLine(); //start of section
+
+                    var name = reader.ReadAndParseString("Name String ");
+                    var pos = reader.ReadAndParseVector3("Position Vector3");
+                    map.ObjectivePoints.Add(new(map, name, pos.X, pos.Y, pos.Z));
+
+                    reader.ReadLine(); //end of section
+                }
+                else
+                    throw new TPMapEditorException("Objective Point Info - Element section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { throw; }
+            catch { throw new Exception("Fail to read Objective Point Info - Element section."); }
         }
 
         private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
