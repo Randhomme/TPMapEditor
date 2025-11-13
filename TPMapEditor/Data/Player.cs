@@ -21,6 +21,17 @@ namespace TPMapEditor.Data
 
         public int TeamIndex { get; set; } //only used for data import
 
+        public Player(WorldMap map, string name, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            Rotation = rotation;
+            Color = playerColor;
+            FormationTypeStart = FormationType = FormationType.Column;
+            IsPlayable = true;
+        }
+
         partial void OnIsPlayableChanged(bool value)
         {
             if (value)
@@ -45,17 +56,6 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
-        }
-
-        public Player(WorldMap map, string name, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-            Rotation = rotation;
-            Color = playerColor;
-            FormationTypeStart = FormationType = FormationType.Column;
-            IsPlayable = true;
         }
     }
 }
