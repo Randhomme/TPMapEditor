@@ -54,7 +54,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                        <Button MinWidth="85" Content="Add team" Command="{Binding AddTeamCommand}"/>
+                        <Button MinWidth="85" Content="Add team" Command="{Binding AddSelectableTeamCommand}"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
