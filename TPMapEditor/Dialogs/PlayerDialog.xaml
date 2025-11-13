@@ -77,7 +77,7 @@
                     <Slider Value="{Binding SelectedPlayer.Rotation}" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                     <Label Margin="-5,5,0,0" Content="Formation type start"/>
                     <ComboBox SelectedItem="{Binding SelectedPlayer.FormationType}" ItemsSource="{enums:EnumBindingSource enums:FormationType}"/>
-                    <CheckBox x:Name="PlayerHasSelectableTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.SelectableTeam != null', Mode=OneWay}"/>
+                    <CheckBox x:Name="PlayerHasSelectableTeamCheckBox" Margin="0,15,0,0" Content="Has selectable team ?" IsChecked="{c:Binding Path='SelectedPlayer.SelectableTeam != null', Mode=OneWay}"/>
                     <Label Margin="-5,5,0,0" Content="Selectable team"/>
                     <ComboBox
                         SelectedItem="{Binding SelectedPlayer.SelectableTeam}"
@@ -90,7 +90,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <CheckBox x:Name="PlayerHasInGameTeamCheckBox" Margin="0,15,0,0" Content="Has team ?" IsChecked="{c:Binding Path='SelectedPlayer.InGameTeam != null', Mode=OneWay}"/>
+                    <CheckBox x:Name="PlayerHasInGameTeamCheckBox" Margin="0,15,0,0" Content="Has in game team ?" IsChecked="{c:Binding Path='SelectedPlayer.InGameTeam != null', Mode=OneWay}"/>
                     <Label Margin="-5,5,0,0" Content="In game team"/>
                     <ComboBox
                         SelectedItem="{Binding SelectedPlayer.InGameTeam}"
