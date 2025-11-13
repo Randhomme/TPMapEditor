@@ -31,6 +31,7 @@ namespace TPMapEditor.Settings
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; } = new();
         public ObservableCollection<GameHeadersFile> TPShipNames { get; } = new();
         public ObservableCollection<GameHeadersFile> TPInGameMessages { get; } = new();
+        public ObservableCollection<GameHeadersFile> TPJournalTitles { get; } = new();
         public ObservableCollection<GameHeadersFile> TPObjectiveTasks { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeechEventsJournals { get; } = new();
         public ObservableCollection<GameHeadersFile> TPMapTextItems { get; } = new();
@@ -81,6 +82,7 @@ namespace TPMapEditor.Settings
             UpdateSpeakersDictionnary(gameStrings);
             UpdateShipNamesDictionnary(gameStrings);
             UpdateInGameMessagesDictionary(gameStrings);
+            UpdateJournalTitlesDictionary(gameStrings);
             UpdateObjectiveTasksDictionary(gameStrings);
             UpdateSpeechEventsJournalsDictionary(gameStrings);
             UpdateMapTextItemsDictionary(gameStrings);
@@ -646,6 +648,43 @@ namespace TPMapEditor.Settings
             }
         }
 
+        private void UpdateJournalTitlesDictionary(Dictionary<string, string> gameStrings)
+        {
+            if (Directory.Exists(GameHeadersFiles))
+            {
+                StringDictionnary.JournalTitles.Clear();
+                foreach (var file in this.TPJournalTitles)
+                {
+                    try
+                    {
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line.StartsWith("#define"))
+                                {
+                                    var defineString = line.Substring(8).Split(' ')[0]; // 8 is the length of "#define "
+                                    if (gameStrings.TryGetValue(defineString, out var gameString))
+                                    {
+                                        StringDictionnary.JournalTitles[defineString] = gameString;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading header file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
         private void UpdateObjectiveTasksDictionary(Dictionary<string, string> gameStrings)
         {
             if (Directory.Exists(GameHeadersFiles))
@@ -902,6 +941,7 @@ namespace TPMapEditor.Settings
             TPShipNames.Add(new("TPSHIPNAMEPROCYON00_GameStrings.h"));
             TPShipNames.Add(new("TPSHIPNAMEPROCYON01_GameStrings.h"));
             TPInGameMessages.Add(new("TPINGAMEMESSAGE_GameStrings.h"));
+            TPJournalTitles.Add(new("TPJOURNALSCREEN_GameStrings.h"));
             TPObjectiveTasks.Add(new("TPOBJECTIVES_GameStrings.h"));
             TPObjectiveTasks.Add(new("TPOBJECTIVES2_GameStrings.h"));
             TPSpeechEventsJournals.Add(new("TPSPEECHEVENTSJOURNALS_GameStrings.h"));

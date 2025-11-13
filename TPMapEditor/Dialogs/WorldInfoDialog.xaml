@@ -36,11 +36,21 @@
                 <GroupBox Header="Map name" Padding="5">
                     <ComboBox ItemsSource="{x:Static data:StringDictionnary.WorldNames}" SelectedValue="{Binding Map.WorldName}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                 </GroupBox>
-                <controls:TextGroupBox Header="Custom map name" Text="{Binding Map.CustomName, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                <GroupBox Header="Custom map name">
+                    <StackPanel>
+                        <CheckBox Margin="5" IsChecked="{Binding Map.UseCustomName}" Content="Use custom name"/>
+                        <TextBox Margin="5" IsEnabled="{Binding Map.UseCustomName}" Text="{Binding Map.CustomName}"/>
+                    </StackPanel>
+                </GroupBox>
                 <GroupBox Header="Map description" Padding="5">
                     <ComboBox ItemsSource="{x:Static data:StringDictionnary.WorldDescriptions}" SelectedValue="{Binding Map.WorldDescription}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                 </GroupBox>
-                <controls:TextGroupBox Header="Custom map description" x:Name="customMapDescription" Text="{Binding Map.CustomDescription}" TextWrapping="Wrap" AcceptsReturn="False" VerticalScrollBarVisibility="Auto"/>
+                <GroupBox Header="Custom map description">
+                    <StackPanel>
+                        <CheckBox Margin="5" IsChecked="{Binding Map.UseCustomDescription}" Content="Use custom description"/>
+                        <TextBox Margin="5" IsEnabled="{Binding Map.UseCustomDescription}" Text="{Binding Map.CustomDescription}"/>
+                    </StackPanel>
+                </GroupBox>
                 <GroupBox Padding="5" Header="Skybox">
                     <ComboBox ItemsSource="{x:Static settings:AppSettings.Meshes}" SelectedValue="{Binding Map.Skybox}"/>
                 </GroupBox>
@@ -112,10 +122,12 @@
                         <Slider Value="{Binding Map.RoofLightOrientationPitch}" Minimum="-90" Maximum="90"/>
                     </StackPanel>
                 </GroupBox>
+                <GroupBox Header="Journal title">
+                    <ComboBox Margin="5" ItemsSource="{x:Static data:StringDictionnary.JournalTitles}" SelectedValue="{Binding Map.JournalTitle}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                </GroupBox>
                 <GroupBox Header="Journal music">
                     <ComboBox Margin="5" ItemsSource="{x:Static settings:AppSettings.Musics}" SelectedValue="{Binding Map.JournalMusic}"/>
                 </GroupBox>
-                
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">

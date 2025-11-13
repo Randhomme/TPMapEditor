@@ -57,14 +57,10 @@ namespace TPMapEditor.Data
                 map.MustAssembleFleet = reader.ReadAndParseBool("MustAssembleFleet Bool ");
 
                 //World Description
-                var worldDescription = reader.ReadAndParseString("World Description String ");
-                StringDictionnary.WorldDescriptions.TryGetValue(worldDescription, out var displayedDescription);
-                map.CustomDescription = displayedDescription;
+                map.WorldDescription = reader.ReadAndParseString("World Description String ");
 
                 //WorldNameID
-                var worldName = reader.ReadAndParseString("WorldNameID String ");
-                StringDictionnary.WorldNames.TryGetValue(worldName, out var displayedName);
-                map.CustomName = displayedName;
+                map.WorldName = reader.ReadAndParseString("WorldNameID String ");
 
                 //Object count, skip
                 reader.ReadLine();
@@ -112,22 +108,16 @@ namespace TPMapEditor.Data
                 map.IsCampaign = reader.ReadAndParseBool("IsCampaign Bool ");
 
                 //Use Custom World Name
-                var useCustomWorldName = reader.ReadAndParseBool("Use Custom World Name Bool ");
+                map.UseCustomName = reader.ReadAndParseBool("Use Custom World Name Bool ");
 
                 //Custom World Name
-                if (useCustomWorldName)
-                    map.CustomName = reader.ReadAndParseString("Custom World Name String ");
-                else
-                    reader.ReadLine();
+                map.CustomName = reader.ReadAndParseString("Custom World Name String ");
 
-                //Use Custom World Name
-                var useCustomWorldDescription = reader.ReadAndParseBool("Use Custom World Description Bool ");
+                //Use Custom World Description
+                map.UseCustomDescription = reader.ReadAndParseBool("Use Custom World Description Bool ");
 
-                //Custom World Name
-                if (useCustomWorldDescription)
-                    map.CustomName = reader.ReadAndParseString("Custom World Description String ");
-                else
-                    reader.ReadLine();
+                //Custom World Description
+                map.CustomDescription = reader.ReadAndParseString("Custom World Description String ");
             });
         }
 
@@ -844,6 +834,9 @@ namespace TPMapEditor.Data
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Page Info - Element section number {i} : {ex.Message}", ex); }
                 }
+
+                //Title StringID String 
+                map.JournalTitle = reader.ReadAndParseString("Title StringID String ");
             });
         }
 

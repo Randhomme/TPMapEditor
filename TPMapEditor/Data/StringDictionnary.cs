@@ -5,6 +5,7 @@ namespace TPMapEditor.Data
     public static class StringDictionnary
     {
         public static Dictionary<string, string> InGameMessagesDictionnary { get; } = new();
+        public static Dictionary<string, string> JournalTitles { get; } = new();
         public static Dictionary<string, string> MapTextItems { get; } = new();
         public static Dictionary<string, string> ObjectiveTasks { get; } = new();
         public static Dictionary<string, string> ShipNames { get; } = new ();
