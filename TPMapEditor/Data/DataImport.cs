@@ -519,6 +519,7 @@ namespace TPMapEditor.Data
                 ReadJournalEntrySection(reader, map);
 
                 //World Map
+                ReadWorldMapSection(reader, map);
             });
         }
 
@@ -855,6 +856,14 @@ namespace TPMapEditor.Data
                 var pictureTexture = reader.ReadAndParseString("PictureTexture String ");
 
                 map.JournalEntries.Add(new(textStringID, speechEventFileName, pictureTexture));
+            });
+        }
+
+        private static void ReadWorldMapSection(StreamReader reader, WorldMap map)
+        {
+            ReadSection("World Map", reader, () =>
+            {
+                map.StarmapTexture = reader.ReadAndParseString("Backdrop Texture Name String ");
             });
         }
 
