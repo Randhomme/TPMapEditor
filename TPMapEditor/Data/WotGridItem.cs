@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using TPMapEditor.Enums.WorldObjectDefinition;
 
 namespace TPMapEditor.Data
 {
@@ -13,6 +14,7 @@ namespace TPMapEditor.Data
         public static ObservableCollection<WotGridItem> WotTypes { get; } = new ObservableCollection<WotGridItem>();
         public BitmapImage? Image { get; set; }
         public string? Type { get; set; }
+        public CustomInfoDefinition CustomInfoDefinition { get; set; }
 
         public override string ToString()
         {

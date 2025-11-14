@@ -290,7 +290,7 @@
         <!--WorldObjectType-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectType}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{enums:EnumBindingSource enums:WorldObjectType}" SelectedValue="{Binding Value}"/>
+                <ComboBox ItemsSource="{enums:EnumBindingSource enums:KillableWorldObjectType}" SelectedValue="{Binding Value}"/>
             </ContentControl>
         </DataTemplate>
 

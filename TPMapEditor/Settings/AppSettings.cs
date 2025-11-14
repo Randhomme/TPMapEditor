@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using TPMapEditor.Data;
+using TPMapEditor.Enums;
+using TPMapEditor.Enums.WorldObjectDefinition;
 
 namespace TPMapEditor.Settings
 {
@@ -881,16 +883,15 @@ namespace TPMapEditor.Settings
                     {
                         using (var reader = new StreamReader(File.OpenRead(file)))
                         {
+                            var wotGridItem = new WotGridItem();
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
                                 if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("Type String"))
                                 {
                                     string typeString = line.Substring("Type String:".Length).Trim('\'');
-                                    var wotGridItem = new WotGridItem
-                                    {
-                                        Type = typeString
-                                    };
+
+                                    wotGridItem.Type = typeString;
                                     // Attempt to load the image for the world object type
                                     if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + "ImageData/WorldObjects/" + typeString + ".png"))
                                     {
@@ -900,9 +901,25 @@ namespace TPMapEditor.Settings
                                     {
                                         wotGridItem.Image = new BitmapImage(new Uri("pack://application:,,,/Images/WotPlaceholder.png"));
                                     }
-                                    WotGridItem.WotTypes.Add(wotGridItem);
+                                }
+                                else if(line.Equals("Definition String 'CUSTOMINFODEFINITION'"))
+                                {
+                                    reader.ReadLine();
+                                    if (!reader.EndOfStream)
+                                    {
+                                        var factoryType = reader.ReadLine().Substring(19).Trim('\'');
+                                        if(Enum.TryParse<CustomInfoDefinition>(factoryType, out var customInfoDefinition))
+                                        {
+                                            wotGridItem.CustomInfoDefinition = customInfoDefinition;
+                                        }
+                                        else
+                                        {
+                                            throw new Exception("Invalid custom info definition.");
+                                        }
+                                    }
                                 }
                             }
+                            WotGridItem.WotTypes.Add(wotGridItem);
                         }
                     }
                     catch (Exception ex)

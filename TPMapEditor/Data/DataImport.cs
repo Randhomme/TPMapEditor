@@ -288,17 +288,19 @@ namespace TPMapEditor.Data
         {
             try
             {
-                var worldObject = new WorldObject(WotGridItem.WotTypes.FirstOrDefault(), 0, 0, 0);
-                map.WorldObjects.Add(worldObject);
 
                 //ID
-                worldObject.Id = reader.ReadAndParseInt("ID Int ");
+                var id = reader.ReadAndParseInt("ID Int ");
 
                 //Type
                 var typeString = reader.ReadAndParseString("Type String ");
-                worldObject.Type = WotGridItem.WotTypes.First((t)=>t.Type == typeString);
+                var type = WotGridItem.WotTypes.First((t)=>t.Type == typeString);
+
+                var worldObject = new WorldObject(type, 0, 0, 0) { Id = id };
 
                 ReadWorldObjectStateSection(reader, worldObject, map);
+                
+                map.WorldObjects.Add(worldObject);
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read WorldObject section."); }
@@ -510,6 +512,11 @@ namespace TPMapEditor.Data
 
                 //World Map
                 ReadWorldMapSection(reader, map);
+
+                //Can Assemble Fleets (not used)
+                reader.ReadLine();
+
+
             });
         }
 
