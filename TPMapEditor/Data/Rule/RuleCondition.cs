@@ -100,7 +100,7 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldWorldPolygon(label, volume, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldWorldObjectType(string? label = null, WorldObjectType worldObjectType = WorldObjectType.Ship, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldWorldObjectType(string? label = null, KillableWorldObjectType worldObjectType = KillableWorldObjectType.Ship, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             RuleFields.Add(new RuleFieldWorldObjectType(label, worldObjectType, isOptional, optionalLabel, isShown));
         }
