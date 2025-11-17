@@ -1,33 +1,54 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Windows.Media;
 using TPMapEditor.Enums;
+using TPMapEditor.Enums.WorldObjectDefinition;
 using TPMapEditor.Exceptions;
 using TPMapEditor.Settings;
+using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data
 {
-    public static class DataImport
+    public class DataImport : IDisposable
     {
-        public static void ReadMapFileAndAddData(string filePath, WorldMap map)
+        private readonly StreamReader reader;
+        private WorldMap map;
+        private IProgress<string> progress;
+        private object _lock;
+
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, object _lock)
         {
-            using var reader = new StreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
+            reader = new StreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
+            this.map = map;
+            this.progress = progress;
+            this._lock = _lock;
+        }
+
+        public void ReadMapFileAndAddData()
+        {
+            progress.Report("Begin map import ...");
             //skip comment line
             reader.ReadLine();
             try
             {
-                ReadWorldInfoSection(reader, map);
-                ReadGameSection(reader, map);
-                ReadWorldSection(reader, map);
+                lock (_lock)
+                {
+                    ReadWorldInfoSection(reader, map);
+                    ReadGameSection(reader, map);
+                    ReadWorldSection(reader, map);
+                }
             }
             //TODO : handle the error, possibly with an IProgress thing
-            catch { }
+            catch (Exception ex)
+            {
+                progress.Report($"An error has occured : {ex.Message}");
+            }
         }
 
-        private static void ReadSection(string sectionName, StreamReader reader, Action action)
+        private void ReadSection(string sectionName, Action action)
         {
+            progress.Report($"Reading {sectionName} section ...");
             try
             {
                 var line = reader.ReadLine().Trim();
@@ -38,6 +59,8 @@ namespace TPMapEditor.Data
                     action.Invoke();
 
                     reader.ReadLine(); //end of section '}'
+
+                    progress.Report($"Done reading {sectionName} section.");
                 }
                 else
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
@@ -46,9 +69,9 @@ namespace TPMapEditor.Data
             catch { throw new Exception($"Fail to read {sectionName} section."); }
         }
 
-        private static void ReadWorldInfoSection(StreamReader reader, WorldMap map)
+        private void ReadWorldInfoSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("WorldInfo", reader, () =>
+            ReadSection("WorldInfo", () =>
             {
                 //IsMultiplayerMap
                 map.IsMultiplayer = reader.ReadAndParseBool("IsMultiplayerMap Bool ");
@@ -121,18 +144,18 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadGameSection(StreamReader reader, WorldMap map)
+        private void ReadGameSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Game", reader, () =>
+            ReadSection("Game", () =>
             {
                 for (int i = 0; i < 8; i++)
                     reader.ReadLine();
             });
         }
 
-        private static void ReadWorldSection(StreamReader reader, WorldMap map)
+        private void ReadWorldSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("World", reader, () =>
+            ReadSection("World", () =>
             {
                 //WorldName and Random Seed (both unused)
                 reader.ReadLine();
@@ -189,9 +212,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadPlayerSection(StreamReader reader, WorldMap map, int playerIndex)
+        private void ReadPlayerSection(StreamReader reader, WorldMap map, int playerIndex)
         {
-            ReadSection("Player", reader, () =>
+            ReadSection("Player", () =>
             {
                 //Name
                 var playerName = reader.ReadAndParseString("Name String ");
@@ -244,9 +267,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadFleetAISection(StreamReader reader, Player player)
+        private void ReadFleetAISection(StreamReader reader, Player player)
         {
-            ReadSection("FleetAI", reader, () =>
+            ReadSection("FleetAI", () =>
             {
                 //UPDATETIMER
                 //skip 4 lines
@@ -284,7 +307,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWorldObjectSection(StreamReader reader, WorldMap map)
+        private void ReadWorldObjectSection(StreamReader reader, WorldMap map)
         {
             try
             {
@@ -306,9 +329,9 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read WorldObject section."); }
         }
 
-        private static void ReadWorldObjectStateSection(StreamReader reader, WorldObject worldObject, WorldMap map)
+        private void ReadWorldObjectStateSection(StreamReader reader, WorldObject worldObject, WorldMap map)
         {
-            ReadSection("State", reader, () =>
+            ReadSection("State", () =>
             {
                 //HasState (must be false for now)
                 var hasState = reader.ReadAndParseBool("HasState Bool ");
@@ -323,7 +346,7 @@ namespace TPMapEditor.Data
 
                 //Orientation
                 var (rotationX, rotationY, rotationZ) = reader.ReadAndParseMatrix33("Orientation Matrix33");
-                var rotationEulerXYZ = GetEulerXYZ(rotationX, rotationY, rotationZ);
+                var rotationEulerXYZ = MathUtils.GetEulerXYZ(rotationX, rotationY, rotationZ);
                 worldObject.XRotation = rotationEulerXYZ.X;
                 worldObject.YRotation = rotationEulerXYZ.Y;
                 worldObject.ZRotation = rotationEulerXYZ.Z;
@@ -345,9 +368,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadGameSpecificSection(StreamReader reader, WorldMap map)
+        private void ReadGameSpecificSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("GameSpecific", reader, () =>
+            ReadSection("GameSpecific", () =>
             {
                 //World Description
                 reader.ReadLine();
@@ -366,7 +389,7 @@ namespace TPMapEditor.Data
                 map.AmbientLightColor = reader.ReadAndParseColor("Ambient Light Colour");
 
                 var roofLightOrientationVector = reader.ReadAndParseVector3("Vector for roof light orientation ");
-                (int rloYaw, int rloPitch) = GetYawPitch(roofLightOrientationVector);
+                (int rloYaw, int rloPitch) = MathUtils.GetYawPitch(roofLightOrientationVector);
                 map.RoofLightOrientationYaw = rloYaw;
                 map.RoofLightOrientationPitch = rloPitch;
 
@@ -516,13 +539,24 @@ namespace TPMapEditor.Data
                 //Can Assemble Fleets (not used)
                 reader.ReadLine();
 
+                //World Crew List - Size Int
+                var worldCrewListCount = reader.ReadAndParseInt("World Crew List - Size Int ");
+                for(int i = 0; i < worldCrewListCount; i++)
+                {
+                    try
+                    {
+                        ReadWorldCrewListElement();
+                    }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Crew List - Element number {i} : {ex.Message}", ex); }
+
+                }
 
             });
         }
 
-        private static void ReadEffectEventKeeperSection(StreamReader reader, WorldMap map)
+        private void ReadEffectEventKeeperSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Effect Event Keeper", reader, () =>
+            ReadSection("Effect Event Keeper", () =>
             {
                 //NumEffectEventInfoChunks
                 var numEffectEvent = reader.ReadAndParseInt("NumEffectEventInfoChunks Int ");
@@ -534,9 +568,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWaypointPathInfoVectorElementSection(StreamReader reader, WorldMap map)
+        private void ReadWaypointPathInfoVectorElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Waypoint Path Info Vector - Element", reader, () =>
+            ReadSection("Waypoint Path Info Vector - Element", () =>
             {
                 var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "));
 
@@ -553,9 +587,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWorldPolygonVectorsSection(StreamReader reader, WorldMap map)
+        private void ReadWorldPolygonVectorsSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("World Polygons Vectors - Element", reader, () =>
+            ReadSection("World Polygons Vectors - Element", () =>
             {
                 var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "));
 
@@ -572,9 +606,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWorldPointSetVectorsSection(StreamReader reader, WorldMap map)
+        private void ReadWorldPointSetVectorsSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("World Point Sets Vector - Element", reader, () =>
+            ReadSection("World Point Sets Vector - Element", () =>
             {
                 var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "));
 
@@ -594,9 +628,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWorldPointElementSection(StreamReader reader, WorldPointSet worldPointSet)
+        private void ReadWorldPointElementSection(StreamReader reader, WorldPointSet worldPointSet)
         {
-            ReadSection("World Points - Element", reader, () =>
+            ReadSection("World Points - Element", () =>
             {
                 var worldPoint = new WorldPoint(worldPointSet, 0, 0, 0, 0);
 
@@ -609,9 +643,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWorldPointBasisSection(StreamReader reader, WorldPoint worldPoint)
+        private void ReadWorldPointBasisSection(StreamReader reader, WorldPoint worldPoint)
         {
-            ReadSection("World Point Basis", reader, () =>
+            ReadSection("World Point Basis", () =>
             {
                 //Position Vector3
                 var position = reader.ReadAndParseVector3("Position Vector3");
@@ -628,7 +662,7 @@ namespace TPMapEditor.Data
                 //Orientation - Up Vector3
                 var orientationUp = reader.ReadAndParseVector3("Orientation - Up Vector3");
 
-                var eulerXYZ = GetEulerXYZ(orientationCross, orientationForward, orientationUp);
+                var eulerXYZ = MathUtils.GetEulerXYZ(orientationCross, orientationForward, orientationUp);
 
                 worldPoint.X = position.X;
                 worldPoint.Y = position.Y;
@@ -639,9 +673,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadFlagListElementSection(StreamReader reader, WorldMap map)
+        private void ReadFlagListElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Flag List - Element", reader, () =>
+            ReadSection("Flag List - Element", () =>
             {
                 var flag = new Flag(map, reader.ReadAndParseString("Flag Name String "), reader.ReadAndParseBool("Flag Value Bool "));
 
@@ -649,9 +683,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadTimerListElementSection(StreamReader reader, WorldMap map)
+        private void ReadTimerListElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Timer List - Element", reader, () =>
+            ReadSection("Timer List - Element", () =>
             {
                 var timer = new Timer(map, reader.ReadAndParseString("Timer Name String "), reader.ReadAndParseBool("Timer Status Bool "), 0);
 
@@ -666,9 +700,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadSpeechEventListElementSection(StreamReader reader, WorldMap map)
+        private void ReadSpeechEventListElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Speech Event List - Element", reader, () =>
+            ReadSection("Speech Event List - Element", () =>
             {
                 var speechEvent = new SpeechEvent(map, reader.ReadAndParseString("Name String "))
                 {
@@ -697,18 +731,18 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadPlayerAllianceInfoVectorElementSection(StreamReader reader, WorldMap map)
+        private void ReadPlayerAllianceInfoVectorElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("PlayerAllianceInfoVector - Element", reader, () =>
+            ReadSection("PlayerAllianceInfoVector - Element", () =>
             {
                 var playerAlliance = new PlayerAlliance(map.Players[reader.ReadAndParseInt("Player0 Int ")], map.Players[reader.ReadAndParseInt("Player1 Int ")]);
                 map.PlayerAlliances.Add(playerAlliance);
             });
         }
 
-        private static void ReadInGameTeamListElementSection(StreamReader reader, WorldMap map)
+        private void ReadInGameTeamListElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Team List - Element", reader, () =>
+            ReadSection("Team List - Element", () =>
             {
                 var name = reader.ReadAndParseString("Team Name ID String ");
                 var race = (Race)reader.ReadAndParseInt("Race Int ");
@@ -718,9 +752,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadGroupSection(StreamReader reader, WorldMap map)
+        private void ReadGroupSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Group", reader, () =>
+            ReadSection("Group", () =>
             {
                 var group = new Group(map, reader.ReadAndParseString("Name String "));
 
@@ -738,7 +772,24 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void SkipNamedSection(StreamReader reader, string sectionName)
+        private void ReadWorldCrewListElement()
+        {
+            var crewName = reader.ReadAndParseString("World Crew List - Element String ");
+            var worldObject = map.WorldObjects.FirstOrDefault((wot) => wot.Type.Type == crewName);
+            if (worldObject != null)
+            {
+                if(worldObject.Type.CustomInfoDefinition == CustomInfoDefinition.CrewCustomInfoFactory)
+                {
+                    map.WorldCrews.Add(worldObject);
+                }
+                else
+                    throw new TPMapEditorException($"World object {crewName} is not a valid crew member.");
+            }
+            else
+                throw new TPMapEditorException($"World object {crewName} does not exists in your TPGame folder.");
+        }
+
+        private void SkipNamedSection(StreamReader reader, string sectionName)
         {
             try
             {
@@ -755,7 +806,7 @@ namespace TPMapEditor.Data
             catch { throw new Exception($"Fail to read {sectionName} section."); }
         }
 
-        private static void SkipSection(StreamReader reader)
+        private void SkipSection(StreamReader reader)
         {
             while(!reader.EndOfStream)
             {
@@ -767,9 +818,9 @@ namespace TPMapEditor.Data
             }
         }
 
-        private static void ReadObjectiveSystemSection(StreamReader reader, WorldMap map)
+        private void ReadObjectiveSystemSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Objective System", reader, () =>
+            ReadSection("Objective System", () =>
             {
                 //Current Objective Point Int (skip for now)
                 reader.ReadLine();
@@ -801,9 +852,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadObjectivePointInfoElementSection(StreamReader reader, WorldMap map)
+        private void ReadObjectivePointInfoElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Objective Point Info - Element", reader, () =>
+            ReadSection("Objective Point Info - Element", () =>
             {
                 var name = reader.ReadAndParseString("Name String ");
                 var pos = reader.ReadAndParseVector3("Position Vector3");
@@ -811,9 +862,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadObjectiveTaskArrayElementSection(StreamReader reader, WorldMap map)
+        private void ReadObjectiveTaskArrayElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Objective Task Array - Element", reader, () =>
+            ReadSection("Objective Task Array - Element", () =>
             {
                 var name = reader.ReadAndParseString("Name String ");
                 var textStringID = reader.ReadAndParseString("TextStringID String ");
@@ -827,9 +878,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadJournalEntrySection(StreamReader reader, WorldMap map)
+        private void ReadJournalEntrySection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Journal Entry", reader, () =>
+            ReadSection("Journal Entry", () =>
             {
                 //Page Info - Size Int
                 var pageInfoSize = reader.ReadAndParseInt("Page Info - Size Int ");
@@ -847,9 +898,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadPageInfoElementSection(StreamReader reader, WorldMap map)
+        private void ReadPageInfoElementSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("Page Info - Element", reader, () =>
+            ReadSection("Page Info - Element", () =>
             {
                 var textStringID = reader.ReadAndParseString("TextStringID String ");
                 var speechEventFileName = reader.ReadAndParseString("SpeechEventFileName String ");
@@ -859,165 +910,21 @@ namespace TPMapEditor.Data
             });
         }
 
-        private static void ReadWorldMapSection(StreamReader reader, WorldMap map)
+        private void ReadWorldMapSection(StreamReader reader, WorldMap map)
         {
-            ReadSection("World Map", reader, () =>
+            ReadSection("World Map", () =>
             {
                 map.StarmapTexture = reader.ReadAndParseString("Backdrop Texture Name String ");
             });
         }
 
-        private static bool ReadAndParseBool(this StreamReader reader, string prefix) 
+        
+
+        public void Dispose()
         {
-            var line = reader.ReadLine().Trim();
-            bool.TryParse(line.GetSafeSubstring(prefix), out var value);
-            return value;
-        }
-
-        private static int ReadAndParseInt(this StreamReader reader, string prefix) 
-        {
-            var line = reader.ReadLine().Trim();
-            int.TryParse(line.GetSafeSubstring(prefix), out var value);
-            return value;
-        }
-
-        private static double ReadAndParseDouble(this StreamReader reader, string prefix)
-        {
-            var line = reader.ReadLine().Trim();
-            double.TryParse(line.GetSafeSubstring(prefix), out var value);
-            return value;
-        }
-
-        private static string ReadAndParseString(this StreamReader reader, string prefix) 
-        {
-            var line = reader.ReadLine().Trim();
-            return line.GetSafeSubstring(prefix).Trim('\'');
-        }
-
-        private static Color ReadAndParseColor(this StreamReader reader, string prefix)
-        {
-            var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
-            var values = line.Split(',');
-            float.TryParse(values[0], out var r);
-            float.TryParse(values[1], out var g);
-            float.TryParse(values[2], out var b);
-            float.TryParse(values[3], out var a);
-            return Color.FromArgb((byte)(a * 255f), (byte)(r * 255f), (byte)(g * 255f), (byte)(b * 255f));
-        }
-
-        private static Vector3 ReadAndParseVector3(this StreamReader reader, string prefix)
-        {
-            var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
-            var values = line.Split(',');
-            float.TryParse(values[0], out var x);
-            float.TryParse(values[1], out var y);
-            float.TryParse(values[2], out var z);
-            return new Vector3(x, y, z);
-        }
-
-        private static Vector2 ReadAndParseVector2(this StreamReader reader, string prefix)
-        {
-            var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
-            var values = line.Split(',');
-            float.TryParse(values[0], out var x);
-            float.TryParse(values[1], out var y);
-            return new Vector2(x, y);
-        }
-
-        private static (Vector3 x, Vector3 y, Vector3 z) ReadAndParseMatrix33(this StreamReader reader, string prefix)
-        {
-            var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
-            var values = line.Split(',');
-            float.TryParse(values[0], out var x1);
-            float.TryParse(values[1], out var x2);
-            float.TryParse(values[2], out var x3);
-            float.TryParse(values[0], out var y1);
-            float.TryParse(values[1], out var y2);
-            float.TryParse(values[2], out var y3);
-            float.TryParse(values[0], out var z1);
-            float.TryParse(values[1], out var z2);
-            float.TryParse(values[2], out var z3);
-            return (new Vector3(x1, x2, x3), new Vector3(y1, y2, y3), new Vector3(z1, z2, z3));
-            
-        }
-
-        private static string GetSafeSubstring(this string str, string val)
-        {
-            if(str.StartsWith(val))
-                return str.Substring(val.Length);
-            return string.Empty;
-        }
-
-        private static Vector3 GetEulerXYZ(Vector3 X, Vector3 Y, Vector3 Z)
-        {
-            // Build the rotation matrix from basis vectors
-            // Lines correspond to local X, Y, Z axes
-            Matrix4x4 m = new Matrix4x4(
-                X.X, X.Y, X.Z, 0,
-                Y.X, Y.Y, Y.Z, 0,
-                Z.X, Z.Y, Z.Z, 0,
-                0, 0, 0, 1
-            );
-
-            // Extract angles (in radians)
-            double sy = -m.M13;
-            double cy = Math.Sqrt(1 - sy * sy);
-
-            double x, y, z; // Euler angles in radians
-
-            if (cy > 1e-6)
-            {
-                x = Math.Atan2(m.M23, m.M33);  // rotation around X
-                y = Math.Asin(-m.M13);         // rotation around Y
-                z = Math.Atan2(m.M12, m.M11);  // rotation around Z
-            }
-            else
-            {
-                // Gimbal lock case
-                x = 0;
-                y = Math.Asin(-m.M13);
-                z = Math.Atan2(-m.M21, m.M22);
-            }
-
-            // Convert to degrees
-            return new Vector3(
-                (float)Math.Round(x * 180.0 / Math.PI),
-                (float)Math.Round(y * 180.0 / Math.PI),
-                (float)Math.Round(z * 180.0 / Math.PI)
-            );
-        }
-
-        /// <summary>
-        /// Y forward and Z up (just to remember)
-        /// </summary>
-        private static (int yaw, int pitch) GetYawPitch(Vector3 dir)
-        {
-            dir = Vector3.Normalize(dir);
-
-            double yaw = Math.Atan2(dir.X, dir.Y);  // rotate around Z (horizontal)
-            double pitch = Math.Asin(-dir.Z);         // rotate around X (vertical)
-
-            yaw *= 180f / Math.PI;
-            pitch *= 180f / Math.PI;
-
-            yaw = NormalizeAngle(yaw);
-
-            int yawInt = (int)Math.Round(yaw);
-            int pitchInt = (int)Math.Round(pitch);
-
-            return (yawInt, pitchInt);
-        }
-
-        private static double NormalizeAngle(double angle)
-        {
-            angle = angle % 360f;
-            if (angle >= 180f) angle -= 360f;
-            if (angle < -180f) angle += 360f;
-            return angle;
+            reader.Dispose();
         }
     }
+
+    
 }
