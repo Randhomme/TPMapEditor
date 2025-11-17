@@ -41,6 +41,8 @@ namespace TPMapEditor.Dialogs
         private GameHeadersFile? selectedMapTextItemsHeaderFile;
         [ObservableProperty]
         private GameHeadersFile? selectedWorldNamesHeaderFile;
+        [ObservableProperty]
+        private GameHeadersFile? selectedWorldDescriptionsHeaderFile;
         public AppSettings AppSettings { get; }
         public GameStringsHeadersDialog(Window owner, AppSettings appSettings) : base(owner)
         {
@@ -109,6 +111,13 @@ namespace TPMapEditor.Dialogs
         {
             string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
             AppSettings.TPWorldNames.Add(new GameHeadersFile(fileName));
+        }
+
+        [RelayCommand]
+        private void OnAddWorldDescriptionsHeaderFile()
+        {
+            string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
+            AppSettings.TPWorldDescriptions.Add(new GameHeadersFile(fileName));
         }
 
         private void RemoveTeamNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
@@ -189,6 +198,15 @@ namespace TPMapEditor.Dialogs
             {
                 AppSettings.TPWorldNames.Remove(SelectedWorldNamesHeaderFile);
                 SelectedWorldNamesHeaderFile = null;
+            }
+        }
+
+        private void RemoveWorldDescriptionsHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedWorldDescriptionsHeaderFile != null)
+            {
+                AppSettings.TPWorldDescriptions.Remove(SelectedWorldDescriptionsHeaderFile);
+                SelectedWorldDescriptionsHeaderFile = null;
             }
         }
     }
