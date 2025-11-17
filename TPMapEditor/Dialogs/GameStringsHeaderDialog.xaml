@@ -188,6 +188,35 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
+            <TabItem Header="Speech events journals">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="5">
+                        <Button MinWidth="85" Content="Add" Command="{Binding AddSpeechEventsHeaderFileCommand}"/>
+                    </StackPanel>
+                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeechEventsJournals}" SelectedItem="{Binding SelectedSpeechEventsJournalsHeaderFile}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Header file" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn MinWidth="85">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Remove" Click="RemoveSpeechEventJournalsHeaderFileButton_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
         </TabControl>
         <StackPanel Margin="0,15,0,0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>

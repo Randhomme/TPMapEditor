@@ -35,6 +35,8 @@ namespace TPMapEditor.Dialogs
         private GameHeadersFile? selectedInGameMessagesHeaderFile;
         [ObservableProperty]
         private GameHeadersFile? selectedObjectiveTasksHeaderFile;
+        [ObservableProperty]
+        private GameHeadersFile? selectedSpeechEventsJournalsHeaderFile;
         public AppSettings AppSettings { get; }
         public GameStringsHeadersDialog(Window owner, AppSettings appSettings) : base(owner)
         {
@@ -82,6 +84,13 @@ namespace TPMapEditor.Dialogs
         {
             string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
             AppSettings.TPObjectiveTasks.Add(new GameHeadersFile(fileName));
+        }
+
+        [RelayCommand]
+        private void OnAddSpeechEventJournalsHeaderFile()
+        {
+            string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
+            AppSettings.TPSpeechEventsJournals.Add(new GameHeadersFile(fileName));
         }
 
         private void RemoveTeamNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
@@ -135,6 +144,15 @@ namespace TPMapEditor.Dialogs
             {
                 AppSettings.TPObjectiveTasks.Remove(SelectedObjectiveTasksHeaderFile);
                 SelectedObjectiveTasksHeaderFile = null;
+            }
+        }
+
+        private void RemoveSpeechEventJournalsHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedSpeechEventsJournalsHeaderFile != null)
+            {
+                AppSettings.TPSpeechEventsJournals.Remove(SelectedSpeechEventsJournalsHeaderFile);
+                SelectedSpeechEventsJournalsHeaderFile = null;
             }
         }
     }
