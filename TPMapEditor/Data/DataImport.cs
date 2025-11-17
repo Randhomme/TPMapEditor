@@ -786,12 +786,12 @@ namespace TPMapEditor.Data
         private void ReadWorldCrewListElement()
         {
             var crewName = reader.ReadAndParseString("World Crew List - Element String ");
-            var worldObject = map.WorldObjects.FirstOrDefault((wot) => wot.Type.Type == crewName);
-            if (worldObject != null)
+            var wotGridItem = WotGridItem.WotTypes.FirstOrDefault((type) => type.Type == crewName);
+            if (wotGridItem != null)
             {
-                if(worldObject.Type.CustomInfoDefinition == CustomInfoDefinition.CrewCustomInfoFactory)
+                if(wotGridItem.CustomInfoDefinition == CustomInfoDefinition.CrewCustomInfoFactory)
                 {
-                    map.WorldCrews.Add(worldObject);
+                    map.WorldCrews.Add(wotGridItem);
                 }
                 else
                     throw new TPMapEditorException($"World object {crewName} is not a valid crew member.");
@@ -803,15 +803,15 @@ namespace TPMapEditor.Data
         private void ReadWorldArmsListElement()
         {
             var gunName = reader.ReadAndParseString("World Arms List - Element String ");
-            var worldObject = map.WorldObjects.FirstOrDefault((wot) => wot.Type.Type == gunName);
-            if (worldObject != null)
+            var wotGridItem = WotGridItem.WotTypes.FirstOrDefault((type) => type.Type == gunName);
+            if (wotGridItem != null)
             {
-                if (worldObject.Type.CustomInfoDefinition == CustomInfoDefinition.GunCustomInfoFactory)
+                if (wotGridItem.CustomInfoDefinition == CustomInfoDefinition.GunCustomInfoFactory)
                 {
-                    map.WorldArms.Add(worldObject);
+                    map.WorldArms.Add(wotGridItem);
                 }
                 else
-                    throw new TPMapEditorException($"World object {gunName} is not a valid gun.");
+                    throw new TPMapEditorException($"World object {gunName} is not a valid weapon.");
             }
             else
                 throw new TPMapEditorException($"World object {gunName} does not exists in your TPGame folder.");
