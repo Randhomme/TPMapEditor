@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media;
+
+namespace TPMapEditor.Utils
+{
+    public static class DataImportExtensions
+    {
+        public static bool ReadAndParseBool(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            bool.TryParse(line.GetSafeSubstring(prefix), out var value);
+            return value;
+        }
+
+        public static int ReadAndParseInt(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            int.TryParse(line.GetSafeSubstring(prefix), out var value);
+            return value;
+        }
+
+        public static double ReadAndParseDouble(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            double.TryParse(line.GetSafeSubstring(prefix), out var value);
+            return value;
+        }
+
+        public static string ReadAndParseString(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            return line.GetSafeSubstring(prefix).Trim('\'');
+        }
+
+        public static Color ReadAndParseColor(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            var values = line.Split(',');
+            float.TryParse(values[0], out var r);
+            float.TryParse(values[1], out var g);
+            float.TryParse(values[2], out var b);
+            float.TryParse(values[3], out var a);
+            return Color.FromArgb((byte)(a * 255f), (byte)(r * 255f), (byte)(g * 255f), (byte)(b * 255f));
+        }
+
+        public static Vector3 ReadAndParseVector3(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            var values = line.Split(',');
+            float.TryParse(values[0], out var x);
+            float.TryParse(values[1], out var y);
+            float.TryParse(values[2], out var z);
+            return new Vector3(x, y, z);
+        }
+
+        public static Vector2 ReadAndParseVector2(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            var values = line.Split(',');
+            float.TryParse(values[0], out var x);
+            float.TryParse(values[1], out var y);
+            return new Vector2(x, y);
+        }
+
+        public static (Vector3 x, Vector3 y, Vector3 z) ReadAndParseMatrix33(this StreamReader reader, string prefix)
+        {
+            var line = reader.ReadLine().Trim();
+            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            var values = line.Split(',');
+            float.TryParse(values[0], out var x1);
+            float.TryParse(values[1], out var x2);
+            float.TryParse(values[2], out var x3);
+            float.TryParse(values[0], out var y1);
+            float.TryParse(values[1], out var y2);
+            float.TryParse(values[2], out var y3);
+            float.TryParse(values[0], out var z1);
+            float.TryParse(values[1], out var z2);
+            float.TryParse(values[2], out var z3);
+            return (new Vector3(x1, x2, x3), new Vector3(y1, y2, y3), new Vector3(z1, z2, z3));
+
+        }
+
+        private static string GetSafeSubstring(this string str, string val)
+        {
+            if (str.StartsWith(val))
+                return str.Substring(val.Length);
+            return string.Empty;
+        }
+    }
+}
