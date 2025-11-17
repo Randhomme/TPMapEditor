@@ -34,9 +34,9 @@ namespace TPMapEditor.Data
             {
                 lock (_lock)
                 {
-                    ReadWorldInfoSection(reader, map);
-                    ReadGameSection(reader, map);
-                    ReadWorldSection(reader, map);
+                    ReadWorldInfoSection();
+                    ReadGameSection();
+                    ReadWorldSection();
                 }
             }
             //TODO : handle the error, possibly with an IProgress thing
@@ -69,7 +69,7 @@ namespace TPMapEditor.Data
             catch { throw new Exception($"Fail to read {sectionName} section."); }
         }
 
-        private void ReadWorldInfoSection(StreamReader reader, WorldMap map)
+        private void ReadWorldInfoSection()
         {
             ReadSection("WorldInfo", () =>
             {
@@ -144,7 +144,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadGameSection(StreamReader reader, WorldMap map)
+        private void ReadGameSection()
         {
             ReadSection("Game", () =>
             {
@@ -153,7 +153,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWorldSection(StreamReader reader, WorldMap map)
+        private void ReadWorldSection()
         {
             ReadSection("World", () =>
             {
@@ -183,7 +183,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadPlayerSection(reader, map, i);
+                        ReadPlayerSection(i);
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Player section number {i} : {ex.Message}", ex); }
                 }
@@ -202,17 +202,17 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadWorldObjectSection(reader, map);
+                        ReadWorldObjectSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read WorldObject section number {i} : {ex.Message}", ex); }
                 }
 
                 //GameSpecific section
-                ReadGameSpecificSection(reader, map);
+                ReadGameSpecificSection();
             });
         }
 
-        private void ReadPlayerSection(StreamReader reader, WorldMap map, int playerIndex)
+        private void ReadPlayerSection(int playerIndex)
         {
             ReadSection("Player", () =>
             {
@@ -260,14 +260,14 @@ namespace TPMapEditor.Data
                 var formationTypeStart = (FormationType)reader.ReadAndParseInt("FormationType Int ");
 
                 //FleetAI section
-                ReadFleetAISection(reader, player);
+                ReadFleetAISection(player);
 
                 //FlagIndex
                 reader.ReadLine(); //probably state thing ?
             });
         }
 
-        private void ReadFleetAISection(StreamReader reader, Player player)
+        private void ReadFleetAISection(Player player)
         {
             ReadSection("FleetAI", () =>
             {
@@ -307,7 +307,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWorldObjectSection(StreamReader reader, WorldMap map)
+        private void ReadWorldObjectSection()
         {
             try
             {
@@ -321,7 +321,7 @@ namespace TPMapEditor.Data
 
                 var worldObject = new WorldObject(type, 0, 0, 0) { Id = id };
 
-                ReadWorldObjectStateSection(reader, worldObject, map);
+                ReadWorldObjectStateSection(worldObject);
                 
                 map.WorldObjects.Add(worldObject);
             }
@@ -329,7 +329,7 @@ namespace TPMapEditor.Data
             catch { throw new Exception("Fail to read WorldObject section."); }
         }
 
-        private void ReadWorldObjectStateSection(StreamReader reader, WorldObject worldObject, WorldMap map)
+        private void ReadWorldObjectStateSection(WorldObject worldObject)
         {
             ReadSection("State", () =>
             {
@@ -368,7 +368,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadGameSpecificSection(StreamReader reader, WorldMap map)
+        private void ReadGameSpecificSection()
         {
             ReadSection("GameSpecific", () =>
             {
@@ -379,7 +379,7 @@ namespace TPMapEditor.Data
                 reader.ReadLine();
 
                 //Effect Event Keeper section
-                ReadEffectEventKeeperSection(reader, map);
+                ReadEffectEventKeeperSection();
 
                 //Skybox mesh
                 var skyboxMeshString = reader.ReadAndParseString("Skybox mesh name String ");
@@ -412,7 +412,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadWaypointPathInfoVectorElementSection(reader, map);
+                        ReadWaypointPathInfoVectorElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Waypoint Path Info section number {i} : {ex.Message}", ex); }
                 }
@@ -423,7 +423,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadWorldPolygonVectorsSection(reader, map);
+                        ReadWorldPolygonVectorsSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Polygon section number {i} : {ex.Message}", ex); }
                 }
@@ -434,7 +434,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadWorldPointSetVectorsSection(reader, map);
+                        ReadWorldPointSetVectorsSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point Set section number {i} : {ex.Message}", ex); }
                 }
@@ -445,7 +445,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadFlagListElementSection(reader, map);
+                        ReadFlagListElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Flag List - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -456,7 +456,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadTimerListElementSection(reader, map);
+                        ReadTimerListElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Timer List - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -467,7 +467,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadSpeechEventListElementSection(reader, map);
+                        ReadSpeechEventListElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Speech Event List - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -478,7 +478,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadPlayerAllianceInfoVectorElementSection(reader, map);
+                        ReadPlayerAllianceInfoVectorElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read PlayerAllianceInfoVector - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -489,7 +489,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadInGameTeamListElementSection(reader, map);
+                        ReadInGameTeamListElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Team List - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -509,32 +509,32 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadGroupSection(reader, map);
+                        ReadGroupSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i} : {ex.Message}", ex); }
                 }
 
                 //Skip World Rules section
                 var worldRulesSectionPosition = reader.BaseStream.Position;
-                SkipNamedSection(reader, "World Rules");
+                SkipNamedSection("World Rules");
 
                 //Objective System
-                ReadObjectiveSystemSection(reader, map);
+                ReadObjectiveSystemSection();
 
                 //Rope
-                SkipNamedSection(reader, "Rope");
+                SkipNamedSection("Rope");
 
                 //Grappled Objects
-                SkipNamedSection(reader, "Grappled Objects");
+                SkipNamedSection("Grappled Objects");
 
                 //Boarding Actions
-                SkipNamedSection(reader, "Boarding Actions");
+                SkipNamedSection("Boarding Actions");
 
                 //Journal Entry
-                ReadJournalEntrySection(reader, map);
+                ReadJournalEntrySection();
 
                 //World Map
-                ReadWorldMapSection(reader, map);
+                ReadWorldMapSection();
 
                 //Can Assemble Fleets (not used)
                 reader.ReadLine();
@@ -554,7 +554,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadEffectEventKeeperSection(StreamReader reader, WorldMap map)
+        private void ReadEffectEventKeeperSection()
         {
             ReadSection("Effect Event Keeper", () =>
             {
@@ -568,7 +568,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWaypointPathInfoVectorElementSection(StreamReader reader, WorldMap map)
+        private void ReadWaypointPathInfoVectorElementSection()
         {
             ReadSection("Waypoint Path Info Vector - Element", () =>
             {
@@ -587,7 +587,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWorldPolygonVectorsSection(StreamReader reader, WorldMap map)
+        private void ReadWorldPolygonVectorsSection()
         {
             ReadSection("World Polygons Vectors - Element", () =>
             {
@@ -606,7 +606,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWorldPointSetVectorsSection(StreamReader reader, WorldMap map)
+        private void ReadWorldPointSetVectorsSection()
         {
             ReadSection("World Point Sets Vector - Element", () =>
             {
@@ -619,7 +619,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadWorldPointElementSection(reader, worldPointSet);
+                        ReadWorldPointElementSection(worldPointSet);
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point section number {i} : {ex.Message}", ex); }
                 }
@@ -628,7 +628,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWorldPointElementSection(StreamReader reader, WorldPointSet worldPointSet)
+        private void ReadWorldPointElementSection(WorldPointSet worldPointSet)
         {
             ReadSection("World Points - Element", () =>
             {
@@ -637,13 +637,13 @@ namespace TPMapEditor.Data
                 //world point magnitude (probably not used)
                 reader.ReadLine();
 
-                ReadWorldPointBasisSection(reader, worldPoint);
+                ReadWorldPointBasisSection(worldPoint);
 
                 worldPointSet.Points.Add(worldPoint);
             });
         }
 
-        private void ReadWorldPointBasisSection(StreamReader reader, WorldPoint worldPoint)
+        private void ReadWorldPointBasisSection(WorldPoint worldPoint)
         {
             ReadSection("World Point Basis", () =>
             {
@@ -673,7 +673,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadFlagListElementSection(StreamReader reader, WorldMap map)
+        private void ReadFlagListElementSection()
         {
             ReadSection("Flag List - Element", () =>
             {
@@ -683,7 +683,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadTimerListElementSection(StreamReader reader, WorldMap map)
+        private void ReadTimerListElementSection()
         {
             ReadSection("Timer List - Element", () =>
             {
@@ -700,7 +700,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadSpeechEventListElementSection(StreamReader reader, WorldMap map)
+        private void ReadSpeechEventListElementSection()
         {
             ReadSection("Speech Event List - Element", () =>
             {
@@ -731,7 +731,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadPlayerAllianceInfoVectorElementSection(StreamReader reader, WorldMap map)
+        private void ReadPlayerAllianceInfoVectorElementSection()
         {
             ReadSection("PlayerAllianceInfoVector - Element", () =>
             {
@@ -740,7 +740,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadInGameTeamListElementSection(StreamReader reader, WorldMap map)
+        private void ReadInGameTeamListElementSection()
         {
             ReadSection("Team List - Element", () =>
             {
@@ -752,7 +752,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadGroupSection(StreamReader reader, WorldMap map)
+        private void ReadGroupSection()
         {
             ReadSection("Group", () =>
             {
@@ -789,7 +789,7 @@ namespace TPMapEditor.Data
                 throw new TPMapEditorException($"World object {crewName} does not exists in your TPGame folder.");
         }
 
-        private void SkipNamedSection(StreamReader reader, string sectionName)
+        private void SkipNamedSection(string sectionName)
         {
             try
             {
@@ -797,7 +797,7 @@ namespace TPMapEditor.Data
                 if (line.EndsWith(sectionName))
                 {
                     reader.ReadLine(); //start of section
-                    SkipSection(reader);
+                    SkipSection();
                 }
                 else
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
@@ -806,19 +806,19 @@ namespace TPMapEditor.Data
             catch { throw new Exception($"Fail to read {sectionName} section."); }
         }
 
-        private void SkipSection(StreamReader reader)
+        private void SkipSection()
         {
             while(!reader.EndOfStream)
             {
                 var line = reader.ReadLine().Trim();
                 if (line.Equals("{"))
-                    SkipSection(reader);
+                    SkipSection();
                 else if (line.Equals("}"))
                     break;
             }
         }
 
-        private void ReadObjectiveSystemSection(StreamReader reader, WorldMap map)
+        private void ReadObjectiveSystemSection()
         {
             ReadSection("Objective System", () =>
             {
@@ -834,7 +834,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadObjectivePointInfoElementSection(reader, map);
+                        ReadObjectivePointInfoElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Point Info - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -845,14 +845,14 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadObjectiveTaskArrayElementSection(reader, map);
+                        ReadObjectiveTaskArrayElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Task Array - Element section number {i} : {ex.Message}", ex); }
                 }
             });
         }
 
-        private void ReadObjectivePointInfoElementSection(StreamReader reader, WorldMap map)
+        private void ReadObjectivePointInfoElementSection()
         {
             ReadSection("Objective Point Info - Element", () =>
             {
@@ -862,7 +862,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadObjectiveTaskArrayElementSection(StreamReader reader, WorldMap map)
+        private void ReadObjectiveTaskArrayElementSection()
         {
             ReadSection("Objective Task Array - Element", () =>
             {
@@ -878,7 +878,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadJournalEntrySection(StreamReader reader, WorldMap map)
+        private void ReadJournalEntrySection()
         {
             ReadSection("Journal Entry", () =>
             {
@@ -888,7 +888,7 @@ namespace TPMapEditor.Data
                 {
                     try
                     {
-                        ReadPageInfoElementSection(reader, map);
+                        ReadPageInfoElementSection();
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Page Info - Element section number {i} : {ex.Message}", ex); }
                 }
@@ -898,7 +898,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadPageInfoElementSection(StreamReader reader, WorldMap map)
+        private void ReadPageInfoElementSection()
         {
             ReadSection("Page Info - Element", () =>
             {
@@ -910,7 +910,7 @@ namespace TPMapEditor.Data
             });
         }
 
-        private void ReadWorldMapSection(StreamReader reader, WorldMap map)
+        private void ReadWorldMapSection()
         {
             ReadSection("World Map", () =>
             {
