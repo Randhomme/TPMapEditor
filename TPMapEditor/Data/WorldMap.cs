@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Media;
 using TPMapEditor.Settings;
 
@@ -92,6 +93,50 @@ namespace TPMapEditor.Data
             };
         }
 
+        public void EnableCollectionSynchronization(object _lock)
+        {
+            BindingOperations.EnableCollectionSynchronization(InGameTeams, _lock);
+            BindingOperations.EnableCollectionSynchronization(Flags, _lock);
+            BindingOperations.EnableCollectionSynchronization(Groups, _lock);
+            BindingOperations.EnableCollectionSynchronization(JournalEntries, _lock);
+            BindingOperations.EnableCollectionSynchronization(MapTextPoints, _lock);
+            BindingOperations.EnableCollectionSynchronization(ObjectivePoints, _lock);
+            BindingOperations.EnableCollectionSynchronization(ObjectiveTasks, _lock);
+            BindingOperations.EnableCollectionSynchronization(PlayerAlliances, _lock);
+            BindingOperations.EnableCollectionSynchronization(Players, _lock);
+            BindingOperations.EnableCollectionSynchronization(SelectableTeams, _lock);
+            BindingOperations.EnableCollectionSynchronization(ShipUnits, _lock);
+            BindingOperations.EnableCollectionSynchronization(SpeechEvents, _lock);
+            BindingOperations.EnableCollectionSynchronization(Timers, _lock);
+            BindingOperations.EnableCollectionSynchronization(WaypointPaths, _lock);
+            BindingOperations.EnableCollectionSynchronization(WorldObjects, _lock);
+            BindingOperations.EnableCollectionSynchronization(WorldPointSets, _lock);
+            BindingOperations.EnableCollectionSynchronization(WorldPolygons, _lock);
+            BindingOperations.EnableCollectionSynchronization(WorldRules, _lock);
+        }
+
+        public void DisableCollectionSynchronization()
+        {
+            BindingOperations.DisableCollectionSynchronization(InGameTeams);
+            BindingOperations.DisableCollectionSynchronization(Flags);
+            BindingOperations.DisableCollectionSynchronization(Groups);
+            BindingOperations.DisableCollectionSynchronization(JournalEntries);
+            BindingOperations.DisableCollectionSynchronization(MapTextPoints);
+            BindingOperations.DisableCollectionSynchronization(ObjectivePoints);
+            BindingOperations.DisableCollectionSynchronization(ObjectiveTasks);
+            BindingOperations.DisableCollectionSynchronization(PlayerAlliances);
+            BindingOperations.DisableCollectionSynchronization(Players);
+            BindingOperations.DisableCollectionSynchronization(SelectableTeams);
+            BindingOperations.DisableCollectionSynchronization(ShipUnits);
+            BindingOperations.DisableCollectionSynchronization(SpeechEvents);
+            BindingOperations.DisableCollectionSynchronization(Timers);
+            BindingOperations.DisableCollectionSynchronization(WaypointPaths);
+            BindingOperations.DisableCollectionSynchronization(WorldObjects);
+            BindingOperations.DisableCollectionSynchronization(WorldPointSets);
+            BindingOperations.DisableCollectionSynchronization(WorldPolygons);
+            BindingOperations.DisableCollectionSynchronization(WorldRules);
+        }
+
         public void Reset()
         {
             Clear();
@@ -122,24 +167,24 @@ namespace TPMapEditor.Data
 
         private void Clear()
         {
-            WorldObjects.Clear();
-            SelectableTeams.Clear();
-            InGameTeams.Clear();
-            Players.Clear();
-            Groups.Clear();
-            WaypointPaths.Clear();
-            WorldPolygons.Clear();
-            WorldPointSets.Clear();
             Flags.Clear();
-            PlayerAlliances.Clear();
-            Timers.Clear();
-            SpeechEvents.Clear();
-            WorldRules.Clear();
-            ShipUnits.Clear();
+            Groups.Clear();
+            InGameTeams.Clear();
+            JournalEntries.Clear();
+            MapTextPoints.Clear();
             ObjectivePoints.Clear();
             ObjectiveTasks.Clear();
-            MapTextPoints.Clear();
-            JournalEntries.Clear();
+            PlayerAlliances.Clear();
+            Players.Clear();
+            SelectableTeams.Clear();
+            ShipUnits.Clear();
+            SpeechEvents.Clear();
+            Timers.Clear();
+            WaypointPaths.Clear();
+            WorldObjects.Clear();
+            WorldPointSets.Clear();
+            WorldPolygons.Clear();
+            WorldRules.Clear();
         }
     }
 }
