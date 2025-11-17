@@ -551,6 +551,17 @@ namespace TPMapEditor.Data
 
                 }
 
+                //World Crew List - Size Int
+                var worlArmsListCount = reader.ReadAndParseInt("World Arms List - Size Int ");
+                for (int i = 0; i < worldCrewListCount; i++)
+                {
+                    try
+                    {
+                        ReadWorldArmsListElement();
+                    }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Arms List - Element number {i} : {ex.Message}", ex); }
+
+                }
             });
         }
 
@@ -787,6 +798,23 @@ namespace TPMapEditor.Data
             }
             else
                 throw new TPMapEditorException($"World object {crewName} does not exists in your TPGame folder.");
+        }
+
+        private void ReadWorldArmsListElement()
+        {
+            var gunName = reader.ReadAndParseString("World Arms List - Element String ");
+            var worldObject = map.WorldObjects.FirstOrDefault((wot) => wot.Type.Type == gunName);
+            if (worldObject != null)
+            {
+                if (worldObject.Type.CustomInfoDefinition == CustomInfoDefinition.GunCustomInfoFactory)
+                {
+                    map.WorldArms.Add(worldObject);
+                }
+                else
+                    throw new TPMapEditorException($"World object {gunName} is not a valid gun.");
+            }
+            else
+                throw new TPMapEditorException($"World object {gunName} does not exists in your TPGame folder.");
         }
 
         private void SkipNamedSection(string sectionName)

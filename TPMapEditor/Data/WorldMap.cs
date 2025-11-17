@@ -41,6 +41,7 @@ namespace TPMapEditor.Data
         public ObservableCollection<MapTextPoint> MapTextPoints { get; }
         public ObservableCollection<JournalEntry> JournalEntries { get; }
         public ObservableCollection<WorldObject> WorldCrews { get; }
+        public ObservableCollection<WorldObject> WorldArms { get; }
 
         public WorldMap()
         {
@@ -79,6 +80,7 @@ namespace TPMapEditor.Data
             MapTextPoints = new ObservableCollection<MapTextPoint>();
             JournalEntries = new ObservableCollection<JournalEntry>();
             WorldCrews = new ObservableCollection<WorldObject>();
+            WorldArms = new ObservableCollection<WorldObject>();
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
             ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
 
