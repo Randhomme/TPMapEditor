@@ -37,6 +37,8 @@ namespace TPMapEditor.Dialogs
         private GameHeadersFile? selectedObjectiveTasksHeaderFile;
         [ObservableProperty]
         private GameHeadersFile? selectedSpeechEventsJournalsHeaderFile;
+        [ObservableProperty]
+        private GameHeadersFile? selectedMapTextItemsHeaderFile;
         public AppSettings AppSettings { get; }
         public GameStringsHeadersDialog(Window owner, AppSettings appSettings) : base(owner)
         {
@@ -87,10 +89,17 @@ namespace TPMapEditor.Dialogs
         }
 
         [RelayCommand]
-        private void OnAddSpeechEventJournalsHeaderFile()
+        private void OnAddSpeechEventsJournalsHeaderFile()
         {
             string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
             AppSettings.TPSpeechEventsJournals.Add(new GameHeadersFile(fileName));
+        }
+
+        [RelayCommand]
+        private void OnAddMapTextItemsHeaderFile()
+        {
+            string fileName = GameHeadersFile.GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
+            AppSettings.TPMapTextItems.Add(new GameHeadersFile(fileName));
         }
 
         private void RemoveTeamNamesHeaderFileButton_Click(object sender, RoutedEventArgs e)
@@ -147,12 +156,21 @@ namespace TPMapEditor.Dialogs
             }
         }
 
-        private void RemoveSpeechEventJournalsHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveSpeechEventsJournalsHeaderFileButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedSpeechEventsJournalsHeaderFile != null)
             {
                 AppSettings.TPSpeechEventsJournals.Remove(SelectedSpeechEventsJournalsHeaderFile);
                 SelectedSpeechEventsJournalsHeaderFile = null;
+            }
+        }
+
+        private void RemoveMapTextItemsHeaderFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedMapTextItemsHeaderFile != null)
+            {
+                AppSettings.TPMapTextItems.Remove(SelectedMapTextItemsHeaderFile);
+                SelectedMapTextItemsHeaderFile = null;
             }
         }
     }
