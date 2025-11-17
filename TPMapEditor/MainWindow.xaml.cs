@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using TPMapEditor.Data;
@@ -107,9 +109,21 @@ namespace TPMapEditor
             {
                 if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
+                    var progressDialog = new ProgressDialog(this);
                     Map.Reset();
                     ClearSelections();
-                    DataImport.ReadMapFileAndAddData(ofd.FileName, Map);
+                    var _lock = new object();
+                    Map.EnableCollectionSynchronization(_lock);
+                    Task.Run(() =>
+                    {
+                        using(var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, _lock))
+                        {
+                            di.ReadMapFileAndAddData();
+                        }
+                        progressDialog.CanClose = true;
+                    });
+                    progressDialog.ShowDialog();
+                    Map.DisableCollectionSynchronization();
                 }
             }
         }
