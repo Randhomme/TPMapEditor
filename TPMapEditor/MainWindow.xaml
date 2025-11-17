@@ -53,6 +53,7 @@
                 <MenuItem Header="World point sets" Command="{Binding WorldPointSetsEditCommand}"/>
                 <MenuItem Header="Objective points" Command="{Binding ObjectivePointsEditCommand}"/>
                 <MenuItem Header="Map text points" Command="{Binding MapTextPointsEditCommand}"/>
+                <MenuItem Header="World crews and arms" Command="{Binding MapWorldCrewsAndArmsEditCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>

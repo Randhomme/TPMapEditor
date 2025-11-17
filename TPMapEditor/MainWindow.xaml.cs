@@ -301,6 +301,12 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnMapWorldCrewsAndArmsEdit()
+        {
+            new WorldCrewAndArmsDialog(this, Map).ShowDialog();
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var asd = new AppSettingsDialog(this, settings);

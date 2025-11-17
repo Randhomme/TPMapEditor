@@ -117,6 +117,8 @@ namespace TPMapEditor.Data
             BindingOperations.EnableCollectionSynchronization(WorldPointSets, _lock);
             BindingOperations.EnableCollectionSynchronization(WorldPolygons, _lock);
             BindingOperations.EnableCollectionSynchronization(WorldRules, _lock);
+            BindingOperations.EnableCollectionSynchronization(WorldCrews, _lock);
+            BindingOperations.EnableCollectionSynchronization(WorldArms, _lock);
         }
 
         public void DisableCollectionSynchronization()
@@ -139,6 +141,8 @@ namespace TPMapEditor.Data
             BindingOperations.DisableCollectionSynchronization(WorldPointSets);
             BindingOperations.DisableCollectionSynchronization(WorldPolygons);
             BindingOperations.DisableCollectionSynchronization(WorldRules);
+            BindingOperations.DisableCollectionSynchronization(WorldCrews);
+            BindingOperations.DisableCollectionSynchronization(WorldArms);
         }
 
         public void Reset()

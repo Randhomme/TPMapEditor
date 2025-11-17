@@ -553,7 +553,7 @@ namespace TPMapEditor.Data
 
                 //World Crew List - Size Int
                 var worlArmsListCount = reader.ReadAndParseInt("World Arms List - Size Int ");
-                for (int i = 0; i < worldCrewListCount; i++)
+                for (int i = 0; i < worlArmsListCount; i++)
                 {
                     try
                     {
