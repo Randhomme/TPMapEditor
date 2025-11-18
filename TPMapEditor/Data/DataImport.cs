@@ -565,6 +565,41 @@ namespace TPMapEditor.Data
 
                 //MapText System
                 ReadMapTextSystemSection();
+
+                try
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var streamPosition = reader.BaseStream.Position;
+                        var line = reader.ReadLine().Trim();
+                        if (line.StartsWith("Journal Music Name"))
+                        {
+                            map.JournalMusic = line.GetSafeSubstring("Journal Music Name String ").Trim('\'');
+                        }
+                        else if (line.StartsWith("PlayEndMovie"))
+                        {
+                            map.PlayEndMovie = DataImportExtensions.ParseBool(line, "PlayEndMovie Bool ");
+                        }
+                        else if (line.StartsWith("Is Alliance Change Allowed"))
+                        {
+                            map.IsAllianceChangeAllowed = DataImportExtensions.ParseBool(line, "Is Alliance Change Allowed Bool ");
+                        }
+                        else if (line.StartsWith("Islands Make Sounds"))
+                        {
+                            map.IslandsMakeSounds = DataImportExtensions.ParseBool(line, "Islands Make Sounds Bool ");
+                        }
+                        else if (line.Equals("{"))
+                        {
+                            SkipSection();
+                        }
+                        else if (line.Equals("}"))
+                        {
+                            reader.BaseStream.Position = streamPosition;
+                            break;
+                        }
+                    }
+                }
+                catch (Exception ex) { throw new TPMapEditorException($"Fail to read end of Game Specific section : {ex.Message}", ex); }
             });
         }
 
