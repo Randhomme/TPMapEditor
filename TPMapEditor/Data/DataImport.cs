@@ -562,6 +562,9 @@ namespace TPMapEditor.Data
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Arms List - Element number {i} : {ex.Message}", ex); }
 
                 }
+
+                //MapText System
+                ReadMapTextSystemSection();
             });
         }
 
@@ -815,6 +818,37 @@ namespace TPMapEditor.Data
             }
             else
                 throw new TPMapEditorException($"World object {gunName} does not exists in your TPGame folder.");
+        }
+
+        private void ReadMapTextSystemSection()
+        {
+            ReadSection("MapText System", () =>
+            {
+                //MapText Point Info - Size Int
+                var mapTextPointInfoCount = reader.ReadAndParseInt("MapText Point Info - Size Int ");
+                for (int i = 0; i < mapTextPointInfoCount; i++)
+                {
+                    try
+                    {
+                        ReadMapTextPointInfoElementSection();
+                    }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read MapText Point Info - Element number {i} : {ex.Message}", ex); }
+
+                }
+            });
+        }
+
+        private void ReadMapTextPointInfoElementSection()
+        {
+            ReadSection("MapText Point Info - Element", () =>
+            {
+                var name = reader.ReadAndParseString("Name String ");
+                var text = reader.ReadAndParseString("DisplayedText String ");
+                var position = reader.ReadAndParseVector3("Position Vector3");
+                var visible = reader.ReadAndParseBool("Visible Bool ");
+
+                map.MapTextPoints.Add(new(map, name, text, position.X, position.Y, position.Z, visible));
+            });
         }
 
         private void SkipNamedSection(string sectionName)
