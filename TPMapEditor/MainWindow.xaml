@@ -607,7 +607,7 @@
                                                 BorderThickness="5"
                                                 BorderBrush="Transparent"
                                                 MouseLeftButtonDown="OnMapTextPointClicked">
-                                                <TextBlock x:Name="DisplayedTextBlock" Text="{Binding DisplayedText}" FontSize="40"/>
+                                                <TextBlock x:Name="DisplayedTextBlock" Text="{Binding DisplayedText}" FontSize="40" Foreground="Khaki"/>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
