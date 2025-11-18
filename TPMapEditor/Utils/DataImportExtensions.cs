@@ -14,6 +14,11 @@ namespace TPMapEditor.Utils
         public static bool ReadAndParseBool(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
+            return ParseBool(line, prefix);
+        }
+
+        public static bool ParseBool(string line, string prefix)
+        {
             bool.TryParse(line.GetSafeSubstring(prefix), out var value);
             return value;
         }
@@ -21,6 +26,11 @@ namespace TPMapEditor.Utils
         public static int ReadAndParseInt(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
+            return ParseInt(prefix, line);
+        }
+
+        public static int ParseInt(string prefix, string line)
+        {
             int.TryParse(line.GetSafeSubstring(prefix), out var value);
             return value;
         }
@@ -28,6 +38,11 @@ namespace TPMapEditor.Utils
         public static double ReadAndParseDouble(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
+            return ParseDouble(prefix, line);
+        }
+
+        public static double ParseDouble(string prefix, string line)
+        {
             double.TryParse(line.GetSafeSubstring(prefix), out var value);
             return value;
         }
@@ -89,7 +104,7 @@ namespace TPMapEditor.Utils
 
         }
 
-        private static string GetSafeSubstring(this string str, string val)
+        public static string GetSafeSubstring(this string str, string val)
         {
             if (str.StartsWith(val))
                 return str.Substring(val.Length);
