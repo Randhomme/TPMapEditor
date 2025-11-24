@@ -317,6 +317,9 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Unit Name String", "Group/Unit"); //might need to be a unit
                     break;
+                case Enums.RuleCondition.WorldInitialize:
+                    RuleFields.Clear();
+                    break;
                 default:
                     RuleFields.Clear();
                     break;
