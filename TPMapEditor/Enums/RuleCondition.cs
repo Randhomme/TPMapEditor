@@ -125,6 +125,9 @@ namespace TPMapEditor.Enums
         UnitFromGroupEntersTriggerVolumeOncePerUnit,
 
         [Display(Name = "Unit is Within any Nebula")]
-        UnitIsWithinAnyNebula
+        UnitIsWithinAnyNebula,
+
+        [Display(Name = "World Initialize")]
+        WorldInitialize
     }
 }
