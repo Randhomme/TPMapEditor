@@ -50,6 +50,11 @@ namespace TPMapEditor.Utils
         public static string ReadAndParseString(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
+            return ParseString(prefix, line);
+        }
+
+        public static string ParseString(string prefix, string line)
+        {
             return line.GetSafeSubstring(prefix).Trim('\'');
         }
 
