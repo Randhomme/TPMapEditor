@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         <DockPanel LastChildFill="True">
             <ProgressBar x:Name="ProgressBar" DockPanel.Dock="Top" IsIndeterminate="{Binding ProgressBarIndeterminate}" Height="20" Value="100"/>
-            <TextBox Margin="0,5,0,0" VerticalScrollBarVisibility="Auto" DockPanel.Dock="Top" IsReadOnly="True" Text="{Binding LogText}"/>
+            <TextBox Margin="0,5,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" DockPanel.Dock="Top" IsReadOnly="True" Text="{Binding LogText}"/>
         </DockPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" Click="SaveButton_Click" IsEnabled="{Binding CanClose}"/>
