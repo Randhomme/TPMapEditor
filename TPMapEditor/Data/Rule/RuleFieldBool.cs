@@ -2,7 +2,7 @@
 {
     public partial class RuleFieldBool : RuleField<bool>
     {
-        public RuleFieldBool(string? label = null, bool value = false, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldBool(string? realLabel, string? label, bool value = false, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
     }

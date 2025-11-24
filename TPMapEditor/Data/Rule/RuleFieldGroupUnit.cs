@@ -7,7 +7,7 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private bool isGroupUnitUnit = false; //true if Unit, false if Group
 
-        public RuleFieldGroupUnit(string? label, NamedElement value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldGroupUnit(string? realLabel, string? label, NamedElement value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
     }

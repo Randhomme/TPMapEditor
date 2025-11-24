@@ -5,7 +5,7 @@ namespace TPMapEditor.Data.Rule
     public abstract partial class RuleField : ObservableObject
     {
         [ObservableProperty]
-        private string? label;
+        private string? realLabel, label; //realLabel is from map file, label is displayed text
 
         [ObservableProperty]
         private bool isOptional;
@@ -16,8 +16,9 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private string? optionalLabel;
 
-        protected RuleField(string? label = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        protected RuleField(string? realLabel, string? label, bool isOptional, string? optionalLabel, bool isShown)
         {
+            this.realLabel = realLabel;
             this.label = label;
             this.isOptional = isOptional;
             this.optionalLabel = optionalLabel;
@@ -35,7 +36,7 @@ namespace TPMapEditor.Data.Rule
             
         }
 
-        protected RuleField(string? label, T value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, isOptional, optionalLabel, isShown)
+        protected RuleField(string? realLabel, string? label, T value, bool isOptional, string? optionalLabel, bool isShown) : base(realLabel, label, isOptional, optionalLabel, isShown)
         {
             this.value = value;
         }

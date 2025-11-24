@@ -9,7 +9,7 @@ namespace TPMapEditor.Data.Rule
 {
     public class RuleFieldAiStance : RuleField<AiStance>
     {
-        public RuleFieldAiStance(string? label = null, AiStance value = AiStance.AISTANCE, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldAiStance(string? realLabel, string? label, AiStance value = AiStance.AISTANCE, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
 

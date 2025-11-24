@@ -4,7 +4,7 @@ namespace TPMapEditor.Data.Rule
 {
     public partial class RuleFieldCrewSkillLevel : RuleField<CrewSkillLevel>
     {
-        public RuleFieldCrewSkillLevel(string? label = null, CrewSkillLevel value = CrewSkillLevel.CREWSKILLLEVEL, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldCrewSkillLevel(string? realLabel, string? label, CrewSkillLevel value = CrewSkillLevel.CREWSKILLLEVEL, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
 

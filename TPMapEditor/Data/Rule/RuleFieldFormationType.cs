@@ -9,7 +9,7 @@ namespace TPMapEditor.Data.Rule
 {
     public class RuleFieldFormationType : RuleField<FormationType>
     {
-        public RuleFieldFormationType(string? label, FormationType value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldFormationType(string? realLabel, string? label, FormationType value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
     }

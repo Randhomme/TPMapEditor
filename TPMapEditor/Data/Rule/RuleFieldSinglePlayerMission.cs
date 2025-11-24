@@ -8,7 +8,7 @@ namespace TPMapEditor.Data.Rule
 {
     public class RuleFieldSinglePlayerMission : RuleField<string>
     {
-        public RuleFieldSinglePlayerMission(string? label, string value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldSinglePlayerMission(string? realLabel, string? label, string value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
     }

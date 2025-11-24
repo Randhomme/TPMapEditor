@@ -8,7 +8,7 @@ namespace TPMapEditor.Data.Rule
 {
     public class RuleFieldObjectiveTask : RuleField<ObjectiveTask>
     {
-        public RuleFieldObjectiveTask(string? label, ObjectiveTask value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldObjectiveTask(string? realLabel, string? label, ObjectiveTask value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
     }

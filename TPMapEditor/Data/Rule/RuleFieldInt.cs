@@ -7,7 +7,7 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private int min, max;
 
-        public RuleFieldInt(string? label = null, int value = 0, int min = -9999, int max = 9999, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldInt(string? realLabel, string? label, int value = 0, int min = -9999, int max = 9999, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
             this.min = min;
             this.max = max;
