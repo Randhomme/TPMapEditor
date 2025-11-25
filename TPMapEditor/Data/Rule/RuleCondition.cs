@@ -259,7 +259,7 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleCondition.SpeechEventNotPlayedYet:
                     RuleFields.Clear();
-                    AddRuleFieldSpeechEvent("Speech Event Name", "Speech event");
+                    AddRuleFieldSpeechEvent("Speech Event Name String", "Speech event");
                     break;
                 case Enums.RuleCondition.SpeechEventPlayedOnce:
                     RuleFields.Clear();
