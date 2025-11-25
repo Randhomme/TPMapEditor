@@ -49,7 +49,7 @@
                     <Label Margin="-5,5,0,0" Content="Sound file name"/>
                     <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding SelectedSpeechEvent.SoundFileName, UpdateSourceTrigger=PropertyChanged}"/>
                     <Label Margin="-5,5,0,0" Content="Face texture"/>
-                    <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding SelectedSpeechEvent.FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ComboBox ItemsSource="{x:Static settings:AppSettings.HudTexturesList}" SelectedValue="{Binding SelectedSpeechEvent.FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
                     <Label Margin="-5,5,0,0" Content="Text"/>
                     <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEvents}" SelectedValue="{Binding SelectedSpeechEvent.TextStringID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                     <Label Margin="-5,5,0,0" Content="Speaker"/>

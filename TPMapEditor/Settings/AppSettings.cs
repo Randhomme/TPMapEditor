@@ -27,7 +27,7 @@ namespace TPMapEditor.Settings
         public static IList<string> Musics { get; } = new List<string>();
         public static IList<string> Meshes { get; } = new List<string>();
         public static IList<string> DialogueFilesList { get; } = new List<string>();
-        public static IList<string> FaceTexturesList { get; } = new List<string>();
+        public static IList<string> HudTexturesList { get; } = new List<string>();
         public ObservableCollection<GameHeadersFile> TPTeamNames { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeechEvents { get; } = new();
         public ObservableCollection<GameHeadersFile> TPSpeakerNames { get; } = new();
@@ -64,7 +64,7 @@ namespace TPMapEditor.Settings
             UpdateAppSettingsFolders();
             UpdateGameHeadersFilesList();
             UpdateDialogueFilesList();
-            UpdateFaceTexturesList();
+            UpdateHudTexturesList();
             UpdateFlagTexturesList();
             UpdateEffectsList();
             UpdateStringsDictionnaries();
@@ -324,7 +324,7 @@ namespace TPMapEditor.Settings
             }
         }
 
-        private void UpdateFaceTexturesList()
+        private void UpdateHudTexturesList()
         {
             var hudFilePath = Path.Combine(this.TpGamePath, "hud.hdt");
             if (File.Exists(hudFilePath))
@@ -333,7 +333,7 @@ namespace TPMapEditor.Settings
                 {
                     using (var reader = new StreamReader(File.OpenRead(hudFilePath), Encoding.GetEncoding("Windows-1252")))
                     {
-                        FaceTexturesList.Clear();
+                        HudTexturesList.Clear();
                         for (int i = 0; i < 185; i++)
                         {
                             if (!reader.EndOfStream)
@@ -357,7 +357,7 @@ namespace TPMapEditor.Settings
                                         var faceTextureName = lineSplit[1];
                                         if (!string.IsNullOrEmpty(faceTextureName))
                                         {
-                                            FaceTexturesList.Add(faceTextureName);
+                                            HudTexturesList.Add(faceTextureName);
                                         }
                                     }
                                     // skip another 24 lines

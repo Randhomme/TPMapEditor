@@ -26,7 +26,7 @@ namespace TPMapEditor.Data
         public SpeechEvent(WorldMap map, string name) : base(map, name)
         {
             soundFileName = AppSettings.DialogueFilesList.FirstOrDefault() ?? string.Empty;
-            faceTexture = AppSettings.FaceTexturesList.FirstOrDefault() ?? string.Empty;
+            faceTexture = AppSettings.HudTexturesList.FirstOrDefault() ?? string.Empty;
             textStringID = StringDictionnary.SpeechEvents.FirstOrDefault().Key ?? string.Empty;
             speakerID = StringDictionnary.SpeakerNames.FirstOrDefault().Key ?? string.Empty;
             textColor = Colors.White;
