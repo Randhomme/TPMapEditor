@@ -15,7 +15,7 @@
         <DockPanel LastChildFill="True">
             <Label Margin="-5,0,0,0" Content="{Binding CurrentOperation}" DockPanel.Dock="Top"/>
             <!--<ProgressBar x:Name="ProgressBar" DockPanel.Dock="Top" IsIndeterminate="{Binding ProgressBarIndeterminate}" Height="20" Value="100"/>-->
-            <ListBox x:Name="LogsListBox" Margin="0,5,0,0" ItemsSource="{Binding Logs}"/>
+            <TextBox Text="{Binding Logs}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
         </DockPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" Click="SaveButton_Click" IsEnabled="{Binding CanClose}"/>

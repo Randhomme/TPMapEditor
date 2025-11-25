@@ -26,9 +26,7 @@ namespace TPMapEditor.Dialogs
         private bool canClose, progressBarIndeterminate = true;
 
         [ObservableProperty]
-        private string currentOperation = "Working...";
-
-        public ObservableCollection<string> Logs { get; } = new ObservableCollection<string>();
+        private string logs, currentOperation = "Working...";
 
         public IProgress<string> Progress { get; }
 
@@ -36,6 +34,7 @@ namespace TPMapEditor.Dialogs
 
         public ProgressDialog(Window owner) : base(owner)
         {
+            logs = "";
             Progress = new Progress<string>(ProgressReport);
             ProgressOperation = new Progress<string>(ProgressOperationReport);
             InitializeComponent();
@@ -49,8 +48,7 @@ namespace TPMapEditor.Dialogs
 
         private void ProgressReport(string s)
         {
-            Logs.Add(s);
-            //LogsListBox.ScrollIntoView(s);
+            Logs += s + Environment.NewLine;
         }
 
         private void ProgressOperationReport(string s)
