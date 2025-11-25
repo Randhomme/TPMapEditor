@@ -40,7 +40,7 @@ namespace TPMapEditor.Enums
         [Display(Name = "Group/Unit Hit at least x Times")]
         GroupUnitHitAtLeastXTimes,
 
-        [Display(Name = "Group/Unit Hit at least x Times by Player ( with eqivalence )")]
+        [Display(Name = "Group/Unit Hit at least x Times by Player ( with eqivalence )", ShortName = "Group/Unit Hit at least x Times by Player ( with equivalence )")]
         GroupUnitHitAtLeastXTimesByPlayerWithEquivalence,
 
         [Display(Name = "Group/Unit Is Docked")]
