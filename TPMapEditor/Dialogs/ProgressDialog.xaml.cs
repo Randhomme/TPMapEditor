@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,16 +23,14 @@ namespace TPMapEditor.Dialogs
     public partial class ProgressDialog : DialogWindow
     {
         [ObservableProperty]
-        private string logText;
-
-        [ObservableProperty]
         private bool canClose, progressBarIndeterminate = true;
+
+        public ObservableCollection<string> Logs { get; } = new ObservableCollection<string>();
 
         public IProgress<string> Progress { get; }
 
         public ProgressDialog(Window owner) : base(owner)
         {
-            logText = "";
             Progress = new Progress<string>(ProgressReport);
             InitializeComponent();
         }
@@ -44,7 +43,8 @@ namespace TPMapEditor.Dialogs
 
         private void ProgressReport(string s)
         {
-            LogText += s + Environment.NewLine;
+            Logs.Add(s);
+            //LogsListBox.ScrollIntoView(s);
         }
 
         partial void OnCanCloseChanged(bool value)

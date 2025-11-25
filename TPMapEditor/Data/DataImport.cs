@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
 using TPMapEditor.Exceptions;
@@ -12,14 +13,14 @@ namespace TPMapEditor.Data
 {
     public class DataImport : IDisposable
     {
-        private readonly StreamReader reader;
+        private readonly PositionnedStreamReader reader;
         private WorldMap map;
         private IProgress<string> progress;
         private object _lock;
 
         public DataImport(string filePath, WorldMap map, IProgress<string> progress, object _lock)
         {
-            reader = new StreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
+            reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = map;
             this.progress = progress;
             this._lock = _lock;
@@ -39,16 +40,15 @@ namespace TPMapEditor.Data
                     ReadWorldSection();
                 }
             }
-            //TODO : handle the error, possibly with an IProgress thing
             catch (Exception ex)
             {
-                progress.Report($"An error has occured : {ex.Message}");
+                progress.Report($"An error has occured.\n{ex.Message}");
             }
         }
 
         private void ReadSection(string sectionName, Action action)
         {
-            progress.Report($"Reading {sectionName} section ...");
+            //progress.Report($"Reading {sectionName} section ...");
             try
             {
                 var line = reader.ReadLine().Trim();
@@ -60,13 +60,13 @@ namespace TPMapEditor.Data
 
                     reader.ReadLine(); //end of section '}'
 
-                    progress.Report($"Done reading {sectionName} section.");
+                    //progress.Report($"Done reading {sectionName} section.");
                 }
                 else
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
             }
             catch (TPMapEditorException) { throw; }
-            catch { throw new Exception($"Fail to read {sectionName} section."); }
+            catch (Exception ex) { throw new Exception($"Fail to read {sectionName} section: {ex.Message}."); }
         }
 
         private void ReadWorldInfoSection()
@@ -185,7 +185,7 @@ namespace TPMapEditor.Data
                     {
                         ReadPlayerSection(i);
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Player section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Player section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //NextID (not used)
@@ -204,7 +204,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWorldObjectSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read WorldObject section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read WorldObject section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //GameSpecific section
@@ -317,7 +317,10 @@ namespace TPMapEditor.Data
 
                 //Type
                 var typeString = reader.ReadAndParseString("Type String ");
-                var type = WotGridItem.WotTypes.First((t)=>t.Type == typeString);
+                var type = WotGridItem.WotTypes.FirstOrDefault((t)=>t.Type == typeString);
+
+                if (type is null)
+                    throw new TPMapEditorException($"WorldObject type '{type}' not found.");
 
                 var worldObject = new WorldObject(type, 0, 0, 0) { Id = id };
 
@@ -414,7 +417,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWaypointPathInfoVectorElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Waypoint Path Info section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Waypoint Path Info section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //World Polygons Vectors - Size
@@ -425,7 +428,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWorldPolygonVectorsSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Polygon section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Polygon section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //World Point Sets Vector - Size
@@ -436,7 +439,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWorldPointSetVectorsSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point Set section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point Set section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Flag List - Size
@@ -447,7 +450,7 @@ namespace TPMapEditor.Data
                     {
                         ReadFlagListElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Flag List - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Flag List - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Timer List - Size
@@ -458,7 +461,7 @@ namespace TPMapEditor.Data
                     {
                         ReadTimerListElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Timer List - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Timer List - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Speech Event List - Size
@@ -469,7 +472,7 @@ namespace TPMapEditor.Data
                     {
                         ReadSpeechEventListElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Speech Event List - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Speech Event List - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //PlayerAllianceInfoVector - Size
@@ -480,7 +483,7 @@ namespace TPMapEditor.Data
                     {
                         ReadPlayerAllianceInfoVectorElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read PlayerAllianceInfoVector - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read PlayerAllianceInfoVector - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Team List - Size (InGameTeams)
@@ -491,7 +494,7 @@ namespace TPMapEditor.Data
                     {
                         ReadInGameTeamListElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Team List - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Team List - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Set the InGameTeam for each player
@@ -511,11 +514,11 @@ namespace TPMapEditor.Data
                     {
                         ReadGroupSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Group section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Skip World Rules section
-                var worldRulesSectionPosition = reader.BaseStream.Position;
+                var worldRulesSectionPosition = reader.CurrentPosition;
                 SkipNamedSection("World Rules");
 
                 //Objective System
@@ -547,7 +550,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWorldCrewListElement();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Crew List - Element number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Crew List - Element number {i + 1} : {ex.Message}", ex); }
 
                 }
 
@@ -559,7 +562,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWorldArmsListElement();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Arms List - Element number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Arms List - Element number {i + 1} : {ex.Message}", ex); }
 
                 }
 
@@ -600,6 +603,13 @@ namespace TPMapEditor.Data
                     }
                 }
                 catch (Exception ex) { throw new TPMapEditorException($"Fail to read end of Game Specific section : {ex.Message}", ex); }
+
+                var endPosition = reader.CurrentPosition;
+
+                //go back to read world rules
+                reader.CurrentPosition = worldRulesSectionPosition;
+                ReadWorldRulesSection();
+
             });
         }
 
@@ -670,7 +680,7 @@ namespace TPMapEditor.Data
                     {
                         ReadWorldPointElementSection(worldPointSet);
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Point section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 map.WorldPointSets.Add(worldPointSet);
@@ -867,7 +877,7 @@ namespace TPMapEditor.Data
                     {
                         ReadMapTextPointInfoElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read MapText Point Info - Element number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read MapText Point Info - Element number {i + 1} : {ex.Message}", ex); }
 
                 }
             });
@@ -884,6 +894,530 @@ namespace TPMapEditor.Data
 
                 map.MapTextPoints.Add(new(map, name, text, position.X, position.Y, position.Z, visible));
             });
+        }
+
+        private void ReadWorldRulesSection()
+        {
+            ReadSection("World Rules", () =>
+            {
+                //Rule List Int
+                var ruleListCount = reader.ReadAndParseInt("Rule List Int ");
+                for(int i = 0; i < ruleListCount; i++)
+                {
+                    try
+                    {
+                        var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "))
+                        {
+                            RunOnce = reader.ReadAndParseBool("Run Once Bool ")
+                        };
+                        //skip IsActive, since a desactivated rule cannot be activated
+                        reader.ReadLine();
+
+                        //NumConditions Int
+                        var numCondition = reader.ReadAndParseInt("NumConditions Int ");
+                        for (int j = 0; j < numCondition; j++)
+                        {
+                            try
+                            {
+                                ReadConditionListSection(worldRule);
+                            }
+                            catch (Exception ex) { throw new TPMapEditorException($"Fail to read Condition number {j + 1} : {ex.Message}", ex); }
+                        }
+
+                        //NumActions Int
+                        var numAction = reader.ReadAndParseInt("NumActions Int ");
+                        for (int j = 0; j < numAction; j++)
+                        {
+                            try
+                            {
+                                ReadActionListSection(worldRule);
+                            }
+                            catch (Exception ex) { throw new TPMapEditorException($"Fail to read Action number {j + 1} : {ex.Message}", ex); }
+                        }
+                        map.WorldRules.Add(worldRule);
+                    }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read World Rule number {i + 1} : {ex.Message}", ex); }
+                }
+            });
+        }
+
+        private void ReadConditionListSection(WorldRule worldRule)
+        {
+            ReadSection("Condition List", () =>
+            {
+                var condition = new Rule.RuleCondition(map);
+                var typeString = reader.ReadAndParseString("Type String ");
+                if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleCondition>(typeString, out var type))
+                    condition.Type = type;
+                else
+                    throw new TPMapEditorException($"Invalid condition type {typeString}");
+
+                while (!reader.EndOfStream)
+                {
+                    var pos = reader.CurrentPosition;
+                    var line = reader.ReadLine() ?? throw new TPMapEditorException("Unexpected end of file when reading condition fields.");
+                    line = line.Trim();
+
+                    if (line.Equals("}"))
+                    {
+                        reader.CurrentPosition = pos;
+                        break;
+                    }
+
+                    RuleField? targetField = null;
+                    foreach (var field in condition.RuleFields)
+                    {
+                        if(field is RuleFieldObservableCollection ruleFieldObservableCollection && ruleFieldObservableCollection.Value != null)
+                        {
+                            foreach (var subField in ruleFieldObservableCollection.Value)
+                            {
+                                if (line.StartsWith(subField.RealLabel))
+                                {
+                                    targetField = subField;
+                                    break;
+                                }
+                            }
+                            if (targetField != null)
+                                break; //break outer loop
+                        }
+                        if (line.StartsWith(field.RealLabel))
+                        {
+                            targetField = field;
+                            break;
+                        }
+                    }
+
+                    if (targetField == null)
+                        throw new TPMapEditorException("Unknown condition field: " + line);
+
+                    ProcessRuleField(targetField, line);
+                    
+                }
+                worldRule.Conditions.Add(condition);
+            });
+        }
+
+        private void ReadActionListSection(WorldRule worldRule)
+        {
+            ReadSection("Action List", () =>
+            {
+                var action = new Rule.RuleAction(map);
+                var typeString = reader.ReadAndParseString("Type String ");
+                if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleAction>(typeString, out var type))
+                    action.Type = type;
+                else
+                    throw new TPMapEditorException($"Invalid action type {typeString}");
+
+                while (!reader.EndOfStream)
+                {
+                    var pos = reader.CurrentPosition;
+                    var line = reader.ReadLine() ?? throw new TPMapEditorException("Unexpected end of file when reading action fields.");
+                    line = line.Trim();
+
+                    if (line.Equals("}"))
+                    {
+                        reader.CurrentPosition = pos;
+                        break;
+                    }
+
+                    RuleField? targetField = null;
+                    foreach (var field in action.RuleFields)
+                    {
+                        if (field is RuleFieldObservableCollection ruleFieldObservableCollection && ruleFieldObservableCollection.Value != null)
+                        {
+                            foreach (var subField in ruleFieldObservableCollection.Value)
+                            {
+                                if (line.StartsWith(subField.RealLabel))
+                                {
+                                    targetField = subField;
+                                    break;
+                                }
+                            }
+                            if (targetField != null)
+                                break; //break outer loop
+                        }
+                        if (field.RealLabel != null && line.StartsWith(field.RealLabel))
+                        {
+                            targetField = field;
+                            break;
+                        }
+                    }
+
+                    if (targetField == null)
+                        throw new TPMapEditorException("Unknown action field: " + line);
+
+                    ProcessRuleField(targetField, line);
+
+                }
+                worldRule.Actions.Add(action);
+            });
+        }
+
+        private void ProcessRuleField(RuleField targetField, string line)
+        {
+            //Do all the RuleField types from Rule folder
+            switch (targetField)
+            {
+                case RuleFieldBool rfBool:
+                    {
+                        var stringValue = DataImportExtensions.ParseString(rfBool.RealLabel + " ", line);
+                        rfBool.Value = bool.Parse(stringValue);
+                    }
+                    break;
+
+                case RuleFieldInt rfInt:
+                    rfInt.Value = DataImportExtensions.ParseInt(rfInt.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldDouble rfDouble:
+                    rfDouble.Value = DataImportExtensions.ParseDouble(rfDouble.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldString rfString:
+                    rfString.Value = DataImportExtensions.ParseString(rfString.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldFlag rfFlag:
+                    {
+                        var flagName = DataImportExtensions.ParseString(rfFlag.RealLabel + " ", line);
+                        var flag = map.Flags.FirstOrDefault(f => f.Name == flagName);
+                        if (!rfFlag.IsOptional && flag == null)
+                            progress.Report($"Warning: Flag '{flagName}' does not exist.");
+                        rfFlag.Value = flag;
+                    }
+                    break;
+
+                case RuleFieldGroup rfGroup:
+                    {
+                        var groupName = DataImportExtensions.ParseString(rfGroup.RealLabel + " ", line);
+                        var group = map.Groups.FirstOrDefault(g => g.Name == groupName);
+                        if (!rfGroup.IsOptional && group == null)
+                        {
+                            progress.Report($"Warning: Group '{groupName}' not found.");
+                        }
+                        rfGroup.Value = group;
+                    }
+                    break;
+
+                case RuleFieldGroupUnit rfGroupUnit:
+                    {
+                        var name = DataImportExtensions.ParseString(rfGroupUnit.RealLabel + " ", line);
+                        var group = map.Groups.FirstOrDefault(g => g.Name == name);
+                        if (group != null)
+                        {
+                            rfGroupUnit.Value = group;
+                            rfGroupUnit.IsGroupUnitUnit = false;
+                        }
+                        else
+                        {
+                            var unitName = name.Split(',').Last();
+                            var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                            if (unit != null)
+                            {
+                                rfGroupUnit.Value = unit;
+                                rfGroupUnit.IsGroupUnitUnit = true;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Group/Unit '{name}' not found.");
+                                rfGroupUnit.Value = null;
+                            }
+                        }
+                    }
+                    break;
+
+                case RuleFieldPlayer rfPlayer:
+                    {
+                        var playerName = DataImportExtensions.ParseString(rfPlayer.RealLabel + " ", line);
+                        var player = map.Players.FirstOrDefault(p => p.Name == playerName);
+                        if (!rfPlayer.IsOptional && player == null)
+                        {
+                            progress.Report($"Warning: Player '{playerName}' not found.");
+                        }
+                        rfPlayer.Value = player;
+                    }
+                    break;
+
+                case RuleFieldTeam rfTeam:
+                    {
+                        var teamName = DataImportExtensions.ParseString(rfTeam.RealLabel + " ", line);
+                        var team = map.InGameTeams.FirstOrDefault(t => t.RealName == teamName);
+                        if (!rfTeam.IsOptional && team == null)
+                        {
+                            progress.Report($"Warning: Team '{teamName}' not found.");
+                        }
+                        rfTeam.Value = team;
+                    }
+                    break;
+
+                case RuleFieldTimer rfTimer:
+                    {
+                        var timerName = DataImportExtensions.ParseString(rfTimer.RealLabel + " ", line);
+                        var timer = map.Timers.FirstOrDefault(t => t.Name == timerName);
+                        if (!rfTimer.IsOptional && timer == null)
+                        {
+                            progress.Report($"Warning: Timer '{timerName}' not found.");
+                        }
+                        rfTimer.Value = timer;
+                    }
+                    break;
+
+                case RuleFieldWorldObject rfWorldObj:
+                    {
+                        var id = DataImportExtensions.ParseInt(rfWorldObj.RealLabel + " ", line);
+                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (!rfWorldObj.IsOptional && wot == null)
+                        {
+                            progress.Report($"Warning: WorldObject with id '{id}' not found.");
+                        }
+                        rfWorldObj.Value = wot;
+                    }
+                    break;
+
+                case RuleFieldUnit rfUnit:
+                    {
+                        var unitName = DataImportExtensions.ParseString(rfUnit.RealLabel + " ", line);
+                        var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                        if (!rfUnit.IsOptional && unit == null)
+                        {
+                            progress.Report($"Warning: Unit '{unitName}' not found.");
+                        }
+                        rfUnit.Value = unit;
+                    }
+                    break;
+
+                case RuleFieldWorldPointSet rfPointSet:
+                    {
+                        var name = DataImportExtensions.ParseString(rfPointSet.RealLabel + " ", line);
+                        var set = map.WorldPointSets.FirstOrDefault(s => s.Name == name);
+                        if (!rfPointSet.IsOptional && set == null)
+                        {
+                            progress.Report($"Warning: WorldPointSet '{name}' not found.");
+                        }
+                        rfPointSet.Value = set;
+                    }
+                    break;
+
+                case RuleFieldWorldPolygon rfPolygon:
+                    {
+                        var name = DataImportExtensions.ParseString(rfPolygon.RealLabel + " ", line);
+                        var poly = map.WorldPolygons.FirstOrDefault(p => p.Name == name);
+                        if (!rfPolygon.IsOptional && poly == null)
+                        {
+                            progress.Report($"Warning: WorldPolygon '{name}' not found.");
+                        }
+                        rfPolygon.Value = poly;
+                    }
+                    break;
+
+                case RuleFieldMapTextPoint rfMapText:
+                    {
+                        var name = DataImportExtensions.ParseString(rfMapText.RealLabel + " ", line);
+                        var mt = map.MapTextPoints.FirstOrDefault(m => m.Name == name);
+                        if (!rfMapText.IsOptional && mt == null)
+                        {
+                            progress.Report($"Warning: MapTextPoint '{name}' not found.");
+                        }
+                        rfMapText.Value = mt;
+                    }
+                    break;
+
+                case RuleFieldSpeechEvent rfSpeech:
+                    {
+                        var name = DataImportExtensions.ParseString(rfSpeech.RealLabel + " ", line);
+                        var se = map.SpeechEvents.FirstOrDefault(s => s.Name == name);
+                        if (!rfSpeech.IsOptional && se == null)
+                        {
+                            progress.Report($"Warning: SpeechEvent '{name}' not found.");
+                        }
+                        rfSpeech.Value = se;
+                    }
+                    break;
+
+                case RuleFieldObjectivePoint rfObjPoint:
+                    {
+                        var name = DataImportExtensions.ParseString(rfObjPoint.RealLabel + " ", line);
+                        var op = map.ObjectivePoints.FirstOrDefault(o => o.Name == name);
+                        if (!rfObjPoint.IsOptional && op == null)
+                        {
+                            progress.Report($"Warning: ObjectivePoint '{name}' not found.");
+                        }
+                        rfObjPoint.Value = op;
+                    }
+                    break;
+
+                case RuleFieldObjectiveTask rfObjTask:
+                    {
+                        var name = DataImportExtensions.ParseString(rfObjTask.RealLabel + " ", line);
+                        var ot = map.ObjectiveTasks.FirstOrDefault(o => o.Name == name);
+                        if (!rfObjTask.IsOptional && ot == null)
+                        {
+                            progress.Report($"Warning: ObjectiveTask '{name}' not found.");
+                        }
+                        rfObjTask.Value = ot;
+                    }
+                    break;
+
+                case RuleFieldWaypointPath rfPath:
+                    {
+                        var name = DataImportExtensions.ParseString(rfPath.RealLabel + " ", line);
+                        var wp = map.WaypointPaths.FirstOrDefault(w => w.Name == name);
+                        if (!rfPath.IsOptional && wp == null)
+                        {
+                            progress.Report($"Warning: WaypointPath '{name}' not found.");
+                        }
+                        rfPath.Value = wp;
+                    }
+                    break;
+
+                case RuleFieldWorldObjectType rfWotType:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfWotType.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<KillableWorldObjectType>(raw, out var val))
+                            rfWotType.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid KillableWorldObjectType '{raw}'.");
+                            rfWotType.Value = KillableWorldObjectType.Ship;
+                        }
+                    }
+                    break;
+
+                case RuleFieldFormationType rfFormation:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfFormation.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<FormationType>(raw, out var val))
+                            rfFormation.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid FormationType '{raw}'.");
+                            rfFormation.Value = FormationType.None;
+                        }
+                    }
+                    break;
+
+                case RuleFieldBannerType rfBanner:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfBanner.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<BannerType>(raw, out var val))
+                            rfBanner.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid BannerType '{raw}'.");
+                            rfBanner.Value = BannerType.NoBanner;
+                        }
+                    }
+                    break;
+
+                case RuleFieldEquivalence rfEquiv:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfEquiv.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<Equivalence>(raw, out var val))
+                            rfEquiv.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid Equivalence '{raw}'.");
+                            rfEquiv.Value = Equivalence.EqualTo;
+                        }
+                    }
+                    break;
+
+                case RuleFieldAiStance rfAiStance:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfAiStance.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<AiStance>(raw, out var val))
+                            rfAiStance.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid AiStance '{raw}'.");
+                            rfAiStance.Value = AiStance.AISTANCE;
+                        }
+                    }
+                    break;
+
+                case RuleFieldCrewSkillLevel rfCrewSkill:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfCrewSkill.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<CrewSkillLevel>(raw, out var val))
+                            rfCrewSkill.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid CrewSkillLevel '{raw}'.");
+                            rfCrewSkill.Value = CrewSkillLevel.Green;
+                        }
+                    }
+                    break;
+
+                case RuleFieldFollowMode rfFollow:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfFollow.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<FollowMode>(raw, out var val))
+                            rfFollow.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid FollowMode '{raw}'.");
+                            rfFollow.Value = FollowMode.ToEnd;
+                        }
+                    }
+                    break;
+
+                case RuleFieldVitalSection rfVital:
+                    {
+                        var raw = DataImportExtensions.ParseString(rfVital.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<VitalSection>(raw, out var val))
+                            rfVital.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid VitalSection '{raw}'.");
+                            rfVital.Value = VitalSection.VitalToMission;
+                        }
+                    }
+                    break;
+
+                case RuleFieldFlagTexture rfFlagTex:
+                    rfFlagTex.Value = DataImportExtensions.ParseString(rfFlagTex.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldEffect rfEffect:
+                    rfEffect.Value = DataImportExtensions.ParseString(rfEffect.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldShipName rfShipName:
+                    rfShipName.Value = DataImportExtensions.ParseString(rfShipName.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldSinglePlayerMission rfSPMission:
+                    rfSPMission.Value = DataImportExtensions.ParseString(rfSPMission.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldDialogueAudio rfDialogue:
+                    rfDialogue.Value = DataImportExtensions.ParseString(rfDialogue.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldGuiTexture rfGui:
+                    rfGui.Value = DataImportExtensions.ParseString(rfGui.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldInGameMessage rfInGameMsg:
+                    rfInGameMsg.Value = DataImportExtensions.ParseString(rfInGameMsg.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldMusic rfMusic:
+                    rfMusic.Value = DataImportExtensions.ParseString(rfMusic.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldObservableCollection rfCollection:
+                    {
+                        var stringValue = DataImportExtensions.ParseString(rfCollection.RealLabel + " ", line);
+                        rfCollection.IsShown = bool.Parse(stringValue);
+                    }
+                    break;
+
+                default:
+                    // unknown/unsupported RuleField type
+                    throw new NotImplementedException("RuleField type not implemented: " + targetField.GetType().Name);
+
+            }
         }
 
         private void SkipNamedSection(string sectionName)
@@ -933,7 +1467,7 @@ namespace TPMapEditor.Data
                     {
                         ReadObjectivePointInfoElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Point Info - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Point Info - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Objective Task Array - Size Int
@@ -944,7 +1478,7 @@ namespace TPMapEditor.Data
                     {
                         ReadObjectiveTaskArrayElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Task Array - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Task Array - Element section number {i + 1} : {ex.Message}", ex); }
                 }
             });
         }
@@ -987,7 +1521,7 @@ namespace TPMapEditor.Data
                     {
                         ReadPageInfoElementSection();
                     }
-                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Page Info - Element section number {i} : {ex.Message}", ex); }
+                    catch (Exception ex) { throw new TPMapEditorException($"Fail to read Page Info - Element section number {i + 1} : {ex.Message}", ex); }
                 }
 
                 //Title StringID String 
