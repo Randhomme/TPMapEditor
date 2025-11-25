@@ -13,13 +13,12 @@ namespace TPMapEditor.Data
         private string name;
         protected WorldMap map;
 
-        [Required(ErrorMessage = "The name cannot be empty.", AllowEmptyStrings = false)]
         public string Name
         {
             get => name;
             set
             {
-                ValidateProperty(value);
+                if(string.IsNullOrEmpty(value)) throw new ArgumentException($"{GetType().Name} name cannot be null or empty.");
                 if (IsNameTaken(value)) throw new ArgumentException("A " + this.GetType().Name.ToLowerInvariant() + " with the same name already exists.");
                 name = value;
                 OnPropertyChanged();
@@ -30,11 +29,6 @@ namespace TPMapEditor.Data
         {
             this.map = map;
             this.name = name;
-        }
-
-        private void ValidateProperty<T>(T value, [CallerMemberName] string? propertyName = null)
-        {
-            Validator.ValidateProperty(value, new(this) { MemberName = propertyName });
         }
 
         protected abstract bool IsNameTaken(string name);
