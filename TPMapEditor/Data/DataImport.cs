@@ -16,19 +16,21 @@ namespace TPMapEditor.Data
         private readonly PositionnedStreamReader reader;
         private WorldMap map;
         private IProgress<string> progress;
+        private IProgress<string> progressOperation;
         private object _lock;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, object _lock)
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = map;
             this.progress = progress;
+            this.progressOperation = progressOperation;
             this._lock = _lock;
         }
 
         public void ReadMapFileAndAddData()
         {
-            progress.Report("Begin map import ...");
+            progressOperation.Report("Begin map import ...");
             //skip comment line
             reader.ReadLine();
             try
@@ -73,6 +75,8 @@ namespace TPMapEditor.Data
         {
             ReadSection("WorldInfo", () =>
             {
+                progressOperation.Report("Reading WorldInfo section ...");
+
                 //IsMultiplayerMap
                 map.IsMultiplayer = reader.ReadAndParseBool("IsMultiplayerMap Bool ");
 
@@ -157,6 +161,8 @@ namespace TPMapEditor.Data
         {
             ReadSection("World", () =>
             {
+                progressOperation.Report("Reading World section ...");
+
                 //WorldName and Random Seed (both unused)
                 reader.ReadLine();
                 reader.ReadLine();
@@ -181,6 +187,7 @@ namespace TPMapEditor.Data
                 //Player section
                 for (int i = 0; i < playerListSize; i++)
                 {
+                    progressOperation.Report($"Reading Player section {i + 1} / {playerListSize} ...");
                     try
                     {
                         ReadPlayerSection(i);
@@ -200,6 +207,7 @@ namespace TPMapEditor.Data
                 //WorldObject Section
                 for (int i = 0; i < worldObjectCount; i++)
                 {
+                    progressOperation.Report($"Reading WorldObject section {i + 1} / {worldObjectCount} ...");
                     try
                     {
                         ReadWorldObjectSection();
@@ -375,6 +383,8 @@ namespace TPMapEditor.Data
         {
             ReadSection("GameSpecific", () =>
             {
+                progressOperation.Report("Reading GameSpecific section ...");
+
                 //World Description
                 reader.ReadLine();
 
@@ -413,6 +423,7 @@ namespace TPMapEditor.Data
 
                 for (int i = 0; i < waypointPathCount; i++)
                 {
+                    progressOperation.Report($"Reading Waypoint Path Info section {i + 1} / {waypointPathCount} ...");
                     try
                     {
                         ReadWaypointPathInfoVectorElementSection();
@@ -424,6 +435,7 @@ namespace TPMapEditor.Data
                 var worldPolygonCount = reader.ReadAndParseInt("World Polygons Vectors - Size Int ");
                 for (int i = 0; i < worldPolygonCount; i++)
                 {
+                    progressOperation.Report($"Reading World Polygon section {i + 1} / {waypointPathCount} ...");
                     try
                     {
                         ReadWorldPolygonVectorsSection();
@@ -435,6 +447,7 @@ namespace TPMapEditor.Data
                 var worldPointSetCount = reader.ReadAndParseInt("World Point Sets Vector - Size Int ");
                 for (int i = 0; i < worldPointSetCount; i++)
                 {
+                    progressOperation.Report($"Reading World Point Set section {i + 1} / {worldPointSetCount} ...");
                     try
                     {
                         ReadWorldPointSetVectorsSection();
@@ -446,6 +459,7 @@ namespace TPMapEditor.Data
                 var flagListCount = reader.ReadAndParseInt("Flag List - Size Int ");
                 for (int i = 0; i < flagListCount; i++)
                 {
+                    progressOperation.Report($"Reading Flag section {i + 1} / {flagListCount} ...");
                     try
                     {
                         ReadFlagListElementSection();
@@ -457,6 +471,7 @@ namespace TPMapEditor.Data
                 var timerListCount = reader.ReadAndParseInt("Timer List - Size Int ");
                 for (int i = 0; i < timerListCount; i++)
                 {
+                    progressOperation.Report($"Reading Timer section {i + 1} / {timerListCount} ...");
                     try
                     {
                         ReadTimerListElementSection();
@@ -468,6 +483,7 @@ namespace TPMapEditor.Data
                 var speechEventListCount = reader.ReadAndParseInt("Speech Event List - Size Int ");
                 for (int i = 0; i < speechEventListCount; i++)
                 {
+                    progressOperation.Report($"Reading Speech Event section {i + 1} / {speechEventListCount} ...");
                     try
                     {
                         ReadSpeechEventListElementSection();
@@ -479,6 +495,7 @@ namespace TPMapEditor.Data
                 var playerAllianceListCount = reader.ReadAndParseInt("PlayerAllianceInfoVector - Size Int ");
                 for (int i = 0; i < playerAllianceListCount; i++)
                 {
+                    progressOperation.Report($"Reading Player Alliance section {i + 1} / {playerAllianceListCount} ...");
                     try
                     {
                         ReadPlayerAllianceInfoVectorElementSection();
@@ -490,6 +507,7 @@ namespace TPMapEditor.Data
                 var inGameTeamListCount = reader.ReadAndParseInt("Team List - Size Int ");
                 for (int i = 0; i < inGameTeamListCount; i++)
                 {
+                    progressOperation.Report($"Reading Team section {i + 1} / {inGameTeamListCount} ...");
                     try
                     {
                         ReadInGameTeamListElementSection();
@@ -510,6 +528,7 @@ namespace TPMapEditor.Data
                 var groupCount = reader.ReadAndParseInt("Num Groups Int ");
                 for (int i = 0; i < groupCount; i++)
                 {
+                    progressOperation.Report($"Reading Group section {i + 1} / {groupCount} ...");
                     try
                     {
                         ReadGroupSection();
@@ -546,6 +565,7 @@ namespace TPMapEditor.Data
                 var worldCrewListCount = reader.ReadAndParseInt("World Crew List - Size Int ");
                 for(int i = 0; i < worldCrewListCount; i++)
                 {
+                    progressOperation.Report($"Reading World Crew section {i + 1} / {worldCrewListCount} ...");
                     try
                     {
                         ReadWorldCrewListElement();
@@ -558,6 +578,7 @@ namespace TPMapEditor.Data
                 var worlArmsListCount = reader.ReadAndParseInt("World Arms List - Size Int ");
                 for (int i = 0; i < worlArmsListCount; i++)
                 {
+                    progressOperation.Report($"Reading World Arm section {i + 1} / {worlArmsListCount} ...");
                     try
                     {
                         ReadWorldArmsListElement();
@@ -873,6 +894,7 @@ namespace TPMapEditor.Data
                 var mapTextPointInfoCount = reader.ReadAndParseInt("MapText Point Info - Size Int ");
                 for (int i = 0; i < mapTextPointInfoCount; i++)
                 {
+                    progressOperation.Report($"Reading MapText Point section {i + 1} / {mapTextPointInfoCount} ...");
                     try
                     {
                         ReadMapTextPointInfoElementSection();
@@ -904,6 +926,7 @@ namespace TPMapEditor.Data
                 var ruleListCount = reader.ReadAndParseInt("Rule List Int ");
                 for(int i = 0; i < ruleListCount; i++)
                 {
+                    progressOperation.Report($"Reading World Rule section {i + 1} / {ruleListCount} ...");
                     try
                     {
                         var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "))

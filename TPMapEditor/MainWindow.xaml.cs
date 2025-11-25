@@ -118,11 +118,11 @@ namespace TPMapEditor
                     Task.Run(() =>
                     {
                         var time = DateTime.Now;
-                        using (var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, _lock))
+                        using (var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation, _lock))
                         {
                             di.ReadMapFileAndAddData();
                         }
-                        progressDialog.Progress.Report($"Map import completed in {(DateTime.Now - time).TotalSeconds} seconds.");
+                        progressDialog.ProgressOperation.Report($"Map import completed in {(DateTime.Now - time).TotalSeconds} seconds.");
                         progressDialog.CanClose = true;
                     });
                     progressDialog.ShowDialog();
