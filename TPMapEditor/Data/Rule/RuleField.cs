@@ -29,14 +29,9 @@ namespace TPMapEditor.Data.Rule
     {
 
         [ObservableProperty]
-        private T value;
+        private T? value;
 
-        partial void OnValueChanged(T? oldValue, T newValue)
-        {
-            
-        }
-
-        protected RuleField(string? realLabel, string? label, T value, bool isOptional, string? optionalLabel, bool isShown) : base(realLabel, label, isOptional, optionalLabel, isShown)
+        protected RuleField(string? realLabel, string? label, T? value, bool isOptional, string? optionalLabel, bool isShown) : base(realLabel, label, isOptional, optionalLabel, isShown)
         {
             this.value = value;
         }

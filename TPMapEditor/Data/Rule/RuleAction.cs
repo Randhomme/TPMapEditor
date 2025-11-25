@@ -291,7 +291,7 @@ namespace TPMapEditor.Data.Rule
                     {
                         if(v is RuleFieldString rfs && e.PropertyName == "Value")
                         {
-                            ShipUnit.Name = rfs.Value;
+                            ShipUnit.Name = rfs.Value ?? string.Empty;
                         }
                     };
                     RuleFields.Add(shipNameField);
