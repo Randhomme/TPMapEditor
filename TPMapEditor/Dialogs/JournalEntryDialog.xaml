@@ -39,7 +39,7 @@
                     <DataGridTemplateColumn Header="Picture texture" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox SelectedValue="{Binding PictureTexture, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.GuiTexturesFull}"/>
+                                <ComboBox SelectedValue="{Binding PictureTexture, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.HudTexturesList}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
