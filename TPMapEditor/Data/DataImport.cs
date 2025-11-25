@@ -31,6 +31,7 @@ namespace TPMapEditor.Data
         public void ReadMapFileAndAddData()
         {
             progressOperation.Report("Begin map import ...");
+            var time = DateTime.Now;
             //skip comment line
             reader.ReadLine();
             try
@@ -41,9 +42,11 @@ namespace TPMapEditor.Data
                     ReadGameSection();
                     ReadWorldSection();
                 }
+                progressOperation.Report($"Map import completed in {(DateTime.Now - time).TotalSeconds} seconds.");
             }
             catch (Exception ex)
             {
+                progressOperation.Report("Map import failed.");
                 progress.Report($"An error has occured.\n{ex.Message}");
             }
         }
