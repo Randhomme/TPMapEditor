@@ -71,7 +71,7 @@ namespace TPMapEditor.Data
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
             }
             catch (TPMapEditorException) { throw; }
-            catch (Exception ex) { throw new Exception($"Fail to read {sectionName} section: {ex.Message}."); }
+            catch (Exception ex) { throw new Exception($"Fail to read {sectionName} section: {ex.Message}"); }
         }
 
         private void ReadWorldInfoSection()
