@@ -114,7 +114,7 @@ namespace TPMapEditor.Data.Rule
                     AddRuleFieldGroup("Group Name String","Group");
                     AddRuleFieldVolume("Volume Name String", "Volume");
                     AddRuleFieldPlayer("Player Name String", "Player");
-                    AddRuleFieldInt("Object that have already entered", "Object that have already entered", isShown: false); //not used, must be 0 for now
+                    AddRuleFieldInt("Object that have already entered - Size Int", "Object that have already entered", isShown: false); //not used, must be 0 for now
                     break;
                 case Enums.RuleCondition.DoesGroupContainUnitName: //the name is bad, it only checks the existance of a unit
                     RuleFields.Clear();
@@ -236,7 +236,7 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit Name String", "Group/Unit");
                     AddRuleFieldPlayer("Player Name String", "Player");
-                    AddRuleFieldInt("Number Of Times Hit", "Number of times hit", min: 0);
+                    AddRuleFieldInt("Number Of Times Hit Int", "Number of times hit", min: 0);
                     break;
                 case Enums.RuleCondition.PlayerHasNoLifeboats:
                     RuleFields.Clear();
@@ -250,9 +250,9 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleCondition.PlayerVsPlayerCaptureCount:
                     RuleFields.Clear();
                     AddRuleFieldPlayer("Player Name A String", "Player A");
-                    AddRuleFieldPlayer("Player Name B", "Player B");
+                    AddRuleFieldPlayer("Player Name B String", "Player B");
                     AddRuleFieldEquivalence("Equivalence String", "Equivalence");
-                    AddRuleFieldInt("Number Of Captures", "Number of captures", min: 0);
+                    AddRuleFieldInt("Number Of Captures Int", "Number of captures", min: 0);
                     break;
                 case Enums.RuleCondition.SkirmishGameComplete:
                     RuleFields.Clear();
