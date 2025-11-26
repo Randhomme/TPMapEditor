@@ -1401,35 +1401,75 @@ namespace TPMapEditor.Data
                     break;
 
                 case RuleFieldFlagTexture rfFlagTex:
-                    rfFlagTex.Value = DataImportExtensions.ParseString(rfFlagTex.RealLabel + " ", line);
+                    var flagTex = DataImportExtensions.ParseString(rfFlagTex.RealLabel + " ", line);
+                    if(!AppSettings.FlagTextures.Contains(flagTex))
+                    {
+                        progress.Report($"Warning: Flag texture '{flagTex}' is not in the predefined list.");
+                    }
+                    rfFlagTex.Value = flagTex;
                     break;
 
                 case RuleFieldEffect rfEffect:
-                    rfEffect.Value = DataImportExtensions.ParseString(rfEffect.RealLabel + " ", line);
+                    var effect = DataImportExtensions.ParseString(rfEffect.RealLabel + " ", line);
+                    if(!AppSettings.Effects.Contains(effect))
+                    {
+                        progress.Report($"Warning: Effect '{effect}' is not in the predefined list.");
+                    }
+                    rfEffect.Value = effect;
                     break;
 
                 case RuleFieldShipName rfShipName:
-                    rfShipName.Value = DataImportExtensions.ParseString(rfShipName.RealLabel + " ", line);
+                    var shipName = DataImportExtensions.ParseString(rfShipName.RealLabel + " ", line);
+                    if(!StringDictionnary.ShipNames.ContainsKey(shipName))
+                    {
+                        progress.Report($"Warning: Ship name '{shipName}' is not in the predefined list.");
+                    }
+                    rfShipName.Value = shipName;
                     break;
 
                 case RuleFieldSinglePlayerMission rfSPMission:
-                    rfSPMission.Value = DataImportExtensions.ParseString(rfSPMission.RealLabel + " ", line);
+                    var spMission = DataImportExtensions.ParseString(rfSPMission.RealLabel + " ", line);
+                    if(!AppSettings.SinglePlayerMissions.Contains(spMission))
+                    {
+                        progress.Report($"Warning: Single Player Mission '{spMission}' is not in the predefined list.");
+                    }
+                    rfSPMission.Value = spMission;
                     break;
 
                 case RuleFieldDialogueAudio rfDialogue:
-                    rfDialogue.Value = DataImportExtensions.ParseString(rfDialogue.RealLabel + " ", line);
+                    var dialogue = DataImportExtensions.ParseString(rfDialogue.RealLabel + " ", line);
+                    if(!AppSettings.DialogueFilesList.Contains(dialogue))
+                    {
+                        progress.Report($"Warning: Dialogue audio file '{dialogue}' is not in the predefined list.");
+                    }
+                    rfDialogue.Value = dialogue;
                     break;
 
                 case RuleFieldGuiTexture rfGui:
-                    rfGui.Value = DataImportExtensions.ParseString(rfGui.RealLabel + " ", line);
+                    var guiTexture = DataImportExtensions.ParseString(rfGui.RealLabel + " ", line);
+                    if(!AppSettings.GuiTextures.Contains(guiTexture))
+                    {
+                        progress.Report($"Warning: GUI base texture '{guiTexture}' is not in the predefined list.");
+                    }
+                    rfGui.Value = guiTexture;
                     break;
 
                 case RuleFieldInGameMessage rfInGameMsg:
-                    rfInGameMsg.Value = DataImportExtensions.ParseString(rfInGameMsg.RealLabel + " ", line);
+                    var inGameMsg = DataImportExtensions.ParseString(rfInGameMsg.RealLabel + " ", line);
+                    if(!StringDictionnary.InGameMessagesDictionnary.ContainsKey(inGameMsg))
+                    {
+                        progress.Report($"Warning: In-Game Message '{inGameMsg}' is not in the predefined list.");
+                    }
+                    rfInGameMsg.Value = inGameMsg;
                     break;
 
                 case RuleFieldMusic rfMusic:
-                    rfMusic.Value = DataImportExtensions.ParseString(rfMusic.RealLabel + " ", line);
+                    var music = DataImportExtensions.ParseString(rfMusic.RealLabel + " ", line);
+                    if(!AppSettings.Musics.Contains(music))
+                    {
+                        progress.Report($"Warning: Music '{music}' is not in the predefined list.");
+                    }
+                    rfMusic.Value = music;
                     break;
 
                 case RuleFieldObservableCollection rfCollection:
