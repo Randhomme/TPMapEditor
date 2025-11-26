@@ -18,9 +18,9 @@
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0*" MinWidth="200"/>
+                <ColumnDefinition Width="*" MinWidth="200"/>
                 <ColumnDefinition Width="auto"/>
-                <ColumnDefinition MinWidth="200"/>
+                <ColumnDefinition Width="2*" MinWidth="200"/>
             </Grid.ColumnDefinitions>
             <Grid>
                 <Grid.RowDefinitions>
