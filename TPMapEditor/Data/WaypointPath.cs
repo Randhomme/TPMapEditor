@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Media;
 
 namespace TPMapEditor.Data
 {
     public partial class WaypointPath : NamedElement
     {
+        public static string[] DefaultName => new string[] { "NO PATH", "PATH NAME" };
+
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
         [ObservableProperty]
@@ -30,6 +33,11 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override bool IsDefaultName(string name)
+        {
+            return DefaultName.Contains(name);
         }
     }
 }

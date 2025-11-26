@@ -18,8 +18,12 @@ namespace TPMapEditor.Data
             get => name;
             set
             {
-                if(string.IsNullOrEmpty(value)) throw new ArgumentException($"{GetType().Name} name cannot be null or empty.");
-                if (IsNameTaken(value)) throw new ArgumentException("A " + this.GetType().Name.ToLowerInvariant() + " with the same name already exists.");
+                if(string.IsNullOrEmpty(value))
+                    throw new ArgumentException($"{GetType().Name} name cannot be null or empty.");
+                if(IsDefaultName(value))
+                    throw new ArgumentException($"{value} is already a default value for {GetType().Name}.");
+                if (IsNameTaken(value))
+                    throw new ArgumentException("A " + this.GetType().Name + " with the same name already exists.");
                 name = value;
                 OnPropertyChanged();
             }
@@ -32,6 +36,11 @@ namespace TPMapEditor.Data
         }
 
         protected abstract bool IsNameTaken(string name);
+
+        public virtual bool IsDefaultName(string name)
+        {
+            return false;
+        }
 
         public static string GenerateName(string prefix, IEnumerable<NamedElement> collection)
         {

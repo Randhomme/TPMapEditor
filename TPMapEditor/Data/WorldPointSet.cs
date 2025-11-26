@@ -11,6 +11,8 @@ namespace TPMapEditor.Data
 {
     public partial class WorldPointSet : NamedElement
     {
+        public static string DefaultName => "POINT SET";
+
         [ObservableProperty]
         private Color color = Colors.Black;
         [ObservableProperty]
@@ -37,6 +39,11 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override bool IsDefaultName(string name)
+        {
+            return name.Equals(DefaultName);
         }
     }
 }

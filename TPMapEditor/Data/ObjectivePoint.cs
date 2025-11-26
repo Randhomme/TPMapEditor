@@ -9,6 +9,8 @@ namespace TPMapEditor.Data
 {
     public partial class ObjectivePoint : NamedElement
     {
+        public static string DefaultName => "NO OBJECTIVE POINT";
+
         [ObservableProperty]
         private double x, y, z;
         [ObservableProperty]
@@ -29,6 +31,11 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override bool IsDefaultName(string name)
+        {
+            return name.Equals(DefaultName);
         }
     }
 }
