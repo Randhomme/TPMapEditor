@@ -160,7 +160,7 @@
                                     
                                     <!-- Preview MapTextPoint -->
                                     <Border x:Name="MapTextPointPreviewControl" Visibility="{c:Binding ElementName=AddMapTextPointCheckBox, Path=IsChecked}" MouseLeftButtonDown="MapTextPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="MapTextPointPreviewControl_MouseRightButtonDown">
-                                        <TextBlock x:Name="MapTextPointPreviewTextBlock" Text="{Binding ElementName=MapTextPointPreviewTextComboBox, Path=SelectedValue}" FontSize="40"/>
+                                        <TextBlock x:Name="MapTextPointPreviewTextBlock" Text="{Binding ElementName=MapTextPointPreviewTextComboBox, Path=SelectedValue}" FontSize="40" Foreground="Khaki"/>
                                     </Border>
                                 </Canvas>
 
