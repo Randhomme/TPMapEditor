@@ -108,7 +108,7 @@
             </ContentControl>
         </DataTemplate>
 
-        <!--AiStance-->
+        <!--FormationType-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldFormationType}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
                 <ComboBox ItemsSource="{enums:EnumBindingSource enums:FormationType}" SelectedValue="{Binding Value}"/>
@@ -168,7 +168,7 @@
             </ContentControl>
         </DataTemplate>
 
-        <!--Effect-->
+        <!--GuiTexture-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldGuiTexture}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
                 <ComboBox ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding Value}"/>
@@ -210,7 +210,7 @@
             </ContentControl>
         </DataTemplate>
 
-        <!--ObjectivePoint-->
+        <!--ObjectiveTask-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldObjectiveTask}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
                 <ComboBox ItemsSource="{Binding Map.ObjectiveTasks, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
