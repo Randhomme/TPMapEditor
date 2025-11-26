@@ -225,6 +225,7 @@ namespace TPMapEditor.Settings
         private void UpdateMusicsList()
         {
             Musics.Clear();
+            Musics.Add("None");
             var directory = Path.Combine(SoundDirectory, "Music");
             if (Directory.Exists(directory))
             {
@@ -405,6 +406,7 @@ namespace TPMapEditor.Settings
         private void UpdateEffectsList()
         {
             Effects.Clear();
+            Effects.Add("EFFECT");
             if (Directory.Exists(EffectsDirectory))
             {
                 foreach (var file in Directory.GetFiles(EffectsDirectory, "*.eft"))
@@ -577,6 +579,7 @@ namespace TPMapEditor.Settings
             if (Directory.Exists(GameHeadersFiles))
             {
                 StringDictionnary.ShipNames.Clear();
+                StringDictionnary.ShipNames.Add("LOCALIZED SHIP NAME", "LOCALIZED SHIP NAME");
                 foreach (var file in this.TPShipNames)
                 {
                     try
@@ -618,6 +621,7 @@ namespace TPMapEditor.Settings
             if (Directory.Exists(GameHeadersFiles))
             {
                 StringDictionnary.InGameMessagesDictionnary.Clear();
+                StringDictionnary.InGameMessagesDictionnary.Add("GAME STRING", "GAME STRING");
                 foreach (var file in this.TPInGameMessages)
                 {
                     try
