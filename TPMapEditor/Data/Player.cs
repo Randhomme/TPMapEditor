@@ -30,6 +30,7 @@ namespace TPMapEditor.Data
             Color = playerColor;
             FormationTypeStart = FormationType = FormationType.Column;
             IsPlayable = true;
+            TeamIndex = -1;
         }
 
         partial void OnIsPlayableChanged(bool value)
