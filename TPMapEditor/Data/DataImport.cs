@@ -1084,55 +1084,168 @@ namespace TPMapEditor.Data
             //Do all the RuleField types from Rule folder
             switch (targetField)
             {
-                case RuleFieldBool rfBool:
+                case RuleFieldAiStance ruleField:
                     {
-                        var stringValue = DataImportExtensions.ParseString(rfBool.RealLabel + " ", line);
-                        rfBool.Value = bool.Parse(stringValue);
-                    }
-                    break;
-
-                case RuleFieldInt rfInt:
-                    rfInt.Value = DataImportExtensions.ParseInt(rfInt.RealLabel + " ", line);
-                    break;
-
-                case RuleFieldDouble rfDouble:
-                    rfDouble.Value = DataImportExtensions.ParseDouble(rfDouble.RealLabel + " ", line);
-                    break;
-
-                case RuleFieldString rfString:
-                    rfString.Value = DataImportExtensions.ParseString(rfString.RealLabel + " ", line);
-                    break;
-
-                case RuleFieldFlag rfFlag:
-                    {
-                        var flagName = DataImportExtensions.ParseString(rfFlag.RealLabel + " ", line);
-                        var flag = map.Flags.FirstOrDefault(f => f.Name == flagName);
-                        if (!rfFlag.IsOptional && flag == null)
-                            progress.Report($"Warning: Flag '{flagName}' does not exist.");
-                        rfFlag.Value = flag;
-                    }
-                    break;
-
-                case RuleFieldGroup rfGroup:
-                    {
-                        var groupName = DataImportExtensions.ParseString(rfGroup.RealLabel + " ", line);
-                        var group = map.Groups.FirstOrDefault(g => g.Name == groupName);
-                        if (!rfGroup.IsOptional && group == null)
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<AiStance>(raw, out var val))
+                            ruleField.Value = val;
+                        else
                         {
-                            progress.Report($"Warning: Group '{groupName}' not found.");
+                            progress.Report($"Warning: Invalid AiStance '{raw}'.");
+                            ruleField.Value = AiStance.AISTANCE;
                         }
-                        rfGroup.Value = group;
                     }
                     break;
 
-                case RuleFieldGroupUnit rfGroupUnit:
+                case RuleFieldBannerType ruleField:
                     {
-                        var name = DataImportExtensions.ParseString(rfGroupUnit.RealLabel + " ", line);
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<BannerType>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid BannerType '{raw}'.");
+                            ruleField.Value = BannerType.NoBanner;
+                        }
+                    }
+                    break;
+
+                case RuleFieldBool ruleField:
+                    {
+                        var stringValue = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        ruleField.Value = bool.Parse(stringValue);
+                    }
+                    break;
+
+                case RuleFieldCrewSkillLevel ruleField:
+                    {
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<CrewSkillLevel>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid CrewSkillLevel '{raw}'.");
+                            ruleField.Value = CrewSkillLevel.Green;
+                        }
+                    }
+                    break;
+
+                case RuleFieldDialogueAudio ruleField:
+                    var dialogue = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!AppSettings.DialogueFilesList.Contains(dialogue))
+                    {
+                        progress.Report($"Warning: Dialogue audio file '{dialogue}' is not in the predefined list.");
+                    }
+                    ruleField.Value = dialogue;
+                    break;
+
+                case RuleFieldDouble ruleField:
+                    ruleField.Value = DataImportExtensions.ParseDouble(ruleField.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldEffect ruleField:
+                    var effect = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!AppSettings.Effects.Contains(effect))
+                    {
+                        progress.Report($"Warning: Effect '{effect}' is not in the predefined list.");
+                    }
+                    ruleField.Value = effect;
+                    break;
+
+                case RuleFieldEquivalence ruleField:
+                    {
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<Equivalence>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid Equivalence '{raw}'.");
+                            ruleField.Value = Equivalence.EqualTo;
+                        }
+                    }
+                    break;
+
+                case RuleFieldFlag ruleField:
+                    {
+                        var flagName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var flag = map.Flags.FirstOrDefault(f => f.Name == flagName);
+                        if (flag == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Flag '{flagName}' does not exist.");
+                            }
+                        }
+                        ruleField.Value = flag;
+                    }
+                    break;
+
+                case RuleFieldFlagTexture ruleField:
+                    var flagTex = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!AppSettings.FlagTextures.Contains(flagTex))
+                    {
+                        progress.Report($"Warning: Flag texture '{flagTex}' is not in the predefined list.");
+                    }
+                    ruleField.Value = flagTex;
+                    break;
+
+                case RuleFieldFollowMode ruleField:
+                    {
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<FollowMode>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid FollowMode '{raw}'.");
+                            ruleField.Value = FollowMode.ToEnd;
+                        }
+                    }
+                    break;
+
+                case RuleFieldFormationType ruleField:
+                    {
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<FormationType>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid FormationType '{raw}'.");
+                            ruleField.Value = FormationType.None;
+                        }
+                    }
+                    break;
+
+                case RuleFieldGroup ruleField:
+                    {
+                        var groupName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var group = map.Groups.FirstOrDefault(g => g.Name == groupName);
+                        if (group == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Group '{groupName}' not found.");
+                            }
+                        }
+                        ruleField.Value = group;
+                    }
+                    break;
+
+                case RuleFieldGroupUnit ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         var group = map.Groups.FirstOrDefault(g => g.Name == name);
                         if (group != null)
                         {
-                            rfGroupUnit.Value = group;
-                            rfGroupUnit.IsGroupUnitUnit = false;
+                            ruleField.Value = group;
+                            ruleField.IsGroupUnitUnit = false;
                         }
                         else
                         {
@@ -1140,342 +1253,367 @@ namespace TPMapEditor.Data
                             var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                             if (unit != null)
                             {
-                                rfGroupUnit.Value = unit;
-                                rfGroupUnit.IsGroupUnitUnit = true;
+                                ruleField.Value = unit;
+                                ruleField.IsGroupUnitUnit = true;
                             }
                             else
                             {
                                 progress.Report($"Warning: Group/Unit '{name}' not found.");
-                                rfGroupUnit.Value = null;
+                                if(ruleField.IsOptional) ruleField.IsShown = false;
+                                ruleField.Value = null;
                             }
                         }
                     }
                     break;
 
-                case RuleFieldPlayer rfPlayer:
-                    {
-                        var playerName = DataImportExtensions.ParseString(rfPlayer.RealLabel + " ", line);
-                        var player = map.Players.FirstOrDefault(p => p.Name == playerName);
-                        if (!rfPlayer.IsOptional && player == null)
-                        {
-                            progress.Report($"Warning: Player '{playerName}' not found.");
-                        }
-                        rfPlayer.Value = player;
-                    }
-                    break;
-
-                case RuleFieldTeam rfTeam:
-                    {
-                        var teamName = DataImportExtensions.ParseString(rfTeam.RealLabel + " ", line);
-                        var team = map.InGameTeams.FirstOrDefault(t => t.RealName == teamName);
-                        if (!rfTeam.IsOptional && team == null)
-                        {
-                            progress.Report($"Warning: Team '{teamName}' not found.");
-                        }
-                        rfTeam.Value = team;
-                    }
-                    break;
-
-                case RuleFieldTimer rfTimer:
-                    {
-                        var timerName = DataImportExtensions.ParseString(rfTimer.RealLabel + " ", line);
-                        var timer = map.Timers.FirstOrDefault(t => t.Name == timerName);
-                        if (!rfTimer.IsOptional && timer == null)
-                        {
-                            progress.Report($"Warning: Timer '{timerName}' not found.");
-                        }
-                        rfTimer.Value = timer;
-                    }
-                    break;
-
-                case RuleFieldWorldObject rfWorldObj:
-                    {
-                        var id = DataImportExtensions.ParseInt(rfWorldObj.RealLabel + " ", line);
-                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
-                        if (!rfWorldObj.IsOptional && wot == null)
-                        {
-                            progress.Report($"Warning: WorldObject with id '{id}' not found.");
-                        }
-                        rfWorldObj.Value = wot;
-                    }
-                    break;
-
-                case RuleFieldUnit rfUnit:
-                    {
-                        var unitName = DataImportExtensions.ParseString(rfUnit.RealLabel + " ", line);
-                        var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
-                        if (!rfUnit.IsOptional && unit == null)
-                        {
-                            progress.Report($"Warning: Unit '{unitName}' not found.");
-                        }
-                        rfUnit.Value = unit;
-                    }
-                    break;
-
-                case RuleFieldWorldPointSet rfPointSet:
-                    {
-                        var name = DataImportExtensions.ParseString(rfPointSet.RealLabel + " ", line);
-                        var set = map.WorldPointSets.FirstOrDefault(s => s.Name == name);
-                        if (!rfPointSet.IsOptional && set == null)
-                        {
-                            progress.Report($"Warning: WorldPointSet '{name}' not found.");
-                        }
-                        rfPointSet.Value = set;
-                    }
-                    break;
-
-                case RuleFieldWorldPolygon rfPolygon:
-                    {
-                        var name = DataImportExtensions.ParseString(rfPolygon.RealLabel + " ", line);
-                        var poly = map.WorldPolygons.FirstOrDefault(p => p.Name == name);
-                        if (!rfPolygon.IsOptional && poly == null)
-                        {
-                            progress.Report($"Warning: WorldPolygon '{name}' not found.");
-                        }
-                        rfPolygon.Value = poly;
-                    }
-                    break;
-
-                case RuleFieldMapTextPoint rfMapText:
-                    {
-                        var name = DataImportExtensions.ParseString(rfMapText.RealLabel + " ", line);
-                        var mt = map.MapTextPoints.FirstOrDefault(m => m.Name == name);
-                        if (!rfMapText.IsOptional && mt == null)
-                        {
-                            progress.Report($"Warning: MapTextPoint '{name}' not found.");
-                        }
-                        rfMapText.Value = mt;
-                    }
-                    break;
-
-                case RuleFieldSpeechEvent rfSpeech:
-                    {
-                        var name = DataImportExtensions.ParseString(rfSpeech.RealLabel + " ", line);
-                        var se = map.SpeechEvents.FirstOrDefault(s => s.Name == name);
-                        if (!rfSpeech.IsOptional && se == null)
-                        {
-                            progress.Report($"Warning: SpeechEvent '{name}' not found.");
-                        }
-                        rfSpeech.Value = se;
-                    }
-                    break;
-
-                case RuleFieldObjectivePoint rfObjPoint:
-                    {
-                        var name = DataImportExtensions.ParseString(rfObjPoint.RealLabel + " ", line);
-                        var op = map.ObjectivePoints.FirstOrDefault(o => o.Name == name);
-                        if (!rfObjPoint.IsOptional && op == null)
-                        {
-                            progress.Report($"Warning: ObjectivePoint '{name}' not found.");
-                        }
-                        rfObjPoint.Value = op;
-                    }
-                    break;
-
-                case RuleFieldObjectiveTask rfObjTask:
-                    {
-                        var name = DataImportExtensions.ParseString(rfObjTask.RealLabel + " ", line);
-                        var ot = map.ObjectiveTasks.FirstOrDefault(o => o.Name == name);
-                        if (!rfObjTask.IsOptional && ot == null)
-                        {
-                            progress.Report($"Warning: ObjectiveTask '{name}' not found.");
-                        }
-                        rfObjTask.Value = ot;
-                    }
-                    break;
-
-                case RuleFieldWaypointPath rfPath:
-                    {
-                        var name = DataImportExtensions.ParseString(rfPath.RealLabel + " ", line);
-                        var wp = map.WaypointPaths.FirstOrDefault(w => w.Name == name);
-                        if (!rfPath.IsOptional && wp == null)
-                        {
-                            progress.Report($"Warning: WaypointPath '{name}' not found.");
-                        }
-                        rfPath.Value = wp;
-                    }
-                    break;
-
-                case RuleFieldWorldObjectType rfWotType:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfWotType.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<KillableWorldObjectType>(raw, out var val))
-                            rfWotType.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid KillableWorldObjectType '{raw}'.");
-                            rfWotType.Value = KillableWorldObjectType.Ship;
-                        }
-                    }
-                    break;
-
-                case RuleFieldFormationType rfFormation:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfFormation.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<FormationType>(raw, out var val))
-                            rfFormation.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid FormationType '{raw}'.");
-                            rfFormation.Value = FormationType.None;
-                        }
-                    }
-                    break;
-
-                case RuleFieldBannerType rfBanner:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfBanner.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<BannerType>(raw, out var val))
-                            rfBanner.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid BannerType '{raw}'.");
-                            rfBanner.Value = BannerType.NoBanner;
-                        }
-                    }
-                    break;
-
-                case RuleFieldEquivalence rfEquiv:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfEquiv.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<Equivalence>(raw, out var val))
-                            rfEquiv.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid Equivalence '{raw}'.");
-                            rfEquiv.Value = Equivalence.EqualTo;
-                        }
-                    }
-                    break;
-
-                case RuleFieldAiStance rfAiStance:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfAiStance.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<AiStance>(raw, out var val))
-                            rfAiStance.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid AiStance '{raw}'.");
-                            rfAiStance.Value = AiStance.AISTANCE;
-                        }
-                    }
-                    break;
-
-                case RuleFieldCrewSkillLevel rfCrewSkill:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfCrewSkill.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<CrewSkillLevel>(raw, out var val))
-                            rfCrewSkill.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid CrewSkillLevel '{raw}'.");
-                            rfCrewSkill.Value = CrewSkillLevel.Green;
-                        }
-                    }
-                    break;
-
-                case RuleFieldFollowMode rfFollow:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfFollow.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<FollowMode>(raw, out var val))
-                            rfFollow.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid FollowMode '{raw}'.");
-                            rfFollow.Value = FollowMode.ToEnd;
-                        }
-                    }
-                    break;
-
-                case RuleFieldVitalSection rfVital:
-                    {
-                        var raw = DataImportExtensions.ParseString(rfVital.RealLabel + " ", line);
-                        if (EnumExtensions.TryGetValueFromDisplayName<VitalSection>(raw, out var val))
-                            rfVital.Value = val;
-                        else
-                        {
-                            progress.Report($"Warning: Invalid VitalSection '{raw}'.");
-                            rfVital.Value = VitalSection.VitalToMission;
-                        }
-                    }
-                    break;
-
-                case RuleFieldFlagTexture rfFlagTex:
-                    var flagTex = DataImportExtensions.ParseString(rfFlagTex.RealLabel + " ", line);
-                    if(!AppSettings.FlagTextures.Contains(flagTex))
-                    {
-                        progress.Report($"Warning: Flag texture '{flagTex}' is not in the predefined list.");
-                    }
-                    rfFlagTex.Value = flagTex;
-                    break;
-
-                case RuleFieldEffect rfEffect:
-                    var effect = DataImportExtensions.ParseString(rfEffect.RealLabel + " ", line);
-                    if(!AppSettings.Effects.Contains(effect))
-                    {
-                        progress.Report($"Warning: Effect '{effect}' is not in the predefined list.");
-                    }
-                    rfEffect.Value = effect;
-                    break;
-
-                case RuleFieldShipName rfShipName:
-                    var shipName = DataImportExtensions.ParseString(rfShipName.RealLabel + " ", line);
-                    if(!StringDictionnary.ShipNames.ContainsKey(shipName))
-                    {
-                        progress.Report($"Warning: Ship name '{shipName}' is not in the predefined list.");
-                    }
-                    rfShipName.Value = shipName;
-                    break;
-
-                case RuleFieldSinglePlayerMission rfSPMission:
-                    var spMission = DataImportExtensions.ParseString(rfSPMission.RealLabel + " ", line);
-                    if(!AppSettings.SinglePlayerMissions.Contains(spMission))
-                    {
-                        progress.Report($"Warning: Single Player Mission '{spMission}' is not in the predefined list.");
-                    }
-                    rfSPMission.Value = spMission;
-                    break;
-
-                case RuleFieldDialogueAudio rfDialogue:
-                    var dialogue = DataImportExtensions.ParseString(rfDialogue.RealLabel + " ", line);
-                    if(!AppSettings.DialogueFilesList.Contains(dialogue))
-                    {
-                        progress.Report($"Warning: Dialogue audio file '{dialogue}' is not in the predefined list.");
-                    }
-                    rfDialogue.Value = dialogue;
-                    break;
-
-                case RuleFieldGuiTexture rfGui:
-                    var guiTexture = DataImportExtensions.ParseString(rfGui.RealLabel + " ", line);
-                    if(!AppSettings.GuiTextures.Contains(guiTexture))
+                case RuleFieldGuiTexture ruleField:
+                    var guiTexture = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!AppSettings.GuiTextures.Contains(guiTexture))
                     {
                         progress.Report($"Warning: GUI base texture '{guiTexture}' is not in the predefined list.");
                     }
-                    rfGui.Value = guiTexture;
+                    ruleField.Value = guiTexture;
                     break;
 
-                case RuleFieldInGameMessage rfInGameMsg:
-                    var inGameMsg = DataImportExtensions.ParseString(rfInGameMsg.RealLabel + " ", line);
-                    if(!StringDictionnary.InGameMessagesDictionnary.ContainsKey(inGameMsg))
+                case RuleFieldInGameMessage ruleField:
+                    var inGameMsg = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!StringDictionnary.InGameMessagesDictionnary.ContainsKey(inGameMsg))
                     {
                         progress.Report($"Warning: In-Game Message '{inGameMsg}' is not in the predefined list.");
                     }
-                    rfInGameMsg.Value = inGameMsg;
+                    ruleField.Value = inGameMsg;
                     break;
 
-                case RuleFieldMusic rfMusic:
-                    var music = DataImportExtensions.ParseString(rfMusic.RealLabel + " ", line);
-                    if(!AppSettings.Musics.Contains(music))
+                case RuleFieldInt rfInt:
+                    rfInt.Value = DataImportExtensions.ParseInt(rfInt.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldMapTextPoint ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var mt = map.MapTextPoints.FirstOrDefault(m => m.Name == name);
+                        if (mt == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: MapTextPoint '{name}' not found.");
+                            }
+                        }
+                        ruleField.Value = mt;
+                    }
+                    break;
+
+                case RuleFieldMusic ruleField:
+                    var music = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!AppSettings.Musics.Contains(music))
                     {
                         progress.Report($"Warning: Music '{music}' is not in the predefined list.");
                     }
-                    rfMusic.Value = music;
+                    ruleField.Value = music;
                     break;
 
                 case RuleFieldObservableCollection rfCollection:
                     {
                         var stringValue = DataImportExtensions.ParseString(rfCollection.RealLabel + " ", line);
                         rfCollection.IsShown = bool.Parse(stringValue);
+                    }
+                    break;
+
+                case RuleFieldObjectivePoint ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (name.Equals(ObjectivePoint.DefaultName))
+                        {
+                            if (!ruleField.IsOptional)
+                            {
+                                progress.Report($"Warning: ObjectivePoint '{name}' is the default name.\nLine {line}, Pos {reader.CurrentPosition}");
+                            }
+                            ruleField.IsShown = false;
+                            ruleField.Value = null;
+                        }
+                        else
+                        {
+                            var op = map.ObjectivePoints.FirstOrDefault(o => o.Name == name);
+                            if (op == null)
+                            {
+                                if (ruleField.IsOptional)
+                                {
+                                    ruleField.IsShown = false;
+                                }
+                                else
+                                {
+                                    progress.Report($"Warning: ObjectivePoint '{name}' not found.");
+                                }
+                            }
+                            ruleField.Value = op;
+                        }
+                    }
+                    break;
+
+                case RuleFieldObjectiveTask ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var ot = map.ObjectiveTasks.FirstOrDefault(o => o.Name == name);
+                        if (ot == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: ObjectiveTask '{name}' not found.");
+                            }
+                        }
+                        ruleField.Value = ot;
+                    }
+                    break;
+
+                case RuleFieldPlayer ruleField:
+                    {
+                        var playerName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var player = map.Players.FirstOrDefault(p => p.Name == playerName);
+                        if (player == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Player '{playerName}' not found.");
+                            }
+                        }
+                        ruleField.Value = player;
+                    }
+                    break;
+
+                case RuleFieldShipName ruleField:
+                    var shipName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (!StringDictionnary.ShipNames.ContainsKey(shipName))
+                    {
+                        progress.Report($"Warning: Ship name '{shipName}' is not in the predefined list.");
+                    }
+                    ruleField.Value = shipName;
+                    break;
+
+                case RuleFieldSinglePlayerMission ruleField:
+                    var spMission = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    var spMissionFromList = AppSettings.SinglePlayerMissions.FirstOrDefault(s => s.Equals(spMission, StringComparison.OrdinalIgnoreCase));
+                    if (spMissionFromList == null)
+                    {
+                        progress.Report($"Warning: Single Player Mission '{spMission}' is not in the predefined list.");
+                    }
+                    ruleField.Value = spMissionFromList;
+                    break;
+
+                case RuleFieldSpeechEvent ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var se = map.SpeechEvents.FirstOrDefault(s => s.Name == name);
+                        if (se == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: SpeechEvent '{name}' not found.");
+                            }
+                        }
+                        ruleField.Value = se;
+                    }
+                    break;
+
+                case RuleFieldString ruleField:
+                    ruleField.Value = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    break;
+
+                case RuleFieldTeam ruleField:
+                    {
+                        var teamName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var team = map.InGameTeams.FirstOrDefault(t => t.RealName == teamName);
+                        if (team == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Team '{teamName}' not found.");
+                            }
+                        }
+                        ruleField.Value = team;
+                    }
+                    break;
+
+                case RuleFieldTimer ruleField:
+                    {
+                        var timerName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var timer = map.Timers.FirstOrDefault(t => t.Name == timerName);
+                        if (timer == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Timer '{timerName}' not found.");
+                            }
+                        }
+                        ruleField.Value = timer;
+                    }
+                    break;
+
+                case RuleFieldUnit ruleField:
+                    {
+                        var unitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                        if (unit == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: Unit '{unitName}' not found.");
+                            }
+                        }
+                        ruleField.Value = unit;
+                    }
+                    break;
+
+                case RuleFieldVitalSection ruleField:
+                    {
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<VitalSection>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid VitalSection '{raw}'.");
+                            ruleField.Value = VitalSection.VitalToMission;
+                        }
+                    }
+                    break;
+
+                case RuleFieldWaypointPath ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (WaypointPath.DefaultName.Contains(name))
+                        {
+                            if (!ruleField.IsOptional)
+                            {
+                                progress.Report($"Warning: WaypointPath '{name}' is a default name.\nLine {line}, Pos {reader.CurrentPosition}");
+                            }
+                            ruleField.IsShown = false;
+                            ruleField.Value = null;
+                        }
+                        else
+                        {
+                            var obj = map.WaypointPaths.FirstOrDefault(o => o.Name == name);
+                            if (obj == null)
+                            {
+                                if (ruleField.IsOptional)
+                                {
+                                    ruleField.IsShown = false;
+                                }
+                                else
+                                {
+                                    progress.Report($"Warning: WaypointPath '{name}' not found.");
+                                }
+                            }
+                            ruleField.Value = obj;
+                        }
+                    }
+                    break;
+
+                case RuleFieldWorldObject ruleField:
+                    {
+                        var id = DataImportExtensions.ParseInt(ruleField.RealLabel + " ", line);
+                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (wot == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: WorldObject with id '{id}' not found.");
+                            }
+                        }
+                        ruleField.Value = wot;
+                    }
+                    break;
+
+                case RuleFieldWorldObjectType ruleField:
+                    {
+                        var raw = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (EnumExtensions.TryGetValueFromDisplayName<KillableWorldObjectType>(raw, out var val))
+                            ruleField.Value = val;
+                        else
+                        {
+                            progress.Report($"Warning: Invalid KillableWorldObjectType '{raw}'.");
+                            ruleField.Value = KillableWorldObjectType.Ship;
+                        }
+                    }
+                    break;
+
+                case RuleFieldWorldPointSet ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        if (name.Equals(WorldPointSet.DefaultName))
+                        {
+                            if (!ruleField.IsOptional)
+                            {
+                                progress.Report($"Warning: WorldPointSet '{name}' is the default name.\nLine {line}, Pos {reader.CurrentPosition}");
+                            }
+                            ruleField.IsShown = false;
+                            ruleField.Value = null;
+                        }
+                        else
+                        {
+                            var obj = map.WorldPointSets.FirstOrDefault(o => o.Name == name);
+                            if (obj == null)
+                            {
+                                if (ruleField.IsOptional)
+                                {
+                                    ruleField.IsShown = false;
+                                }
+                                else
+                                {
+                                    progress.Report($"Warning: WorldPointSet '{name}' not found.");
+                                }
+                            }
+                            ruleField.Value = obj;
+                        }
+                    }
+                    break;
+
+                case RuleFieldWorldPolygon ruleField:
+                    {
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var poly = map.WorldPolygons.FirstOrDefault(p => p.Name == name);
+                        if (poly == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: WorldPolygon '{name}' not found.");
+                            }
+                        }
+                        ruleField.Value = poly;
                     }
                     break;
 
