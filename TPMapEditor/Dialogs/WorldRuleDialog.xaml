@@ -21,7 +21,7 @@
             <StackPanel>
                 <StackPanel Visibility="{c:Binding 'IsOptional'}">
                     <Label Margin="-5,5,0,0" Content="{Binding OptionalLabel}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
-                    <CheckBox IsChecked="{Binding IsShown}" Content="{Binding IsShown}"/>
+                    <CheckBox IsChecked="{Binding IsShown}" Content="{Binding IsShown}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
                 </StackPanel>
                 <StackPanel Visibility="{c:Binding 'IsShown'}">
                     <Label Margin="-5,5,0,0" Content="{Binding Label}" Visibility="{c:Binding 'Label!=null'}"/>
