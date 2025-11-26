@@ -233,14 +233,14 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.StateInitSetupEtheriumCurrent:
                     RuleFields.Clear();
                     AddRuleFieldWorldObject("World Object ID Int", "World object");
-                    AddRuleFieldPath("Etherium Name String", "Etherium current path");
-                    AddRuleFieldString("Etherium Path String", "Etherium current name");
+                    AddRuleFieldPath("Etherium Path String", "Etherium current path");
+                    AddRuleFieldString("Etherium Name String", "Etherium current name");
                     break;
                 case Enums.RuleAction.StateInitSetupIsland:
                     RuleFields.Clear();
                     AddRuleFieldWorldObject("World Object ID Int", "World object");
-                    AddRuleFieldPlayer("Combat Strength Int", "Player/Owner", isOptional: true, optionalLabel: "Has player/owner");
-                    AddRuleFieldInt("Player/Owner String", "Combat strength", min: 0);
+                    AddRuleFieldPlayer("Player/Owner String", "Player/Owner", isOptional: true, optionalLabel: "Has player/owner");
+                    AddRuleFieldInt("Combat Strength Int", "Combat strength", min: 0);
                     AddRuleFieldCrewSkillLevel("Gunnery Level String", "Gunnery level");
                     AddRuleFieldAiStance("AI Stance String", "Ai stance");
                     break;
@@ -515,7 +515,7 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.SetCurrentObjectivePoint:
                     RuleFields.Clear();
-                    AddRuleFieldObjectivePoint("Objective Point String", "Objective point");
+                    AddRuleFieldObjectivePoint("Objective Point String", "Objective point", isOptional: true, optionalLabel: "Has objective point");
                     break;
                 case Enums.RuleAction.SetCurrentObjectivePointOnShip:
                     RuleFields.Clear();
@@ -721,7 +721,7 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.SetupAsteroidBelt:
                     RuleFields.Clear();
                     AddRuleFieldGroup("Group Name String", "Asteroid group");
-                    AddRuleFieldPath("Path Name String", "Path");
+                    AddRuleFieldPath("Path Name String", "Path", isOptional: true, optionalLabel: "Has path");
                     AddRuleFieldFollowMode("Follow Mode String", "Follow mode");
                     AddRuleFieldBool("Find Closest Point String", "Find closest");
                     AddRuleFieldDouble("Velocity Upper m/sec Float", "Velocity Upper m/sec");
