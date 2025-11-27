@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using TPMapEditor.Enums;
 using TPMapEditor.Settings;
@@ -93,10 +95,11 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldGroup(realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldGroupUnit(string? realLabel, string? label, NamedElement? group = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedElement? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            group ??= map.Groups.FirstOrDefault();
-            RuleFields.Add(new RuleFieldGroupUnit(realLabel, label, group, isOptional, optionalLabel, isShown));
+            value ??= map.Groups.FirstOrDefault();
+            selectedGroup ??= map.Groups.FirstOrDefault();
+            RuleFields.Add(new RuleFieldGroupUnit(realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldGuiTexture(string? realLabel, string? label, string? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -181,9 +184,14 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldSpeechEvent(realLabel, label, speechEvent, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldString(string? realLabel, string? label, string value = "", bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldString(string? realLabel, string? label, string value = "", bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
         {
-            RuleFields.Add(new RuleFieldString(realLabel, label, value, isOptional, optionalLabel, isShown));
+            var field = new RuleFieldString(realLabel, label, value, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
         }
 
         private void AddRuleFieldTeam(string? realLabel, string? label, Team? team = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -198,6 +206,13 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldTimer(realLabel, label, timer, isOptional, optionalLabel, isShown));
         }
 
+        private void AddRuleFieldUnit(string? realLabel, string? label, Group? selectedGroup = null, ShipUnit? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        {
+            selectedGroup ??= map.Groups.FirstOrDefault();
+            value ??= selectedGroup.ShipUnits.FirstOrDefault();
+            RuleFields.Add(new RuleFieldUnit(realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
+        }
+
         private void AddRuleFieldVitalSection(string? realLabel, string? label, VitalSection vitalSection = VitalSection.VitalToMission, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             RuleFields.Add(new RuleFieldVitalSection(realLabel, label, vitalSection, isOptional, optionalLabel, isShown));
@@ -209,10 +224,15 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldWorldPolygon(realLabel, label, volume, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldWorldObject(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldWorldObject(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
         {
             worldObject ??= map.WorldObjects.FirstOrDefault();
-            RuleFields.Add(new RuleFieldWorldObject(realLabel, label, worldObject, isOptional, optionalLabel, isShown));
+            var field = new RuleFieldWorldObject(realLabel, label, worldObject, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
         }
 
         private void AddRuleFieldWorldObjectType(string? realLabel, string? label, KillableWorldObjectType worldObjectType = KillableWorldObjectType.Ship, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -285,16 +305,20 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     ShipUnit = new(map, NamedElement.GenerateName("Ship", map.ShipUnits));
                     map.ShipUnits.Add(ShipUnit);
-                    AddRuleFieldWorldObject("World Object ID Int", "World object");
-                    var shipNameField = new RuleFieldString("Ship Name String", "Ship name", ShipUnit.Name);
-                    shipNameField.PropertyChanged += (v, e) =>
+                    AddRuleFieldWorldObject("World Object ID Int", "World object", ShipUnit.WorldObject, propertyChanged: (s, e) =>
                     {
-                        if(v is RuleFieldString rfs && e.PropertyName == "Value")
+                        if (s is RuleFieldWorldObject rfwo && e.PropertyName == "Value")
+                        {
+                            ShipUnit.WorldObject = rfwo.Value;
+                        }
+                    });
+                    AddRuleFieldString("Ship Name String", "Ship name", ShipUnit.Name, propertyChanged: (s, e) =>
+                    {
+                        if (s is RuleFieldString rfs && e.PropertyName == "Value")
                         {
                             ShipUnit.Name = rfs.Value ?? string.Empty;
                         }
-                    };
-                    RuleFields.Add(shipNameField);
+                    });
                     AddRuleFieldPath("Ship Path String", "Ship path", isOptional: true, optionalLabel: "Has path");
                     AddRuleFieldFollowMode("Follow Mode String", "Follow mode");
                     AddRuleFieldAiStance("AI Stance String", "AI stance");
