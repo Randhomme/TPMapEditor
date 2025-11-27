@@ -15,7 +15,7 @@
         Title="WorldRuleDialog" Height="450" Width="800">
     <Window.Resources>
         <converter:EnumToNameConverter x:Key="EnumToNameConverter"/>
-
+        
         <!--RuleField-->
         <ControlTemplate x:Key="RuleFieldTemplate" TargetType="ContentControl">
             <StackPanel>
@@ -116,25 +116,33 @@
         </DataTemplate>
 
         <!--Group-->
-        <DataTemplate DataType="{x:Type datarule:RuleFieldGroup}">
-            <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{Binding Map.Groups, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
-            </ContentControl>
-        </DataTemplate>
-
         <DataTemplate x:Key="GroupFieldTemplate">
             <ComboBox ItemsSource="{Binding Map.Groups, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
         </DataTemplate>
-
-        <!--Unit-->
-        <DataTemplate DataType="{x:Type datarule:RuleFieldUnit}">
+        
+        <DataTemplate DataType="{x:Type datarule:RuleFieldGroup}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{Binding Map.ShipUnits, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+                <ContentPresenter ContentTemplate="{StaticResource GroupFieldTemplate}"/>
             </ContentControl>
         </DataTemplate>
 
+
+        <!--Unit-->
         <DataTemplate x:Key="UnitFieldTemplate">
-            <ComboBox ItemsSource="{Binding Map.ShipUnits, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ComboBox ItemsSource="{Binding Map.Groups, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding SelectedGroup, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableShipUnits}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            </Grid>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type datarule:RuleFieldUnit}">
+            <ContentControl Template="{StaticResource RuleFieldTemplate}">
+                <ContentPresenter ContentTemplate="{StaticResource UnitFieldTemplate}"/>
+            </ContentControl>
         </DataTemplate>
 
         <!--GroupUnit-->
@@ -248,7 +256,7 @@
         <!--String-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldString}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <TextBox Text="{Binding Value}"/>
+                <TextBox Text="{Binding Value, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
             </ContentControl>
         </DataTemplate>
 
