@@ -23,7 +23,7 @@ namespace TPMapEditor.Data
                 if(IsDefaultName(value))
                     throw new ArgumentException($"{value} is already a default value for {GetType().Name}.");
                 if (IsNameTaken(value))
-                    throw new ArgumentException("A " + this.GetType().Name + " with the same name already exists.");
+                    throw new ArgumentException($"A {this.GetType().Name} with the same name in the same group already exists.");
                 name = value;
                 OnPropertyChanged();
             }
