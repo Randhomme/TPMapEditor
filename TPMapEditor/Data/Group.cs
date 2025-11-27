@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Media;
 
 namespace TPMapEditor.Data
@@ -11,10 +12,22 @@ namespace TPMapEditor.Data
         private Color color; // for visual purpose only, not used in the map file
         [ObservableProperty]
         private bool canBeRemoved; //used for Player0 Group
+
+        private readonly ShipUnit defaultUnit;
+
         public ObservableCollection<WorldObject> WorldObjects { get; }
+
+        public IEnumerable<ShipUnit> ShipUnits
+        {
+            get
+            {
+                return map.ShipUnits.Where(su => su.WorldObject?.Group == this).Prepend(defaultUnit);
+            }
+        }
 
         public Group(WorldMap map, string name) : base(map, name)
         {
+            defaultUnit = new ShipUnit(map, "HUMAN CONTROLLED SHIP");
             Color = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
             CanBeRemoved = true;

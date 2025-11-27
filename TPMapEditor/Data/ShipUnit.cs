@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,20 +10,32 @@ namespace TPMapEditor.Data
     /// <summary>
     /// Class representing a unit in world rules
     /// </summary>
-    public class ShipUnit : NamedElement
+    public partial class ShipUnit : NamedElement
     {
-        public ShipUnit(WorldMap map, string name) : base(map, name)
+        [ObservableProperty]
+        private WorldObject? worldObject;
+
+        public ShipUnit(WorldMap map, string name, WorldObject? worldObject = null) : base(map, name)
         {
+            this.worldObject = worldObject ?? map.WorldObjects.FirstOrDefault();
         }
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.ShipUnits)
+            if(WorldObject?.Group != null)
             {
-                if (item.Name == name && item != this)
-                    return true;
+                foreach (var item in WorldObject.Group.ShipUnits)
+                {
+                    if (item.Name == name && item != this)
+                        return true;
+                }
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            return $"{WorldObject?.Group?.Name ?? "Player0 Group"},{Name}"; //Default to Player0 Group to prevent game crash
         }
     }
 }
