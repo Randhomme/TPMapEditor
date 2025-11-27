@@ -54,10 +54,11 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldGroup(realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldGroupUnit(string? realLabel, string? label, NamedElement? group = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedElement? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            group ??= map.Groups.FirstOrDefault();
-            RuleFields.Add(new RuleFieldGroupUnit(realLabel, label, group, isOptional, optionalLabel, isShown));
+            value ??= map.Groups.FirstOrDefault();
+            selectedGroup ??= map.Groups.FirstOrDefault();
+            RuleFields.Add(new RuleFieldGroupUnit(realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldInt(string? realLabel, string? label, int value = 0, int min = -9999, int max = 9999, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -87,6 +88,13 @@ namespace TPMapEditor.Data.Rule
         {
             timer ??= map.Timers.FirstOrDefault();
             RuleFields.Add(new RuleFieldTimer(realLabel, label, timer, isOptional, optionalLabel, isShown));
+        }
+
+        private void AddRuleFieldUnit(string? realLabel, string? label, Group? selectedGroup = null, ShipUnit? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        {
+            selectedGroup ??= map.Groups.FirstOrDefault();
+            value ??= selectedGroup.ShipUnits.FirstOrDefault();
+            RuleFields.Add(new RuleFieldUnit(realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldVitalSection(string? realLabel, string? label, VitalSection vitalSection = VitalSection.VitalToMission, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
