@@ -32,10 +32,5 @@ namespace TPMapEditor.Data
             }
             return false;
         }
-
-        public override string ToString()
-        {
-            return $"{WorldObject?.Group?.Name ?? "Player0 Group"},{Name}"; //Default to Player0 Group to prevent game crash
-        }
     }
 }

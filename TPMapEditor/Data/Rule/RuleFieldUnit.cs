@@ -21,5 +21,10 @@ namespace TPMapEditor.Data.Rule
         {
             this.selectedGroup = selectedGroup;
         }
+
+        public override string ToString()
+        {
+            return $"{SelectedGroup.Name},{Value?.Name ?? "HUMAN CONTROLLED SHIP"}";
+        }
     }
 }
