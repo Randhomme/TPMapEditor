@@ -178,19 +178,21 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldShipName(realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
+        private void AddRuleFieldShipUnitName(string? realLabel, string? label, ShipUnit unit, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        {
+            var field = new RuleFieldShipUnitName(realLabel, label, unit, null, isOptional, optionalLabel, isShown);
+            RuleFields.Add(field);
+        }
+
         private void AddRuleFieldSpeechEvent(string? realLabel, string? label, SpeechEvent? speechEvent = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             speechEvent ??= map.SpeechEvents.FirstOrDefault();
             RuleFields.Add(new RuleFieldSpeechEvent(realLabel, label, speechEvent, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldString(string? realLabel, string? label, string value = "", bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        private void AddRuleFieldString(string? realLabel, string? label, string value = "", bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             var field = new RuleFieldString(realLabel, label, value, isOptional, optionalLabel, isShown);
-            if (propertyChanged != null)
-            {
-                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
-            }
             RuleFields.Add(field);
         }
 
@@ -312,13 +314,7 @@ namespace TPMapEditor.Data.Rule
                             ShipUnit.WorldObject = rfwo.Value;
                         }
                     });
-                    AddRuleFieldString("Ship Name String", "Ship name", ShipUnit.Name, propertyChanged: (s, e) =>
-                    {
-                        if (s is RuleFieldString rfs && e.PropertyName == "Value")
-                        {
-                            ShipUnit.Name = rfs.Value ?? string.Empty;
-                        }
-                    });
+                    AddRuleFieldShipUnitName("Ship Name String", "Ship name", ShipUnit);
                     AddRuleFieldPath("Ship Path String", "Ship path", isOptional: true, optionalLabel: "Has path");
                     AddRuleFieldFollowMode("Follow Mode String", "Follow mode");
                     AddRuleFieldAiStance("AI Stance String", "AI stance");

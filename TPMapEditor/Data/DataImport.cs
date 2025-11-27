@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
-using System.Xml.Linq;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
@@ -1407,6 +1406,16 @@ namespace TPMapEditor.Data
                         progress.Report($"Warning: Ship name '{shipName}' is not in the predefined list.");
                     }
                     ruleField.Value = shipName;
+                    break;
+
+                case RuleFieldShipUnitName ruleField:
+                    var shipUnitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (string.IsNullOrEmpty(shipUnitName))
+                    {
+                        shipUnitName = NamedElement.GenerateName("ShipUnit", map.ShipUnits);
+                        progress.Report($"Warning: Empty unit name replaced by {shipUnitName}.");
+                    }
+                    ruleField.Value = shipUnitName;
                     break;
 
                 case RuleFieldSinglePlayerMission ruleField:
