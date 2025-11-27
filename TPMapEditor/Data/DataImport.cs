@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using System.Xml.Linq;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
@@ -1249,12 +1250,19 @@ namespace TPMapEditor.Data
                         }
                         else
                         {
-                            var unitName = name.Split(',').Last();
-                            var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
-                            if (unit != null)
+                            var nameSplit = name.Split(',');
+                            var unitGroupName = nameSplit.First();
+                            var unitName = nameSplit.Last();
+                            var unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
+                            if(unitGroup != null)
                             {
-                                ruleField.Value = unit;
-                                ruleField.IsGroupUnitUnit = true;
+                                var unit = unitGroup.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                if (unit != null)
+                                {
+                                    ruleField.SelectedGroup = unitGroup;
+                                    ruleField.Value = unit;
+                                    ruleField.IsGroupUnitUnit = true;
+                                }
                             }
                             else
                             {
@@ -1474,20 +1482,26 @@ namespace TPMapEditor.Data
 
                 case RuleFieldUnit ruleField:
                     {
-                        var unitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
-                        var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
-                        if (unit == null)
+                        var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                        var nameSplit = name.Split(',');
+                        var unitGroupName = nameSplit.First();
+                        var unitName = nameSplit.Last();
+                        var unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
+                        if (unitGroup != null)
                         {
-                            if (ruleField.IsOptional)
+                            var unit = unitGroup.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                            if (unit != null)
                             {
-                                ruleField.IsShown = false;
-                            }
-                            else
-                            {
-                                progress.Report($"Warning: Unit '{unitName}' not found.");
+                                ruleField.SelectedGroup = unitGroup;
+                                ruleField.Value = unit;
                             }
                         }
-                        ruleField.Value = unit;
+                        else
+                        {
+                            progress.Report($"Warning: Unit '{name}' not found.");
+                            if (ruleField.IsOptional) ruleField.IsShown = false;
+                            ruleField.Value = null;
+                        }
                     }
                     break;
 
