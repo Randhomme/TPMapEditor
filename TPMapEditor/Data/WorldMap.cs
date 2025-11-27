@@ -175,6 +175,7 @@ namespace TPMapEditor.Data
 
         private void Clear()
         {
+            WorldRules.Clear();
             Flags.Clear();
             Groups.Clear();
             InGameTeams.Clear();
@@ -192,7 +193,6 @@ namespace TPMapEditor.Data
             WorldObjects.Clear();
             WorldPointSets.Clear();
             WorldPolygons.Clear();
-            WorldRules.Clear();
         }
     }
 }
