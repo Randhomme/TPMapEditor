@@ -360,7 +360,7 @@ namespace TPMapEditor.Data
 
                 //Orientation
                 var (rotationX, rotationY, rotationZ) = reader.ReadAndParseMatrix33("Orientation Matrix33");
-                var rotationEulerXYZ = MathUtils.GetEulerXYZ(rotationX, rotationY, rotationZ);
+                var rotationEulerXYZ = MathUtils.Matrix33ToEulerXYZ(rotationX, rotationY, rotationZ);
                 worldObject.XRotation = rotationEulerXYZ.X;
                 worldObject.YRotation = rotationEulerXYZ.Y;
                 worldObject.ZRotation = rotationEulerXYZ.Z;
@@ -745,7 +745,7 @@ namespace TPMapEditor.Data
                 //Orientation - Up Vector3
                 var orientationUp = reader.ReadAndParseVector3("Orientation - Up Vector3");
 
-                var eulerXYZ = MathUtils.GetEulerXYZ(orientationCross, orientationForward, orientationUp);
+                var eulerXYZ = MathUtils.Matrix33ToEulerXYZ(orientationCross, orientationForward, orientationUp);
 
                 worldPoint.X = position.X;
                 worldPoint.Y = position.Y;
