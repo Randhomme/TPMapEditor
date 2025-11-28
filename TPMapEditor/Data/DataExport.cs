@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data
 {
@@ -136,6 +137,16 @@ namespace TPMapEditor.Data
                     var player = map.Players[i];
                     WritePlayerSection(player, level);
                 }
+                WriteLineLevel($"NextID Int {map.WorldObjects.LastOrDefault()?.Id ?? 0}", level);
+                WriteLineLevel("# World Object List", level);
+                WriteLineLevel($"WorldObjects Int {map.WorldObjects.Count}", level);
+                for(int i = 0; i < map.WorldObjects.Count; i++)
+                {
+                    var worldObject = map.WorldObjects[i];
+                    WriteLineLevel($"ID Int {worldObject.Id}", level);
+                    WriteLineLevel($"Type String '{worldObject.Type.Type}'", level);
+                    WriteWorldObjectStateSection(worldObject, level);
+                }
             }, level);
         }
 
@@ -148,7 +159,64 @@ namespace TPMapEditor.Data
                 WriteLineLevel($"IsPlayable Bool {player.IsPlayable}", level);
                 WriteLineLevel("Is Used In Game Bool False", level); // False for now, maybe state ?
                 WriteLineLevel("Multiplayer Name String ''", level); //Empty for now, maybe state ?
-                WriteLineLevel($"StartPoint Vector3( {player.X:F6}, {player.Y:F6}, {player.Z:F6} )", level); //Empty for now, maybe state ?
+                WriteLineLevel($"StartPoint Vector3( {player.X:F6}, {player.Y:F6}, {player.Z:F6} )", level);
+                var playerRotationRad = player.Rotation * (float)Math.PI / 180f;
+                WriteLineLevel($"StartPointForwardVector Vector3( {Math.Sin(playerRotationRad):F6}, {Math.Cos(playerRotationRad):F6}, 0.000000 )", level);
+                var raceInt = player.InGameTeam is null ? 4 : (int)player.InGameTeam.Race;
+                WriteLineLevel($"Race Int {raceInt}", level);
+                WriteLineLevel("Points Float 0.000000", level);
+                var inGameTeamIndex = player.InGameTeam is null ? -1 : map.InGameTeams.IndexOf(player.InGameTeam);
+                WriteLineLevel($"TeamIndex Int {inGameTeamIndex}", level);
+                WriteLineLevel($"FormationType Int {(int)player.FormationTypeStart}", level);
+                WriteFleetAiSection(player, level);
+                WriteLineLevel("FlagIndex Int 0", level);
+            }, level);
+        }
+
+        private void WriteFleetAiSection(Player player, int level)
+        {
+            WriteSection("FleetAI", (level1) =>
+            {
+                WriteSection("UPDATETIMER", (level2) =>
+                {
+                    WriteLineLevel("StartTime Double 0", level2);
+                }, level1);
+                WriteSection("OFFSETTIMER", (level2) =>
+                {
+                    WriteLineLevel("StartTime Double 0", level2);
+                }, level1);
+                WriteLineLevel("OFFSETTIME Float 0.062500", level1);
+                WriteLineLevel("UPDATETIME Float 0.500000", level1);
+                WriteSection("FORMATION", (level2) =>
+                {
+                    WriteLineLevel($"FORMATIONTYPE String '{player.FormationType}'", level2);
+                }, level1);
+                WriteLineLevel("SHIPINFO - Size Int 0", level1);
+                WriteLineLevel("HOLDFIREACTIVE Bool False", level1);
+                WriteLineLevel("AITYPE String 'AIFLEET'", level1);
+            }, level);
+        }
+
+        private void WriteWorldObjectStateSection(WorldObject worldObject, int level)
+        {
+            WriteSection("State", (level) =>
+            {
+                WriteLineLevel("HasState Bool False", level); // No state for now, of course
+                WriteLineLevel($"Position Vector3( {worldObject.X:F6}, {worldObject.Y:F6}, {worldObject.Z:F6} )", level);
+                var orMat33 = MathUtils.EulerXYZToMatrix33(worldObject.XRotation, worldObject.YRotation, worldObject.ZRotation);
+                WriteLineLevel($"Orientation Matrix33( {orMat33[0,0]:F6}, {orMat33[1, 0]:F6}, {orMat33[2, 0]:F6}, {-orMat33[0, 2]:F6}, {-orMat33[1, 2]:F6}, {-orMat33[2, 2]:F6}, {orMat33[0, 1]:F6}, {orMat33[1, 1]:F6}, {orMat33[2, 1]:F6} )", level);
+                var playerIndex = worldObject.Player is null ? -1 : map.Players.IndexOf(worldObject.Player);
+                WriteLineLevel($"PlayerIndex Int {playerIndex}", level);
+                WriteLineLevel("# AIEntity", level);
+                WriteLineLevel("Type String ''", level);
+                WriteLineLevel("# RenderEntity", level);
+                WriteLineLevel("Type String ''", level);
+                WriteLineLevel("# PhysicsEntity", level);
+                WriteLineLevel("Type String ''", level);
+                WriteLineLevel("# CollisionEntity", level);
+                WriteLineLevel("Type String ''", level);
+                WriteLineLevel("# CustomInfoEntity", level);
+                WriteLineLevel("Type String ''", level);
             }, level);
         }
 
