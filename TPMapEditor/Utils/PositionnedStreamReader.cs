@@ -19,14 +19,17 @@ namespace TPMapEditor.Utils
             get => currentPosition;
             set
             {
-                if (BaseStream.CanSeek)
+                if (currentPosition != value && BaseStream.CanSeek)
                 {
+                    currentPosition = value;
                     BaseStream.Seek(value, SeekOrigin.Begin);
                     DiscardBufferedData();
-                    currentPosition = value;
                 }
             }
         }
+
+        #region Constructors
+
         public PositionnedStreamReader(Stream stream) : base(stream)
         {
         }
@@ -70,6 +73,8 @@ namespace TPMapEditor.Utils
         public PositionnedStreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize, bool leaveOpen) : base(stream, encoding, detectEncodingFromByteOrderMarks, bufferSize, leaveOpen)
         {
         }
+
+        #endregion
 
         public override string ReadLine()
         {
