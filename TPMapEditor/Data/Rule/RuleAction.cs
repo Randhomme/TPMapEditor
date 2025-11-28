@@ -760,7 +760,7 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.SetupTeamObjective:
                     RuleFields.Clear();
                     AddRuleFieldTeam("Team Name String", "Team");
-                    AddRuleFieldObjectivePoint("Objective Point String", "Objective point");
+                    AddRuleFieldObjectivePoint("Objective Point String", "Objective point", isOptional: true, optionalLabel: "Has objective point");
                     AddRuleFieldObjectiveTask("Objective Task String", "Objective task");
                     break;
                 case Enums.RuleAction.StartTimer:
