@@ -32,12 +32,12 @@ namespace TPMapEditor.Data
         {
             progressOperation.Report("Begin map import ...");
             var time = DateTime.Now;
-            //skip comment line
-            reader.ReadLine();
             try
             {
                 lock (_lock)
                 {
+                    //skip comment line
+                    reader.ReadLine();
                     ReadWorldInfoSection();
                     ReadGameSection();
                     ReadWorldSection();
@@ -232,7 +232,7 @@ namespace TPMapEditor.Data
                 var player = map.Players.FirstOrDefault((p) => p.Name == playerName);
                 if (player is null)
                 {
-                    player = new(map, playerName, 0, 0, 0, 0, Colors.White);
+                    player = new(map, playerName, 0, 0, 0, 0, Colors.White) { IsPlayable = false };
                     map.Players.Insert(playerIndex, player);
                 }
 

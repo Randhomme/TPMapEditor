@@ -130,6 +130,30 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnMapExport()
+        {
+            var sfd = new SaveFileDialog()
+            {
+                DefaultExt = ".twt",
+                Filter = "Map file (.twt)|*.twt",
+                Title = "Save your map file",
+            };
+            if (sfd.ShowDialog(this) == true)
+            {
+                var progressDialog = new ProgressDialog(this);
+                Task.Run(() =>
+                {
+                    using (var de = new DataExport(sfd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation))
+                    {
+                        de.CreateMapFileAndWriteData();
+                    }
+                    progressDialog.CanClose = true;
+                });
+                progressDialog.ShowDialog();
+            }
+        }
+
+        [RelayCommand]
         private void OnWorldInfoEdit()
         {
             new WorldInfoDialog(this, Map).ShowDialog();
