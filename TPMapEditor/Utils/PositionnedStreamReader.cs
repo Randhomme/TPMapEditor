@@ -79,7 +79,8 @@ namespace TPMapEditor.Utils
         public override string ReadLine()
         {
             var line = base.ReadLine();
-            CurrentPosition += CurrentEncoding.GetByteCount(line) + CurrentEncoding.GetByteCount(Environment.NewLine);
+            if (line != null)
+                CurrentPosition += CurrentEncoding.GetByteCount(line) + CurrentEncoding.GetByteCount(Environment.NewLine);
             return line;
         }
     }
