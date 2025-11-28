@@ -13,7 +13,7 @@ namespace TPMapEditor.Data
     {
         public static ObservableCollection<WotGridItem> WotTypes { get; } = new ObservableCollection<WotGridItem>();
         public BitmapImage? Image { get; set; }
-        public string? Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         public CustomInfoDefinition CustomInfoDefinition { get; set; }
 
         public override string ToString()
