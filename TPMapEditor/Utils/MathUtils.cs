@@ -9,7 +9,7 @@ namespace TPMapEditor.Utils
 {
     public static class MathUtils
     {
-        public static Vector3 GetEulerXYZ(Vector3 X, Vector3 Y, Vector3 Z)
+        public static Vector3 Matrix33ToEulerXYZ(Vector3 X, Vector3 Y, Vector3 Z)
         {
             // Build the rotation matrix from basis vectors
             // Lines correspond to local X, Y, Z axes
@@ -49,6 +49,40 @@ namespace TPMapEditor.Utils
         }
 
         /// <summary>
+        /// Build a 3x3 rotation matrix from Euler angles XYZ (degrees).
+        /// </summary>
+        public static double[,] EulerXYZToMatrix33(double rotXDeg, double rotYDeg, double rotZDeg)
+        {
+            double x = rotXDeg * Math.PI / 180;
+            double y = rotYDeg * Math.PI / 180;
+            double z = rotZDeg * Math.PI / 180;
+
+            double cx = Math.Cos(x);
+            double sx = Math.Sin(x);
+            double cy = Math.Cos(y);
+            double sy = Math.Sin(y);
+            double cz = Math.Cos(z);
+            double sz = Math.Sin(z);
+
+            // Final rotation matrix R = Rz * Ry * Rx
+            double[,] m = new double[3, 3];
+
+            m[0, 0] = cz * cy;
+            m[0, 1] = cz * sy * sx - sz * cx;
+            m[0, 2] = cz * sy * cx + sz * sx;
+
+            m[1, 0] = sz * cy;
+            m[1, 1] = sz * sy * sx + cz * cx;
+            m[1, 2] = sz * sy * cx - cz * sx;
+
+            m[2, 0] = -sy;
+            m[2, 1] = cy * sx;
+            m[2, 2] = cy * cx;
+
+            return m;
+        }
+
+        /// <summary>
         /// Y forward and Z up (just to remember)
         /// </summary>
         public static (int yaw, int pitch) GetYawPitch(Vector3 dir)
@@ -75,6 +109,32 @@ namespace TPMapEditor.Utils
             if (angle >= 180f) angle -= 360f;
             if (angle < -180f) angle += 360f;
             return angle;
+        }
+
+        /// <summary>
+        /// Y forward Z up
+        /// </summary>
+        /// <returns></returns>
+        public static Vector3 FromYawPitch(int yawDeg, int pitchDeg)
+        {
+            // Convert to radians
+            float yaw = yawDeg * (float)Math.PI / 180f;
+            float pitch = pitchDeg * (float)Math.PI / 180f;
+
+            // Precompute cos/sin
+            float cosPitch = (float)Math.Cos(pitch);
+            float sinPitch = (float)Math.Sin(pitch);
+            float sinYaw = (float)Math.Sin(yaw);
+            float cosYaw = (float)Math.Cos(yaw);
+
+            // Build vector according to your coordinate system
+            Vector3 dir = new Vector3(
+                sinYaw * cosPitch,  // X = right
+                cosYaw * cosPitch,  // Y = forward
+                -sinPitch           // Z = up  (negative = pitch up)
+            );
+
+            return Vector3.Normalize(dir);
         }
     }
 }
