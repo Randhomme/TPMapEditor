@@ -28,6 +28,8 @@ namespace TPMapEditor.Data
             var time = DateTime.Now;
             try
             {
+                map.ReorganizeWorldObjectIds();
+
                 // Write comment line, and give credits for your favorite video game
                 writer.WriteLine("# (c) BaRkiNg DOG studios 2002");
 
@@ -284,6 +286,13 @@ namespace TPMapEditor.Data
                     var team = map.InGameTeams[i];
                     WriteTeamListElementSection(team, level);
                 }
+                WriteLineLevel("Winning Team Int -1", level);
+                WriteLineLevel($"Num Groups Int {map.Groups.Count}", level);
+                for (int i = 0; i < map.Groups.Count; i++)
+                {
+                    var group = map.Groups[i];
+                    WriteGroupSection(group, level);
+                }
             }, level);
         }
 
@@ -393,6 +402,20 @@ namespace TPMapEditor.Data
             {
                 WriteLineLevel($"Player0 Int {map.Players.IndexOf(playerAlliance.Player1)}", level);
                 WriteLineLevel($"Player1 Int {map.Players.IndexOf(playerAlliance.Player2)}", level);
+            }, level);
+        }
+
+        private void WriteGroupSection(Group group, int level)
+        {
+            WriteSection("Group", (level) =>
+            {
+                WriteLineLevel($"Name String '{group.Name}'", level);
+                WriteLineLevel($"World Object IDs - Size Int {group.WorldObjects.Count}", level);
+                for(int i = 0; i < group.WorldObjects.Count; i++)
+                {
+                    var worldObject = group.WorldObjects[i];
+                    WriteLineLevel($"World Object IDs - Element Int {worldObject.Id}", level);
+                }
             }, level);
         }
 
