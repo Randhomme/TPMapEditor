@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data
@@ -147,6 +144,7 @@ namespace TPMapEditor.Data
                     WriteLineLevel($"Type String '{worldObject.Type.Type}'", level);
                     WriteWorldObjectStateSection(worldObject, level);
                 }
+                WriteGameSpecificSection(level);
             }, level);
         }
 
@@ -204,7 +202,7 @@ namespace TPMapEditor.Data
                 WriteLineLevel("HasState Bool False", level); // No state for now, of course
                 WriteLineLevel($"Position Vector3( {worldObject.X:F6}, {worldObject.Y:F6}, {worldObject.Z:F6} )", level);
                 var orMat33 = MathUtils.EulerXYZToMatrix33(worldObject.XRotation, worldObject.YRotation, worldObject.ZRotation);
-                WriteLineLevel($"Orientation Matrix33( {orMat33[0,0]:F6}, {orMat33[1, 0]:F6}, {orMat33[2, 0]:F6}, {-orMat33[0, 2]:F6}, {-orMat33[1, 2]:F6}, {-orMat33[2, 2]:F6}, {orMat33[0, 1]:F6}, {orMat33[1, 1]:F6}, {orMat33[2, 1]:F6} )", level);
+                WriteLineLevel($"Orientation Matrix33( {orMat33[0,0]:F6}, {orMat33[1, 0]:F6}, {orMat33[2, 0]:F6}, {orMat33[0, 1]:F6}, {orMat33[1, 1]:F6}, {orMat33[2, 1]:F6}, {orMat33[0, 2]:F6}, {orMat33[1, 2]:F6}, {orMat33[2, 2]:F6} )", level);
                 var playerIndex = worldObject.Player is null ? -1 : map.Players.IndexOf(worldObject.Player);
                 WriteLineLevel($"PlayerIndex Int {playerIndex}", level);
                 WriteLineLevel("# AIEntity", level);
@@ -217,6 +215,99 @@ namespace TPMapEditor.Data
                 WriteLineLevel("Type String ''", level);
                 WriteLineLevel("# CustomInfoEntity", level);
                 WriteLineLevel("Type String ''", level);
+            }, level);
+        }
+
+        private void WriteGameSpecificSection(int level)
+        {
+            WriteSection("GameSpecific", (level) =>
+            {
+                WriteLineLevel($"World Description Sting ID String '{map.WorldDescription}'", level);
+                WriteLineLevel($"World Name Sting ID String '{map.WorldName}'", level);
+                WriteSection("Effect Event Keeper", (level) =>
+                {
+                    WriteLineLevel("NumEffectEventInfoChunks Int 0", level);
+                }, level);
+                WriteLineLevel($"Skybox mesh name String '{map.Skybox}'", level);
+                WriteLineLevel($"Ambient Light Colour( {map.AmbientLightColor.R/255f:F6}, {map.AmbientLightColor.G / 255f:F6}, {map.AmbientLightColor.B / 255f:F6}, {map.AmbientLightColor.A / 255f:F6} )", level);
+                var rlov = MathUtils.YawPitchToVector3(map.RoofLightOrientationYaw, map.RoofLightOrientationPitch);
+                WriteLineLevel($"Vector for roof light orientation Vector3( {rlov.X:F6}, {rlov.Y:F6}, {rlov.Z:F6} )", level);
+                WriteLineLevel($"Hemispherical floor light color Colour( {map.FloorLightColor.R / 255f:F6}, {map.FloorLightColor.G / 255f:F6}, {map.FloorLightColor.B / 255f:F6}, {map.FloorLightColor.A / 255f:F6} )", level);
+                WriteLineLevel($"Hemispherical roof light color Colour( {map.RoofLightColor.R / 255f:F6}, {map.RoofLightColor.G / 255f:F6}, {map.RoofLightColor.B / 255f:F6}, {map.RoofLightColor.A / 255f:F6} )", level);
+                WriteLineLevel("World Initialized State Bool False", level);
+                WriteLineLevel("World Buffer Size Float 200.000000", level);
+                WriteLineLevel($"Waypoint Path Info Vector - Size Int {map.WaypointPaths.Count}", level);
+                for (int i = 0; i < map.WaypointPaths.Count; i++)
+                {
+                    var path = map.WaypointPaths[i];
+                    WriteWaypointPathInfoVectorElement(path, level);
+                }
+                WriteLineLevel($"World Polygons Vectors - Size Int {map.WorldPolygons.Count}", level);
+                for(int i = 0; i < map.WorldPolygons.Count; i++)
+                {
+                    var polygon = map.WorldPolygons[i];
+                    WriteWorldPolygonsVectors(polygon, level);
+                }
+                WriteLineLevel($"World Point Sets Vector - Size Int {map.WorldPointSets.Count}", level);
+                for(int i = 0; i < map.WorldPointSets.Count; i++)
+                {
+                    var pointSet = map.WorldPointSets[i];
+                    WriteWorldPointSetsVector(pointSet, level);
+                }
+            }, level);
+        }
+
+        private void WriteWaypointPathInfoVectorElement(WaypointPath path, int level)
+        {
+            WriteSection("Waypoint Path Info Vector - Element", (level) =>
+            {
+                WriteLineLevel($"Waypoint Path Name String '{path.Name}'", level);
+                WriteLineLevel($"Waypoint Path Points - Size Int {path.Points.Count}", level);
+                for(int i = 0; i < path.Points.Count; i++)
+                {
+                    var pathPoint = path.Points[i];
+                    WriteLineLevel($"Waypoint Path Points - Element Vector3( {pathPoint.X:F6}, {pathPoint.Y:F6}, {pathPoint.Z:F6} )", level);
+                }
+            }, level);
+        }
+
+        private void WriteWorldPolygonsVectors(WorldPolygon polygon, int level)
+        {
+            WriteSection("World Polygons Vectors - Element", (level) =>
+            {
+                WriteLineLevel($"Name String '{polygon.Name}'", level);
+                WriteLineLevel($"Points Int {polygon.Points.Count}", level);
+                for(int i = 0; i < polygon.Points.Count; i++)
+                {
+                    var polygonPoint = polygon.Points[i];
+                    WriteLineLevel($"Points Coord( {polygonPoint.X:F6}, {polygonPoint.Y:F6} )", level);
+                }
+            }, level);
+        }
+
+        private void WriteWorldPointSetsVector(WorldPointSet pointSet, int level)
+        {
+            WriteSection("World Point Sets Vector - Element", (level) =>
+            {
+                WriteLineLevel($"Name String '{pointSet.Name}'", level);
+                WriteLineLevel($"World Points - Size Int {pointSet.Points.Count}", level);
+                for(int i = 0; i < pointSet.Points.Count; i++)
+                {
+                    var point = pointSet.Points[i];
+                    WriteSection("World Points - Element", (level) =>
+                    {
+                        WriteLineLevel("World Point Magnitude Float 0.000000", level);
+                        WriteSection("World Point Basis", (level) =>
+                        {
+                            WriteLineLevel($"Position Vector3( {point.X:F6}, {point.Y:F6}, {point.Z:F6} )", level);
+                            WriteLineLevel("LookAt Vector Length Float 1.000000", level);
+                            var orMat33 = MathUtils.EulerXYZToMatrix33(point.XRotation, point.YRotation, point.ZRotation);
+                            WriteLineLevel($"Orientation - Cross Vector3( {orMat33[0, 0]:F6}, {orMat33[1, 0]:F6}, {orMat33[2, 0]:F6} )", level);
+                            WriteLineLevel($"Orientation - Forward Vector3( {orMat33[0, 1]:F6}, {orMat33[1, 1]:F6}, {orMat33[2, 1]:F6} )", level);
+                            WriteLineLevel($"Orientation - Up Vector3( {orMat33[0, 2]:F6}, {orMat33[1, 2]:F6}, {orMat33[2, 2]:F6} )", level);
+                        }, level);
+                    }, level);
+                }
             }, level);
         }
 
