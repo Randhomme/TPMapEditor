@@ -27,7 +27,7 @@
                 </Grid.RowDefinitions>
                 <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.WorldObjects}" SelectedItem="{Binding SelectedWorldObject}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Type}" Header="Type" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding}" Header="Type" Width="*"/>
                         <DataGridTemplateColumn MinWidth="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
