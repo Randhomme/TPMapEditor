@@ -61,7 +61,7 @@ namespace TPMapEditor.Data
                 for(int i = 0; i < map.SelectableTeams.Count; i++)
                 {
                     var team = map.SelectableTeams[i];
-                    WriteSelectableTeamSection(team, level);
+                    WriteTeamListElementSection(team, level);
                 }
                 var playablePlayers = map.Players.Where((p) => p.IsPlayable);
                 WriteLineLevel($"Number of Players Int {playablePlayers.Count()}", level);
@@ -79,7 +79,7 @@ namespace TPMapEditor.Data
             }, level);
         }
 
-        private void WriteSelectableTeamSection(Team team, int level)
+        private void WriteTeamListElementSection(Team team, int level)
         {
             WriteSection("Team List - Element", (level) =>
             {
@@ -277,6 +277,12 @@ namespace TPMapEditor.Data
                 {
                     var playerAlliance = map.PlayerAlliances[i];
                     WritePlayerAllianceInfoVectorElementSection(playerAlliance, level);
+                }
+                WriteLineLevel($"Team List - Size Int {map.InGameTeams.Count}", level);
+                for (int i = 0; i < map.InGameTeams.Count; i++)
+                {
+                    var team = map.InGameTeams[i];
+                    WriteTeamListElementSection(team, level);
                 }
             }, level);
         }
