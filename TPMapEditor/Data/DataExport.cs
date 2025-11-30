@@ -254,6 +254,12 @@ namespace TPMapEditor.Data
                     var pointSet = map.WorldPointSets[i];
                     WriteWorldPointSetsVector(pointSet, level);
                 }
+                WriteLineLevel($"Flag List - Size Int {map.Flags.Count}", level);
+                for(int i = 0; i < map.Flags.Count; i++)
+                {
+                    var flag = map.Flags[i];
+                    WriteFlagListElementSection(flag, level);
+                }
             }, level);
         }
 
@@ -308,6 +314,15 @@ namespace TPMapEditor.Data
                         }, level);
                     }, level);
                 }
+            }, level);
+        }
+
+        private void WriteFlagListElementSection(Flag flag, int level)
+        {
+            WriteSection("Flag List - Element", (level) =>
+            {
+                WriteLineLevel($"Flag Name String '{flag.Name}'", level);
+                WriteLineLevel($"Flag Value Bool {flag.Value}", level);
             }, level);
         }
 
