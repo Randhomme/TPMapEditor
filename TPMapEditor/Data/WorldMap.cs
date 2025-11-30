@@ -83,7 +83,6 @@ namespace TPMapEditor.Data
             WorldArms = new ObservableCollection<WotGridItem>();
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
             ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
-
             Players.CollectionChanged += (s, e) =>
             {
                 if (e.OldItems != null)
@@ -193,6 +192,7 @@ namespace TPMapEditor.Data
             WorldObjects.Clear();
             WorldPointSets.Clear();
             WorldPolygons.Clear();
+            WorldObject.ResetNextId();
         }
     }
 }

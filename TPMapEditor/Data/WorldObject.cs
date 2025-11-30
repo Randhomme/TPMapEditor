@@ -4,6 +4,8 @@ namespace TPMapEditor.Data
 {
     public partial class WorldObject : ObservableObject
     {
+        private static int nextId = 0;
+
         [ObservableProperty]
         private WotGridItem type;
         [ObservableProperty]
@@ -15,7 +17,17 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected;
 
-        public int Id { get; set; } //only used for data import
+        private int id;
+        public int Id //only used for data import/export
+        {
+            get => id;
+            set 
+            {
+                id = value;
+                if (value >= nextId)
+                    nextId = value+1;
+            } 
+        }
 
         public WorldObject(WotGridItem type, double x, double y, double zRotation)
         {
@@ -24,6 +36,7 @@ namespace TPMapEditor.Data
             this.y = y;
             this.z = this.xRotation = this.yRotation = 0;
             this.zRotation = zRotation;
+            this.id = nextId++;
         }
 
         partial void OnGroupChanged(Group? oldValue, Group? newValue)
@@ -39,5 +52,7 @@ namespace TPMapEditor.Data
         }
 
         public override string ToString() => $"#{Id} {Type}";
+
+        public static void ResetNextId() => nextId = 0;
     }
 }
