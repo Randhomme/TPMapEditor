@@ -41,6 +41,7 @@ namespace TPMapEditor.Data
                     ReadWorldInfoSection();
                     ReadGameSection();
                     ReadWorldSection();
+                    map.ReorganizeWorldObjectIds();
                 }
                 progressOperation.Report($"Map import completed in {(DateTime.Now - time).TotalSeconds} seconds.");
             }

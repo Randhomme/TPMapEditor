@@ -144,6 +144,16 @@ namespace TPMapEditor.Data
             BindingOperations.DisableCollectionSynchronization(WorldArms);
         }
 
+        public void ReorganizeWorldObjectIds()
+        {
+            WorldObject.ResetNextId();
+            for (int i = 0; i < WorldObjects.Count; i++)
+            {
+                var worlObject = WorldObjects[i];
+                worlObject.Id = i;
+            }
+        }
+
         public void Reset()
         {
             Clear();
