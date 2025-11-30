@@ -20,8 +20,6 @@ namespace TPMapEditor.Data
 
         public ObservableCollection<WorldPoint> Points { get; }
 
-        public ObservableCollection<WorldPoint> WorldPoints { get; } = new();
-
         public WorldPointSet(WorldMap map, string name) : base(map, name)
         {
             Points = new ObservableCollection<WorldPoint>();
