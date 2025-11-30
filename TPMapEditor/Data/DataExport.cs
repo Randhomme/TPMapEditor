@@ -260,6 +260,12 @@ namespace TPMapEditor.Data
                     var flag = map.Flags[i];
                     WriteFlagListElementSection(flag, level);
                 }
+                WriteLineLevel($"Timer List - Size Int {map.Timers.Count}", level);
+                for (int i = 0; i < map.Timers.Count; i++)
+                {
+                    var timer = map.Timers[i];
+                    WriteTimerListElementSection(timer, level);
+                }
             }, level);
         }
 
@@ -323,6 +329,19 @@ namespace TPMapEditor.Data
             {
                 WriteLineLevel($"Flag Name String '{flag.Name}'", level);
                 WriteLineLevel($"Flag Value Bool {flag.Value}", level);
+            }, level);
+        }
+
+        private void WriteTimerListElementSection(Timer timer, int level)
+        {
+            WriteSection("Timer List - Element", (level) =>
+            {
+                WriteLineLevel($"Timer Name String '{timer.Name}'", level);
+                WriteLineLevel($"Timer Status Bool {timer.Status}", level);
+                WriteSection("Timer Value Chunk", (level) =>
+                {
+                    WriteLineLevel($"StartTime Double {timer.StartTime}", level);
+                }, level);
             }, level);
         }
 
