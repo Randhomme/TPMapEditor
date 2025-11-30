@@ -266,6 +266,12 @@ namespace TPMapEditor.Data
                     var timer = map.Timers[i];
                     WriteTimerListElementSection(timer, level);
                 }
+                WriteLineLevel($"Speech Event List - Size Int {map.SpeechEvents.Count}", level);
+                for (int i = 0; i < map.SpeechEvents.Count; i++)
+                {
+                    var speechEvent = map.SpeechEvents[i];
+                    WriteSpeechEventListElementSection(speechEvent, level);
+                }
             }, level);
         }
 
@@ -342,6 +348,30 @@ namespace TPMapEditor.Data
                 {
                     WriteLineLevel($"StartTime Double {timer.StartTime}", level);
                 }, level);
+            }, level);
+        }
+
+        private void WriteSpeechEventListElementSection(SpeechEvent speechEvent, int level)
+        {
+            WriteSection("Speech Event List - Element", (level) =>
+            {
+                WriteLineLevel($"Name String '{speechEvent.Name}'", level);
+                WriteLineLevel($"Sound FileName String '{speechEvent.SoundFileName}'", level);
+                WriteLineLevel($"Text Color Colour( {speechEvent.TextColor.R / 255f:F6}, {speechEvent.TextColor.G / 255f:F6}, {speechEvent.TextColor.B / 255f:F6}, {speechEvent.TextColor.A / 255f:F6} )", level);
+                WriteLineLevel($"FaceTexture String '{speechEvent.FaceTexture}'", level);
+                WriteLineLevel($"TalkingHeadLocation Int {(int)speechEvent.TalkingHeadLocation}", level);
+                WriteLineLevel($"Has Been Played Once Bool {speechEvent.HasBeenPlayedOnce}", level);
+                WriteLineLevel($"Is Secondary Speech Bool {speechEvent.IsSecondarySpeech}", level);
+                WriteLineLevel($"Display Time Float {speechEvent.DisplayTime:F6}", level);
+                WriteLineLevel($"Open Chat Bar Bool {speechEvent.OpenChatBar}", level);
+                WriteLineLevel($"Open Talking Head Bool {speechEvent.OpenTalkingHead}", level);
+                WriteLineLevel($"Has Text Bool {speechEvent.HasText}", level);
+                WriteLineLevel($"Use Sound File Length Bool {speechEvent.HasText}", level);
+                WriteLineLevel($"Always Open Speech Event Bar Bool {speechEvent.AlwaysOpenSpeechEventBar}", level);
+                WriteLineLevel("Valid Text StringID Bool True", level);
+                WriteLineLevel($"TextStringID String '{speechEvent.TextStringID}'", level);
+                WriteLineLevel("Valid Speaker ID Bool True", level);
+                WriteLineLevel($"SpeakerID String '{speechEvent.SpeakerID}'", level);
             }, level);
         }
 
