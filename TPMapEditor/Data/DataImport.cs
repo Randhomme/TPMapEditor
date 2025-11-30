@@ -405,7 +405,7 @@ namespace TPMapEditor.Data
                 map.AmbientLightColor = reader.ReadAndParseColor("Ambient Light Colour");
 
                 var roofLightOrientationVector = reader.ReadAndParseVector3("Vector for roof light orientation ");
-                (int rloYaw, int rloPitch) = MathUtils.GetYawPitch(roofLightOrientationVector);
+                (int rloYaw, int rloPitch) = MathUtils.Vector3ToYawPitch(roofLightOrientationVector);
                 map.RoofLightOrientationYaw = rloYaw;
                 map.RoofLightOrientationPitch = rloPitch;
 

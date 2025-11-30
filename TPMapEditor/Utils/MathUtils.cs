@@ -85,7 +85,7 @@ namespace TPMapEditor.Utils
         /// <summary>
         /// Y forward and Z up (just to remember)
         /// </summary>
-        public static (int yaw, int pitch) GetYawPitch(Vector3 dir)
+        public static (int yaw, int pitch) Vector3ToYawPitch(Vector3 dir)
         {
             dir = Vector3.Normalize(dir);
 
@@ -115,7 +115,7 @@ namespace TPMapEditor.Utils
         /// Y forward Z up
         /// </summary>
         /// <returns></returns>
-        public static Vector3 FromYawPitch(int yawDeg, int pitchDeg)
+        public static Vector3 YawPitchToVector3(int yawDeg, int pitchDeg)
         {
             // Convert to radians
             float yaw = yawDeg * (float)Math.PI / 180f;
