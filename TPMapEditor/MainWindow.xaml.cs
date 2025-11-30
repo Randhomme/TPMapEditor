@@ -154,6 +154,13 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnResetMap()
+        {
+            if (MessageBox.Show("The current map will be cleared. Continue ?", "Map reset", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                Map.Reset();
+        }
+
+        [RelayCommand]
         private void OnWorldInfoEdit()
         {
             new WorldInfoDialog(this, Map).ShowDialog();

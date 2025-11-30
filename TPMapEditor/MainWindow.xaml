@@ -35,6 +35,7 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Map Settings">
+                <MenuItem Header="Reset" Command="{Binding ResetMapCommand}"/>
                 <MenuItem Header="World info" Command="{Binding WorldInfoEditCommand}"/>
                 <MenuItem Header="Map size" Command="{Binding MapSizeEditCommand}"/>
                 <MenuItem Header="Teams" Command="{Binding TeamsEditCommand}"/>
