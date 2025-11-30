@@ -272,6 +272,12 @@ namespace TPMapEditor.Data
                     var speechEvent = map.SpeechEvents[i];
                     WriteSpeechEventListElementSection(speechEvent, level);
                 }
+                WriteLineLevel($"PlayerAllianceInfoVector - Size Int {map.PlayerAlliances.Count}", level);
+                for (int i = 0; i < map.PlayerAlliances.Count; i++)
+                {
+                    var playerAlliance = map.PlayerAlliances[i];
+                    WritePlayerAllianceInfoVectorElementSection(playerAlliance, level);
+                }
             }, level);
         }
 
@@ -372,6 +378,15 @@ namespace TPMapEditor.Data
                 WriteLineLevel($"TextStringID String '{speechEvent.TextStringID}'", level);
                 WriteLineLevel("Valid Speaker ID Bool True", level);
                 WriteLineLevel($"SpeakerID String '{speechEvent.SpeakerID}'", level);
+            }, level);
+        }
+
+        private void WritePlayerAllianceInfoVectorElementSection(PlayerAlliance playerAlliance, int level)
+        {
+            WriteSection("PlayerAllianceInfoVector - Element", (level) =>
+            {
+                WriteLineLevel($"Player0 Int {map.Players.IndexOf(playerAlliance.Player1)}", level);
+                WriteLineLevel($"Player1 Int {map.Players.IndexOf(playerAlliance.Player2)}", level);
             }, level);
         }
 
