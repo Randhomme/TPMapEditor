@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using TPMapEditor.Data.Rule;
+using TPMapEditor.Enums;
 using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data
@@ -30,7 +32,7 @@ namespace TPMapEditor.Data
             {
                 map.ReorganizeWorldObjectIds();
 
-                // Write comment line, and give credits for your favorite video game
+                // Give credits for your favorite video game
                 writer.WriteLine("# (c) BaRkiNg DOG studios 2002");
 
                 // Write sections
@@ -293,6 +295,7 @@ namespace TPMapEditor.Data
                     var group = map.Groups[i];
                     WriteGroupSection(group, level);
                 }
+                WriteWorldRulesSection(level);
             }, level);
         }
 
@@ -415,6 +418,89 @@ namespace TPMapEditor.Data
                 {
                     var worldObject = group.WorldObjects[i];
                     WriteLineLevel($"World Object IDs - Element Int {worldObject.Id}", level);
+                }
+            }, level);
+        }
+
+        private void WriteWorldRulesSection(int level)
+        {
+            WriteSection("World Rules", (level) =>
+            {
+                WriteLineLevel($"Rule List Int {map.WorldRules.Count}", level);
+                for(int i = 0; i < map.WorldRules.Count; i++)
+                {
+                    var rule = map.WorldRules[i];
+                    WriteLineLevel($"Rule Name String '{rule.Name}'", level);
+                    WriteLineLevel($"Run Once Bool {rule.RunOnce}", level);
+                    WriteLineLevel("Is Active Bool True", level);
+                    WriteLineLevel($"NumConditions Int {rule.Conditions.Count}", level);
+                    for (int j = 0; j < rule.Conditions.Count; j++)
+                    {
+                        var condition = rule.Conditions[j];
+                        WriteConditionListSection(condition, level);
+                    }
+                    WriteLineLevel($"NumActions Int {rule.Actions.Count}", level);
+                    for (int j = 0; j < rule.Actions.Count; j++)
+                    {
+                        var action = rule.Actions[j];
+                        WriteActionListSection(action, level);
+                    }
+                }
+            }, level);
+        }
+
+        private void WriteConditionListSection(Rule.RuleCondition condition, int level)
+        {
+            WriteSection("Condition List", (level) =>
+            {
+                WriteLineLevel($"Type String '{condition.Type.GetName()}'", level);
+                for(int i = 0; i < condition.RuleFields.Count; i++)
+                {
+                    var field = condition.RuleFields[i];
+                    if (field is RuleFieldObservableCollection fieldObservableCollection && fieldObservableCollection.Value != null)
+                    {
+                        if(fieldObservableCollection.RealLabel != null)
+                        {
+                            WriteLineLevel($"{fieldObservableCollection}", level);
+                        }
+                        for(int j = 0; j < fieldObservableCollection.Value.Count; j++)
+                        {
+                            var field2 = fieldObservableCollection.Value[j];
+                            WriteLineLevel($"{field2}", level);
+                        }
+                    }
+                    else
+                    {
+                        WriteLineLevel($"{field}", level);
+                    }
+                }
+            }, level);
+        }
+
+        private void WriteActionListSection(Rule.RuleAction action, int level)
+        {
+            WriteSection("Action List", (level) =>
+            {
+                WriteLineLevel($"Type String '{action.Type.GetName()}'", level);
+                for (int i = 0; i < action.RuleFields.Count; i++)
+                {
+                    var field = action.RuleFields[i];
+                    if (field is RuleFieldObservableCollection fieldObservableCollection && fieldObservableCollection.Value != null)
+                    {
+                        if (fieldObservableCollection.RealLabel != null)
+                        {
+                            WriteLineLevel($"{fieldObservableCollection}", level);
+                        }
+                        for (int j = 0; j < fieldObservableCollection.Value.Count; j++)
+                        {
+                            var field2 = fieldObservableCollection.Value[j];
+                            WriteLineLevel($"{field2}", level);
+                        }
+                    }
+                    else
+                    {
+                        WriteLineLevel($"{field}", level);
+                    }
                 }
             }, level);
         }
