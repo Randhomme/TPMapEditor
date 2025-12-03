@@ -28,8 +28,8 @@ namespace TPMapEditor.Data.Rule
         public override string ToString()
         {
             if (IsGroupUnitUnit)
-                return $"{SelectedGroup.Name},{Value?.Name ?? "HUMAN CONTROLLED SHIP"}";
-            return Value?.Name ?? "Player0 Group";
+                return $"{RealLabel} '{SelectedGroup.Name},{Value?.Name ?? "HUMAN CONTROLLED SHIP"}'";
+            return $"{RealLabel} '{Value}'";
         }
     }
 }

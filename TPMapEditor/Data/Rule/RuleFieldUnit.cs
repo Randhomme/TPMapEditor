@@ -24,7 +24,7 @@ namespace TPMapEditor.Data.Rule
 
         public override string ToString()
         {
-            return $"{SelectedGroup.Name},{Value?.Name ?? "HUMAN CONTROLLED SHIP"}";
+            return $"{RealLabel} '{SelectedGroup.Name},{Value?.Name ?? "HUMAN CONTROLLED SHIP"}'";
         }
     }
 }

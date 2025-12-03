@@ -14,11 +14,7 @@ namespace TPMapEditor.Data.Rule
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(RealLabel))
-            {
-                return IsShown ? "TRUE" : "FALSE";
-            }
-            return string.Empty;
+            return $"{RealLabel} '{IsShown.ToString().ToUpperInvariant()}'";
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TPMapEditor.Data.Rule
 
         public override string ToString()
         {
-            return Value.ToString("0.000000");
+            return $"{RealLabel} {Value:0.000000}";
         }
     }
 }

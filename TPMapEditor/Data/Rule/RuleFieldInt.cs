@@ -12,5 +12,10 @@ namespace TPMapEditor.Data.Rule
             this.min = min;
             this.max = max;
         }
+
+        public override string ToString()
+        {
+            return $"{RealLabel} {Value}";
+        }
     }
 }

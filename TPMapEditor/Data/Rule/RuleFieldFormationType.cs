@@ -12,5 +12,10 @@ namespace TPMapEditor.Data.Rule
         public RuleFieldFormationType(string? realLabel, string? label, FormationType value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
+
+        public override string ToString()
+        {
+            return $"{RealLabel} '{Value.GetName()}'";
+        }
     }
 }

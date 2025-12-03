@@ -279,28 +279,19 @@ namespace TPMapEditor.Data.Rule
                     {
                         new RuleFieldDouble("Meteor Strike Recharge Time Float", "Meteors strike recharge time", min: 0)
                     });
-                    AddRuleFieldObservableCollection(null, "Has nebula cloud effect", new()
-                    {
-                        new RuleFieldEffect("Nebula Cloud Effect Name String", "Nebula cloud effect", AppSettings.Effects.FirstOrDefault()),
-                        new RuleFieldWorldPointSet("Nebula Cloud Point Set Name String", "Nebula cloud point set", map.WorldPointSets.FirstOrDefault())
-                    });
-                    AddRuleFieldObservableCollection(null, "Has solar storm effect", new()
-                    {
-                        new RuleFieldEffect("Solar Storm Effect Name String", "Solar storm effect", AppSettings.Effects.FirstOrDefault()),
-                        new RuleFieldWorldPointSet("Solar Storm Point Set Name String", "Solar storm point set", map.WorldPointSets.FirstOrDefault())
-                    });
-                    AddRuleFieldObservableCollection(null, "Has meteor shower effect", new()
-                    {
-                        new RuleFieldEffect("Meteor Shower Effect Name  String", "Meteor shower effect", AppSettings.Effects.FirstOrDefault()),
-                        new RuleFieldWorldPointSet("Meteor Shower Point Set Name String", "Meteor shower point set", map.WorldPointSets.FirstOrDefault())
-                    });
+                    AddRuleFieldEffect("Nebula Cloud Effect Name String", "Nebula cloud effect", AppSettings.Effects.FirstOrDefault());
+                    AddRuleFieldEffect("Solar Storm Effect Name String", "Solar storm effect", AppSettings.Effects.FirstOrDefault());
+                    AddRuleFieldEffect("Meteor Shower Effect Name  String", "Meteor shower effect", AppSettings.Effects.FirstOrDefault());
+                    AddRuleFieldWorldPointSet("Nebula Cloud Point Set Name String", "Nebula cloud point set", map.WorldPointSets.FirstOrDefault(), true, "Has nebula cloud point set");
+                    AddRuleFieldWorldPointSet("Solar Storm Point Set Name String", "Solar storm point set", map.WorldPointSets.FirstOrDefault(), true, "Has solar storm point set");
+                    AddRuleFieldWorldPointSet("Meteor Shower Point Set Name String", "Meteor shower point set", map.WorldPointSets.FirstOrDefault(), true, "Has meteor shower point set");
                     AddRuleFieldObservableCollection("Rotational Winds On/Off String", "Has rotational winds", new()
                     {
                         new RuleFieldDouble("Wind Magnitude Float", "Wind magnitude"), //might need to be >= 0
-                        new RuleFieldDouble("Solar Storm Wind Damage Frequency Float", "Wind damage frequency"), //might need to be >= 0
                     });
                     AddRuleFieldBool("Nebula Cloud Energy Drain On/Off String", "Nebula cloud eneergy drain");
                     AddRuleFieldBool("Nebula Occlusion On/Off String", "Nebula occlusion");
+                    AddRuleFieldDouble("Solar Storm Wind Damage Frequency Float", "Wind damage frequency"); //might need to be >= 0
                     AddRuleFieldDouble("Ambient sound max distance Float", "Ambient sound max distance");
                     break;
                 case Enums.RuleAction.StateInitSetupShip:

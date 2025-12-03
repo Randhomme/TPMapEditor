@@ -10,7 +10,7 @@ namespace TPMapEditor.Data.Rule
 
         public override string ToString()
         {
-            return Value.GetName();
+            return $"{RealLabel} '{Value.GetName()}'";
         }
     }
 }

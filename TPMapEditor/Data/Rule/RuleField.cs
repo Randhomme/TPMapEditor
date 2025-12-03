@@ -38,7 +38,7 @@ namespace TPMapEditor.Data.Rule
 
         public override string ToString()
         {
-            return Value?.ToString() ?? base.ToString();
+            return $"{RealLabel} '{Value}'";
         }
     }
 }
