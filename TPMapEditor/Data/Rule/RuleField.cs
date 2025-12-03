@@ -25,6 +25,7 @@ namespace TPMapEditor.Data.Rule
             this.isShown = isShown;
         }
     }
+
     public abstract partial class RuleField<T> : RuleField
     {
 
