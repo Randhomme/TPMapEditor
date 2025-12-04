@@ -122,6 +122,13 @@
                         <Slider Value="{Binding Map.RoofLightOrientationPitch}" Minimum="-90" Maximum="90"/>
                     </StackPanel>
                 </GroupBox>
+                <GroupBox Header="Current objective point">
+                    <StackPanel>
+                        <CheckBox Margin="5" x:Name="HasCurrentObjectivePointCheckBox" Content="Has current objective point" IsChecked="{c:Binding 'Map.CurrentObjectivePoint!=null', Mode=OneWay}"/>
+                        <ComboBox Margin="5" ItemsSource="{Binding Map.ObjectivePoints}" SelectedItem="{Binding Map.CurrentObjectivePoint}" IsEnabled="{c:Binding ElementName=HasCurrentObjectivePointCheckBox, Path=IsChecked}" SelectedIndex="{c:Binding ElementName=HasCurrentObjectivePointCheckBox, Path='IsChecked ? 0 : -1', Mode=OneWay}"/>
+                        <CheckBox Margin="5" Content="Is current objective point visible on star map" IsChecked="{Binding Map.IsCurrentObjectivePointVisibleOnStarMap}"/>
+                    </StackPanel>
+                </GroupBox>
                 <GroupBox Header="Journal title">
                     <ComboBox Margin="5" ItemsSource="{x:Static data:StringDictionnary.JournalTitles}" SelectedValue="{Binding Map.JournalTitle}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                 </GroupBox>

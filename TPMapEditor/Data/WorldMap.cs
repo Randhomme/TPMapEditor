@@ -14,13 +14,15 @@ namespace TPMapEditor.Data
     public partial class WorldMap : ObservableObject
     {
         [ObservableProperty]
-        private bool mustAssembleFleet, isMultiplayer, isCampaign, useCustomName, useCustomDescription, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds;
+        private bool mustAssembleFleet, isMultiplayer, isCampaign, useCustomName, useCustomDescription, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds, isCurrentObjectivePointVisibleOnStarMap;
         [ObservableProperty]
         private int size, zSize, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
         [ObservableProperty]
         private string worldName, worldDescription, customName, customDescription, starmapTexture, skybox, journalMusic, journalTitle;
         [ObservableProperty]
         private Color ambientLightColor, roofLightColor, floorLightColor;
+        [ObservableProperty]
+        private ObjectivePoint? currentObjectivePoint;
 
         public ObservableCollection<WorldObject> WorldObjects { get; }
         public ObservableCollection<Team> SelectableTeams { get; }

@@ -310,7 +310,7 @@ namespace TPMapEditor.Data
                     WriteLineLevel($"World Crew List - Element String '{crew.Type}'", level);
                 }
                 WriteLineLevel($"World Arms List - Size Int {map.WorldArms.Count}", level);
-                for(int i = 0; i < map.WorldCrews.Count; i++)
+                for(int i = 0; i < map.WorldArms.Count; i++)
                 {
                     var arm = map.WorldArms[i];
                     WriteLineLevel($"World Arms List - Element String '{arm.Type}'", level);
@@ -549,8 +549,9 @@ namespace TPMapEditor.Data
         {
             WriteSection("Objective System", (level) =>
             {
-                WriteLineLevel("Current Objective Point Int 0", level); // 0 for now
-                WriteLineLevel("Current Point Visible On StarMap Bool True", level); // True for now
+
+                WriteLineLevel($"Current Objective Point Int {map.ObjectivePoints.IndexOf(map.CurrentObjectivePoint)}", level);
+                WriteLineLevel($"Current Point Visible On StarMap Bool {map.IsCurrentObjectivePointVisibleOnStarMap}", level);
                 WriteLineLevel($"Objective Point Info - Size Int {map.ObjectivePoints.Count}", level);
                 for(int i = 0; i < map.ObjectivePoints.Count; i++)
                 {
