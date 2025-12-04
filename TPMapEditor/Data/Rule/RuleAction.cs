@@ -261,8 +261,8 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.StateInitSetupIsland:
                     RuleFields.Clear();
                     AddRuleFieldWorldObject("World Object ID Int", "World object");
-                    AddRuleFieldPlayer("Player/Owner String", "Player/Owner", isOptional: true, optionalLabel: "Has player/owner");
                     AddRuleFieldInt("Combat Strength Int", "Combat strength", min: 0);
+                    AddRuleFieldPlayer("Player/Owner String", "Player/Owner", isOptional: true, optionalLabel: "Has player/owner");
                     AddRuleFieldCrewSkillLevel("Gunnery Level String", "Gunnery level");
                     AddRuleFieldAiStance("AI Stance String", "Ai stance");
                     break;
@@ -427,8 +427,8 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit Name String", "Group/Unit");
                     AddRuleFieldDouble("Distance Float", "Distance", min: 0);
-                    AddRuleFieldDouble("Angle XY Float", "Angle XY", min: 0, max: 360);
                     AddRuleFieldDouble("Angle YZ Float", "Angle YZ", min: 0, max: 360);
+                    AddRuleFieldDouble("Angle XY Float", "Angle XY", min: 0, max: 360);
                     break;
                 case Enums.RuleAction.NISEnd:
                     RuleFields.Clear();
@@ -448,8 +448,8 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Unit Name String", "Group/Unit");
                     AddRuleFieldDouble("Distance Float", "Distance", min: 0);
-                    AddRuleFieldDouble("Angle XY Float", "Angle XY", min: 0, max: 360);
                     AddRuleFieldDouble("Angle YZ Float", "Angle YZ", min: 0, max: 360);
+                    AddRuleFieldDouble("Angle XY Float", "Angle XY", min: 0, max: 360);
                     AddRuleFieldBool("Jump to point String", "Jump to point");
                     break;
                 case Enums.RuleAction.NISSetCameraPath:

@@ -157,9 +157,9 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleCondition.GroupToGroupDistance:
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("GroupA Name String", "Group/Unit A");
-                    AddRuleFieldGroupUnit("GroupB Name String", "Group/Unit B");
-                    AddRuleFieldInt("Distance Int", "Distance", 100, min: 0);
                     AddRuleFieldEquivalence("Equivalence String", "Equivalence");
+                    AddRuleFieldInt("Distance Int", "Distance", 100, min: 0);
+                    AddRuleFieldGroupUnit("GroupB Name String", "Group/Unit B");
                     break;
                 case Enums.RuleCondition.GroupUnitContainsNoMissionEssentialShips:
                     RuleFields.Clear();
@@ -173,8 +173,8 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleCondition.GroupUnitFiredXShots:
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit Name String", "Group/Unit");
-                    AddRuleFieldEquivalence("Equivalence String", "Equivalence");
                     AddRuleFieldInt("Number Of Rounds Fired Int", "Number of rounds fired", min: 0);
+                    AddRuleFieldEquivalence("Equivalence String", "Equivalence");
                     break;
                 case Enums.RuleCondition.GroupUnitHitAtLeastXTimes:
                     RuleFields.Clear();
