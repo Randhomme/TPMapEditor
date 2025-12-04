@@ -296,6 +296,10 @@ namespace TPMapEditor.Data
                     WriteGroupSection(group, level);
                 }
                 WriteWorldRulesSection(level);
+                WriteObjectiveSystemSection(level);
+                WriteRopeSection(level);
+                WriteGrappledObjectsSection(level);
+                WriteBoardingActionsSection(level);
             }, level);
         }
 
@@ -502,6 +506,72 @@ namespace TPMapEditor.Data
                         WriteLineLevel($"{field}", level);
                     }
                 }
+            }, level);
+        }
+
+        private void WriteObjectiveSystemSection(int level)
+        {
+            WriteSection("Objective System", (level) =>
+            {
+                WriteLineLevel("Current Objective Point Int 0", level); // 0 for now
+                WriteLineLevel("Current Point Visible On StarMap Bool True", level); // True for now
+                WriteLineLevel($"Objective Point Info - Size Int {map.ObjectivePoints.Count}", level);
+                for(int i = 0; i < map.ObjectivePoints.Count; i++)
+                {
+                    var point = map.ObjectivePoints[i];
+                    WriteObjectivePointInfoElementSection(point, level);
+                }
+                WriteLineLevel($"Objective Task Array - Size Int {map.ObjectiveTasks.Count}", level);
+                for (int i = 0; i < map.ObjectiveTasks.Count; i++)
+                {
+                    var task = map.ObjectiveTasks[i];
+                    WriteObjectiveTaskArrayElement(task, level);
+                }
+            }, level);
+        }
+
+        private void WriteObjectivePointInfoElementSection(ObjectivePoint point, int level)
+        {
+            WriteSection("Objective Point Info - Element", (level) =>
+            {
+                WriteLineLevel($"Name String '{point.Name}'", level);
+                WriteLineLevel($"Position Vector3( {point.X:F6}, {point.Y:F6}, {point.Z:F6} )", level);
+            }, level);
+        }
+
+        private void WriteObjectiveTaskArrayElement(ObjectiveTask task, int level)
+        {
+            WriteSection("Objective Task Array - Element", (level) =>
+            {
+                WriteLineLevel($"Name String '{task.Name}'", level);
+                WriteLineLevel($"TextStringID String '{task.TextStringId}'", level);
+                WriteLineLevel($"Active Bool {task.Active}", level);
+                WriteLineLevel($"Completed Bool {task.Completed}", level);
+                WriteLineLevel($"Failed Bool {task.Failed}", level);
+            }, level);
+        }
+
+        private void WriteRopeSection(int level)
+        {
+            WriteSection("Rope", (level) =>
+            {
+                WriteLineLevel("RopeInfo - Size Int 0", level);
+            }, level);
+        }
+
+        private void WriteGrappledObjectsSection(int level)
+        {
+            WriteSection("Grappled Objects", (level) =>
+            {
+                WriteLineLevel("Grappled Objects Info - Size Int 0", level);
+            }, level);
+        }
+
+        private void WriteBoardingActionsSection(int level)
+        {
+            WriteSection("Boarding Actions", (level) =>
+            {
+                WriteLineLevel("Boarding Actions Info - Size Int 0", level);
             }, level);
         }
 
