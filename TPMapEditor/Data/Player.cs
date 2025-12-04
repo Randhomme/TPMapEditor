@@ -8,6 +8,8 @@ namespace TPMapEditor.Data
 {
     public partial class Player : NamedElement
     {
+        public static string DefaultName => "NO PLAYER";
+
         [ObservableProperty]
         private double x, y, z, rotation;
         [ObservableProperty]
@@ -57,6 +59,11 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override bool IsDefaultName(string name)
+        {
+            return name.Equals(DefaultName);
         }
     }
 }
