@@ -300,6 +300,8 @@ namespace TPMapEditor.Data
                 WriteRopeSection(level);
                 WriteGrappledObjectsSection(level);
                 WriteBoardingActionsSection(level);
+                WriteJournalEntrySection(level);
+                WriteWorldMapSection(level);
             }, level);
         }
 
@@ -572,6 +574,37 @@ namespace TPMapEditor.Data
             WriteSection("Boarding Actions", (level) =>
             {
                 WriteLineLevel("Boarding Actions Info - Size Int 0", level);
+            }, level);
+        }
+
+        private void WriteJournalEntrySection(int level)
+        {
+            WriteSection("Journal Entry", (level) =>
+            {
+                WriteLineLevel($"Page Info - Size Int {map.JournalEntries.Count}", level);
+                for(int i = 0; i < map.JournalEntries.Count; i++)
+                {
+                    var entry = map.JournalEntries[i];
+                    WritePageInfoElementSection(entry, level);
+                }
+            }, level);
+        }
+
+        private void WritePageInfoElementSection(JournalEntry entry, int level)
+        {
+            WriteSection("Page Info - Element", (level) =>
+            {
+                WriteLineLevel($"TextStringID String '{entry.TextStringId}'", level);
+                WriteLineLevel($"SpeechEventFileName String '{entry.SpeechEventFileName}'", level);
+                WriteLineLevel($"PictureTexture String '{entry.PictureTexture}'", level);
+            }, level);
+        }
+
+        private void WriteWorldMapSection(int level)
+        {
+            WriteSection("World Map", (level) =>
+            {
+                WriteLineLevel($"Backdrop Texture Name String '{map.StarmapTexture}'", level);
             }, level);
         }
 
