@@ -12,6 +12,8 @@ namespace TPMapEditor.Data
     /// </summary>
     public partial class ShipUnit : NamedElement
     {
+        public static string DefaultName => "HUMAN CONTROLLED COMMAND SHIP";
+
         [ObservableProperty]
         private WorldObject? worldObject;
 
@@ -31,6 +33,11 @@ namespace TPMapEditor.Data
                 }
             }
             return false;
+        }
+
+        public override bool IsDefaultName(string name)
+        {
+            return name.Equals(DefaultName);
         }
     }
 }

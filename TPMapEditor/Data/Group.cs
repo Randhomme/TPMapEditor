@@ -29,7 +29,7 @@ namespace TPMapEditor.Data
 
         public Group(WorldMap map, string name) : base(map, name)
         {
-            defaultUnit = new ShipUnit(map, "HUMAN CONTROLLED SHIP");
+            defaultUnit = new ShipUnit(map, ShipUnit.DefaultName);
             Color = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
             CanBeRemoved = true;
