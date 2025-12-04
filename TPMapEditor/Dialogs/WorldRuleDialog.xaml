@@ -312,7 +312,7 @@
         <!--WorldPointSet-->
         <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPointSet}">
             <ContentControl Template="{StaticResource RuleFieldTemplate}">
-                <ComboBox ItemsSource="{Binding Map.WorldPoints, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+                <ComboBox ItemsSource="{Binding Map.WorldPointSets, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
             </ContentControl>
         </DataTemplate>
 
