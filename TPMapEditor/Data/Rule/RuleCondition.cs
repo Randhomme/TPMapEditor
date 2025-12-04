@@ -274,6 +274,7 @@ namespace TPMapEditor.Data.Rule
                     AddRuleFieldSpeechEvent("Speech Event Name String", "Speech event");
                     break;
                 case Enums.RuleCondition.TeamGameComplete:
+                    RuleFields.Clear();
                     break;
                 case Enums.RuleCondition.TeamMemberEntersVolume:
                     RuleFields.Clear();

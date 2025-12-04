@@ -266,8 +266,8 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleAction.StateInitSetupEtheriumCurrent:
                     RuleFields.Clear();
                     AddRuleFieldWorldObject("World Object ID Int", "World object");
-                    AddRuleFieldPath("Etherium Path String", "Etherium current path");
                     AddRuleFieldString("Etherium Name String", "Etherium current name");
+                    AddRuleFieldPath("Etherium Path String", "Etherium current path");
                     break;
                 case Enums.RuleAction.StateInitSetupIsland:
                     RuleFields.Clear();
