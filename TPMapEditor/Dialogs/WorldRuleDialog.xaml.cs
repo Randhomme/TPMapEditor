@@ -82,6 +82,11 @@ namespace TPMapEditor.Dialogs
             if (SelectedWorldRule != null && SelectedRuleAction != null)
             {
                 SelectedWorldRule.Actions.Remove(SelectedRuleAction);
+                if (SelectedRuleAction.Type == Enums.RuleAction.StateInitSetupShip && SelectedRuleAction.ShipUnit != null)
+                {
+                    Map.ShipUnits.Remove(SelectedRuleAction.ShipUnit);
+                    SelectedRuleAction.ShipUnit = null;
+                }
                 SelectedRuleAction = null;
             }
         }

@@ -22,7 +22,7 @@ namespace TPMapEditor.Data.Rule
         public RuleAction(WorldMap map)
         {
             this.map = map;
-            OnTypeChanged(type);
+            OnTypeChanged(type, type);
         }
 
         private void AddRuleFieldAiStance(string? realLabel, string? label, AiStance value = AiStance.AISTANCE, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -248,9 +248,20 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldWorldPointSet(realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
-        partial void OnTypeChanged(Enums.RuleAction value)
+        partial void OnTypeChanged(Enums.RuleAction oldValue, Enums.RuleAction newValue)
         {
-            switch (value)
+            switch (oldValue)
+            {
+                case Enums.RuleAction.StateInitSetupShip:
+                    if (ShipUnit != null)
+                    {
+                        map.ShipUnits.Remove(ShipUnit);
+                        ShipUnit = null;
+                    }
+                    break;
+            }
+
+            switch (newValue)
             {
                 case Enums.RuleAction.StateInitSetupEtheriumCurrent:
                     RuleFields.Clear();
