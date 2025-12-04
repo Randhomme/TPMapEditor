@@ -184,9 +184,9 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleCondition.GroupUnitHitAtLeastXTimesByPlayerWithEquivalence:
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit Name String", "Group/Unit");
-                    AddRuleFieldPlayer("Player Name String", "Player");
-                    AddRuleFieldEquivalence("Equivalence String", "Equivalence");
                     AddRuleFieldInt("Number Of Times Hit Int", "Number of times hit", min: 0);
+                    AddRuleFieldEquivalence("Equivalence String", "Equivalence");
+                    AddRuleFieldPlayer("Player Name String", "Player");
                     break;
                 case Enums.RuleCondition.GroupUnitIsDocked:
                     RuleFields.Clear();
