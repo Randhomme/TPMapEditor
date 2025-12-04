@@ -243,8 +243,8 @@ namespace TPMapEditor.Data.Rule
                 case Enums.RuleCondition.PlayerHasHitGroupUnitAtLeastXTimes:
                     RuleFields.Clear();
                     AddRuleFieldGroupUnit("Group/Unit Name String", "Group/Unit");
-                    AddRuleFieldPlayer("Player Name String", "Player");
                     AddRuleFieldInt("Number Of Times Hit Int", "Number of times hit", min: 0);
+                    AddRuleFieldPlayer("Player Name String", "Player");
                     break;
                 case Enums.RuleCondition.PlayerHasNoLifeboats:
                     RuleFields.Clear();
