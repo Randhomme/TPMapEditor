@@ -37,8 +37,10 @@ namespace TPMapEditor.Data
 
         public void ClearWot()
         {
-            foreach (var wot in WorldObjects)
+            while (WorldObjects.Count > 0)
             {
+                var wot = WorldObjects[0];
+                WorldObjects.RemoveAt(0);
                 wot.Group = null;
             }
         }
