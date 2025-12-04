@@ -48,6 +48,8 @@ namespace TPMapEditor
         private ObjectivePoint? selectedObjectivePoint;
         [ObservableProperty]
         private MapTextPoint? selectedMapTextPoint;
+        [ObservableProperty]
+        private UIElement? selectedElement;
 
         public IList<WorldObject> SelectedWorldObjects { get; }
         public IList<Player> SelectedPlayers { get; }
@@ -444,6 +446,21 @@ namespace TPMapEditor
             SelectedWorldPointSet = null;
             SelectedObjectivePoint = null;
             SelectedMapTextPoint = null;
+            SelectedElement = null;
+        }
+
+        private void IncreaseZIndexButton_Click(object sender, RoutedEventArgs e)
+        {
+            Canvas.SetZIndex(SelectedElement, Panel.GetZIndex(SelectedElement) + 1);
+            //if (SelectedElement != null)
+            //    SelectedElement.Opacity += 0.1;
+        }
+
+        private void DecreaseZIndexButton_Click(object sender, RoutedEventArgs e)
+        {
+            Canvas.SetZIndex(SelectedElement, Panel.GetZIndex(SelectedElement) - 1);
+            //if (SelectedElement != null)
+            //    SelectedElement.Opacity -= 0.1;
         }
 
         #endregion
@@ -519,6 +536,8 @@ namespace TPMapEditor
         {
             if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
             {
+                SelectedElement = (UIElement)WorldObjectItemsControl.ItemContainerGenerator.ContainerFromItem(clickedObject);
+
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
                 if (ctrlPressed)

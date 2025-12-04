@@ -28,7 +28,7 @@ namespace TPMapEditor.Enums
         [Display(Name = "Group to Group Distance")]
         GroupToGroupDistance,
 
-        [Display(Name = "Group/Unit Contains no mission essential ships")]
+        [Display(Name = "Group/Unit contains no mission essential ships")]
         GroupUnitContainsNoMissionEssentialShips,
 
         [Display(Name = "Group/Unit Docked")]

@@ -129,8 +129,8 @@ namespace TPMapEditor.Data
                 StringDictionnary.WorldNames.TryGetValue(map.WorldName, out worldName);
                 WriteLineLevel($"WorldName String '{worldName}'", level);
                 WriteLineLevel("Random Seed Int 0", level); // Idk about this
-                WriteLineLevel($"World Size - Min Vector3( {-map.Size / 2:F6},  {-map.Size / 2:F6}, {-map.ZSize / 2:F6} )", level);
-                WriteLineLevel($"World Size - Max Vector3( {map.Size / 2:F6},  {map.Size / 2:F6}, {map.ZSize / 2:F6} )", level);
+                WriteLineLevel($"World Size - Min Vector3( {-map.Size / 2:F6}, {-map.Size / 2:F6}, {-map.ZSize / 2:F6} )", level);
+                WriteLineLevel($"World Size - Max Vector3( {map.Size / 2:F6}, {map.Size / 2:F6}, {map.ZSize / 2:F6} )", level);
                 WriteLineLevel("# Player List", level);
                 WriteLineLevel($"PlayerList Int {map.Players.Count}", level);
                 for(int i = 0; i < map.Players.Count; i++)
@@ -289,10 +289,10 @@ namespace TPMapEditor.Data
                     WriteTeamListElementSection(team, level);
                 }
                 WriteLineLevel("Winning Team Int -1", level);
-                WriteLineLevel($"Num Groups Int {map.Groups.Count}", level);
-                for (int i = 0; i < map.Groups.Count; i++)
+                var usableGroups = map.Groups.Where((g) => !g.Name.Equals(Group.DefaultName));
+                WriteLineLevel($"Num Groups Int {usableGroups.Count()}", level);
+                foreach(var group in usableGroups)
                 {
-                    var group = map.Groups[i];
                     WriteGroupSection(group, level);
                 }
                 WriteWorldRulesSection(level);
@@ -316,6 +316,26 @@ namespace TPMapEditor.Data
                     WriteLineLevel($"World Arms List - Element String '{arm.Type}'", level);
                 }
                 WriteMapTextSystemSection(level);
+                WriteLineLevel("READAIENTITYCOUNTS Bool False", level);
+                WriteLineLevel($"Journal Music Name String '{map.JournalMusic}'", level);
+                WriteLineLevel($"PlayEndMovie Bool {map.PlayEndMovie}", level);
+                WriteLineLevel($"IsCampaign Bool {map.IsCampaign}", level);
+                WriteLineLevel($"Is Alliance Change Allowed Bool {map.IsAllianceChangeAllowed}", level);
+                WriteLineLevel($"Use Custom World Name Bool {map.UseCustomName}", level);
+                WriteLineLevel($"Custom World Name String '{map.CustomName}'", level);
+                WriteLineLevel($"Use Custom World Description Bool {map.UseCustomDescription}", level);
+                WriteLineLevel($"Custom World Description String '{map.CustomDescription}'", level);
+                WriteLineLevel($"Islands Make Sounds Bool {map.IslandsMakeSounds}", level);
+                WriteLineLevel("DATA_NEBULA_CAMERA_EFFECT Int 0", level);
+                WriteLineLevel("DATA_NEXT_NEBULA_CAMERA_EFFECT Int 0", level);
+                WriteSection("DATA_NEBULA_CAMERA_EFFECT_FADE_IN_TIMER", (level) =>
+                {
+                    WriteLineLevel("StartTime Double 0", level);
+                }, level);
+                WriteSection("DATA_NEBULA_CAMERA_EFFECT_SPIN_TIMER", (level) =>
+                {
+                    WriteLineLevel("StartTime Double 0", level);
+                }, level);
             }, level);
         }
 
@@ -601,6 +621,7 @@ namespace TPMapEditor.Data
                     var entry = map.JournalEntries[i];
                     WritePageInfoElementSection(entry, level);
                 }
+                WriteLineLevel($"Title StringID String '{map.JournalTitle}'", level);
             }, level);
         }
 
@@ -640,7 +661,7 @@ namespace TPMapEditor.Data
             WriteSection("MapText Point Info - Element", (level) =>
             {
                 WriteLineLevel($"Name String '{point.Name}'", level);
-                WriteLineLevel($"DisplayedText String '{point.DisplayedText}'", level);
+                WriteLineLevel($"DisplayedText String '{point.RealText}'", level);
                 WriteLineLevel($"Position Vector3( {point.X:F6}, {point.Y:F6}, {point.Z:F6} )", level);
                 WriteLineLevel($"Visible Bool {point.Visible}", level);
             }, level);
