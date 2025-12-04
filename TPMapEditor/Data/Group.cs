@@ -8,6 +8,8 @@ namespace TPMapEditor.Data
 {
     public partial class Group : NamedElement
     {
+        public static string DefaultName => "Player0 Group";
+
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
         [ObservableProperty]
@@ -49,6 +51,11 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override bool IsDefaultName(string name)
+        {
+            return name.Equals(DefaultName);
         }
     }
 }
