@@ -1413,7 +1413,7 @@ namespace TPMapEditor.Data
                     var shipUnitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(shipUnitName))
                     {
-                        shipUnitName = NamedElement.GenerateName("ShipUnit", map.ShipUnits);
+                        shipUnitName = NamedElement.GenerateName("Ship", map.ShipUnits);
                         progress.Report($"Warning: Empty unit name replaced by {shipUnitName}.");
                     }
                     ruleField.Value = shipUnitName;
