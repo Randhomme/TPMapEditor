@@ -302,6 +302,20 @@ namespace TPMapEditor.Data
                 WriteBoardingActionsSection(level);
                 WriteJournalEntrySection(level);
                 WriteWorldMapSection(level);
+                WriteLineLevel($"Can Assemble Fleets Bool {map.MustAssembleFleet}", level);
+                WriteLineLevel($"World Crew List - Size Int {map.WorldCrews.Count}", level);
+                for(int i = 0; i < map.WorldCrews.Count; i++)
+                {
+                    var crew = map.WorldCrews[i];
+                    WriteLineLevel($"World Crew List - Element String '{crew.Type}'", level);
+                }
+                WriteLineLevel($"World Arms List - Size Int {map.WorldArms.Count}", level);
+                for(int i = 0; i < map.WorldCrews.Count; i++)
+                {
+                    var arm = map.WorldArms[i];
+                    WriteLineLevel($"World Arms List - Element String '{arm.Type}'", level);
+                }
+                WriteMapTextSystemSection(level);
             }, level);
         }
 
@@ -605,6 +619,30 @@ namespace TPMapEditor.Data
             WriteSection("World Map", (level) =>
             {
                 WriteLineLevel($"Backdrop Texture Name String '{map.StarmapTexture}'", level);
+            }, level);
+        }
+
+        private void WriteMapTextSystemSection(int level)
+        {
+            WriteSection("MapText System", (level) =>
+            {
+                WriteLineLevel($"MapText Point Info - Size Int {map.MapTextPoints.Count}", level);
+                for(int i = 0; i < map.MapTextPoints.Count; i++)
+                {
+                    var point = map.MapTextPoints[i];
+                    WriteMapTextPointInfoElementSection(point, level);
+                }
+            }, level);
+        }
+
+        private void WriteMapTextPointInfoElementSection(MapTextPoint point, int level)
+        {
+            WriteSection("MapText Point Info - Element", (level) =>
+            {
+                WriteLineLevel($"Name String '{point.Name}'", level);
+                WriteLineLevel($"DisplayedText String '{point.DisplayedText}'", level);
+                WriteLineLevel($"Position Vector3( {point.X:F6}, {point.Y:F6}, {point.Z:F6} )", level);
+                WriteLineLevel($"Visible Bool {point.Visible}", level);
             }, level);
         }
 
