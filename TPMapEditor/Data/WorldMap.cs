@@ -179,7 +179,6 @@ namespace TPMapEditor.Data
             RoofLightColor = Colors.DarkKhaki;
             FloorLightColor = Colors.DarkKhaki;
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
-            ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
         }
 
         private void Clear()
