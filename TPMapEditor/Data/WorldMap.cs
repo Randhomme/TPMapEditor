@@ -201,6 +201,8 @@ namespace TPMapEditor.Data
             WorldObjects.Clear();
             WorldPointSets.Clear();
             WorldPolygons.Clear();
+            WorldCrews.Clear();
+            WorldArms.Clear();
             WorldObject.ResetNextId();
         }
     }
