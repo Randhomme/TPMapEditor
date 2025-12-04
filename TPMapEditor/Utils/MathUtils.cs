@@ -85,20 +85,33 @@ namespace TPMapEditor.Utils
         /// <summary>
         /// Y forward and Z up (just to remember)
         /// </summary>
-        public static (int yaw, int pitch) Vector3ToYawPitch(Vector3 dir)
+        public static (int yaw, int pitch) Vector3ToYawPitch(Vector3 dir, bool clampPitch = true)
         {
-            dir = Vector3.Normalize(dir);
+            if (dir == Vector3.Zero)
+                throw new ArgumentException("dir must not be the zero vector", nameof(dir));
 
-            double yaw = Math.Atan2(dir.X, dir.Y);  // rotate around Z (horizontal)
-            double pitch = Math.Asin(-dir.Z);         // rotate around X (vertical)
+            Vector3 n = Vector3.Normalize(dir);
 
-            yaw *= 180f / Math.PI;
-            pitch *= 180f / Math.PI;
+            // yaw = atan2(X, Y)
+            double yawRad = Math.Atan2(n.X, n.Y);
 
-            yaw = NormalizeAngle(yaw);
+            // pitch = asin(-Z)
+            double zClamped = Clamp(-n.Z, -1.0, 1.0);
+            double pitchRad = Math.Asin(zClamped);
 
-            int yawInt = (int)Math.Round(yaw);
-            int pitchInt = (int)Math.Round(pitch);
+            double yawDeg = yawRad * 180.0 / Math.PI;
+            double pitchDeg = pitchRad * 180.0 / Math.PI;
+
+            if (clampPitch)
+            {
+                if (pitchDeg > 89.999) pitchDeg = 89.999;
+                if (pitchDeg < -89.999) pitchDeg = -89.999;
+            }
+
+            yawDeg = NormalizeAngle(yawDeg);
+
+            int yawInt = (int)Math.Round(yawDeg);
+            int pitchInt = (int)Math.Round(pitchDeg);
 
             return (yawInt, pitchInt);
         }
@@ -109,6 +122,13 @@ namespace TPMapEditor.Utils
             if (angle >= 180f) angle -= 360f;
             if (angle < -180f) angle += 360f;
             return angle;
+        }
+
+        private static double Clamp(double v, double min, double max)
+        {
+            if (v < min) return min;
+            if (v > max) return max;
+            return v;
         }
 
         /// <summary>

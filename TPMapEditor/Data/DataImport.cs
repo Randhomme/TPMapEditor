@@ -405,7 +405,7 @@ namespace TPMapEditor.Data
                 //Ambient Light
                 map.AmbientLightColor = reader.ReadAndParseColor("Ambient Light Colour");
 
-                var roofLightOrientationVector = reader.ReadAndParseVector3("Vector for roof light orientation ");
+                var roofLightOrientationVector = reader.ReadAndParseVector3("Vector for roof light orientation Vector3");
                 (int rloYaw, int rloPitch) = MathUtils.Vector3ToYawPitch(roofLightOrientationVector);
                 map.RoofLightOrientationYaw = rloYaw;
                 map.RoofLightOrientationPitch = rloPitch;
@@ -1681,11 +1681,11 @@ namespace TPMapEditor.Data
         {
             ReadSection("Objective System", () =>
             {
-                //Current Objective Point Int (skip for now)
-                reader.ReadLine();
+                //Current Objective Point Int
+                var currentObjectivePointIndex = reader.ReadAndParseInt("Current Objective Point Int ");
 
-                //Current Point Visible On StarMap Bool (skip for now)
-                reader.ReadLine();
+                //Current Point Visible On StarMap Bool
+                map.IsCurrentObjectivePointVisibleOnStarMap = reader.ReadAndParseBool("Current Point Visible On StarMap Bool ");
 
                 //Objective Point Info - Size Int
                 var objectivePointListCount = reader.ReadAndParseInt("Objective Point Info - Size Int ");
@@ -1697,6 +1697,15 @@ namespace TPMapEditor.Data
                     }
                     catch (Exception ex) { throw new TPMapEditorException($"Fail to read Objective Point Info - Element section number {i + 1} : {ex.Message}", ex); }
                 }
+
+                try
+                {
+                    if (currentObjectivePointIndex < 0)
+                        map.CurrentObjectivePoint = null;
+                    else
+                        map.CurrentObjectivePoint = map.ObjectivePoints[currentObjectivePointIndex];
+                }
+                catch { throw new TPMapEditorException("Fail to set current objective point."); }
 
                 //Objective Task Array - Size Int
                 var objectiveTaskListCount = reader.ReadAndParseInt("Objective Task Array - Size Int ");
