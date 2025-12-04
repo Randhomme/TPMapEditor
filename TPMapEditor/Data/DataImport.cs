@@ -269,7 +269,7 @@ namespace TPMapEditor.Data
                 player.TeamIndex = reader.ReadAndParseInt("TeamIndex Int ");
 
                 //Formation type
-                var formationTypeStart = (FormationType)reader.ReadAndParseInt("FormationType Int ");
+                player.FormationTypeStart = (FormationType)reader.ReadAndParseInt("FormationType Int ");
 
                 //FleetAI section
                 ReadFleetAISection(player);
