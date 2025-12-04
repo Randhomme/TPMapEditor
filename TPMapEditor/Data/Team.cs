@@ -33,5 +33,10 @@ namespace TPMapEditor.Data
         {
             OnPropertyChanged(nameof(DisplayedName));
         }
+
+        public override string ToString()
+        {
+            return RealName;
+        }
     }
 }
