@@ -110,7 +110,7 @@
         </ScrollViewer>
 
         <!-- Row 2 (map) -->
-        <Grid Grid.Row="2" Margin="5,0,5,5">
+        <Grid Grid.Row="2" Margin="5,0,5,5" RenderOptions.BitmapScalingMode="NearestNeighbor">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -130,7 +130,7 @@
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                     <!-- Preview WorldObject -->
-                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding 'SelectedWotGridItem!=null'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
+                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="{Binding SelectedWotGridItem.Pivot}" Visibility="{c:Binding 'SelectedWotGridItem!=null'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{Binding ElementName=WotSliderRotate, Path=Value}"/>
                                         </Border.RenderTransform>
@@ -202,7 +202,7 @@
                                             <Border x:Name="border"
                                                 BorderThickness="5"
                                                 BorderBrush="Transparent"
-                                                RenderTransformOrigin="0.5,0.5"
+                                                RenderTransformOrigin="{Binding Type.Pivot}"
                                                 MouseLeftButtonDown="OnWorldObjectClicked">
                                                 <Border.RenderTransform>
                                                     <RotateTransform Angle="{Binding ZRotation}"/>

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -881,55 +882,70 @@ namespace TPMapEditor.Settings
             if (Directory.Exists(WorldObjectFilesDirectory))
             {
                 WotGridItem.WotTypes.Clear();
-                foreach (var file in Directory.GetFiles(WorldObjectFilesDirectory, "*.wot"))
+                try
                 {
-                    try
+                    using var stream = File.OpenRead($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects.xml");
+                    var serializer = new XmlSerializer(typeof(WorldObjectTypeXmlCollection));
+                    var xmlData = (WorldObjectTypeXmlCollection)serializer.Deserialize(stream);
+                    foreach (var file in Directory.GetFiles(WorldObjectFilesDirectory, "*.wot"))
                     {
-                        using (var reader = new StreamReader(File.OpenRead(file)))
+                        try
                         {
-                            var wotGridItem = new WotGridItem();
-                            while (!reader.EndOfStream)
+                            using (var reader = new StreamReader(File.OpenRead(file)))
                             {
-                                var line = reader.ReadLine();
-                                if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("Type String"))
+                                var wotGridItem = new WotGridItem();
+                                while (!reader.EndOfStream)
                                 {
-                                    string typeString = line.Substring("Type String:".Length).Trim('\'');
+                                    var line = reader.ReadLine();
+                                    if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("Type String"))
+                                    {
+                                        string typeString = line.Substring("Type String:".Length).Trim('\'');
 
-                                    wotGridItem.Type = typeString;
-                                    // Attempt to load the image for the world object type
-                                    if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + "ImageData/WorldObjects/" + typeString + ".png"))
-                                    {
-                                        wotGridItem.Image = new BitmapImage(new Uri(AppDomain.CurrentDomain.BaseDirectory + "ImageData/WorldObjects/" + typeString + ".png"));
-                                    }
-                                    else
-                                    {
-                                        wotGridItem.Image = new BitmapImage(new Uri("pack://application:,,,/Images/WotPlaceholder.png"));
-                                    }
-                                }
-                                else if(line.Equals("Definition String 'CUSTOMINFODEFINITION'"))
-                                {
-                                    reader.ReadLine();
-                                    if (!reader.EndOfStream)
-                                    {
-                                        var factoryType = reader.ReadLine().Substring(19).Trim('\'');
-                                        if(Enum.TryParse<CustomInfoDefinition>(factoryType, out var customInfoDefinition))
+                                        wotGridItem.Type = typeString;
+                                        // Attempt to load the image for the world object type
+                                        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "ImageData/WorldObjects/" + typeString + ".png"))
                                         {
-                                            wotGridItem.CustomInfoDefinition = customInfoDefinition;
+                                            wotGridItem.Image = new BitmapImage(new Uri("/ImageData/WorldObjects/" + typeString + ".png", UriKind.Relative));
                                         }
                                         else
                                         {
-                                            throw new Exception("Invalid custom info definition.");
+                                            wotGridItem.Image = new BitmapImage(new Uri("/Images/WotPlaceholder.png", UriKind.Relative));
+                                        }
+                                    }
+                                    else if (line.Equals("Definition String 'CUSTOMINFODEFINITION'"))
+                                    {
+                                        reader.ReadLine();
+                                        if (!reader.EndOfStream)
+                                        {
+                                            var factoryType = reader.ReadLine().Substring(19).Trim('\'');
+                                            if (Enum.TryParse<CustomInfoDefinition>(factoryType, out var customInfoDefinition))
+                                            {
+                                                wotGridItem.CustomInfoDefinition = customInfoDefinition;
+                                            }
+                                            else
+                                            {
+                                                throw new Exception("Invalid custom info definition.");
+                                            }
                                         }
                                     }
                                 }
+                                var xmlWorldObjectType = xmlData.Items.Find(x => x.Name == wotGridItem.Type);
+                                if(xmlWorldObjectType != null)
+                                {
+                                    wotGridItem.Pivot = new(xmlWorldObjectType.PivotX, xmlWorldObjectType.PivotY);
+                                }
+                                WotGridItem.WotTypes.Add(wotGridItem);
                             }
-                            WotGridItem.WotTypes.Add(wotGridItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error reading world object file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error reading world object file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Error while reading WorldObjects.xml. Z axis rotations might not be accurate on WorldObjects.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             else
