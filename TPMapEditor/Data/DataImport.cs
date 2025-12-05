@@ -419,8 +419,8 @@ namespace TPMapEditor.Data
                 //World Initialized State (skip for now)
                 reader.ReadLine();
 
-                //World Buffer (skip for now, no idea how it's used)
-                reader.ReadLine();
+                //World Buffer
+                map.WorldBuffer = reader.ReadAndParseDouble("World Buffer Size Float ");
 
                 //Waypoint Path Info Vector - Size Int 
                 var waypointPathCount = reader.ReadAndParseInt("Waypoint Path Info Vector - Size Int ");

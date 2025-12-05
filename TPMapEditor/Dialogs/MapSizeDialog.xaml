@@ -7,7 +7,7 @@
         xmlns:TPMapEditor="clr-namespace:TPMapEditor"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="Map size" Height="250" Width="430">
+        Title="Map size" Height="320" Width="430">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -20,6 +20,9 @@
             <Label Margin="-5,5,0,0" Content="Z Size" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox x:Name="TextZSize" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <Slider Margin="0,5,0,0" x:Name="SliderZSize" Value="{Binding ZSize, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Maximum="6000" SmallChange="1" TickFrequency="2" ValueChanged="SliderZSize_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
+            <Label Margin="-5,5,0,0" Content="World buffer" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <TextBox x:Name="TextWorldBuffer" IsEnabled="False" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Slider Margin="0,5,0,0" x:Name="SliderWorldBuffer" Value="{Binding WorldBuffer, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Minimum="0" Maximum="9999" SmallChange="1" TickFrequency="1" ValueChanged="SliderWorldBuffer_ValueChanged" Height="22" IsSnapToTickEnabled="True"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button Content="Save" Margin="0,0,15,0" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>

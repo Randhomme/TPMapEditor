@@ -124,7 +124,7 @@
                             <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
                             </Grid.LayoutTransform>
-                            <Grid Name="MapGridInside" Margin="2000" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                            <Grid Name="MapGridInside" Margin="{Binding Map.WorldBuffer}" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
 
                                 <!-- Preview Canvas -->
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">

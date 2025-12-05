@@ -23,6 +23,8 @@ namespace TPMapEditor.Data
         private Color ambientLightColor, roofLightColor, floorLightColor;
         [ObservableProperty]
         private ObjectivePoint? currentObjectivePoint;
+        [ObservableProperty]
+        private double worldBuffer; // Size of the off map area
 
         public ObservableCollection<WorldObject> WorldObjects { get; }
         public ObservableCollection<Team> SelectableTeams { get; }
@@ -60,6 +62,7 @@ namespace TPMapEditor.Data
             journalTitle = StringDictionnary.JournalTitles.Keys.FirstOrDefault();
             size = 2500;
             zSize = 1500;
+            worldBuffer = 500;
             ambientLightColor = Colors.Khaki;
             roofLightColor = Colors.DarkKhaki;
             floorLightColor = Colors.DarkKhaki;
@@ -84,7 +87,6 @@ namespace TPMapEditor.Data
             WorldCrews = new ObservableCollection<WorldObjectType>();
             WorldArms = new ObservableCollection<WorldObjectType>();
             Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
-            ShipUnits.Add(new(this, "HUMAN CONTROLLED COMMAND SHIP"));
             Players.CollectionChanged += (s, e) =>
             {
                 if (e.OldItems != null)

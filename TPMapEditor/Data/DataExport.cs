@@ -239,7 +239,7 @@ namespace TPMapEditor.Data
                 WriteLineLevel($"Hemispherical floor light color Colour( {map.FloorLightColor.R / 255f:F6}, {map.FloorLightColor.G / 255f:F6}, {map.FloorLightColor.B / 255f:F6}, {map.FloorLightColor.A / 255f:F6} )", level);
                 WriteLineLevel($"Hemispherical roof light color Colour( {map.RoofLightColor.R / 255f:F6}, {map.RoofLightColor.G / 255f:F6}, {map.RoofLightColor.B / 255f:F6}, {map.RoofLightColor.A / 255f:F6} )", level);
                 WriteLineLevel("World Initialized State Bool False", level);
-                WriteLineLevel("World Buffer Size Float 200.000000", level);
+                WriteLineLevel($"World Buffer Size Float {map.WorldBuffer:F6}", level);
                 WriteLineLevel($"Waypoint Path Info Vector - Size Int {map.WaypointPaths.Count}", level);
                 for (int i = 0; i < map.WaypointPaths.Count; i++)
                 {

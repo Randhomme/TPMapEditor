@@ -171,11 +171,12 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnMapSizeEdit()
         {
-            var msd = new MapSizeDialog(this, Map.Size, Map.ZSize);
+            var msd = new MapSizeDialog(this, Map.Size, Map.ZSize, Map.WorldBuffer);
             if (msd.ShowDialog() == true)
             {
                 Map.Size = msd.Size;
                 Map.ZSize = msd.ZSize;
+                Map.WorldBuffer = msd.WorldBuffer;
             }
         }
 
