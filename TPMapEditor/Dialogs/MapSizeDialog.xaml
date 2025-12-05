@@ -7,7 +7,7 @@
         xmlns:TPMapEditor="clr-namespace:TPMapEditor"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="Map size" Height="320" Width="430">
+        Title="Map size" Height="330" Width="430">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
