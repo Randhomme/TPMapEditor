@@ -120,11 +120,11 @@
             <ScrollViewer x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <Grid x:Name="MapGridOutside" Background="Transparent">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
-                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="True">
+                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="True" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
                             <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
                             </Grid.LayoutTransform>
-                            <Grid Name="MapGridInside" Margin="{Binding Map.WorldBuffer}" Background="Gray" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                            <Grid Name="MapGridInside" Margin="{Binding Map.WorldBuffer}" Background="Gray">
 
                                 <!-- Preview Canvas -->
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
