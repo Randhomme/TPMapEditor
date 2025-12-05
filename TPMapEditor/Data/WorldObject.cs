@@ -7,7 +7,7 @@ namespace TPMapEditor.Data
         private static int nextId = 0;
 
         [ObservableProperty]
-        private WotGridItem type;
+        private WorldObjectType type;
         [ObservableProperty]
         private double x, y, z, xRotation, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)
         [ObservableProperty]
@@ -29,7 +29,7 @@ namespace TPMapEditor.Data
             } 
         }
 
-        public WorldObject(WotGridItem type, double x, double y, double zRotation)
+        public WorldObject(WorldObjectType type, double x, double y, double zRotation)
         {
             this.type = type;
             this.x = x;

@@ -31,7 +31,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Button Margin="0,0,5,0" MinWidth="85" Content="Add crew" Command="{Binding AddWorldCrewCommand}"/>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static data:WotGridItem.WotTypes}, Converter={StaticResource WotTypesToCrewTypesConverter}}" SelectedValue="{Binding SelectedCrewType}"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static data:WorldObjectType.WotTypes}, Converter={StaticResource WotTypesToCrewTypesConverter}}" SelectedValue="{Binding SelectedCrewType}"/>
                     </Grid>
                     <DataGrid Grid.Row="1" HeadersVisibility="Column" ItemsSource="{Binding Map.WorldCrews}" SelectedItem="{Binding SelectedWorldCrew}" AutoGenerateColumns="False" CanUserAddRows="False">
                         <DataGrid.Columns>
@@ -59,7 +59,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Button Margin="0,0,5,0" MinWidth="85" Content="Add crew" Command="{Binding AddWorldArmCommand}"/>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static data:WotGridItem.WotTypes}, Converter={StaticResource WotTypesToGunTypesConverter}}" SelectedValue="{Binding SelectedArmType}"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Source={x:Static data:WorldObjectType.WotTypes}, Converter={StaticResource WotTypesToGunTypesConverter}}" SelectedValue="{Binding SelectedArmType}"/>
                     </Grid>
                     <DataGrid Grid.Row="1" HeadersVisibility="Column" ItemsSource="{Binding Map.WorldArms}" SelectedItem="{Binding SelectedWorldArm}" AutoGenerateColumns="False" CanUserAddRows="False">
                         <DataGrid.Columns>

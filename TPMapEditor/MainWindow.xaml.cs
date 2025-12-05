@@ -27,7 +27,7 @@ namespace TPMapEditor
         private Point moveActionPoint;
         private AppSettings settings;
         [ObservableProperty]
-        private WotGridItem? selectedWotGridItem;
+        private WorldObjectType? selectedWorldObjectType;
         [ObservableProperty]
         private WorldObject? selectedWorldObject;
         [ObservableProperty]
@@ -523,7 +523,7 @@ namespace TPMapEditor
 
         private void WorldObjectPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Map.WorldObjects.Add(new(SelectedWotGridItem!, Canvas.GetLeft(WorldObjectPreviewControl) + WorldObjectPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldObjectPreviewControl) - WorldObjectPreviewControl.ActualHeight / 2, WotSliderRotate.Value));
+            Map.WorldObjects.Add(new(SelectedWorldObjectType!, Canvas.GetLeft(WorldObjectPreviewControl) + WorldObjectPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldObjectPreviewControl) - WorldObjectPreviewControl.ActualHeight / 2, WotSliderRotate.Value));
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 

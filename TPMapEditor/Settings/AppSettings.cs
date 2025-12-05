@@ -881,7 +881,7 @@ namespace TPMapEditor.Settings
         {
             if (Directory.Exists(WorldObjectFilesDirectory))
             {
-                WotGridItem.WotTypes.Clear();
+                WorldObjectType.WotTypes.Clear();
                 try
                 {
                     using var stream = File.OpenRead($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects.xml");
@@ -893,7 +893,7 @@ namespace TPMapEditor.Settings
                         {
                             using (var reader = new StreamReader(File.OpenRead(file)))
                             {
-                                var wotGridItem = new WotGridItem();
+                                var wotGridItem = new WorldObjectType();
                                 while (!reader.EndOfStream)
                                 {
                                     var line = reader.ReadLine();
@@ -934,7 +934,7 @@ namespace TPMapEditor.Settings
                                 {
                                     wotGridItem.Pivot = new(xmlWorldObjectType.PivotX, xmlWorldObjectType.PivotY);
                                 }
-                                WotGridItem.WotTypes.Add(wotGridItem);
+                                WorldObjectType.WotTypes.Add(wotGridItem);
                             }
                         }
                         catch (Exception ex)

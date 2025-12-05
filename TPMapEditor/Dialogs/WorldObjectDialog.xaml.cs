@@ -34,7 +34,7 @@ namespace TPMapEditor.Dialogs
         [RelayCommand]
         private void OnAddWorldObject()
         {
-            Map.WorldObjects.Add(new(WotGridItem.WotTypes.FirstOrDefault(), 0, 0, 0));
+            Map.WorldObjects.Add(new(WorldObjectType.WotTypes.FirstOrDefault(), 0, 0, 0));
         }
 
         private void RemoveWorldObject_Click(object sender, RoutedEventArgs e)

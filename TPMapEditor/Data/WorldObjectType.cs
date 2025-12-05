@@ -10,9 +10,9 @@ namespace TPMapEditor.Data
     /// <summary>
     /// A class representing a world object in the selection grid.
     /// </summary>
-    public class WotGridItem
+    public class WorldObjectType
     {
-        public static ObservableCollection<WotGridItem> WotTypes { get; } = new ObservableCollection<WotGridItem>();
+        public static ObservableCollection<WorldObjectType> WotTypes { get; } = new ObservableCollection<WorldObjectType>();
         public BitmapImage? Image { get; set; }
         public string Type { get; set; } = string.Empty;
         public Point Pivot { get; set; } = new Point(0.5, 0.5);

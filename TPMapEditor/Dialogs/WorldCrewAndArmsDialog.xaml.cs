@@ -23,18 +23,18 @@ namespace TPMapEditor.Dialogs
     public partial class WorldCrewAndArmsDialog : DialogWindow
     {
         [ObservableProperty]
-        private WotGridItem? selectedWorldCrew;
+        private WorldObjectType? selectedWorldCrew;
         [ObservableProperty]
-        private WotGridItem? selectedWorldArm;
+        private WorldObjectType? selectedWorldArm;
         [ObservableProperty]
-        private WotGridItem selectedCrewType;
+        private WorldObjectType selectedCrewType;
         [ObservableProperty]
-        private WotGridItem selectedArmType;
+        private WorldObjectType selectedArmType;
         public WorldMap Map { get; }
         public WorldCrewAndArmsDialog(Window owner, WorldMap map) : base(owner)
         {
-            selectedCrewType = WotGridItem.WotTypes.FirstOrDefault((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.CrewCustomInfoFactory);
-            selectedArmType = WotGridItem.WotTypes.FirstOrDefault((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.GunCustomInfoFactory);
+            selectedCrewType = WorldObjectType.WotTypes.FirstOrDefault((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.CrewCustomInfoFactory);
+            selectedArmType = WorldObjectType.WotTypes.FirstOrDefault((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.GunCustomInfoFactory);
             Map = map;
             InitializeComponent();
         }

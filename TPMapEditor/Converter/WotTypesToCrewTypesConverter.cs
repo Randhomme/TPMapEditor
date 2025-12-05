@@ -13,7 +13,7 @@ namespace TPMapEditor.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is IEnumerable<WotGridItem> wotGridItems)
+            if (value is IEnumerable<WorldObjectType> wotGridItems)
             {
                 return wotGridItems.Where((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.CrewCustomInfoFactory);
 

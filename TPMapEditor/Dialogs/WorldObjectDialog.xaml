@@ -43,7 +43,7 @@
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Visibility="{c:Binding 'SelectedWorldObject!=null'}">
                 <StackPanel>
                     <Label Margin="-5,0,0,0" Content="Type"/>
-                    <ComboBox SelectedItem="{Binding SelectedWorldObject.Type}" ItemsSource="{x:Static data:WotGridItem.WotTypes}"/>
+                    <ComboBox SelectedItem="{Binding SelectedWorldObject.Type}" ItemsSource="{x:Static data:WorldObjectType.WotTypes}"/>
                     <Label Margin="-5,5,0,0" Content="Position X"/>
                     <Slider Value="{Binding SelectedWorldObject.X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                     <Label Margin="-5,5,0,0" Content="Position Y"/>

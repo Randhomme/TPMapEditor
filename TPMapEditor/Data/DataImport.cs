@@ -329,7 +329,7 @@ namespace TPMapEditor.Data
 
                 //Type
                 var typeString = reader.ReadAndParseString("Type String ");
-                var type = WotGridItem.WotTypes.FirstOrDefault((t)=>t.Type == typeString);
+                var type = WorldObjectType.WotTypes.FirstOrDefault((t)=>t.Type == typeString);
 
                 if (type is null)
                     throw new TPMapEditorException($"WorldObject type '{type}' not found.");
@@ -859,7 +859,7 @@ namespace TPMapEditor.Data
         private void ReadWorldCrewListElement()
         {
             var crewName = reader.ReadAndParseString("World Crew List - Element String ");
-            var wotGridItem = WotGridItem.WotTypes.FirstOrDefault((type) => type.Type == crewName);
+            var wotGridItem = WorldObjectType.WotTypes.FirstOrDefault((type) => type.Type == crewName);
             if (wotGridItem != null)
             {
                 if(wotGridItem.CustomInfoDefinition == CustomInfoDefinition.CrewCustomInfoFactory)
@@ -876,7 +876,7 @@ namespace TPMapEditor.Data
         private void ReadWorldArmsListElement()
         {
             var gunName = reader.ReadAndParseString("World Arms List - Element String ");
-            var wotGridItem = WotGridItem.WotTypes.FirstOrDefault((type) => type.Type == gunName);
+            var wotGridItem = WorldObjectType.WotTypes.FirstOrDefault((type) => type.Type == gunName);
             if (wotGridItem != null)
             {
                 if (wotGridItem.CustomInfoDefinition == CustomInfoDefinition.GunCustomInfoFactory)

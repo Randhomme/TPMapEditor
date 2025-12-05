@@ -130,11 +130,11 @@
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                     <!-- Preview WorldObject -->
-                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="{Binding SelectedWotGridItem.Pivot}" Visibility="{c:Binding 'SelectedWotGridItem!=null'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
+                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="{Binding SelectedWorldObjectType.Pivot}" Visibility="{c:Binding 'SelectedWorldObjectType!=null'}" MouseLeftButtonDown="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown">
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{Binding ElementName=WotSliderRotate, Path=Value}"/>
                                         </Border.RenderTransform>
-                                        <Image Source="{Binding SelectedWotGridItem.Image}"/>
+                                        <Image Source="{Binding SelectedWorldObjectType.Image}"/>
                                     </Border>
 
                                     <!-- Preview Player -->
@@ -682,7 +682,7 @@
                                             <Slider x:Name="WotSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" IsSnapToTickEnabled="True" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                         </GroupBox>
                                         <GroupBox Header="World objects" Grid.Row="1">
-                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{x:Static data:WotGridItem.WotTypes}" SelectedItem="{Binding SelectedWotGridItem}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single">
+                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{x:Static data:WorldObjectType.WotTypes}" SelectedItem="{Binding SelectedWorldObjectType}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single">
                                                 <DataGrid.Columns>
                                                     <DataGridTemplateColumn Width="60">
                                                         <DataGridTemplateColumn.CellTemplate>
@@ -749,7 +749,7 @@
                                             <GroupBox Header="Selected world object" Visibility="{c:Binding 'SelectedWorldObject!=null'}">
                                                 <StackPanel Margin="5">
                                                     <GroupBox Header="Type" Padding="0,5,0,0">
-                                                        <ComboBox SelectedItem="{Binding SelectedWorldObject.Type}" ItemsSource="{x:Static data:WotGridItem.WotTypes}"/>
+                                                        <ComboBox SelectedItem="{Binding SelectedWorldObject.Type}" ItemsSource="{x:Static data:WorldObjectType.WotTypes}"/>
                                                     </GroupBox>
                                                     <GroupBox Header="Position">
                                                         <StackPanel>
