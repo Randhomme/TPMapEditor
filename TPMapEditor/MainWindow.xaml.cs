@@ -187,7 +187,11 @@ namespace TPMapEditor
             if (SelectedPlayer != null)
             {
                 if (!Map.Players.Contains(SelectedPlayer))
+                {
                     SelectedPlayer = null;
+                    if (PlayerRadioButton.IsChecked == true)
+                        SelectedElement = null;
+                }
             }
         }
 
@@ -198,7 +202,11 @@ namespace TPMapEditor
             if (SelectedWorldObject != null)
             {
                 if (!Map.WorldObjects.Contains(SelectedWorldObject))
+                {
                     SelectedWorldObject = null;
+                    if (WorldObjectRadioButton.IsChecked == true)
+                        SelectedElement = null;
+                }
             }
         }
 
@@ -269,6 +277,8 @@ namespace TPMapEditor
                 {
                     SelectedWaypointPathPoint = null;
                     SelectedWaypointPath = null;
+                    if (WaypointPathRadioButton.IsChecked == true)
+                        SelectedElement = null;
                 }
                 else if (SelectedWaypointPathPoint != null && !SelectedWaypointPath.Points.Contains(SelectedWaypointPathPoint))
                 {
@@ -287,6 +297,8 @@ namespace TPMapEditor
                 {
                     SelectedWorldPolygonPoint = null;
                     SelectedWorldPolygon = null;
+                    if (WorldPolygonRadioButton.IsChecked == true)
+                        SelectedElement = null;
                 }
                 else if (SelectedWorldPolygonPoint != null && !SelectedWorldPolygon.Points.Contains(SelectedWorldPolygonPoint))
                 {
@@ -305,10 +317,14 @@ namespace TPMapEditor
                 {
                     SelectedWorldPoint = null;
                     SelectedWorldPointSet = null;
+                    if (WorldPointSetRadioButton.IsChecked == true)
+                        SelectedElement = null;
                 }
                 else if(SelectedWorldPoint!=null && !SelectedWorldPointSet.Points.Contains(SelectedWorldPoint))
                 {
                     SelectedWorldPoint = null;
+                    if (WorldPointSetRadioButton.IsChecked == true)
+                        SelectedElement = null;
                 }
             }
         }
@@ -320,7 +336,11 @@ namespace TPMapEditor
             if (SelectedObjectivePoint != null)
             {
                 if (!Map.ObjectivePoints.Contains(SelectedObjectivePoint))
+                {
                     SelectedObjectivePoint = null;
+                    if (ObjectivePointRadioButton.IsChecked == true)
+                        SelectedElement = null;
+                }
             }
         }
 
@@ -331,7 +351,11 @@ namespace TPMapEditor
             if (SelectedMapTextPoint != null)
             {
                 if (!Map.MapTextPoints.Contains(SelectedMapTextPoint))
+                {
                     SelectedMapTextPoint = null;
+                    if (MapTextPointRadioButton.IsChecked == true)
+                        SelectedElement = null;
+                }
             }
         }
 
@@ -495,6 +519,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldObjectButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldObject();
+            SelectedElement = (UIElement)WorldObjectItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldObject);
         }
 
         private void HideWotElements()
@@ -537,8 +562,6 @@ namespace TPMapEditor
         {
             if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
             {
-                SelectedElement = (UIElement)WorldObjectItemsControl.ItemContainerGenerator.ContainerFromItem(clickedObject);
-
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
                 if (ctrlPressed)
@@ -565,7 +588,7 @@ namespace TPMapEditor
                     AddWorldObjectToSelection(clickedObject);
                 }
 
-                if(MoveCheckBox.IsChecked == false)
+                if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
             }
         }
@@ -582,6 +605,7 @@ namespace TPMapEditor
             worldObject.IsSelected = worldObject.IsLastSelected = true;
             SelectedWorldObjects.Add(worldObject);
             SelectedWorldObject = worldObject;
+            SelectedElement = (UIElement)WorldObjectItemsControl.ItemContainerGenerator.ContainerFromItem(worldObject);
         }
 
         private void SelectWorldObjectFromSelection(WorldObject worldObject)
@@ -597,6 +621,7 @@ namespace TPMapEditor
             worldObject.IsSelected = worldObject.IsLastSelected = false;
             SelectedWorldObjects.Remove(worldObject);
             SelectedWorldObject = null;
+            SelectedElement = null;
         }
 
         private void ClearWorldObjectSelection()
@@ -607,6 +632,7 @@ namespace TPMapEditor
             }
             SelectedWorldObjects.Clear();
             SelectedWorldObject = null;
+            SelectedElement = null;
         }
 
         private void MoveWorldObjectCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -673,6 +699,7 @@ namespace TPMapEditor
             }
             SelectedWorldObjects.Clear();
             SelectedWorldObject = null;
+            SelectedElement = null;
         }
 
         #endregion
@@ -706,6 +733,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeletePlayerPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMovePlayer();
+            SelectedElement = (UIElement)PlayerItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedPlayer);
         }
 
         private void HidePlayerElements()
@@ -801,6 +829,7 @@ namespace TPMapEditor
             player.IsSelected = player.IsLastSelected = true;
             SelectedPlayers.Add(player);
             SelectedPlayer = player;
+            SelectedElement = (UIElement)PlayerItemsControl.ItemContainerGenerator.ContainerFromItem(player);
         }
 
         private void SelectPlayerFromSelection(Player player)
@@ -816,6 +845,7 @@ namespace TPMapEditor
             player.IsSelected = player.IsLastSelected = false;
             SelectedPlayers.Remove(player);
             SelectedPlayer = null;
+            SelectedElement = null;
         }
 
         private void ClearPlayerSelection()
@@ -826,6 +856,7 @@ namespace TPMapEditor
             }
             SelectedPlayers.Clear();
             SelectedPlayer = null;
+            SelectedElement = null;
         }
 
         private void MovePlayerCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -892,6 +923,7 @@ namespace TPMapEditor
             }
             SelectedPlayers.Clear();
             SelectedPlayer = null;
+            SelectedElement = null;
         }
 
         #endregion
@@ -925,6 +957,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWaypointPathPoint();
+            SelectedElement = (UIElement)WaypointPathItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWaypointPath);
         }
 
         private void HidePathElements()
@@ -1081,6 +1114,7 @@ namespace TPMapEditor
             }
             waypointPath.IsLastSelected = true;
             SelectedWaypointPath = waypointPath;
+            SelectedElement = (UIElement)WaypointPathItemsControl.ItemContainerGenerator.ContainerFromItem(waypointPath);
         }
 
         private void MakeWaypointPathPointLastSelected(WaypointPathPoint waypointPathPoint)
@@ -1095,13 +1129,14 @@ namespace TPMapEditor
 
         private void RemoveWaypointPathFromSelection(WaypointPath waypointPath)
         {
-            waypointPath.IsSelected = false;
-            SelectedWaypointPaths.Remove(waypointPath);
-            if (waypointPath.IsLastSelected)
+            foreach (var point in waypointPath.Points)
             {
-                waypointPath.IsLastSelected = false;
-                SelectedWaypointPath = null;
+                RemoveWaypointPathPointFromSelection(point);
             }
+            waypointPath.IsSelected = waypointPath.IsLastSelected = false;
+            SelectedWaypointPaths.Remove(waypointPath);
+            SelectedWaypointPath = null;
+            SelectedElement = null;
         }
 
         private void RemoveWaypointPathPointFromSelection(WaypointPathPoint waypointPathPoint)
@@ -1123,6 +1158,7 @@ namespace TPMapEditor
             }
             SelectedWaypointPaths.Clear();
             SelectedWaypointPath = null;
+            SelectedElement = null;
             ClearWaypointPathPointSelection();
         }
 
@@ -1201,8 +1237,15 @@ namespace TPMapEditor
                 if(p.Parent.Points.Count == 0)
                 {
                     Map.WaypointPaths.Remove(p.Parent);
+                    if (p.Parent.IsLastSelected)
+                    {
+                        SelectedWaypointPath = null;
+                        SelectedElement = null;
+                    }
                 }
             }
+            SelectedWaypointPathPoints.Clear();
+            SelectedWaypointPathPoint = null;
         }
 
         private void MapGridOutsideWaypointPathPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -1289,6 +1332,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPolygonPoint();
+            SelectedElement = (UIElement)WorldPolygonItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPolygon);
         }
 
         private void HideWorldPolygonElements()
@@ -1445,6 +1489,7 @@ namespace TPMapEditor
             }
             worldPolygon.IsLastSelected = true;
             SelectedWorldPolygon = worldPolygon;
+            SelectedElement = (UIElement)WorldPolygonItemsControl.ItemContainerGenerator.ContainerFromItem(worldPolygon);
         }
 
         private void MakeWorldPolygonPointLastSelected(WorldPolygonPoint worldPolygonPoint)
@@ -1459,13 +1504,14 @@ namespace TPMapEditor
 
         private void RemoveWorldPolygonFromSelection(WorldPolygon worldPolygon)
         {
-            worldPolygon.IsSelected = false;
-            SelectedWorldPolygons.Remove(worldPolygon);
-            if (worldPolygon.IsLastSelected)
+            foreach(var p in worldPolygon.Points)
             {
-                worldPolygon.IsLastSelected = false;
-                SelectedWorldPolygon = null;
+                RemoveWorldPolygonPointFromSelection(p);
             }
+            worldPolygon.IsSelected = worldPolygon.IsLastSelected = false;
+            SelectedWorldPolygons.Remove(worldPolygon);
+            SelectedWorldPolygon = null;
+            SelectedElement = null;
         }
 
         private void RemoveWorldPolygonPointFromSelection(WorldPolygonPoint worldPolygonPoint)
@@ -1487,6 +1533,7 @@ namespace TPMapEditor
             }
             SelectedWorldPolygons.Clear();
             SelectedWorldPolygon = null;
+            SelectedElement = null;
             ClearWorldPolygonPointSelection();
         }
 
@@ -1565,8 +1612,15 @@ namespace TPMapEditor
                 if (p.Parent.Points.Count == 0)
                 {
                     Map.WorldPolygons.Remove(p.Parent);
+                    if (p.Parent.IsLastSelected)
+                    {
+                        SelectedWorldPolygon = null;
+                        SelectedElement = null;
+                    }
                 }
             }
+            SelectedWorldPolygonPoints.Clear();
+            SelectedWorldPolygonPoint = null;
         }
 
         private void MapGridOutsideWorldPolygonPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -1652,6 +1706,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPoint();
+            SelectedElement = (UIElement)WorldPointSetItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPointSet);
         }
 
         private void HideWorldPointSetElements()
@@ -1670,27 +1725,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldPointButton_Click;
-        }
-
-        private void OnWorldPointSetClicked(object sender, MouseButtonEventArgs e)
-        {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldPointSet clickedObject)
-            {
-                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-                if (ctrlPressed)
-                {
-                    CtrlSelectWorldPointSet(clickedObject);
-                }
-                else
-                {
-                    ClearWorldPointSetSelection();
-                    SelectAndMakeWorldPointSetLastSelected(clickedObject);
-                }
-
-                if (MoveCheckBox.IsChecked == false)
-                    e.Handled = true;
-            }
         }
 
         private void OnWorldPointClicked(object sender, MouseButtonEventArgs e)
@@ -1719,18 +1753,6 @@ namespace TPMapEditor
             ClearWorldPointSetSelection();
         }
 
-        private void CtrlSelectWorldPointSet(WorldPointSet worldPointSet)
-        {
-            if (worldPointSet.IsLastSelected)
-            {
-                RemoveWorldPointSetFromSelection(worldPointSet);
-            }
-            else
-            {
-                SelectAndMakeWorldPointSetLastSelected(worldPointSet);
-            }
-        }
-
         private void CtrlSelectWorldPoint(WorldPoint worldPoint)
         {
             if (worldPoint.IsLastSelected)
@@ -1743,30 +1765,10 @@ namespace TPMapEditor
             }
         }
 
-        private void SelectWorldPointSet(WorldPointSet worldPointSet)
-        {
-            SelectWorldPointSetWithoutPoints(worldPointSet);
-            foreach (var p in worldPointSet.Points)
-            {
-                SelectWorldPoint(p);
-                if (p.IsLastSelected)
-                {
-                    SelectedWorldPoint = null;
-                    p.IsLastSelected = false;
-                }
-            }
-        }
-
         private void SelectWorldPointSetWithoutPoints(WorldPointSet worldPointSet)
         {
             if (!worldPointSet.IsSelected)
                 AddWorldPointSetToSelection(worldPointSet);
-        }
-
-        private void SelectAndMakeWorldPointSetLastSelected(WorldPointSet worldPointSet)
-        {
-            SelectWorldPointSet(worldPointSet);
-            MakeWorldPointSetLastSelected(worldPointSet);
         }
 
         private void SelectAndMakeWorldPointSetLastSelectedWithoutPoints(WorldPointSet worldPointSet)
@@ -1818,17 +1820,7 @@ namespace TPMapEditor
             }
             worldPoint.IsLastSelected = true;
             SelectedWorldPoint = worldPoint;
-        }
-
-        private void RemoveWorldPointSetFromSelection(WorldPointSet worldPointSet)
-        {
-            worldPointSet.IsSelected = false;
-            SelectedWorldPointSets.Remove(worldPointSet);
-            if (worldPointSet.IsLastSelected)
-            {
-                worldPointSet.IsLastSelected = false;
-                SelectedWorldPointSet = null;
-            }
+            SelectedElement = (UIElement)WorldPointSetItemsControl.ItemContainerGenerator.ContainerFromItem(worldPoint);
         }
 
         private void RemoveWorldPointFromSelection(WorldPoint worldPoint)
@@ -1850,6 +1842,7 @@ namespace TPMapEditor
             }
             SelectedWorldPointSets.Clear();
             SelectedWorldPointSet = null;
+            SelectedElement = null;
             ClearWorldPointSelection();
         }
 
@@ -1928,8 +1921,15 @@ namespace TPMapEditor
                 if (p.Parent.Points.Count == 0)
                 {
                     Map.WorldPointSets.Remove(p.Parent);
+                    if (p.Parent.IsLastSelected)
+                    {
+                        SelectedWorldPointSet = null;
+                    }
                 }
             }
+            SelectedWorldPoints.Clear();
+            SelectedWorldPoint = null;
+            SelectedElement = null;
         }
 
         private void MapGridOutsideWorldPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2015,6 +2015,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteObjectivePointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveObjectivePoint();
+            SelectedElement = (UIElement)ObjectivePointItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedObjectivePoint);
         }
 
         private void HideObjectivePointElements()
@@ -2099,6 +2100,7 @@ namespace TPMapEditor
             }
             objectivePoint.IsLastSelected = true;
             SelectedObjectivePoint = objectivePoint;
+            SelectedElement = (UIElement)ObjectivePointItemsControl.ItemContainerGenerator.ContainerFromItem(objectivePoint);
         }
 
         private void RemoveObjectivePointFromSelection(ObjectivePoint objectivePoint)
@@ -2120,6 +2122,7 @@ namespace TPMapEditor
             }
             SelectedObjectivePoints.Clear();
             SelectedObjectivePoint = null;
+            SelectedElement = null;
         }
 
         private void MoveObjectivePointCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -2186,6 +2189,7 @@ namespace TPMapEditor
             }
             SelectedObjectivePoints.Clear();
             SelectedObjectivePoint = null;
+            SelectedElement = null;
         }
 
         private void MapGridOutsideObjectivePointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2239,6 +2243,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteMapTextPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveMapTextPoint();
+            SelectedElement = (UIElement)MapTextPointItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedMapTextPoint);
         }
 
         private void HideMapTextPointElements()
@@ -2323,6 +2328,7 @@ namespace TPMapEditor
             }
             mapTextPoint.IsLastSelected = true;
             SelectedMapTextPoint = mapTextPoint;
+            SelectedElement = (UIElement)MapTextPointItemsControl.ItemContainerGenerator.ContainerFromItem(mapTextPoint);
         }
 
         private void RemoveMapTextPointFromSelection(MapTextPoint mapTextPoint)
@@ -2344,6 +2350,7 @@ namespace TPMapEditor
             }
             SelectedMapTextPoints.Clear();
             SelectedMapTextPoint = null;
+            SelectedElement = null;
         }
 
         private void MoveMapTextPointCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -2410,6 +2417,7 @@ namespace TPMapEditor
             }
             SelectedMapTextPoints.Clear();
             SelectedMapTextPoint = null;
+            SelectedElement = null;
         }
 
         private void MapGridOutsideMapTextPointPreview_MouseMove(object sender, MouseEventArgs e)
