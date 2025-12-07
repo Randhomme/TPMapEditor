@@ -10,7 +10,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ImageData\WorldObjects\Animal_SpaceDragon.png" />
+    <None Remove="ImageData\WorldObjects\Animal_SpaceMantaray.png" />
+    <None Remove="ImageData\WorldObjects\Animal_SpaceWhale.png" />
+    <None Remove="ImageData\WorldObjects\Base_MerchantVille.png" />
+    <None Remove="ImageData\WorldObjects\Bullet_StarMine_Med.png" />
+    <None Remove="ImageData\WorldObjects\Ship_Navy_Tender_Wrecked.png" />
+    <None Remove="ImageData\WorldObjects\Ship_Pirate_Carrack_Wrecked.png" />
+    <None Remove="ImageData\WorldObjects\Ship_Pirate_FastFrigate_Wrecked.png" />
+    <None Remove="ImageData\WorldObjects\Ship_Pirate_JollyRoger_Wrecked.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Cresentia_Distant.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Moon_Parliament.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Moon_Pirate.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Moon_Rocky.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Planet_Jupitron.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Planet_Osmosis.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Planet_Parliament.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Planet_Ringo.png" />
+    <None Remove="ImageData\WorldObjects\Terrain_Planet_Shattered.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="ImageData\WorldObjects.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Animal_SpaceDragon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Animal_SpaceMantaray.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Animal_SpaceWhale.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Asteroid_Darkmatter1.png">
@@ -76,6 +106,9 @@
     <Content Include="ImageData\WorldObjects\Base_IroncladMines.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ImageData\WorldObjects\Base_MerchantVille.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ImageData\WorldObjects\Base_MiningCamp.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -122,6 +155,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Base_Whocaresville.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Bullet_StarMine_Med.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Island01.png">
@@ -415,6 +451,9 @@
     <Content Include="ImageData\WorldObjects\Ship_Navy_Tender_Feather.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ImageData\WorldObjects\Ship_Navy_Tender_Wrecked.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ImageData\WorldObjects\Ship_Navy_Torpedo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -439,13 +478,22 @@
     <Content Include="ImageData\WorldObjects\Ship_Pirate_Carrack.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ImageData\WorldObjects\Ship_Pirate_Carrack_Wrecked.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ImageData\WorldObjects\Ship_Pirate_FastAttack.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Ship_Pirate_FastFrigate_Wrecked.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Ship_Pirate_Galleon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Ship_Pirate_Gunboat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Ship_Pirate_JollyRoger_Wrecked.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Ship_Pirate_Lifeboat.png">
@@ -521,6 +569,33 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Ship_WeaponBarge.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Cresentia_Distant.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Moon_Parliament.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Moon_Pirate.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Moon_Rocky.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Planet_Jupitron.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Planet_Osmosis.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Planet_Parliament.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Planet_Ringo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ImageData\WorldObjects\Terrain_Planet_Shattered.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
