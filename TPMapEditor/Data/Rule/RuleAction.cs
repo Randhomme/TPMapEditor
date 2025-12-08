@@ -180,7 +180,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldShipUnitName(string? realLabel, string? label, ShipUnit unit, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            var field = new RuleFieldShipUnitName(realLabel, label, unit, null, isOptional, optionalLabel, isShown);
+            var field = new RuleFieldShipUnitName(realLabel, label, unit, isOptional, optionalLabel, isShown);
             RuleFields.Add(field);
         }
 

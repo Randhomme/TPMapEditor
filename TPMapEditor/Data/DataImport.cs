@@ -1416,7 +1416,8 @@ namespace TPMapEditor.Data
                         shipUnitName = NamedElement.GenerateName("Ship", map.ShipUnits);
                         progress.Report($"Warning: Empty unit name replaced by {shipUnitName}.");
                     }
-                    ruleField.Value = shipUnitName;
+                    if(ruleField.Value!=null)
+                        ruleField.Value.Name = shipUnitName;
                     break;
 
                 case RuleFieldSinglePlayerMission ruleField:
