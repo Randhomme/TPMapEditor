@@ -9,16 +9,7 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private bool isGroupUnitUnit = false; //true if Unit, false if Group
         [ObservableProperty]
-        private Group selectedGroup; //for unit selection
-
-        public IEnumerable<ShipUnit> AvailableShipUnits => SelectedGroup.ShipUnits;
-
-        partial void OnSelectedGroupChanged(Group value)
-        {
-            OnPropertyChanged(nameof(AvailableShipUnits));
-            if (IsGroupUnitUnit)
-                Value = AvailableShipUnits.FirstOrDefault();
-        }
+        private Group selectedGroup;
 
         public RuleFieldGroupUnit(string? realLabel, string? label, Group selectedGroup, NamedElement value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
         {

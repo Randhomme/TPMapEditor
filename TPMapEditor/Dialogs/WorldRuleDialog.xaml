@@ -135,7 +135,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <ComboBox ItemsSource="{Binding Map.Groups, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding SelectedGroup, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableShipUnits}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Map.ShipUnits, RelativeSource={RelativeSource AncestorType=Window}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
             </Grid>
         </DataTemplate>
         

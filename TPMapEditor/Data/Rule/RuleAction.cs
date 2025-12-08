@@ -211,7 +211,7 @@ namespace TPMapEditor.Data.Rule
         private void AddRuleFieldUnit(string? realLabel, string? label, Group? selectedGroup = null, ShipUnit? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             selectedGroup ??= map.Groups.FirstOrDefault();
-            value ??= selectedGroup.ShipUnits.FirstOrDefault();
+            value ??= map.ShipUnits.FirstOrDefault();
             RuleFields.Add(new RuleFieldUnit(realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 

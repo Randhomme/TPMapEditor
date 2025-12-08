@@ -86,7 +86,8 @@ namespace TPMapEditor.Data
             JournalEntries = new ObservableCollection<JournalEntry>();
             WorldCrews = new ObservableCollection<WorldObjectType>();
             WorldArms = new ObservableCollection<WorldObjectType>();
-            Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
+            Groups.Add(new(this, Group.DefaultName) { CanBeRemoved = false });
+            ShipUnits.Add(new(this, ShipUnit.DefaultName));
             Players.CollectionChanged += (s, e) =>
             {
                 if (e.OldItems != null)
@@ -182,7 +183,8 @@ namespace TPMapEditor.Data
             AmbientLightColor = Colors.Khaki;
             RoofLightColor = Colors.DarkKhaki;
             FloorLightColor = Colors.DarkKhaki;
-            Groups.Add(new(this, "Player0 Group") { CanBeRemoved = false });
+            Groups.Add(new(this, Group.DefaultName) { CanBeRemoved = false });
+            ShipUnits.Add(new(this, ShipUnit.DefaultName));
         }
 
         private void Clear()

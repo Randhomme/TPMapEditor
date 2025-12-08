@@ -1256,7 +1256,7 @@ namespace TPMapEditor.Data
                             var unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
                             if(unitGroup != null)
                             {
-                                var unit = unitGroup.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                                 if (unit != null)
                                 {
                                     ruleField.SelectedGroup = unitGroup;
@@ -1500,7 +1500,7 @@ namespace TPMapEditor.Data
                         var unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
                         if (unitGroup != null)
                         {
-                            var unit = unitGroup.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                            var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                             if (unit != null)
                             {
                                 ruleField.SelectedGroup = unitGroup;

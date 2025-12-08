@@ -15,21 +15,10 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool canBeRemoved; //used for Player0 Group
 
-        private readonly ShipUnit defaultUnit;
-
         public ObservableCollection<WorldObject> WorldObjects { get; }
-
-        public IEnumerable<ShipUnit> ShipUnits
-        {
-            get
-            {
-                return map.ShipUnits.Where(su => su.WorldObject?.Group == this).Prepend(defaultUnit);
-            }
-        }
 
         public Group(WorldMap map, string name) : base(map, name)
         {
-            defaultUnit = new ShipUnit(map, ShipUnit.DefaultName);
             Color = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
             CanBeRemoved = true;
