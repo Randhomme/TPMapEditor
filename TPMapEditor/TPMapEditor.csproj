@@ -10,27 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ImageData\WorldObjects\Animal_SpaceDragon.png" />
-    <None Remove="ImageData\WorldObjects\Animal_SpaceMantaray.png" />
-    <None Remove="ImageData\WorldObjects\Animal_SpaceWhale.png" />
-    <None Remove="ImageData\WorldObjects\Base_MerchantVille.png" />
-    <None Remove="ImageData\WorldObjects\Bullet_StarMine_Med.png" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Tender_Wrecked.png" />
-    <None Remove="ImageData\WorldObjects\Ship_Pirate_Carrack_Wrecked.png" />
-    <None Remove="ImageData\WorldObjects\Ship_Pirate_FastFrigate_Wrecked.png" />
-    <None Remove="ImageData\WorldObjects\Ship_Pirate_JollyRoger_Wrecked.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Cresentia_Distant.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Moon_Parliament.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Moon_Pirate.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Moon_Rocky.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Planet_Jupitron.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Planet_Osmosis.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Planet_Parliament.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Planet_Ringo.png" />
-    <None Remove="ImageData\WorldObjects\Terrain_Planet_Shattered.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="ImageData\WorldObjects.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
