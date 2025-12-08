@@ -558,6 +558,12 @@ namespace TPMapEditor
             WotDataGrid.SelectedItem = null;
         }
 
+        private void WorldObjectPreviewControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            WotSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+            e.Handled = true;
+        }
+
         private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
         {
             if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
@@ -815,6 +821,12 @@ namespace TPMapEditor
         private void PlayerPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddPlayerCheckBox.IsChecked = false;
+        }
+
+        private void PlayerPreviewControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            PlayerSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+            e.Handled = true;
         }
 
         private void MapGridOutsidePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1972,6 +1984,12 @@ namespace TPMapEditor
         private void WorldPointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddWorldPointSetPointRadioButton.IsChecked = false;
+        }
+
+        private void WorldPointPreviewControl_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            WorldPointSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+            e.Handled = true;
         }
 
         private void EditWorldPointSetColor_Click(object sender, RoutedEventArgs e)
