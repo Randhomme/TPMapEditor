@@ -24,14 +24,14 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            if(WorldObject?.Group != null)
-            {
-                foreach (var item in WorldObject.Group.ShipUnits)
-                {
-                    if (item.Name == name && item != this)
-                        return true;
-                }
-            }
+            //if(WorldObject?.Group != null)
+            //{
+            //    foreach (var item in WorldObject.Group.ShipUnits)
+            //    {
+            //        if (item.Name == name && item != this)
+            //            return true;
+            //    }
+            //}
             return false;
         }
 
