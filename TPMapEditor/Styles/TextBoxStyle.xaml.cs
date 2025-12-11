@@ -22,7 +22,7 @@ namespace TPMapEditor.Styles
                 DependencyProperty prop = TextBox.TextProperty;
 
                 BindingExpression binding = BindingOperations.GetBindingExpression(tBox, prop);
-                if (binding != null) { binding.UpdateSource(); }
+                binding?.UpdateSource();
                 e.Handled = true;
             }
         }
