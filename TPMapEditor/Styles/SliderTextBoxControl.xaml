@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:converter="clr-namespace:TPMapEditor.Converter"
                     xmlns:controls="clr-namespace:TPMapEditor.Controls"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="TPMapEditor.Styles.SliderTextBoxControl">
     <Style x:Key="RepeatButtonTransparent" TargetType="{x:Type RepeatButton}">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -259,6 +260,7 @@
     </ControlTemplate>
 
     <Style TargetType="{x:Type Slider}">
+        <EventSetter Event="PreviewMouseDown" Handler="Slider_PreviewMouseDown"/>
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
