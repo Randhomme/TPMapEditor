@@ -601,6 +601,8 @@
   <ItemGroup>
     <Resource Include="Images\AlphaBg.png" />
     <Resource Include="Images\Arrow.png" />
+    <Resource Include="Images\ArrowDown.png" />
+    <Resource Include="Images\ArrowUp.png" />
     <Resource Include="Images\bg.png" />
     <Resource Include="Images\Default.png" />
     <Resource Include="Images\Move.png" />

@@ -347,6 +347,10 @@
                     <RowDefinition/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Map.WorldRules}" SelectedItem="{Binding SelectedWorldRule}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Header="Name" Width="*"/>
@@ -359,7 +363,15 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Margin="0,5,0,0" Grid.Row="3" MinWidth="85" Content="Add rule" Command="{Binding AddWorldRuleCommand}"/>
+                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add rule" Command="{Binding AddWorldRuleCommand}"/>
+                <StackPanel Grid.Column="1">
+                    <Button Margin="5,0,0,0" Width="25" Command="{Binding MoveUpWorldRuleCommand}">
+                        <Image Source="/Images/ArrowUp.png"/>
+                    </Button>
+                    <Button Margin="5,5,0,0" Width="25" Command="{Binding MoveDownWorldRuleCommand}">
+                        <Image Source="/Images/ArrowDown.png"/>
+                    </Button>
+                </StackPanel>
             </Grid>
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <TabControl Grid.Column="2" Visibility="{c:Binding 'SelectedWorldRule!=null'}">
@@ -382,6 +394,10 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
                             <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding SelectedWorldRule.Conditions}" SelectedItem="{Binding SelectedRuleCondition}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Binding="{Binding Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
@@ -395,6 +411,14 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add condition" Command="{Binding AddRuleConditionCommand}"/>
+                            <StackPanel Grid.Column="1">
+                                <Button Margin="5,0,0,0" Width="25" Command="{Binding MoveUpRuleConditionCommand}">
+                                    <Image Source="/Images/ArrowUp.png"/>
+                                </Button>
+                                <Button Margin="5,5,0,0" Width="25" Command="{Binding MoveDownRuleConditionCommand}">
+                                    <Image Source="/Images/ArrowDown.png"/>
+                                </Button>
+                            </StackPanel>
                         </Grid>
                         <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
                         <ScrollViewer Grid.Column="2" Visibility="{c:Binding 'SelectedRuleCondition!=null'}" VerticalScrollBarVisibility="Auto">
@@ -424,6 +448,10 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
                             <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding SelectedWorldRule.Actions}" SelectedItem="{Binding SelectedRuleAction}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn  Binding="{Binding Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
@@ -437,6 +465,14 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Button Grid.Row="1" Margin="0,5,0,0" MinWidth="85" Content="Add action" Command="{Binding AddRuleActionCommand}"/>
+                            <StackPanel Grid.Column="1">
+                                <Button Margin="5,0,0,0" Width="25" Command="{Binding MoveUpRuleActionCommand}">
+                                    <Image Source="/Images/ArrowUp.png"/>
+                                </Button>
+                                <Button Margin="5,5,0,0" Width="25" Command="{Binding MoveDownRuleActionCommand}">
+                                    <Image Source="/Images/ArrowDown.png"/>
+                                </Button>
+                            </StackPanel>
                         </Grid>
                         <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
                         <ScrollViewer Grid.Column="2" Visibility="{c:Binding 'SelectedRuleAction!=null'}" VerticalScrollBarVisibility="Auto">
