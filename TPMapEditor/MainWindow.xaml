@@ -12,7 +12,7 @@
         xmlns:Styles="clr-namespace:TPMapEditor.Styles" x:Class="TPMapEditor.MainWindow"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Title="TPMapEditor" Height="500" Width="1000" Closing="Window_Closing" Closed="Window_Closed" WindowState="Maximized" UseLayoutRounding="True" ContentRendered="Window_ContentRendered">
+        Title="TPMapEditor" Height="500" Width="1000" Closing="Window_Closing" Closed="Window_Closed" WindowState="Maximized" UseLayoutRounding="True" ContentRendered="Window_ContentRendered" PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <converter:TeamNameConverter x:Key="teamNameConverter"/>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>

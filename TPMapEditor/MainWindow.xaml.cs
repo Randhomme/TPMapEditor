@@ -27,6 +27,7 @@ namespace TPMapEditor
     public partial class MainWindow : Window
     {
         private Point moveActionPoint;
+        private DateTime lastWheelTime = DateTime.MinValue;
         private AppSettings settings;
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
@@ -492,6 +493,26 @@ namespace TPMapEditor
             //    SelectedElement.Opacity -= 0.1;
         }
 
+        //Disable default Alt behaviour to allow rotation
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) && ((WorldObjectPreviewControl.Visibility == Visibility.Visible) || (PlayerPreviewControl.Visibility == Visibility.Visible) || (WorldPointSetPreviewControl.Visibility == Visibility.Visible) || (WorldPointPreviewControl.Visibility == Visibility.Visible)))
+                e.Handled = true;
+        }
+
+        private int GetAcceleratedRotation()
+        {
+            DateTime now = DateTime.Now;
+            double ms = (now - lastWheelTime).TotalMilliseconds;
+            lastWheelTime = now;
+
+            if (ms < 25) return 10;
+            if (ms < 50) return 5;
+            if (ms < 100) return 2;
+
+            return 1;
+        }
+
         #endregion
 
         #region WorldObject
@@ -564,8 +585,12 @@ namespace TPMapEditor
 
         private void WorldObjectPreviewControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            WotSliderRotate.Value += e.Delta > 0 ? 1 : -1;
-            e.Handled = true;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                var step = GetAcceleratedRotation();
+                WotSliderRotate.Value += e.Delta > 0 ? step : -step;
+                e.Handled = true;
+            }
         }
 
         private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
@@ -829,8 +854,11 @@ namespace TPMapEditor
 
         private void PlayerPreviewControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            PlayerSliderRotate.Value += e.Delta > 0 ? 1 : -1;
-            e.Handled = true;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                PlayerSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+                e.Handled = true;
+            }
         }
 
         private void MapGridOutsidePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1992,8 +2020,11 @@ namespace TPMapEditor
 
         private void WorldPointPreviewControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            WorldPointSliderRotate.Value += e.Delta > 0 ? 1 : -1;
-            e.Handled = true;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                WorldPointSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+                e.Handled = true;
+            }
         }
 
         private void EditWorldPointSetColor_Click(object sender, RoutedEventArgs e)
