@@ -10,9 +10,18 @@ namespace TPMapEditor.Dialogs
     public partial class MapSizeDialog : DialogWindow
     {
         [ObservableProperty]
-        private int size, zSize;
+        [NotifyPropertyChangedFor(nameof(MaxWorldBuffer))]
+        [NotifyPropertyChangedFor(nameof(SizeText))]
+        private int size;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ZSizeText))]
+        private int zSize;
         [ObservableProperty]
         private double worldBuffer;
+
+        public double MaxWorldBuffer { get => Size / 2; }
+        public string SizeText { get => $"{Size} x {Size}"; }
+        public string ZSizeText { get => $"{ZSize} x {ZSize}"; }
 
         public MapSizeDialog(Window owner, int size, int zSize, double worldBuffer) : base(owner)
         {
@@ -23,22 +32,10 @@ namespace TPMapEditor.Dialogs
             DataContext = this;
         }
 
-        private void SliderSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        partial void OnSizeChanged(int value)
         {
-            var sliderValue = SliderSize.Value;
-            TextSize.Text = $"{sliderValue} x {sliderValue}";
-        }
-
-        private void SliderZSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            var sliderZValue = SliderZSize.Value;
-            TextZSize.Text = $"{sliderZValue} x {sliderZValue}";
-        }
-
-        private void SliderWorldBuffer_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            var sliderWorldBufferValue = SliderWorldBuffer.Value;
-            TextWorldBuffer.Text = $"{sliderWorldBufferValue}";
+            if (WorldBuffer > MaxWorldBuffer)
+                WorldBuffer = MaxWorldBuffer;
         }
     }
 }
