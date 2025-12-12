@@ -18,6 +18,7 @@
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
         <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
         <converter:FillColorConverter x:Key="FillColorConverter"/>
+        <converter:SelectableWorldObjectTypeConverter x:Key="SelectableWorldObjectTypeConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -690,7 +691,7 @@
                                             <Slider x:Name="WotSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" IsSnapToTickEnabled="True" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                         </GroupBox>
                                         <GroupBox Header="World objects" Grid.Row="1">
-                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{x:Static data:WorldObjectType.WotTypes}" SelectedItem="{Binding SelectedWorldObjectType}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single">
+                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{Binding Source={x:Static data:WorldObjectType.WotTypes}, Converter={StaticResource SelectableWorldObjectTypeConverter}}" SelectedItem="{Binding SelectedWorldObjectType}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single">
                                                 <DataGrid.Columns>
                                                     <DataGridTemplateColumn Width="60">
                                                         <DataGridTemplateColumn.CellTemplate>
