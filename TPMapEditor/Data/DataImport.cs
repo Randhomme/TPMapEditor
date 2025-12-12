@@ -602,7 +602,7 @@ namespace TPMapEditor.Data
                         var line = reader.ReadLine().Trim();
                         if (line.StartsWith("Journal Music Name"))
                         {
-                            map.JournalMusic = line.GetSafeSubstring("Journal Music Name String ").Trim('\'');
+                            map.JournalMusic = DataImportExtensions.ParseString("Journal Music Name String ", line);
                         }
                         else if (line.StartsWith("PlayEndMovie"))
                         {
