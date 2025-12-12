@@ -19,7 +19,7 @@ namespace TPMapEditor.Utils
 
         public static bool ParseBool(string line, string prefix)
         {
-            bool.TryParse(line.GetSafeSubstring(prefix), out var value);
+            bool.TryParse(line.GetSubstring(prefix), out var value);
             return value;
         }
 
@@ -31,8 +31,9 @@ namespace TPMapEditor.Utils
 
         public static int ParseInt(string prefix, string line)
         {
-            int.TryParse(line.GetSafeSubstring(prefix), out var value);
+            int.TryParse(line.GetSubstring(prefix), out var value);
             return value;
+                
         }
 
         public static double ReadAndParseDouble(this StreamReader reader, string prefix)
@@ -43,7 +44,7 @@ namespace TPMapEditor.Utils
 
         public static double ParseDouble(string prefix, string line)
         {
-            double.TryParse(line.GetSafeSubstring(prefix), out var value);
+            double.TryParse(line.GetSubstring(prefix), out var value);
             return value;
         }
 
@@ -55,13 +56,13 @@ namespace TPMapEditor.Utils
 
         public static string ParseString(string prefix, string line)
         {
-            return line.GetSafeSubstring(prefix).Trim('\'');
+            return line.GetSubstring(prefix).Trim('\'');
         }
 
         public static Color ReadAndParseColor(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            line = line.GetSubstring(prefix).Trim('(', ')');
             var values = line.Split(',');
             float.TryParse(values[0], out var r);
             float.TryParse(values[1], out var g);
@@ -73,7 +74,7 @@ namespace TPMapEditor.Utils
         public static Vector3 ReadAndParseVector3(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            line = line.GetSubstring(prefix).Trim('(', ')');
             var values = line.Split(',');
             float.TryParse(values[0], out var x);
             float.TryParse(values[1], out var y);
@@ -84,7 +85,7 @@ namespace TPMapEditor.Utils
         public static Vector2 ReadAndParseVector2(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            line = line.GetSubstring(prefix).Trim('(', ')');
             var values = line.Split(',');
             float.TryParse(values[0], out var x);
             float.TryParse(values[1], out var y);
@@ -94,7 +95,7 @@ namespace TPMapEditor.Utils
         public static (Vector3 x, Vector3 y, Vector3 z) ReadAndParseMatrix33(this StreamReader reader, string prefix)
         {
             var line = reader.ReadLine().Trim();
-            line = line.GetSafeSubstring(prefix).Trim('(', ')');
+            line = line.GetSubstring(prefix).Trim('(', ')');
             var values = line.Split(',');
             float.TryParse(values[0], out var x1);
             float.TryParse(values[1], out var x2);
@@ -109,11 +110,12 @@ namespace TPMapEditor.Utils
 
         }
 
-        public static string GetSafeSubstring(this string str, string val)
+        private static string GetSubstring(this string str, string val)
         {
             if (str.StartsWith(val))
                 return str.Substring(val.Length);
-            return string.Empty;
+            else
+                throw new ArgumentException($"'{val.Trim()}' not found in '{str}'");
         }
     }
 }
