@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -71,8 +73,9 @@ namespace TPMapEditor
 
         public MainWindow()
         {
-			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
             settings = new AppSettings();
             LoadSettings();
             Map = new WorldMap();
@@ -87,6 +90,7 @@ namespace TPMapEditor
             SelectedObjectivePoints = new List<ObjectivePoint>();
             SelectedMapTextPoints = new List<MapTextPoint>();
             InitializeComponent();
+            Title = $"{Title} v{version.Major}.{version.Minor}.{version.Build}";
             WorldObjectRadioButton.IsChecked = true;
             HidePlayerElements();
             HidePathElements();
