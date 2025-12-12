@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <Label Content="Game strings path" Margin="-5,0,0,0"/>
+            <Label Content="TPGame path" Margin="-5,0,0,0"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
