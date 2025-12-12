@@ -2497,5 +2497,14 @@ namespace TPMapEditor
         }
 
         #endregion
+
+        private void MapScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset + e.Delta);
+                e.Handled = true;
+            }
+        }
     }
 }
