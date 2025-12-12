@@ -12,7 +12,7 @@ namespace TPMapEditor.Data
     public partial class WorldRule : NamedElement
     {
         [ObservableProperty]
-        private bool runOnce;
+        private bool runOnce = true;
         public ObservableCollection<RuleCondition> Conditions { get; } = new ObservableCollection<RuleCondition>();
         public ObservableCollection<RuleAction> Actions { get; } = new ObservableCollection<RuleAction>();
 
