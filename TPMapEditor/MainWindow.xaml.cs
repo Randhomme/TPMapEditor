@@ -856,7 +856,8 @@ namespace TPMapEditor
         {
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
-                PlayerSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+                var step = GetAcceleratedRotation();
+                PlayerSliderRotate.Value += e.Delta > 0 ? step : -step;
                 e.Handled = true;
             }
         }
@@ -2022,7 +2023,8 @@ namespace TPMapEditor
         {
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
-                WorldPointSliderRotate.Value += e.Delta > 0 ? 1 : -1;
+                var step = GetAcceleratedRotation();
+                WorldPointSliderRotate.Value += e.Delta > 0 ? step : -step;
                 e.Handled = true;
             }
         }
