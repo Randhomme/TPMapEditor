@@ -164,7 +164,10 @@ namespace TPMapEditor
         private void OnResetMap()
         {
             if (MessageBox.Show("The current map will be cleared. Continue ?", "Map reset", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                ClearSelections();
                 Map.Reset();
+            }
         }
 
         [RelayCommand]
@@ -496,8 +499,23 @@ namespace TPMapEditor
         //Disable default Alt behaviour to allow rotation
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) && ((WorldObjectPreviewControl.Visibility == Visibility.Visible) || (PlayerPreviewControl.Visibility == Visibility.Visible) || (WorldPointSetPreviewControl.Visibility == Visibility.Visible) || (WorldPointPreviewControl.Visibility == Visibility.Visible)))
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) &&
+                (RotateCheckBox.IsChecked == true ||
+                (WorldObjectPreviewControl.Visibility == Visibility.Visible) ||
+                (PlayerPreviewControl.Visibility == Visibility.Visible) ||
+                (WorldPointSetPreviewControl.Visibility == Visibility.Visible) ||
+                (WorldPointPreviewControl.Visibility == Visibility.Visible)))
                 e.Handled = true;
+        }
+
+        //Scroll horizontally by pressing Shift and using MouseWheel
+        private void MapScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset + e.Delta);
+                e.Handled = true;
+            }
         }
 
         private int GetAcceleratedRotation()
@@ -511,6 +529,14 @@ namespace TPMapEditor
             if (ms < 100) return 2;
 
             return 1;
+        }
+
+        //Returns a rotation between -180 and 180
+        private double GetRotation(double rotation)
+        {
+            if (rotation > 180) rotation -= 360;
+            else if (rotation < -180) rotation += 360;
+            return rotation;
         }
 
         #endregion
@@ -539,11 +565,15 @@ namespace TPMapEditor
             //    SelectedWorldObject.IsLastSelected = true;
             MoveCheckBox.Checked += MoveWorldObjectCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldObjectCheckBox_Unchecked;
+            if (MoveCheckBox.IsChecked == true)
+                EnableMoveWorldObject();
+            RotateCheckBox.Checked += RotateWorldObjectCheckBox_Checked;
+            RotateCheckBox.Unchecked += RotateWorldObjectCheckBox_Unchecked;
+            if (RotateCheckBox.IsChecked == true)
+                EnableRotateWorldObject();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
-            if (MoveCheckBox.IsChecked == true)
-                EnableMoveWorldObject();
             SelectedElement = (UIElement)WorldObjectItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldObject);
         }
 
@@ -560,6 +590,10 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveWorldObjectCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveWorldObject();
+            RotateCheckBox.Checked -= RotateWorldObjectCheckBox_Checked;
+            RotateCheckBox.Unchecked -= RotateWorldObjectCheckBox_Unchecked;
+            if (RotateCheckBox.IsChecked == true)
+                DisableRotateWorldObject();
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldObjectButton_Click;
@@ -588,7 +622,8 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                WotSliderRotate.Value += e.Delta > 0 ? step : -step;
+                var newValue = WotSliderRotate.Value + (e.Delta > 0 ? step : -step);
+                WotSliderRotate.Value = GetRotation(newValue);
                 e.Handled = true;
             }
         }
@@ -726,6 +761,41 @@ namespace TPMapEditor
             moveActionPoint = pos;
         }
 
+        private void RotateWorldObjectCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableRotateWorldObject();
+        }
+
+        private void RotateWorldObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DisableRotateWorldObject();
+        }
+
+        private void EnableRotateWorldObject()
+        {
+            MapGridOutside.MouseWheel += MapGridOutsideWorldObject_MouseWheel;
+        }
+
+        private void DisableRotateWorldObject()
+        {
+            MapGridOutside.MouseWheel -= MapGridOutsideWorldObject_MouseWheel;
+        }
+
+        private void MapGridOutsideWorldObject_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                var step = GetAcceleratedRotation();
+                for (int i = 0; i < SelectedWorldObjects.Count; i++)
+                {
+                    var worldObject = SelectedWorldObjects[i];
+                    var newRotation = worldObject.ZRotation + (e.Delta > 0 ? step : -step);
+                    worldObject.ZRotation = GetRotation(newRotation);
+                    e.Handled = true;
+                }
+            }
+        }
+
         private void DeleteWorldObjectButton_Click(object sender, RoutedEventArgs e)
         {
             foreach(var worldObject in SelectedWorldObjects)
@@ -761,13 +831,17 @@ namespace TPMapEditor
             //    SelectedWots[i].IsSelected = true;
             //if (SelectedPlayer != null)
             //    SelectedPlayer.IsLastSelected = true;
-            MoveCheckBox.Checked += MovePlayerCheckBox_Checked;
-            MoveCheckBox.Unchecked += MovePlayerCheckBox_Unchecked;
             MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMovePlayer();
+            RotateCheckBox.Checked += RotatePlayerCheckBox_Checked;
+            RotateCheckBox.Unchecked += RotatePlayerCheckBox_Unchecked;
+            if (RotateCheckBox.IsChecked == true)
+                EnableRotatePlayer();
+            MoveCheckBox.Checked += MovePlayerCheckBox_Checked;
+            MoveCheckBox.Unchecked += MovePlayerCheckBox_Unchecked;
             SelectedElement = (UIElement)PlayerItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedPlayer);
         }
 
@@ -784,6 +858,10 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MovePlayerCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMovePlayer();
+            RotateCheckBox.Checked -= RotatePlayerCheckBox_Checked;
+            RotateCheckBox.Unchecked -= RotatePlayerCheckBox_Unchecked;
+            if (RotateCheckBox.IsChecked == true)
+                DisableRotatePlayer();
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsidePlayer_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click -= DeletePlayerPointButton_Click;
@@ -857,7 +935,8 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                PlayerSliderRotate.Value += e.Delta > 0 ? step : -step;
+                var newValue = PlayerSliderRotate.Value + (e.Delta > 0 ? step : -step);
+                PlayerSliderRotate.Value = GetRotation(newValue);
                 e.Handled = true;
             }
         }
@@ -958,6 +1037,41 @@ namespace TPMapEditor
                 selectedWot.Y -= y;
             }
             moveActionPoint = pos;
+        }
+
+        private void RotatePlayerCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableRotatePlayer();
+        }
+
+        private void RotatePlayerCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DisableRotatePlayer();
+        }
+
+        private void EnableRotatePlayer()
+        {
+            MapGridOutside.MouseWheel += MapGridOutsidePlayer_MouseWheel;
+        }
+
+        private void DisableRotatePlayer()
+        {
+            MapGridOutside.MouseWheel -= MapGridOutsidePlayer_MouseWheel;
+        }
+
+        private void MapGridOutsidePlayer_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                var step = GetAcceleratedRotation();
+                for (int i = 0; i < SelectedPlayers.Count; i++)
+                {
+                    var player = SelectedPlayers[i];
+                    var newRotation = player.Rotation + (e.Delta > 0 ? step : -step);
+                    player.Rotation = GetRotation(newRotation);
+                    e.Handled = true;
+                }
+            }
         }
 
         private void DeletePlayerPointButton_Click(object sender, RoutedEventArgs e)
@@ -1746,11 +1860,15 @@ namespace TPMapEditor
             //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveWorldPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldPointCheckBox_Unchecked;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
             DeleteButton.Click += DeleteWorldPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPoint();
+            RotateCheckBox.Checked += RotateWorldPointCheckBox_Checked;
+            RotateCheckBox.Unchecked += RotateWorldPointCheckBox_Unchecked;
+            if (RotateCheckBox.IsChecked == true)
+                EnableRotateWorldPoint();
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
+            MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
             SelectedElement = (UIElement)WorldPointSetItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPointSet);
         }
 
@@ -1761,12 +1879,14 @@ namespace TPMapEditor
             WorldPointSetItemsControl.Opacity = 0.5;
             WorldPointSetItemsControl.IsEnabled = false;
             NewWorldPointSetRadioButton.IsChecked = AddWorldPointSetPointRadioButton.IsChecked = false;
-            //for (int i = 0; i < SelectedWots.Count; i++)
-            //    SelectedWots[i].BorderBrush = Brushes.Transparent;
             MoveCheckBox.Checked -= MoveWorldPointCheckBox_Checked;
             MoveCheckBox.Unchecked -= MoveWorldPointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveWorldPoint();
+            RotateCheckBox.Checked -= RotateWorldPointCheckBox_Checked;
+            RotateCheckBox.Unchecked -= RotateWorldPointCheckBox_Unchecked;
+            if (RotateCheckBox.IsChecked == true)
+                DisableRotateWorldPoint();
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldPointButton_Click;
@@ -2024,8 +2144,44 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                WorldPointSliderRotate.Value += e.Delta > 0 ? step : -step;
+                var newValue = WorldPointSliderRotate.Value + (e.Delta > 0 ? step : -step);
+                WorldPointSliderRotate.Value = GetRotation(newValue);
                 e.Handled = true;
+            }
+        }
+
+        private void RotateWorldPointCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableRotateWorldPoint();
+        }
+
+        private void RotateWorldPointCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DisableRotateWorldPoint();
+        }
+
+        private void EnableRotateWorldPoint()
+        {
+            MapGridOutside.MouseWheel += MapGridOutsideWorldPoint_MouseWheel;
+        }
+
+        private void DisableRotateWorldPoint()
+        {
+            MapGridOutside.MouseWheel -= MapGridOutsideWorldPoint_MouseWheel;
+        }
+
+        private void MapGridOutsideWorldPoint_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                var step = GetAcceleratedRotation();
+                for (int i = 0; i < SelectedWorldPoints.Count; i++)
+                {
+                    var worldPoint = SelectedWorldPoints[i];
+                    var newRotation = worldPoint.ZRotation + (e.Delta > 0 ? step : -step);
+                    worldPoint.ZRotation = GetRotation(newRotation);
+                    e.Handled = true;
+                }
             }
         }
 
@@ -2497,14 +2653,5 @@ namespace TPMapEditor
         }
 
         #endregion
-
-        private void MapScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-            {
-                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset + e.Delta);
-                e.Handled = true;
-            }
-        }
     }
 }

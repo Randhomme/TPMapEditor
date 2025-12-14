@@ -608,6 +608,7 @@
     <Resource Include="Images\Move.png" />
     <Resource Include="Images\ObjectivePoint.png" />
     <Resource Include="Images\Player.png" />
+    <Resource Include="Images\Rotate.png" />
     <Resource Include="Images\WotPlaceholder.png" />
   </ItemGroup>
 
