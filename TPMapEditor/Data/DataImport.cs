@@ -1465,7 +1465,7 @@ namespace TPMapEditor.Data
                             }
                             else
                             {
-                                progress.Report($"Warning: Team '{teamName}' not found.");
+                                progress.Report($"Warning: In game team '{teamName}' not found.");
                             }
                         }
                         ruleField.Value = team;
