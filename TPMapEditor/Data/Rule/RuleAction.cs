@@ -317,7 +317,7 @@ namespace TPMapEditor.Data.Rule
                         }
                     });
                     AddRuleFieldShipUnitName("Ship Name String", "Ship name", ShipUnit);
-                    AddRuleFieldPath("Ship Path String", "Ship path", isOptional: true, optionalLabel: "Has path");
+                    AddRuleFieldPath("Ship Path String", "Ship path", isOptional: true, isShown: false, optionalLabel: "Has path");
                     AddRuleFieldFollowMode("Follow Mode String", "Follow mode");
                     AddRuleFieldAiStance("AI Stance String", "AI stance");
                     AddRuleFieldPlayer("Player/Owner String", "Player/Owner", isOptional: true, optionalLabel: "Has player/owner");
@@ -513,7 +513,7 @@ namespace TPMapEditor.Data.Rule
                     AddRuleFieldBool("Crossfade transition String", "Crossfade transition");
                     AddRuleFieldDouble("Fade Out Time ( secs ) Float", "Fade out time (secs)", min: 0);
                     AddRuleFieldDouble("Fade In Time ( secs ) Float", "Fade in time (secs)", min: 0);
-                    AddRuleFieldDouble("New Volume ( 0 to 1 ) Float", "New volume", min: 0, max: 1);
+                    AddRuleFieldDouble("New Volume ( 0 to 1 ) Float", "New volume", 1, min: 0, max: 1);
                     break;
                 case Enums.RuleAction.PlaySpecialEffect:
                     RuleFields.Clear();
