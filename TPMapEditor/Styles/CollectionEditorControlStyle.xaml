@@ -1,0 +1,67 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                    xmlns:converter="clr-namespace:TPMapEditor.Converter"
+                    xmlns:dialogs="clr-namespace:TPMapEditor.Dialogs">
+    <ControlTemplate x:Key="CollectionEditorControlFullGrid" TargetType="{x:Type dialogs:CollectionEditorControl}">
+        
+    </ControlTemplate>
+    <ControlTemplate x:Key="CollectionEditorControlNotFullGrid" TargetType="{x:Type dialogs:CollectionEditorControl}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="200"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="2*" MinWidth="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Items}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Objects" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Display}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn MinWidth="70">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Remove" Command="{Binding RelativeSource={RelativeSource AncestorType=dialogs:CollectionEditorControl}, Path=RemoveCommand}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add" Command="{TemplateBinding AddCommand}"/>
+                <StackPanel Grid.Column="1">
+                    <Button Margin="5,0,0,0" Width="25" Command="{TemplateBinding MoveUpCommand}">
+                        <Image Source="/Images/ArrowUp.png"/>
+                    </Button>
+                    <Button Margin="5,5,0,0" Width="25" Command="{TemplateBinding MoveDownCommand}">
+                        <Image Source="/Images/ArrowDown.png"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+            <ScrollViewer Grid.Column="2" Visibility="{c:Binding RelativeSource={RelativeSource TemplatedParent}, Path='SelectedItem!=null'}" VerticalScrollBarVisibility="Auto">
+                <ContentControl Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem.Item}"/>
+            </ScrollViewer>
+        </Grid>
+    </ControlTemplate>
+    <Style TargetType="{x:Type dialogs:CollectionEditorControl}">
+        <Setter Property="Template" Value="{StaticResource CollectionEditorControlNotFullGrid}"/>
+        <Style.Triggers>
+            <Trigger Property="GridOnlyMode" Value="True">
+                <Setter Property="Template" Value="{StaticResource CollectionEditorControlFullGrid}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
