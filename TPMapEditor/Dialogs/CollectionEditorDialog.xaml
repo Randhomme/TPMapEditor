@@ -1,0 +1,21 @@
+﻿<local:DialogWindow x:Class="TPMapEditor.Dialogs.CollectionEditorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+        xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        mc:Ignorable="d"
+        Title="CollectionEditorDialog" Height="450" Width="800">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <local:CollectionEditorControl Items="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" AddCommand="{Binding AddObjectCommand}" RemoveCommand="{Binding RemoveObjectCommand}" MoveUpCommand="{Binding MoveUpObjectCommand}" MoveDownCommand="{Binding MoveDownObjectCommand}"/>
+        <!--<local:CollectionEditorControl/>-->
+        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
+            <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
+        </StackPanel>
+    </Grid>
+</local:DialogWindow>
