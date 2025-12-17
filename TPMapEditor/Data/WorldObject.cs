@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Linq;
 
 namespace TPMapEditor.Data
 {
@@ -15,7 +16,9 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Player? player;
         [ObservableProperty]
-        private bool isSelected, isLastSelected;
+        private bool isSelected, isLastSelected, hasGroup, hasPlayer;
+
+        public WorldMap Map { get; }
 
         private int id;
         public int Id //only used for data import/export
@@ -29,8 +32,16 @@ namespace TPMapEditor.Data
             } 
         }
 
-        public WorldObject(WorldObjectType type, double x, double y, double zRotation)
+        public WorldObject(WorldMap map)
         {
+            Map = map;
+            type = WorldObjectType.WotTypes.FirstOrDefault();
+            this.id = nextId++;
+        }
+
+        public WorldObject(WorldMap map, WorldObjectType type, double x, double y, double zRotation)
+        {
+            Map = map;
             this.type = type;
             this.x = x;
             this.y = y;
@@ -48,6 +59,38 @@ namespace TPMapEditor.Data
             if (newValue != null)
             {
                 newValue.WorldObjects.Add(this);
+                if (!HasGroup)
+                    HasGroup = true;
+            }
+            else if (!HasGroup)
+            {
+                HasGroup = false;
+            }
+        }
+
+        partial void OnHasGroupChanged(bool value)
+        {
+            if (value)
+            {
+                Group = Map.Groups.FirstOrDefault();
+            }
+            else
+            {
+                Group = null;
+            }
+        }
+
+        partial void OnPlayerChanged(Player? value)
+        {
+            if(value == null)
+            {
+                if (HasPlayer)
+                    HasPlayer = false;
+            }
+            else
+            {
+                if (!HasPlayer)
+                    HasPlayer = true;
             }
         }
 
