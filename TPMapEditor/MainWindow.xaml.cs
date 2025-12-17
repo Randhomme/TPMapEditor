@@ -191,7 +191,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnPlayersEdit()
         {
-            new PlayerDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<Player>(Map.Players, () => new(Map)) }.ShowDialog();
             if (SelectedPlayer != null)
             {
                 if (!Map.Players.Contains(SelectedPlayer))
@@ -206,7 +206,8 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldObjectsEdit()
         {
-            new WorldObjectDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<WorldObject>(Map.WorldObjects, () => new(Map)) }.ShowDialog();
+            //new WorldObjectDialog(this, Map).ShowDialog();
             if (SelectedWorldObject != null)
             {
                 if (!Map.WorldObjects.Contains(SelectedWorldObject))
@@ -227,13 +228,14 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnGroupsEdit()
         {
-            new GroupDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<Group>(Map.Groups, () => new(Map, NamedElement.GenerateName("Group", Map.Groups))) }.ShowDialog();
         }
 
         [RelayCommand]
         private void OnFlagsEdit()
         {
-            new FlagDialog(this, Map).ShowDialog();
+            //new FlagDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<Flag>(Map.Flags, () => new(Map), true) }.ShowDialog();
         }
 
         [RelayCommand]
@@ -340,7 +342,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnObjectivePointsEdit()
         {
-            new ObjectivePointDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<ObjectivePoint>(Map.ObjectivePoints, () => new(Map)) }.ShowDialog();
             if (SelectedObjectivePoint != null)
             {
                 if (!Map.ObjectivePoints.Contains(SelectedObjectivePoint))
@@ -608,7 +610,7 @@ namespace TPMapEditor
 
         private void WorldObjectPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Map.WorldObjects.Add(new(SelectedWorldObjectType!, Canvas.GetLeft(WorldObjectPreviewControl) + WorldObjectPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldObjectPreviewControl) - WorldObjectPreviewControl.ActualHeight / 2, WotSliderRotate.Value));
+            Map.WorldObjects.Add(new(Map, SelectedWorldObjectType!, Canvas.GetLeft(WorldObjectPreviewControl) + WorldObjectPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldObjectPreviewControl) - WorldObjectPreviewControl.ActualHeight / 2, WotSliderRotate.Value));
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -899,16 +901,6 @@ namespace TPMapEditor
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
-            }
-        }
-
-        private void EditPlayerColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedPlayer != null)
-            {
-                var cp = new ColorPicker(this, SelectedPlayer.Color);
-                if (cp.ShowDialog() == true)
-                    SelectedPlayer.Color = cp.NewColor;
             }
         }
 

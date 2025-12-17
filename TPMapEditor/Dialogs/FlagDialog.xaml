@@ -17,11 +17,11 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Margin="0,0,5,0">
-            <Button MinWidth="85" Content="Add flag" Command="{Binding AddFlagCommand}"/>
+            <Button MinWidth="85" Content="Add" Command="{Binding AddFlagCommand}"/>
         </StackPanel>
         <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedFlag}" ItemsSource="{Binding Map.Flags}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Name" Width="*" SortMemberPath="Name">
+                <DataGridTemplateColumn Header="Name" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
