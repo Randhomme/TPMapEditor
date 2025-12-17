@@ -11,8 +11,6 @@ namespace TPMapEditor.Data
     public abstract class NamedElement : ObservableObject
     {
         private string name;
-        protected WorldMap map;
-
         public string Name
         {
             get => name;
@@ -23,15 +21,17 @@ namespace TPMapEditor.Data
                 if(IsDefaultName(value))
                     throw new ArgumentException($"{value} is already a default value for {GetType().Name}.");
                 if (IsNameTaken(value))
-                    throw new ArgumentException($"A {this.GetType().Name} with the same name in the same group already exists.");
+                    throw new ArgumentException($"A {GetType().Name} with the same name in the same group already exists.");
                 name = value;
                 OnPropertyChanged();
             }
         }
 
+        public WorldMap Map { get; }
+
         public NamedElement(WorldMap map, string name)
         {
-            this.map = map;
+            Map = map;
             this.name = name;
         }
 

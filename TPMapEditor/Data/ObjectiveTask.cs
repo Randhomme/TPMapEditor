@@ -21,7 +21,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.ObjectiveTasks)
+            foreach (var item in Map.ObjectiveTasks)
             {
                 if (item.Name == name && item != this)
                     return true;

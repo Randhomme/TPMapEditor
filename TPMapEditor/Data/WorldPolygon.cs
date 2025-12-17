@@ -24,7 +24,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.WorldPolygons)
+            foreach (var item in Map.WorldPolygons)
             {
                 if (item.Name == name && item != this)
                     return true;

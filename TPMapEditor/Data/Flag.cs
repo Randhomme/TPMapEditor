@@ -7,6 +7,8 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool value;
 
+        public Flag(WorldMap map) : base(map, GenerateName("Flag", map.Flags)) { }
+
         public Flag(WorldMap map, string name, bool value = false) : base(map, name)
         {
             Value = value;
@@ -14,7 +16,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.Flags)
+            foreach (var item in Map.Flags)
             {
                 if (item.Name == name && item != this)
                     return true;

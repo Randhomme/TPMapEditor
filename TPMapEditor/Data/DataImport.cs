@@ -334,7 +334,7 @@ namespace TPMapEditor.Data
                 if (type is null)
                     throw new TPMapEditorException($"WorldObject type '{type}' not found.");
 
-                var worldObject = new WorldObject(type, 0, 0, 0) { Id = id };
+                var worldObject = new WorldObject(map, type, 0, 0, 0) { Id = id };
 
                 ReadWorldObjectStateSection(worldObject);
                 

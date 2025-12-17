@@ -22,7 +22,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.Timers)
+            foreach (var item in Map.Timers)
             {
                 if (item.Name == name && item!=this)
                     return true;

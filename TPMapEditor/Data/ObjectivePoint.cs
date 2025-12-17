@@ -16,6 +16,8 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected;
 
+        public ObjectivePoint(WorldMap map) : base(map, GenerateName("ObjectivePoint", map.ObjectivePoints)) { }
+
         public ObjectivePoint(WorldMap map, string name, double x, double y, double z = 0) : base(map, name)
         {
             this.x = x;
@@ -25,7 +27,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.ObjectivePoints)
+            foreach (var item in Map.ObjectivePoints)
             {
                 if (item.Name == name && item != this)
                     return true;

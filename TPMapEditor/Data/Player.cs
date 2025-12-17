@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using TPMapEditor.Enums;
@@ -19,9 +20,14 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Team? selectableTeam, inGameTeam;
         [ObservableProperty]
-        private bool isPlayable, isSelected, isLastSelected;
+        private bool isPlayable, isSelected, isLastSelected, hasSelectableTeam, hasInGameTeam;
 
         public int TeamIndex { get; set; } //only used for data import
+
+        public Player(WorldMap map) : base(map, GenerateName("Player", map.Players))
+        {
+            Color = Colors.Red;
+        }
 
         public Player(WorldMap map, string name, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
         {
@@ -39,21 +45,73 @@ namespace TPMapEditor.Data
         {
             if (value)
             {
-                map.PlayerPlayableCount++;
-                if (map.PlayerPlayableCount > 8)
+                Map.PlayerPlayableCount++;
+                if (Map.PlayerPlayableCount > 8)
                 {
                     IsPlayable = false; // Ensure it doesn't stay true if count exceeds 8
                 }
             }
             else
             {
-                map.PlayerPlayableCount--;
+                Map.PlayerPlayableCount--;
+            }
+        }
+
+        partial void OnSelectableTeamChanged(Team? value)
+        {
+            if(value == null)
+            {
+                if (!HasSelectableTeam)
+                    HasSelectableTeam = false;
+            }
+            else
+            {
+                if (HasSelectableTeam)
+                    HasSelectableTeam = true;
+            }
+        }
+
+        partial void OnHasSelectableTeamChanged(bool value)
+        {
+            if (value)
+            {
+                SelectableTeam = Map.SelectableTeams.FirstOrDefault();
+            }
+            else
+            {
+                SelectableTeam = null;
+            }
+        }
+
+        partial void OnInGameTeamChanged(Team? value)
+        {
+            if (value == null)
+            {
+                if (!HasInGameTeam)
+                    HasInGameTeam = false;
+            }
+            else
+            {
+                if (HasInGameTeam)
+                    HasInGameTeam = true;
+            }
+        }
+
+        partial void OnHasInGameTeamChanged(bool value)
+        {
+            if (value)
+            {
+                InGameTeam = Map.InGameTeams.FirstOrDefault();
+            }
+            else
+            {
+                InGameTeam = null;
             }
         }
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.Players)
+            foreach (var item in Map.Players)
             {
                 if (item.Name == name && item != this)
                     return true;

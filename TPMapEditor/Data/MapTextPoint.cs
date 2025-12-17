@@ -36,7 +36,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.MapTextPoints)
+            foreach (var item in Map.MapTextPoints)
             {
                 if (item.Name == name && item != this)
                     return true;

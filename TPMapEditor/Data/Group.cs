@@ -17,6 +17,13 @@ namespace TPMapEditor.Data
 
         public ObservableCollection<WorldObject> WorldObjects { get; }
 
+        public Group(WorldMap map) : base(map, GenerateName("Group", map.Groups))
+        {
+            Color = Colors.Black;
+            WorldObjects = new ObservableCollection<WorldObject>();
+            CanBeRemoved = true;
+        }
+
         public Group(WorldMap map, string name) : base(map, name)
         {
             Color = Colors.Black;
@@ -36,7 +43,7 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in map.Groups)
+            foreach (var item in Map.Groups)
             {
                 if (item.Name == name && item != this)
                     return true;
