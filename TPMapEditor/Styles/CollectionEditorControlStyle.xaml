@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
                     xmlns:converter="clr-namespace:TPMapEditor.Converter"
-                    xmlns:dialogs="clr-namespace:TPMapEditor.Dialogs">
-    <ControlTemplate x:Key="CollectionEditorControlFullGrid" TargetType="{x:Type dialogs:CollectionEditorControl}">
+                    xmlns:controls="clr-namespace:TPMapEditor.Controls">
+    <ControlTemplate x:Key="CollectionEditorControlFullGrid" TargetType="{x:Type controls:CollectionEditorControl}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -21,7 +21,7 @@
                     <DataGridTemplateColumn MinWidth="70">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Remove" Command="{Binding RelativeSource={RelativeSource AncestorType=dialogs:CollectionEditorControl}, Path=RemoveCommand}"/>
+                                <Button Content="Remove" Command="{Binding RelativeSource={RelativeSource AncestorType=controls:CollectionEditorControl}, Path=RemoveCommand}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -29,7 +29,7 @@
             </DataGrid>
         </Grid>
     </ControlTemplate>
-    <ControlTemplate x:Key="CollectionEditorControlNotFullGrid" TargetType="{x:Type dialogs:CollectionEditorControl}">
+    <ControlTemplate x:Key="CollectionEditorControlNotFullGrid" TargetType="{x:Type controls:CollectionEditorControl}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="200"/>
@@ -45,7 +45,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedWrapper, Mode=TwoWay}">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Objects" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -57,29 +57,29 @@
                         <DataGridTemplateColumn MinWidth="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Remove" Command="{Binding RelativeSource={RelativeSource AncestorType=dialogs:CollectionEditorControl}, Path=DataContext.RemoveCommand}"/>
+                                    <Button Content="Remove" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add" Command="{Binding AddCommand}"/>
+                <Button x:Name="PART_AddButton" Margin="0,5,0,0" Grid.Row="1" MinWidth="85" Content="Add"/>
                 <StackPanel Grid.Column="1">
-                    <Button Margin="5,0,0,0" Width="25" Command="{Binding MoveUpCommand}">
+                    <Button x:Name="PART_MoveUpButton" Margin="5,0,0,0" Width="25">
                         <Image Source="/Images/ArrowUp.png"/>
                     </Button>
-                    <Button Margin="5,5,0,0" Width="25" Command="{Binding MoveDownCommand}">
+                    <Button x:Name="PART_MoveDownButton" Margin="5,5,0,0" Width="25">
                         <Image Source="/Images/ArrowDown.png"/>
                     </Button>
                 </StackPanel>
             </Grid>
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
-            <ScrollViewer Grid.Column="2" Visibility="{c:Binding 'SelectedItem!=null'}" VerticalScrollBarVisibility="Auto">
-                <ContentControl Content="{Binding SelectedItem.Item}"/>
+            <ScrollViewer Grid.Column="2" Visibility="{c:Binding 'SelectedItem!=null', RelativeSource={RelativeSource TemplatedParent}}" VerticalScrollBarVisibility="Auto">
+                <ContentControl Content="{TemplateBinding SelectedItem}"/>
             </ScrollViewer>
         </Grid>
     </ControlTemplate>
-    <Style TargetType="{x:Type dialogs:CollectionEditorControl}">
+    <Style TargetType="{x:Type controls:CollectionEditorControl}">
         <Setter Property="Template" Value="{StaticResource CollectionEditorControlNotFullGrid}"/>
         <Style.Triggers>
             <Trigger Property="GridOnlyMode" Value="True">
