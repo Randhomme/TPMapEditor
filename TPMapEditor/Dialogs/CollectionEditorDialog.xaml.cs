@@ -24,10 +24,15 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class CollectionEditorDialog : DialogWindow
     {
-        public CollectionEditorDialog(Window owner) : base(owner)
+        public IEnumerable<object> ItemsSource { get; }
+        public Func<object> Factory { get; }
+        public bool GridOnlyMode { get; }
+        public CollectionEditorDialog(Window owner, IEnumerable<object> itemSource, Func<object> factory, bool gridOnlyMode = false) : base(owner)
         {
+            this.ItemsSource = itemSource;
+            this.Factory = factory;
+            this.GridOnlyMode = gridOnlyMode;
             InitializeComponent();
-
         }
     }
 }
