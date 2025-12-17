@@ -12,8 +12,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <local:CollectionEditorControl Items="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" AddCommand="{Binding AddObjectCommand}" RemoveCommand="{Binding RemoveObjectCommand}" MoveUpCommand="{Binding MoveUpObjectCommand}" MoveDownCommand="{Binding MoveDownObjectCommand}"/>
-        <!--<local:CollectionEditorControl/>-->
+        <local:CollectionEditorControl GridOnlyMode="{Binding GridOnlyMode}"/>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>
