@@ -30,14 +30,19 @@ namespace TPMapEditor.Controls
         private IList? editableList => ItemsSource as IList;
         private INotifyCollectionChanged? observableItemsSource;
 
+        private DataGrid? dataGrid;
         private Button? addButton;
         private Button? moveUpButton;
         private Button? moveDownButton;
-        private ICommand addCommand;
+        private RelayCommand addCommand;
+        private RelayCommand moveUpCommand;
+        private RelayCommand moveDownCommand;
 
         public CollectionEditorControl()
         {
-            addCommand = new RelayCommand(AddNewItem);
+            addCommand = new RelayCommand(AddNewItem) { };
+            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItem(-1));
+            moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItem(1));
         }
 
         internal ObservableCollection<ItemWrapper>? Wrappers
@@ -89,7 +94,12 @@ namespace TPMapEditor.Controls
         public object? SelectedItem
         {
             get => GetValue(SelectedItemProperty);
-            private set => SetValue(SelectedItemPropertyKey, value);
+            private set
+            {
+                SetValue(SelectedItemPropertyKey, value);
+                moveUpCommand.NotifyCanExecuteChanged();
+                moveDownCommand.NotifyCanExecuteChanged();
+            }
         }
 
         private static readonly DependencyPropertyKey SelectedItemPropertyKey =
@@ -116,6 +126,19 @@ namespace TPMapEditor.Controls
 
         public static readonly DependencyProperty FactoryProperty =
             DependencyProperty.Register(nameof(Factory), typeof(Func<object>), typeof(CollectionEditorControl));
+
+
+
+        public ObservableCollection<DataGridColumn> Columns
+        {
+            get { return (ObservableCollection<DataGridColumn>)GetValue(ColumnsProperty); }
+            set { SetValue(ColumnsProperty, value); }
+        }
+
+        public static readonly DependencyProperty ColumnsProperty =
+            DependencyProperty.Register(nameof(Columns), typeof(ObservableCollection<DataGridColumn>), typeof(CollectionEditorControl));
+
+
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -161,8 +184,12 @@ namespace TPMapEditor.Controls
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
+                    var index = e.NewStartingIndex;
                     foreach (var item in e.NewItems)
-                        Wrappers?.Add(new ItemWrapper(item));
+                    {
+                        Wrappers?.Insert(index, new ItemWrapper(item));
+                        index++;
+                    }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
@@ -213,17 +240,57 @@ namespace TPMapEditor.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
+            dataGrid = GetTemplateChild("PART_DataGrid") as DataGrid;
             addButton = GetTemplateChild("PART_AddButton") as Button;
+            moveUpButton = GetTemplateChild("PART_MoveUpButton") as Button;
+            moveDownButton = GetTemplateChild("PART_MoveDownButton") as Button;
             if (addButton != null)
                 addButton.Command = addCommand;
-        }
+            if (moveUpButton != null)
+                moveUpButton.Command = moveUpCommand;
+            if (moveDownButton != null)
+                moveDownButton.Command = moveDownCommand;
+        }        
 
         private void AddNewItem()
         {
             editableList?.Add(Factory());
         }
 
+        private void MoveSelectedItems(int direction)
+        {
+            if (SelectedWrapper == null || editableList == null)
+                return;
+
+            var item = SelectedWrapper.Item;
+            var index = editableList.IndexOf(item);
+            if (index < 0)
+                return;
+
+            var newIndex = index + direction;
+
+            editableList.RemoveAt(index);
+            editableList.Insert(newIndex, item);
+
+            SelectedWrapper = Wrappers
+                .FirstOrDefault(w => ReferenceEquals(w.Item, item));
+
+            moveUpCommand.NotifyCanExecuteChanged();
+            moveDownCommand.NotifyCanExecuteChanged();
+        }
+
+        private bool CanMoveSelectedItem(int direction)
+        {
+            if (SelectedWrapper == null || editableList == null)
+                return false;
+
+            var index = editableList.IndexOf(SelectedWrapper.Item);
+            if (index < 0)
+                return false;
+
+            var newIndex = index + direction;
+            return newIndex >= 0 && newIndex < editableList.Count;
+        }
     }
 
     //public partial class CollectionEditorControlContext<T> : ObservableObject where T : INotifyPropertyChanged
