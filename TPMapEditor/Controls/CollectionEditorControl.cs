@@ -40,6 +40,7 @@ namespace TPMapEditor.Controls
 
         public CollectionEditorControl()
         {
+            CommandBindings.Add(new CommandBinding(DeleteItemCommand, DeleteItem));
             addCommand = new RelayCommand(AddNewItem) { };
             moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItem(-1));
             moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItem(1));
@@ -139,6 +140,7 @@ namespace TPMapEditor.Controls
             DependencyProperty.Register(nameof(Columns), typeof(ObservableCollection<DataGridColumn>), typeof(CollectionEditorControl));
 
 
+        public static readonly RoutedCommand DeleteItemCommand = new(nameof(DeleteItemCommand), typeof(CollectionEditorControl));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -184,11 +186,13 @@ namespace TPMapEditor.Controls
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    var index = e.NewStartingIndex;
-                    foreach (var item in e.NewItems)
                     {
-                        Wrappers?.Insert(index, new ItemWrapper(item));
-                        index++;
+                        var index = e.NewStartingIndex;
+                        foreach (var item in e.NewItems)
+                        {
+                            Wrappers?.Insert(index, new ItemWrapper(item));
+                            index++;
+                        }
                     }
                     break;
 
@@ -202,10 +206,16 @@ namespace TPMapEditor.Controls
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.OldItems)
-                        RemoveWrapper(item);
-                    foreach (var item in e.NewItems)
-                        Wrappers?.Add(new ItemWrapper(item));
+                    {
+                        foreach (var item in e.OldItems)
+                            RemoveWrapper(item);
+                        var index = e.NewStartingIndex;
+                        foreach (var item in e.NewItems)
+                        {
+                            Wrappers?.Insert(index, new ItemWrapper(item));
+                            index++;
+                        }
+                    }
                     break;
             }
         }
@@ -257,6 +267,17 @@ namespace TPMapEditor.Controls
             editableList?.Add(Factory());
         }
 
+        private void DeleteItem(object sender, ExecutedRoutedEventArgs e)
+        {
+            var item = e.Parameter;
+            editableList?.Remove(item);
+        }
+
+        private void CanDeleteItem(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = e.Parameter != null;
+        }
+
         private void MoveSelectedItems(int direction)
         {
             if (SelectedWrapper == null || editableList == null)
@@ -269,8 +290,10 @@ namespace TPMapEditor.Controls
 
             var newIndex = index + direction;
 
-            editableList.RemoveAt(index);
-            editableList.Insert(newIndex, item);
+            (editableList[index], editableList[newIndex]) = (editableList[newIndex], editableList[index]);
+
+            //editableList.RemoveAt(index);
+            //editableList.Insert(newIndex, item);
 
             SelectedWrapper = Wrappers
                 .FirstOrDefault(w => ReferenceEquals(w.Item, item));

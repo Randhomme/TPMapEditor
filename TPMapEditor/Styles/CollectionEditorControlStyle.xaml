@@ -45,7 +45,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedWrapper, Mode=TwoWay}">
+                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedWrapper, Mode=TwoWay}" SelectionMode="Extended">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Objects" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -57,7 +57,7 @@
                         <DataGridTemplateColumn MinWidth="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Remove" />
+                                    <Button Content="Remove" Command="{x:Static controls:CollectionEditorControl.DeleteItemCommand}" CommandParameter="{Binding Item}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
