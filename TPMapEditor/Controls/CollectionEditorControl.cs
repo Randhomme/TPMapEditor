@@ -7,17 +7,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TPMapEditor.Controls
 {
@@ -27,23 +19,47 @@ namespace TPMapEditor.Controls
     [TemplatePart(Name = "PART_MoveDownButton", Type = typeof(Button))]
     public partial class CollectionEditorControl : Control
     {
-        private IList? editableList => ItemsSource as IList;
+        private IList? EditableList => ItemsSource as IList;
+        private IList<ItemWrapper> SelectedWrappers => dataGrid?.SelectedItems.OfType<ItemWrapper>().ToList() ?? Array.Empty<ItemWrapper>().ToList();
         private INotifyCollectionChanged? observableItemsSource;
-
         private DataGrid? dataGrid;
         private Button? addButton;
         private Button? moveUpButton;
         private Button? moveDownButton;
-        private RelayCommand addCommand;
-        private RelayCommand moveUpCommand;
-        private RelayCommand moveDownCommand;
+        private readonly RelayCommand addCommand;
+        private readonly RelayCommand<object> deleteCommand;
+        private readonly RelayCommand moveUpCommand;
+        private readonly RelayCommand moveDownCommand;
+        private readonly DataGridColumn deleteButtonColumn;
 
         public CollectionEditorControl()
         {
-            CommandBindings.Add(new CommandBinding(DeleteItemCommand, DeleteItem));
-            addCommand = new RelayCommand(AddNewItem) { };
-            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItem(-1));
-            moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItem(1));
+            Columns = new ObservableCollection<DataGridColumn>();
+            addCommand = new RelayCommand(AddNewItem);
+            deleteCommand = new RelayCommand<object>(DeleteItem);
+            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItems(-1));
+            moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItems(1));
+            var buttonFactory = new FrameworkElementFactory(typeof(Button));
+            buttonFactory.SetValue(Button.ContentProperty, "Remove");
+
+            // Binding vers la commande Delete du contrôle
+            buttonFactory.SetValue(
+                Button.CommandProperty,
+                deleteCommand);
+
+            // CommandParameter = item métier (DataContext de la ligne)
+            buttonFactory.SetBinding(
+                Button.CommandParameterProperty,
+                new Binding("Item")
+            );
+            deleteButtonColumn = new DataGridTemplateColumn()
+            {
+                CellTemplate = new System.Windows.DataTemplate()
+                {
+                    VisualTree = buttonFactory
+                },
+                MinWidth = 70,
+            };
         }
 
         internal ObservableCollection<ItemWrapper>? Wrappers
@@ -52,11 +68,7 @@ namespace TPMapEditor.Controls
         }
 
         private static readonly DependencyPropertyKey WrappersPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(Wrappers),
-                typeof(ObservableCollection<ItemWrapper>),
-                typeof(CollectionEditorControl),
-                new PropertyMetadata(null));
+            DependencyProperty.RegisterReadOnly(nameof(Wrappers), typeof(ObservableCollection<ItemWrapper>), typeof(CollectionEditorControl), new PropertyMetadata(null));
 
         internal static readonly DependencyProperty WrappersProperty =
             WrappersPropertyKey.DependencyProperty;
@@ -79,45 +91,14 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable), typeof(CollectionEditorControl), new PropertyMetadata(null, OnItemsSourceChanged));
 
-        internal ItemWrapper? SelectedWrapper
-        {
-            get => (ItemWrapper)GetValue(SelectedWrapperProperty);
-            set => SetValue(SelectedWrapperProperty, value);
-        }
-
-        internal static readonly DependencyProperty SelectedWrapperProperty =
-            DependencyProperty.Register(
-                nameof(SelectedWrapper),
-                typeof(ItemWrapper),
-                typeof(CollectionEditorControl),
-                new PropertyMetadata(OnSelectedWrapperChanged));
-
         public object? SelectedItem
         {
-            get => GetValue(SelectedItemProperty);
-            private set
-            {
-                SetValue(SelectedItemPropertyKey, value);
-                moveUpCommand.NotifyCanExecuteChanged();
-                moveDownCommand.NotifyCanExecuteChanged();
-            }
+            get { return (object?)GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
         }
-
-        private static readonly DependencyPropertyKey SelectedItemPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(SelectedItem),
-                typeof(object),
-                typeof(CollectionEditorControl),
-                new PropertyMetadata(null));
 
         public static readonly DependencyProperty SelectedItemProperty =
-            SelectedItemPropertyKey.DependencyProperty;
-
-        private static void OnSelectedWrapperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = (CollectionEditorControl)d;
-            control.SelectedItem = (e.NewValue as ItemWrapper)?.Item;
-        }
+            DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(CollectionEditorControl), new FrameworkPropertyMetadata(null, OnSelectedItemChanged) { BindsTwoWayByDefault = true, DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
 
         public Func<object> Factory
         {
@@ -128,8 +109,6 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty FactoryProperty =
             DependencyProperty.Register(nameof(Factory), typeof(Func<object>), typeof(CollectionEditorControl));
 
-
-
         public ObservableCollection<DataGridColumn> Columns
         {
             get { return (ObservableCollection<DataGridColumn>)GetValue(ColumnsProperty); }
@@ -139,14 +118,20 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty ColumnsProperty =
             DependencyProperty.Register(nameof(Columns), typeof(ObservableCollection<DataGridColumn>), typeof(CollectionEditorControl));
 
-
-        public static readonly RoutedCommand DeleteItemCommand = new(nameof(DeleteItemCommand), typeof(CollectionEditorControl));
-
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (CollectionEditorControl)d;
             control.DetachFromOldItemsSource(e.OldValue);
             control.AttachToNewItemsSource(e.NewValue);
+        }
+
+        private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if(e.NewValue is ItemWrapper wrapper)
+            {
+                var control = (CollectionEditorControl)d;
+                control.SelectedItem = wrapper.Item;
+            }
         }
 
         private void DetachFromOldItemsSource(object oldValue)
@@ -218,6 +203,8 @@ namespace TPMapEditor.Controls
                     }
                     break;
             }
+            moveUpCommand.NotifyCanExecuteChanged();
+            moveDownCommand.NotifyCanExecuteChanged();
         }
 
         private void RemoveWrapper(object item)
@@ -249,157 +236,153 @@ namespace TPMapEditor.Controls
 
         public override void OnApplyTemplate()
         {
+            if (dataGrid != null)
+            {
+                dataGrid.SelectionChanged -= DataGrid_SelectionChanged;
+                dataGrid.Columns.Clear();
+            }
+
             base.OnApplyTemplate();
+
             dataGrid = GetTemplateChild("PART_DataGrid") as DataGrid;
             addButton = GetTemplateChild("PART_AddButton") as Button;
             moveUpButton = GetTemplateChild("PART_MoveUpButton") as Button;
             moveDownButton = GetTemplateChild("PART_MoveDownButton") as Button;
+            if (dataGrid != null)
+            {
+                dataGrid.SelectionChanged += DataGrid_SelectionChanged;
+                if (GridOnlyMode)
+                {
+                    if (Columns != null)
+                    {
+                        foreach (var column in Columns)
+                        {
+                            //dataGrid.Columns.Add(CloneColumn(column));
+                            dataGrid.Columns.Add(column);
+                        }
+                    }
+                }
+                dataGrid.Columns.Add(deleteButtonColumn);
+            }
             if (addButton != null)
                 addButton.Command = addCommand;
             if (moveUpButton != null)
                 moveUpButton.Command = moveUpCommand;
             if (moveDownButton != null)
                 moveDownButton.Command = moveDownCommand;
-        }        
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            moveUpCommand.NotifyCanExecuteChanged();
+            moveDownCommand.NotifyCanExecuteChanged();
+        }
 
         private void AddNewItem()
         {
-            editableList?.Add(Factory());
+            EditableList?.Add(Factory());
         }
 
-        private void DeleteItem(object sender, ExecutedRoutedEventArgs e)
+        private void DeleteItem(object? item)
         {
-            var item = e.Parameter;
-            editableList?.Remove(item);
-        }
-
-        private void CanDeleteItem(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = e.Parameter != null;
+            //var item = e.Parameter;
+            //editableList?.Remove(item);
+            EditableList?.Remove(item);
         }
 
         private void MoveSelectedItems(int direction)
         {
-            if (SelectedWrapper == null || editableList == null)
+            var selectedItems = SelectedWrappers;
+
+            if (selectedItems.Count <= 0 || EditableList == null)
                 return;
 
-            var item = SelectedWrapper.Item;
-            var index = editableList.IndexOf(item);
-            if (index < 0)
-                return;
+            var items = selectedItems.Select(w => w.Item).ToList();
+            var indices = items
+                .Select(i => EditableList.IndexOf(i))
+                .OrderBy(i => i)
+                .ToList();
 
-            var newIndex = index + direction;
+            if (direction < 0)
+            {
+                // UP → parcourir du haut vers le bas
+                for (int i = 0; i < indices.Count; i++)
+                {
+                    var index = indices[i];
+                    EditableList.RemoveAt(index);
+                    EditableList.Insert(index - 1, items[i]);
+                }
+            }
+            else
+            {
+                // DOWN → parcourir à l’envers
+                for (int i = indices.Count - 1; i >= 0; i--)
+                {
+                    var index = indices[i];
+                    EditableList.RemoveAt(index);
+                    EditableList.Insert(index + 1, items[i]);
+                }
+            }
 
-            (editableList[index], editableList[newIndex]) = (editableList[newIndex], editableList[index]);
-
-            //editableList.RemoveAt(index);
-            //editableList.Insert(newIndex, item);
-
-            SelectedWrapper = Wrappers
-                .FirstOrDefault(w => ReferenceEquals(w.Item, item));
+            RestoreSelection(items);
 
             moveUpCommand.NotifyCanExecuteChanged();
             moveDownCommand.NotifyCanExecuteChanged();
         }
 
-        private bool CanMoveSelectedItem(int direction)
+        private bool CanMoveSelectedItems(int direction)
         {
-            if (SelectedWrapper == null || editableList == null)
+            var selectedItems = SelectedWrappers;
+            
+            if (selectedItems.Count <= 0 || EditableList == null)
                 return false;
 
-            var index = editableList.IndexOf(SelectedWrapper.Item);
-            if (index < 0)
+            var indices = selectedItems.Select(w => EditableList.IndexOf(w.Item)).OrderBy(i => i).ToList();
+
+            if (indices.Any(i => i < 0))
                 return false;
 
-            var newIndex = index + direction;
-            return newIndex >= 0 && newIndex < editableList.Count;
+            return direction < 0 ? indices.First() > 0 : indices.Last() < EditableList.Count - 1;
         }
+
+        private void RestoreSelection(IEnumerable<object> items)
+        {
+            if (dataGrid != null)
+            {
+                dataGrid.SelectedItems.Clear();
+
+                foreach (var wrapper in Wrappers.Where(w => items.Contains(w.Item)))
+                    dataGrid.SelectedItems.Add(wrapper);
+            }
+        }
+
+        //private DataGridColumn? CloneColumn(DataGridColumn column)
+        //{
+        //    return column switch
+        //    {
+        //        DataGridTextColumn text => CloneTextColumn(text),
+        //        DataGridCheckBoxColumn check => CloneCheckBoxColumn(check),
+        //        DataGridTemplateColumn template => CloneTemplateColumn(template),
+        //        _ => null,
+        //    };
+        //}
+
+        //private DataGridColumn CloneTextColumn(DataGridTextColumn column)
+        //{
+        //    return new DataGridTextColumn()
+        //    {
+        //        Binding = column.Binding
+        //    };
+        //}
+        //private DataGridColumn CloneCheckBoxColumn(DataGridCheckBoxColumn column)
+        //{
+        //    return new DataGridTextColumn();
+        //}
+        //private DataGridColumn CloneTemplateColumn(DataGridTemplateColumn column)
+        //{
+        //    return new DataGridTextColumn();
+        //}
     }
-
-    //public partial class CollectionEditorControlContext<T> : ObservableObject where T : INotifyPropertyChanged
-    //{
-    //    [ObservableProperty]
-    //    [NotifyCanExecuteChangedFor(nameof(MoveUpCommand))]
-    //    [NotifyCanExecuteChangedFor(nameof(MoveDownCommand))]
-    //    private CollectionEditorObjectWrapper<T>? selectedItem;
-
-    //    [ObservableProperty]
-    //    private bool gridOnlyMode;
-
-    //    private readonly Func<T> factory;
-
-    //    public ObservableCollection<T> Source { get; }
-    //    public ObservableCollection<CollectionEditorObjectWrapper<T>> Items { get; }
-
-    //    public CollectionEditorControlContext(ObservableCollection<T> source, Func<T> factory, bool gridOnlyMode = false)
-    //    {
-    //        Source = source;
-    //        this.factory = factory;
-    //        this.gridOnlyMode = gridOnlyMode;
-    //        Items = new ObservableCollection<CollectionEditorObjectWrapper<T>>(Source.Select(item => new CollectionEditorObjectWrapper<T>(item)));
-    //        Items.CollectionChanged += Items_CollectionChanged;
-    //    }
-
-    //    private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-    //    {
-    //        if (e.NewItems != null)
-    //            foreach (CollectionEditorObjectWrapper<T> item in e.NewItems)
-    //                Source.Add(item.Item);
-
-    //        if (e.OldItems != null)
-    //            foreach (CollectionEditorObjectWrapper<T> item in e.OldItems)
-    //            {
-    //                var wrapper = Source.First(w => Equals(w, item.Item));
-    //                Source.Remove(wrapper);
-    //            }
-    //    }
-
-    //    [RelayCommand]
-    //    private void OnAdd()
-    //    {
-    //        var wrapper = new CollectionEditorObjectWrapper<T>(factory());
-    //        Items.Add(wrapper);
-    //        SelectedItem = wrapper;
-    //    }
-
-    //    [RelayCommand]
-    //    private void OnRemove()
-    //    {
-    //        if (SelectedItem != null)
-    //        {
-    //            Items.Remove(SelectedItem);
-    //            SelectedItem = null;
-    //        }
-    //    }
-
-    //    [RelayCommand(CanExecute = nameof(CanMoveUp))]
-    //    private void OnMoveUp()
-    //    {
-    //        var index = Items.IndexOf(SelectedItem!);
-    //        Items.Move(index, index - 1);
-    //        MoveUpCommand.NotifyCanExecuteChanged();
-    //        MoveDownCommand.NotifyCanExecuteChanged();
-    //    }
-
-    //    [RelayCommand(CanExecute = nameof(CanMoveDown))]
-    //    private void OnMoveDown()
-    //    {
-    //        var index = Items.IndexOf(SelectedItem!);
-    //        Items.Move(index, index + 1);
-    //        MoveUpCommand.NotifyCanExecuteChanged();
-    //        MoveDownCommand.NotifyCanExecuteChanged();
-    //    }
-
-    //    private bool CanMoveUp()
-    //    {
-    //        return SelectedItem != null && Items.IndexOf(SelectedItem) > 0;
-    //    }
-
-    //    private bool CanMoveDown()
-    //    {
-    //        return SelectedItem != null && Items.IndexOf(SelectedItem) < Items.Count - 1;
-    //    }
-    //}
 
     public sealed class ItemWrapper : ObservableObject, IDisposable
     {

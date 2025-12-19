@@ -14,19 +14,15 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                <Button MinWidth="85" Content="Add" Command="{Binding AddCommand}"/>
+                <Button x:Name="PART_AddButton" MinWidth="85" Content="Add"/>
+                <Button x:Name="PART_MoveUpButton" Margin="5,5,0,0" Width="25" HorizontalAlignment="Right">
+                    <Image Source="/Images/ArrowUp.png"/>
+                </Button>
+                <Button x:Name="PART_MoveDownButton" Margin="5,5,0,0" Width="25" HorizontalAlignment="Right">
+                    <Image Source="/Images/ArrowDown.png"/>
+                </Button>
             </StackPanel>
-            <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" CanUserAddRows="False">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn MinWidth="70">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Remove" Command="{Binding RelativeSource={RelativeSource AncestorType=controls:CollectionEditorControl}, Path=RemoveCommand}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <DataGrid x:Name="PART_DataGrid" Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="10" Grid.Column="1" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" CanUserAddRows="False" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow"/>
         </Grid>
     </ControlTemplate>
     <ControlTemplate x:Key="CollectionEditorControlNotFullGrid" TargetType="{x:Type controls:CollectionEditorControl}">
@@ -45,19 +41,12 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedWrapper, Mode=TwoWay}" SelectionMode="Extended">
+                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Objects" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Display}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn MinWidth="70">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Remove" Command="{x:Static controls:CollectionEditorControl.DeleteItemCommand}" CommandParameter="{Binding Item}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
