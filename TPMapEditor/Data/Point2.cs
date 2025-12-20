@@ -32,5 +32,10 @@ namespace TPMapEditor.Data
             X = x;
             Y = y;
         }
+
+        public override string ToString()
+        {
+            return $"{X:0.000000}, {Y:0.000000}";
+        }
     }
 }

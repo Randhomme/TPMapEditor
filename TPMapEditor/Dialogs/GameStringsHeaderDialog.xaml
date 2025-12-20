@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:data="clr-namespace:TPMapEditor.Data"
         mc:Ignorable="d"
@@ -15,294 +16,134 @@
         </Grid.RowDefinitions>
         <TabControl>
             <TabItem Header="Team names">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddTeamNamesHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPTeamNames}" SelectedItem="{Binding SelectedTeamNamesHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveTeamNamesHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPTeamNames}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Speech events">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddSpeechEventsHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeechEvents}" SelectedItem="{Binding SelectedSpeechEventsHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveSpeechEventsHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPSpeechEvents}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Speaker names">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddSpeakerNamesHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeakerNames}" SelectedItem="{Binding SelectedSpeakerNamesHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveSpeakerNamesHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPSpeakerNames}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Ship names">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddShipNamesHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPShipNames}" SelectedItem="{Binding SelectedShipNamesHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveShipNamesHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPShipNames}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="In game messages">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddInGameMessagesHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPInGameMessages}" SelectedItem="{Binding SelectedInGameMessagesHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveInGameMessagesHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPInGameMessages}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Objective tasks">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddObjectiveTasksHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPObjectiveTasks}" SelectedItem="{Binding SelectedObjectiveTasksHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveObjectiveTasksHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPObjectiveTasks}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Speech events journals">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddSpeechEventsJournalsHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPSpeechEventsJournals}" SelectedItem="{Binding SelectedSpeechEventsJournalsHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveSpeechEventsJournalsHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPSpeechEventsJournals}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Map text items">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddMapTextItemsHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPMapTextItems}" SelectedItem="{Binding SelectedMapTextItemsHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveMapTextItemsHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPMapTextItems}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="World names">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddWorldNamesHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPWorldNames}" SelectedItem="{Binding SelectedWorldNamesHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveWorldNamesHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPWorldNames}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
-            <TabItem Header="World names">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Margin="5">
-                        <Button MinWidth="85" Content="Add" Command="{Binding AddWorldDescriptionsHeaderFileCommand}"/>
-                    </StackPanel>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" AutoGenerateColumns="False" CanUserAddRows="False" Grid.Column="1" Margin="0,5,5,5" ItemsSource="{Binding AppSettings.TPWorldDescriptions}" SelectedItem="{Binding SelectedWorldDescriptionsHeaderFile}">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Header file" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn MinWidth="85">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveWorldDescriptionsHeaderFileButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+            <TabItem Header="World descriptions">
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding AppSettings.TPWorldDescriptions}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTemplateColumn Header="Header file" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{x:Static data:GameHeadersFile.GameHeadersFilesList}" SelectedValue="{Binding Item.FileName}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
             </TabItem>
         </TabControl>
         <StackPanel Margin="0,15,0,0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">

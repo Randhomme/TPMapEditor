@@ -1,5 +1,6 @@
-﻿using System.Windows;
-using CommunityToolkit.Mvvm.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using TPMapEditor.Data;
 
 namespace TPMapEditor.Dialogs
@@ -9,24 +10,14 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class FlagDialog : DialogWindow
     {
-        public Flag? SelectedFlag { get; set; }
         public WorldMap Map { get; }
-        public FlagDialog(Window owner, WorldMap map) : base(owner)
+        public Func<Flag> Factory { get; }
+
+        public FlagDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             Map = map;
+            Factory = () => new(map);
             InitializeComponent();
-        }
-
-        [RelayCommand]
-        private void OnAddFlag()
-        {
-            Map.Flags.Add(new Flag(Map, NamedElement.GenerateName("Flag", Map.Flags)));
-        }
-
-        private void RemoveFlag_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedFlag != null)
-                Map.Flags.Remove(SelectedFlag);
         }
     }
 }

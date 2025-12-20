@@ -6,10 +6,11 @@ namespace TPMapEditor.Dialogs
     [ObservableObject]
     public partial class DialogWindow : Window
     {
-        public DialogWindow(Window owner)
+        public DialogWindow(Window owner, string title)
         {
             Owner = owner;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Title = title;
         }
         public bool? ShowDialog(bool showInTaskBar = false)
         {

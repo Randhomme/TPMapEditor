@@ -1,20 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using TPMapEditor.Data;
 using TPMapEditor.Settings;
 using WF = System.Windows.Forms;
 
@@ -26,7 +12,7 @@ namespace TPMapEditor.Dialogs
     public partial class AppSettingsDialog : DialogWindow
     {
         public AppSettings AppSettings { get; }
-        public AppSettingsDialog(Window owner, AppSettings appSettings) : base(owner)
+        public AppSettingsDialog(Window owner, string title, AppSettings appSettings) : base(owner, title)
         {
             AppSettings = appSettings;
             InitializeComponent();
@@ -54,7 +40,7 @@ namespace TPMapEditor.Dialogs
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var gshd = new GameStringsHeadersDialog(this, AppSettings);
+            var gshd = new GameStringsHeadersDialog(this, "Game strings headers", AppSettings);
             gshd.ShowDialog();
             AppSettings.UpdateStringsDictionnaries();
         }

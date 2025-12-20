@@ -16,7 +16,7 @@ namespace TPMapEditor.Data
 
         public GameHeadersFile()
         {
-            fileName = string.Empty;
+            fileName = GameHeadersFilesList.FirstOrDefault() ?? string.Empty;
         }
 
         public GameHeadersFile(string fileName)

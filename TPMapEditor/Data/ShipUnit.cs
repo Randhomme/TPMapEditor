@@ -14,12 +14,14 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "HUMAN CONTROLLED COMMAND SHIP";
 
+        public static ShipUnit DefaultShipUnit = new(null, DefaultName);
+
         [ObservableProperty]
         private WorldObject? worldObject;
 
         public ShipUnit(WorldMap map, string name, WorldObject? worldObject = null) : base(map, name)
         {
-            this.worldObject = worldObject ?? map.WorldObjects.FirstOrDefault();
+            this.worldObject = worldObject ?? map?.WorldObjects.FirstOrDefault();
         }
 
         protected override bool IsNameTaken(string name)

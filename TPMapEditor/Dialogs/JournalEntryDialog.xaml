@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:data="clr-namespace:TPMapEditor.Data"
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
@@ -15,47 +16,31 @@
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedJournalEntry}" ItemsSource="{Binding Map.JournalEntries}" AutoGenerateColumns="False" CanUserAddRows="False">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Text" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <ComboBox SelectedValue="{Binding TextStringId, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.SpeechEventsJournals}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Speech sound" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <ComboBox SelectedValue="{Binding SpeechEventFileName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Picture texture" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <ComboBox SelectedValue="{Binding PictureTexture, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.HudTexturesList}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="70">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Remove" Click="RemoveJournalEntry_Click"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-            <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                <Button MinWidth="85" Content="Add journal entry" Command="{Binding AddJournalEntryCommand}"/>
-            </StackPanel>
-        </Grid>
+        <controls:CollectionEditorControl ItemsSource="{Binding Map.JournalEntries}" Factory="{Binding Factory}" GridOnlyMode="True">
+            <controls:CollectionEditorControl.Columns>
+                <DataGridTemplateColumn Header="Text" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValue="{Binding Item.TextStringId, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.SpeechEventsJournals}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Speech sound" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValue="{Binding Item.SpeechEventFileName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Picture texture" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValue="{Binding Item.PictureTexture, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static settings:AppSettings.HudTexturesList}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </controls:CollectionEditorControl.Columns>
+        </controls:CollectionEditorControl>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>

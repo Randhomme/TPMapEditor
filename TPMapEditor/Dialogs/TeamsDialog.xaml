@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:enums="clr-namespace:TPMapEditor.Enums"
+        xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:data="clr-namespace:TPMapEditor.Data"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
@@ -17,88 +18,60 @@
         <TabControl>
             <TabItem Header="Selectable teams">
                 <Grid Margin="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedSelectableTeam}" ItemsSource="{Binding Map.SelectableTeams}" AutoGenerateColumns="False" CanUserAddRows="False">
-                        <DataGrid.Columns>
+                    <controls:CollectionEditorControl ItemsSource="{Binding Map.SelectableTeams}" Factory="{Binding Factory}" GridOnlyMode="True">
+                        <controls:CollectionEditorControl.Columns>
                             <DataGridTemplateColumn Header="Team name" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedValue="{Binding RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                                        <ComboBox SelectedValue="{Binding Item.RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Race" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedValue="{Binding Race, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{enums:EnumBindingSource enums:Race}"/>
+                                        <ComboBox SelectedValue="{Binding Item.Race, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{enums:EnumBindingSource enums:Race}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Race locked" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox IsChecked="{Binding RaceLocked, UpdateSourceTrigger=PropertyChanged}" Content="{Binding RaceLocked, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <CheckBox IsChecked="{Binding Item.RaceLocked, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Item.RaceLocked, UpdateSourceTrigger=PropertyChanged}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="70">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveSelectedSelectableTeamButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                        <Button MinWidth="85" Content="Add team" Command="{Binding AddSelectableTeamCommand}"/>
-                    </StackPanel>
+                        </controls:CollectionEditorControl.Columns>
+                    </controls:CollectionEditorControl>
                 </Grid>
             </TabItem>
             <TabItem Header="In game teams">
                 <Grid Margin="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedInGameTeam}" ItemsSource="{Binding Map.InGameTeams}" AutoGenerateColumns="False" CanUserAddRows="False">
-                        <DataGrid.Columns>
+                    <controls:CollectionEditorControl ItemsSource="{Binding Map.InGameTeams}" Factory="{Binding Factory}" GridOnlyMode="True">
+                        <controls:CollectionEditorControl.Columns>
                             <DataGridTemplateColumn Header="Team name" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedValue="{Binding RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                                        <ComboBox SelectedValue="{Binding Item.RealName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{x:Static data:StringDictionnary.TeamNames}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Race" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedValue="{Binding Race, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{enums:EnumBindingSource enums:Race}"/>
+                                        <ComboBox SelectedValue="{Binding Item.Race, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{enums:EnumBindingSource enums:Race}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Race locked" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox IsChecked="{Binding RaceLocked, UpdateSourceTrigger=PropertyChanged}" Content="{Binding RaceLocked, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <CheckBox IsChecked="{Binding Item.RaceLocked, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Item.RaceLocked, UpdateSourceTrigger=PropertyChanged}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="70">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Remove" Click="RemoveSelectedInGameTeamButton_Click"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                        <Button MinWidth="85" Content="Add team" Command="{Binding AddInGameTeamCommand}"/>
-                    </StackPanel>
+                        </controls:CollectionEditorControl.Columns>
+                    </controls:CollectionEditorControl>
                 </Grid>
             </TabItem>
         </TabControl>

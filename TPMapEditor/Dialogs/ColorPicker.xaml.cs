@@ -18,7 +18,7 @@ namespace TPMapEditor.Dialogs
         [ObservableProperty]
         private Color newColor;
         public Color CurrentColor { get; set; }
-        public ColorPicker(Window owner, Color color, short alpha = -1) : base(owner)
+        public ColorPicker(Window owner, string title, Color color, short alpha = -1) : base(owner, title)
         {
             this.alpha = alpha;
             CurrentColor = NewColor = color;

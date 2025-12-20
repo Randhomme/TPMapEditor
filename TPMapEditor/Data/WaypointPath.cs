@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,8 +16,10 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected;
         public ObservableCollection<WaypointPathPoint> Points { get; set; }
+        public Func<WaypointPathPoint> WaypointPathPointFactory { get; }
         public WaypointPath(WorldMap map, string name) : base(map, name)
         {
+            WaypointPathPointFactory = () => new(this, 0, 0, 0);
             Points = new ObservableCollection<WaypointPathPoint>();
             Points.CollectionChanged += (s, e) =>
             {

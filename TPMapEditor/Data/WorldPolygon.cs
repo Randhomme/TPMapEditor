@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
@@ -12,8 +13,10 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected;
         public ObservableCollection<WorldPolygonPoint> Points { get; set; }
+        public Func<WorldPolygonPoint> WorldPolygonPointFactory { get; }
         public WorldPolygon(WorldMap map, string name) : base(map, name)
         {
+            WorldPolygonPointFactory = () => new(this, 0, 0);
             Points = new ObservableCollection<WorldPolygonPoint>();
             Points.CollectionChanged += (s, e) =>
             {

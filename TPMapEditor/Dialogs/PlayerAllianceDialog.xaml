@@ -1,52 +1,40 @@
-﻿<local:DialogWindow x:Class="TPMapEditor.Dialogs.PlayerAllianceDialog"
+﻿
+<local:DialogWindow x:Class="TPMapEditor.Dialogs.PlayerAllianceDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:controls="clr-namespace:TPMapEditor.Controls"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
         Title="PlayerAllianceWindow" Height="450" Width="800">
     <Window.Resources>
-        <CollectionViewSource x:Key="players" Source="{Binding Map.Players}"/>
+        <CollectionViewSource x:Key="Players" Source="{Binding Map.Players}"/>
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Margin="0,0,5,0">
-            <Button MinWidth="85" Content="Add player alliance" Command="{Binding AddPlayerAllianceCommand}"/>
-        </StackPanel>
-        <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedPlayerAlliance}" ItemsSource="{Binding Map.PlayerAlliances}" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
+        <controls:CollectionEditorControl ItemsSource="{Binding Map.PlayerAlliances}" Factory="{Binding Factory}" GridOnlyMode="True">
+            <controls:CollectionEditorControl.Columns>
                 <DataGridTemplateColumn Header="Player 1" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding Source={StaticResource players}}" SelectedItem="{Binding Player1, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <ComboBox ItemsSource="{Binding Source={StaticResource Players}}" SelectedItem="{Binding Item.Player1}" DisplayMemberPath="Name"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Player 2" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding Source={StaticResource players}}" SelectedItem="{Binding Player2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <ComboBox ItemsSource="{Binding Source={StaticResource Players}}" SelectedItem="{Binding Item.Player2}" DisplayMemberPath="Name"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn MinWidth="70">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Remove" Click="RemovePlayerAlliance_Click"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            </controls:CollectionEditorControl.Columns>
+        </controls:CollectionEditorControl>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>

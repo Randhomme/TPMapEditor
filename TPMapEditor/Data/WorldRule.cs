@@ -15,9 +15,13 @@ namespace TPMapEditor.Data
         private bool runOnce = true;
         public ObservableCollection<RuleCondition> Conditions { get; } = new ObservableCollection<RuleCondition>();
         public ObservableCollection<RuleAction> Actions { get; } = new ObservableCollection<RuleAction>();
+        public Func<RuleCondition> RuleConditionFactory { get; }
+        public Func<RuleAction> RuleActionFactory { get; }
 
         public WorldRule(WorldMap map, string name) : base(map, name)
         {
+            RuleConditionFactory = () => new(Map);
+            RuleActionFactory = () => new(Map);
         }
 
         protected override bool IsNameTaken(string name)

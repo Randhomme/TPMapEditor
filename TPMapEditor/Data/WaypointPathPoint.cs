@@ -16,7 +16,7 @@ namespace TPMapEditor.Data
 
         public WaypointPathPoint(WaypointPath parent, double x, double y, double z) : base(x, y, z)
         {
-            this.parent = parent;   
+            this.parent = parent;
         }
     }
 }

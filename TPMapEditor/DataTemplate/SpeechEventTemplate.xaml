@@ -1,0 +1,50 @@
+﻿<ResourceDictionary x:Class="TPMapEditor.DataTemplate.SpeechEventTemplate"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:data="clr-namespace:TPMapEditor.Data"
+                    xmlns:enums="clr-namespace:TPMapEditor.Enums"
+                    xmlns:settings="clr-namespace:TPMapEditor.Settings"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate DataType="{x:Type data:SpeechEvent}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Label Margin="-5,0,0,0" Content="Name"/>
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                <Label Margin="-5,5,0,0" Content="Sound file name"/>
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding SoundFileName, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Margin="-5,5,0,0" Content="Face texture"/>
+                <ComboBox ItemsSource="{x:Static settings:AppSettings.HudTexturesList}" SelectedValue="{Binding FaceTexture, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Margin="-5,5,0,0" Content="Text"/>
+                <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeechEvents}" SelectedValue="{Binding TextStringID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+                <Label Margin="-5,5,0,0" Content="Speaker"/>
+                <ComboBox ItemsSource="{x:Static data:StringDictionnary.SpeakerNames}" SelectedValue="{Binding SpeakerID, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Key" DisplayMemberPath="Value" />
+                <Label Margin="-5,5,0,0" Content="Text color"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Width="70" Content="Edit" Click="EditTextColor_Click"/>
+                    <Rectangle Grid.Column="1">
+                        <Rectangle.Fill>
+                            <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Grid.Column="1">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding TextColor}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+                <Label Margin="-5,5,0,0" Content="Talking head location"/>
+                <ComboBox SelectedItem="{Binding TalkingHeadLocation}" ItemsSource="{enums:EnumBindingSource enums:TalkingHeadLocation}"/>
+                <CheckBox Margin="0,10,0,0" Content="Has been played once" IsChecked="{Binding HasBeenPlayedOnce, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Margin="0,10,0,0" Content="Is secondary speech" IsChecked="{Binding IsSecondarySpeech, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Margin="0,10,0,0" Content="Open chat bar" IsChecked="{Binding OpenChatBar, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Margin="0,10,0,0" Content="Open talking head" IsChecked="{Binding OpenTalkingHead, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Margin="0,10,0,0" Content="Has text" IsChecked="{Binding HasText, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Margin="0,10,0,0" Content="Use sound file length" IsChecked="{Binding UseSoundFileLength, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Margin="0,10,0,0" Content="Always open speech event bar" IsChecked="{Binding AlwaysOpenSpeechEventBar, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+</ResourceDictionary>

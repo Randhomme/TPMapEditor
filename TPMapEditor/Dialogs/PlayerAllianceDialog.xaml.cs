@@ -22,25 +22,13 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class PlayerAllianceDialog : DialogWindow
     {
-        [ObservableProperty]
-        private PlayerAlliance? selectedPlayerAlliance;
         public WorldMap Map { get; }
-        public PlayerAllianceDialog(Window owner, WorldMap map) : base(owner)
+        public Func<PlayerAlliance> Factory { get; }
+        public PlayerAllianceDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
-            Map = map;
+            this.Map = map;
+            this.Factory = () => new(Map.Players[0], Map.Players[1]);
             InitializeComponent();
-        }
-
-        [RelayCommand]
-        private void OnAddPlayerAlliance()
-        {
-            Map.PlayerAlliances.Add(new PlayerAlliance(Map.Players[0], Map.Players[1]));
-        }
-
-        private void RemovePlayerAlliance_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedPlayerAlliance != null)
-                Map.PlayerAlliances.Remove(SelectedPlayerAlliance);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace TPMapEditor.Dialogs
         public string SizeText { get => $"{Size} x {Size}"; }
         public string ZSizeText { get => $"{ZSize} x {ZSize}"; }
 
-        public MapSizeDialog(Window owner, int size, int zSize, double worldBuffer) : base(owner)
+        public MapSizeDialog(Window owner, string title, int size, int zSize, double worldBuffer) : base(owner, title)
         {
             this.size = size;
             this.zSize = zSize;

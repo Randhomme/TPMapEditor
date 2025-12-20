@@ -22,25 +22,14 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class TimerDialog : DialogWindow
     {
-        [ObservableProperty]
-        private Timer? selectedTimer;
         public WorldMap Map { get; }
-        public TimerDialog(Window owner, WorldMap map) : base(owner)
+        public Func<Timer> Factory { get; }
+
+        public TimerDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             Map = map;
+            Factory = () => new Data.Timer(Map, NamedElement.GenerateName("Timer", Map.Timers), false, 0);
             InitializeComponent();
-        }
-
-        [RelayCommand]
-        private void OnAddTimer()
-        {
-            Map.Timers.Add(new Timer(Map, NamedElement.GenerateName("Timer", Map.Timers), false, 0));
-        }
-
-        private void RemoveTimer_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedTimer != null)
-                Map.Timers.Remove(SelectedTimer);
         }
     }
 }

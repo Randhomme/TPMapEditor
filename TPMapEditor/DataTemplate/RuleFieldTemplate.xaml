@@ -1,0 +1,328 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    x:Class="TPMapEditor.DataTemplate.RuleFieldTemplate"
+                    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                    xmlns:data="clr-namespace:TPMapEditor.Data"
+                    xmlns:datarule="clr-namespace:TPMapEditor.Data.Rule"
+                    xmlns:enums="clr-namespace:TPMapEditor.Enums"
+                    xmlns:settings="clr-namespace:TPMapEditor.Settings"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--RuleField-->
+    <ControlTemplate x:Key="RuleFieldTemplate" TargetType="ContentControl">
+        <StackPanel>
+            <StackPanel Visibility="{c:Binding 'IsOptional'}">
+                <Label Margin="-5,5,0,0" Content="{Binding OptionalLabel}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
+                <CheckBox IsChecked="{Binding IsShown}" Content="{Binding IsShown}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
+            </StackPanel>
+            <StackPanel Visibility="{c:Binding 'IsShown'}">
+                <Label Margin="-5,5,0,0" Content="{Binding Label}" Visibility="{c:Binding 'Label!=null'}"/>
+                <ContentPresenter/>
+            </StackPanel>
+        </StackPanel>
+    </ControlTemplate>
+
+    <!--AiStance-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldAiStance}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:AiStance}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--BannerType-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldBannerType}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:BannerType}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+
+    <!--Bool-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldBool}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <CheckBox IsChecked="{Binding Value}" Content="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--CrewSkillLevel-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldCrewSkillLevel}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:CrewSkillLevel}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Dialogue-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldDialogueAudio}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static settings:AppSettings.DialogueFilesList}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Double-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldDouble}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <Slider Value="{Binding Value}" IsSnapToTickEnabled="True" TickFrequency="0.001" LargeChange="0.001" SmallChange="0.001" Minimum="{Binding Min}" Maximum="{Binding Max}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Effect-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldEffect}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static settings:AppSettings.Effects}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Equivalence-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldEquivalence}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:Equivalence}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Flag-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldFlag}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.Flags}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--FlagTexture-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldFlagTexture}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static settings:AppSettings.FlagTextures}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--FollowMode-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldFollowMode}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:FollowMode}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--FormationType-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldFormationType}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:FormationType}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Group-->
+    <DataTemplate x:Key="GroupFieldTemplate">
+        <ComboBox ItemsSource="{Binding Map.Groups, Converter={StaticResource SelectableGroupConverter}}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type datarule:RuleFieldGroup}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ContentPresenter ContentTemplate="{StaticResource GroupFieldTemplate}"/>
+        </ContentControl>
+    </DataTemplate>
+
+
+    <!--Unit-->
+    <DataTemplate x:Key="UnitFieldTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ComboBox ItemsSource="{Binding Map.Groups, Converter={StaticResource SelectableGroupConverter}}" SelectedValue="{Binding SelectedGroup, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Map.ShipUnits, Converter={StaticResource SelectableShipUnitConverter}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type datarule:RuleFieldUnit}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ContentPresenter ContentTemplate="{StaticResource UnitFieldTemplate}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--GroupUnit-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldGroupUnit}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <StackPanel>
+                <ComboBox x:Name="TypeSelector" SelectedIndex="{Binding IsGroupUnitUnit}">
+                    <ComboBoxItem Content="Group"/>
+                    <ComboBoxItem Content="Unit"/>
+                </ComboBox>
+                <ContentControl Margin="0,5,0,0">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Style.Triggers>
+                                <!--Group-->
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=TypeSelector}" Value="0">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource GroupFieldTemplate}"/>
+                                </DataTrigger>
+                                <!--Unit-->
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=TypeSelector}" Value="1">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource UnitFieldTemplate}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                    <ContentControl.Content>
+                        <Binding Path="." />
+                    </ContentControl.Content>
+                </ContentControl>
+            </StackPanel>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--GuiTexture-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldGuiTexture}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static settings:AppSettings.GuiTextures}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--InGameMessage-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldInGameMessage}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static data:StringDictionnary.InGameMessagesDictionnary}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Int-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldInt}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <Slider Value="{Binding Value}" IsSnapToTickEnabled="True" TickFrequency="1" LargeChange="1" SmallChange="1" Minimum="{Binding Min}" Maximum="{Binding Max}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--MapTextPoint-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldMapTextPoint}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.MapTextPoints}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Music-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldMusic}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static settings:AppSettings.Musics}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--ObjectivePoint-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldObjectivePoint}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.ObjectivePoints}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--ObjectiveTask-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldObjectiveTask}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.ObjectiveTasks}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Player-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldPlayer}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--ShipName-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldShipName}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static data:StringDictionnary.ShipNames}" SelectedValue="{Binding Value}" SelectedValuePath="Key" DisplayMemberPath="Value"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--ShipUnitName-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldShipUnitName}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <TextBox Text="{Binding Value.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--SinglePlayerMission-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldSinglePlayerMission}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{x:Static settings:AppSettings.SinglePlayerMissions}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--SpeechEvent-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldSpeechEvent}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.SpeechEvents}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--String-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldString}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <TextBox Text="{Binding Value, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Team-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldTeam}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.InGameTeams}" SelectedValue="{Binding Value}" DisplayMemberPath="DisplayedName"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--Timer-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldTimer}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.Timers}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--VitalSection-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldVitalSection}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:VitalSection}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WaypointPath-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWaypointPath}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldObject-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObject}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldObjects}" SelectedItem="{Binding Value}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldObjectType-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectType}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{enums:EnumBindingSource enums:KillableWorldObjectType}" SelectedValue="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldPointSet-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPointSet}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldPointSets}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldPolygon-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPolygon}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldPolygons}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--ObservableCollection-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldObservableCollection}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ItemsControl ItemsSource="{Binding Value}"/>
+        </ContentControl>
+    </DataTemplate>
+</ResourceDictionary>

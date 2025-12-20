@@ -10,10 +10,10 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "Player0 Group";
 
+        public static Group DefaultGroup = new(null, DefaultName);
+
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
-        [ObservableProperty]
-        private bool canBeRemoved; //used for Player0 Group
 
         public ObservableCollection<WorldObject> WorldObjects { get; }
 
@@ -21,14 +21,12 @@ namespace TPMapEditor.Data
         {
             Color = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
-            CanBeRemoved = true;
         }
 
         public Group(WorldMap map, string name) : base(map, name)
         {
             Color = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
-            CanBeRemoved = true;
         }
 
         public void ClearWot()
@@ -43,11 +41,12 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in Map.Groups)
-            {
-                if (item.Name == name && item != this)
-                    return true;
-            }
+            if(Map!=null)
+                foreach (var item in Map.Groups)
+                {
+                    if (item.Name == name && item != this)
+                        return true;
+                }
             return false;
         }
 

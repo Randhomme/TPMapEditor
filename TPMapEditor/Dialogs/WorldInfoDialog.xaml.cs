@@ -21,7 +21,7 @@ namespace TPMapEditor.Dialogs
     public partial class WorldInfoDialog : DialogWindow
     {
         public WorldMap Map { get; set; }
-        public WorldInfoDialog(Window owner, WorldMap map) : base(owner)
+        public WorldInfoDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             this.Map = map;
             InitializeComponent();
@@ -78,21 +78,21 @@ namespace TPMapEditor.Dialogs
 
         private void EditMapAmbientLightColor_Click(object sender, RoutedEventArgs e)
         {
-            var cp = new ColorPicker(this, Map.AmbientLightColor, 255);
+            var cp = new ColorPicker(this, "Ambient light color", Map.AmbientLightColor, 255);
             if (cp.ShowDialog() == true)
                 Map.AmbientLightColor = cp.NewColor;
         }
 
         private void EditMapRoofLightColor_Click(object sender, RoutedEventArgs e)
         {
-            var cp = new ColorPicker(this, Map.RoofLightColor, 255);
+            var cp = new ColorPicker(this, "Roof light color", Map.RoofLightColor, 255);
             if (cp.ShowDialog() == true)
                 Map.RoofLightColor = cp.NewColor;
         }
 
         private void EditMapFloorLightColor_Click(object sender, RoutedEventArgs e)
         {
-            var cp = new ColorPicker(this, Map.FloorLightColor, 255);
+            var cp = new ColorPicker(this, "Floor light color", Map.FloorLightColor, 255);
             if (cp.ShowDialog() == true)
                 Map.FloorLightColor = cp.NewColor;
         }

@@ -62,7 +62,7 @@ namespace TPMapEditor.Data
                 if (!HasGroup)
                     HasGroup = true;
             }
-            else if (!HasGroup)
+            else if (HasGroup)
             {
                 HasGroup = false;
             }

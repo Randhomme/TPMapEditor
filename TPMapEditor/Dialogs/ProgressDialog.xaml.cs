@@ -32,7 +32,7 @@ namespace TPMapEditor.Dialogs
 
         public IProgress<string> ProgressOperation { get; }
 
-        public ProgressDialog(Window owner) : base(owner)
+        public ProgressDialog(Window owner, string title) : base(owner, title)
         {
             logs = "";
             Progress = new Progress<string>(ProgressReport);

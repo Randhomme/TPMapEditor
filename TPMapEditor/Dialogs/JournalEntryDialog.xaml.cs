@@ -23,28 +23,13 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class JournalEntryDialog : DialogWindow
     {
-        [ObservableProperty]
-        private JournalEntry? selectedJournalEntry;
         public WorldMap Map { get; }
-        public JournalEntryDialog(Window owner, WorldMap map) : base(owner)
+        public Func<JournalEntry> Factory { get; }
+        public JournalEntryDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             Map = map;
+            Factory = () => new JournalEntry(StringDictionnary.SpeechEventsJournals.Keys.FirstOrDefault(), AppSettings.DialogueFilesList.FirstOrDefault(), AppSettings.HudTexturesList.FirstOrDefault());
             InitializeComponent();
-        }
-
-        [RelayCommand]
-        private void OnAddJournalEntry()
-        {
-            Map.JournalEntries.Add(new(StringDictionnary.SpeechEventsJournals.Keys.FirstOrDefault(), AppSettings.DialogueFilesList.FirstOrDefault(), AppSettings.GuiTexturesFull.FirstOrDefault()));
-        }
-
-        private void RemoveJournalEntry_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedJournalEntry != null)
-            {
-                Map.JournalEntries.Remove(SelectedJournalEntry);
-                SelectedJournalEntry = null;
-            }
         }
     }
 }

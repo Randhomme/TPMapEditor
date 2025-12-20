@@ -13,45 +13,31 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <DataGrid Style="{StaticResource DataGridNoSelectedForeground}" x:Name="dataGrid" HeadersVisibility="Column" Grid.Column="1" SelectedItem="{Binding SelectedTimer}" ItemsSource="{Binding Map.Timers}" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
+        <controls:CollectionEditorControl ItemsSource="{Binding Map.Timers}" Factory="{Binding Factory}" GridOnlyMode="True">
+            <controls:CollectionEditorControl.Columns>
                 <DataGridTemplateColumn Header="Name" Width="*" SortMemberPath="Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Background="Transparent" Text="{Binding Name, UpdateSourceTrigger=LostFocus, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
+                            <TextBox Background="Transparent" Text="{Binding Item.Name, UpdateSourceTrigger=LostFocus, NotifyOnValidationError=True, ValidatesOnExceptions=True}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Status" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding Status, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Status, UpdateSourceTrigger=PropertyChanged}"/>
+                            <CheckBox IsChecked="{Binding Item.Status, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Item.Status, UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Start time" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox Background="Transparent" Text="{Binding StartTime, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBox Background="Transparent" Text="{Binding Item.StartTime, UpdateSourceTrigger=LostFocus}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn MinWidth="70">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Remove" Click="RemoveTimer_Click"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <StackPanel Grid.Column="0" Margin="0,0,5,0">
-            <Button MinWidth="85" Content="Add timer" Command="{Binding AddTimerCommand}"/>
-        </StackPanel>
+            </controls:CollectionEditorControl.Columns>
+        </controls:CollectionEditorControl>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>

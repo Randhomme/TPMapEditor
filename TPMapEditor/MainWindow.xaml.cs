@@ -117,7 +117,7 @@ namespace TPMapEditor
             {
                 if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    var progressDialog = new ProgressDialog(this);
+                    var progressDialog = new ProgressDialog(this, "Importing map");
                     Map.Reset();
                     ClearSelections();
                     var _lock = new object();
@@ -147,7 +147,7 @@ namespace TPMapEditor
             };
             if (sfd.ShowDialog(this) == true)
             {
-                var progressDialog = new ProgressDialog(this);
+                var progressDialog = new ProgressDialog(this, "Exporting map");
                 Task.Run(() =>
                 {
                     using (var de = new DataExport(sfd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation))
@@ -171,15 +171,9 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
-        private void OnWorldInfoEdit()
-        {
-            new WorldInfoDialog(this, Map).ShowDialog();
-        }
-
-        [RelayCommand]
         private void OnMapSizeEdit()
         {
-            var msd = new MapSizeDialog(this, Map.Size, Map.ZSize, Map.WorldBuffer);
+            var msd = new MapSizeDialog(this, "Map size", Map.Size, Map.ZSize, Map.WorldBuffer);
             if (msd.ShowDialog() == true)
             {
                 Map.Size = msd.Size;
@@ -189,9 +183,69 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnWorldInfoEdit()
+        {
+            new WorldInfoDialog(this, "World info", Map).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnFlagsEdit()
+        {
+            new FlagDialog(this, "Flags", Map).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnGroupsEdit()
+        {
+            new CollectionEditorDialog(this, "Groups", Map.Groups, () => new Group(Map)).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnJournalEntriesEdit()
+        {
+            new JournalEntryDialog(this, "Journal entries", Map).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnMapTextPointsEdit()
+        {
+            new CollectionEditorDialog(this, "Map text points", Map.MapTextPoints, () => new MapTextPoint(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault())).ShowDialog();
+            if (SelectedMapTextPoint != null)
+            {
+                if (!Map.MapTextPoints.Contains(SelectedMapTextPoint))
+                {
+                    SelectedMapTextPoint = null;
+                    if (MapTextPointRadioButton.IsChecked == true)
+                        SelectedElement = null;
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void OnObjectiveTasksEdit()
+        {
+            new CollectionEditorDialog(this, "Objective tasks", Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedElement.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault())).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnObjectivePointsEdit()
+        {
+            new CollectionEditorDialog(this, "Objective points", Map.ObjectivePoints, () => new ObjectivePoint(Map)).ShowDialog();
+            if (SelectedObjectivePoint != null)
+            {
+                if (!Map.ObjectivePoints.Contains(SelectedObjectivePoint))
+                {
+                    SelectedObjectivePoint = null;
+                    if (ObjectivePointRadioButton.IsChecked == true)
+                        SelectedElement = null;
+                }
+            }
+        }
+
+        [RelayCommand]
         private void OnPlayersEdit()
         {
-            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<Player>(Map.Players, () => new(Map)) }.ShowDialog();
+            new CollectionEditorDialog(this, "Players", Map.Players, () => new Player(Map)).ShowDialog();
             if (SelectedPlayer != null)
             {
                 if (!Map.Players.Contains(SelectedPlayer))
@@ -204,83 +258,41 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
-        private void OnWorldObjectsEdit()
-        {
-            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<WorldObject>(Map.WorldObjects, () => new(Map)) }.ShowDialog();
-            //new WorldObjectDialog(this, Map).ShowDialog();
-            if (SelectedWorldObject != null)
-            {
-                if (!Map.WorldObjects.Contains(SelectedWorldObject))
-                {
-                    SelectedWorldObject = null;
-                    if (WorldObjectRadioButton.IsChecked == true)
-                        SelectedElement = null;
-                }
-            }
-        }
-
-        [RelayCommand]
-        private void OnTeamsEdit()
-        {
-            new TeamsDialog(this, Map).ShowDialog();
-        }
-
-        [RelayCommand]
-        private void OnGroupsEdit()
-        {
-            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<Group>(Map.Groups, () => new(Map, NamedElement.GenerateName("Group", Map.Groups))) }.ShowDialog();
-        }
-
-        [RelayCommand]
-        private void OnFlagsEdit()
-        {
-            //new FlagDialog(this, Map).ShowDialog();
-            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<Flag>(Map.Flags, () => new(Map), true) }.ShowDialog();
-        }
-
-        [RelayCommand]
         private void OnPlayerAlliancesEdit()
         {
             if (Map.Players.Count > 1)
-                new PlayerAllianceDialog(this, Map).ShowDialog();
+                new PlayerAllianceDialog(this, "Player alliances", Map).ShowDialog();
             else
                 MessageBox.Show("You need at least 2 players to create alliances.");
         }
 
         [RelayCommand]
-        private void OnTimersEdit()
-        {
-            new TimerDialog(this, Map).ShowDialog();
-        }
-
-        [RelayCommand]
         private void OnSpeechEventsEdit()
         {
-            new SpeechEventDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this, "Speech events", Map.SpeechEvents, () => new SpeechEvent(Map, NamedElement.GenerateName("SpeechEvent", Map.SpeechEvents))).ShowDialog();
         }
 
         [RelayCommand]
-        private void OnWorldRulesEdit()
+        private void OnTeamsEdit()
         {
-            new WorldRuleDialog(this, Map).ShowDialog();
+            new TeamsDialog(this, "Teams", Map).ShowDialog();
         }
 
         [RelayCommand]
-        private void OnObjectiveTasksEdit()
+        private void OnTimersEdit()
         {
-            new ObjectiveTaskDialog(this, Map).ShowDialog();
-        }
-
-        [RelayCommand]
-        private void OnJournalEntriesEdit()
-        {
-            new JournalEntryDialog(this, Map).ShowDialog();
+            new TimerDialog(this, "Timers", Map).ShowDialog();
         }
 
         [RelayCommand]
         private void OnWaypointPathsEdit()
         {
-            new WaypointPathDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this, "Waypoint paths", Map.WaypointPaths, () =>
+            {
+                var wp = new WaypointPath(Map, NamedElement.GenerateName("WaypointPath", Map.WaypointPaths));
+                wp.Points.Add(new(wp, 0, 0, 0));
+                return wp;
+            }).ShowDialog();
             if (SelectedWaypointPath != null)
             {
                 if (!Map.WaypointPaths.Contains(SelectedWaypointPath))
@@ -298,21 +310,22 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
-        private void OnWorldPolygonsEdit()
+        private void OnWorldCrewsAndArmsEdit()
         {
-            new WorldPolygonDialog(this, Map).ShowDialog();
-            if (SelectedWorldPolygon != null)
+            new WorldCrewAndArmsDialog(this, "World crews and arms", Map).ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnWorldObjectsEdit()
+        {
+            new CollectionEditorDialog(this, "World objects", Map.WorldObjects, () => new WorldObject(Map)).ShowDialog();
+            if (SelectedWorldObject != null)
             {
-                if (!Map.WorldPolygons.Contains(SelectedWorldPolygon))
+                if (!Map.WorldObjects.Contains(SelectedWorldObject))
                 {
-                    SelectedWorldPolygonPoint = null;
-                    SelectedWorldPolygon = null;
-                    if (WorldPolygonRadioButton.IsChecked == true)
+                    SelectedWorldObject = null;
+                    if (WorldObjectRadioButton.IsChecked == true)
                         SelectedElement = null;
-                }
-                else if (SelectedWorldPolygonPoint != null && !SelectedWorldPolygon.Points.Contains(SelectedWorldPolygonPoint))
-                {
-                    SelectedWorldPolygonPoint = null;
                 }
             }
         }
@@ -320,7 +333,12 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldPointSetsEdit()
         {
-            new WorldPointSetDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this, "World point sets", Map.WorldPointSets, () =>
+            {
+                var wps = new WorldPointSet(Map, NamedElement.GenerateName("WorldPointSet", Map.WorldPointSets));
+                wps.Points.Add(new(wps, 0, 0, 0, 0));
+                return wps;
+            }).ShowDialog();
             if (SelectedWorldPointSet != null)
             {
                 if (!Map.WorldPointSets.Contains(SelectedWorldPointSet))
@@ -340,46 +358,48 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
-        private void OnObjectivePointsEdit()
+        private void OnWorldPolygonsEdit()
         {
-            new CollectionEditorDialog(this) { DataContext = new CollectionEditorControlContext<ObjectivePoint>(Map.ObjectivePoints, () => new(Map)) }.ShowDialog();
-            if (SelectedObjectivePoint != null)
+            new CollectionEditorDialog(this, "World polygons", Map.WorldPolygons, () =>
             {
-                if (!Map.ObjectivePoints.Contains(SelectedObjectivePoint))
+                var wp = new WorldPolygon(Map, NamedElement.GenerateName("WorldPolygon", Map.WorldPolygons));
+                wp.Points.Add(new(wp, 0, 0));
+                return wp;
+            }).ShowDialog();
+            if (SelectedWorldPolygon != null)
+            {
+                if (!Map.WorldPolygons.Contains(SelectedWorldPolygon))
                 {
-                    SelectedObjectivePoint = null;
-                    if (ObjectivePointRadioButton.IsChecked == true)
+                    SelectedWorldPolygonPoint = null;
+                    SelectedWorldPolygon = null;
+                    if (WorldPolygonRadioButton.IsChecked == true)
                         SelectedElement = null;
+                }
+                else if (SelectedWorldPolygonPoint != null && !SelectedWorldPolygon.Points.Contains(SelectedWorldPolygonPoint))
+                {
+                    SelectedWorldPolygonPoint = null;
                 }
             }
         }
 
         [RelayCommand]
-        private void OnMapTextPointsEdit()
+        private void OnWorldRulesEdit()
         {
-            new MapTextPointDialog(this, Map).ShowDialog();
-            if (SelectedMapTextPoint != null)
-            {
-                if (!Map.MapTextPoints.Contains(SelectedMapTextPoint))
-                {
-                    SelectedMapTextPoint = null;
-                    if (MapTextPointRadioButton.IsChecked == true)
-                        SelectedElement = null;
-                }
-            }
-        }
-
-        [RelayCommand]
-        private void OnMapWorldCrewsAndArmsEdit()
-        {
-            new WorldCrewAndArmsDialog(this, Map).ShowDialog();
+            new CollectionEditorDialog(this, "World rules", Map.WorldRules, () => new WorldRule(Map, NamedElement.GenerateName("WorldRule", Map.WorldRules))).ShowDialog();
         }
 
         [RelayCommand]
         private void OnAppSettingsEdit()
         {
-            var asd = new AppSettingsDialog(this, settings);
+            var asd = new AppSettingsDialog(this, "Settings", settings);
             asd.ShowDialog();
+        }
+
+        [RelayCommand]
+        private void OnAboutAppShow()
+        {
+            var v = Assembly.GetExecutingAssembly().GetName().Version;
+            MessageBox.Show($"TPMapEditor version {v.Major}.{v.Minor}.{v.Build}\nAuthor : Randhomme", "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #endregion MenuCommand
@@ -1442,16 +1462,6 @@ namespace TPMapEditor
             AddWaypointPathPointRadioButton.IsChecked = false;
         }
 
-        private void EditWaypointPathColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedWaypointPath != null)
-            {
-                var cp = new ColorPicker(this, SelectedWaypointPath.Color);
-                if (cp.ShowDialog() == true)
-                    SelectedWaypointPath.Color = cp.NewColor;
-            }
-        }
-
         #endregion
 
         #region WorldPolygon
@@ -1816,16 +1826,6 @@ namespace TPMapEditor
             AddWorldPolygonPointRadioButton.IsChecked = false;
         }
 
-        private void EditWorldPolygonColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedWorldPolygon != null)
-            {
-                var cp = new ColorPicker(this, SelectedWorldPolygon.Color);
-                if (cp.ShowDialog() == true)
-                    SelectedWorldPolygon.Color = cp.NewColor;
-            }
-        }
-
         #endregion
 
         #region WorldPointSet
@@ -2174,16 +2174,6 @@ namespace TPMapEditor
                     worldPoint.ZRotation = GetRotation(newRotation);
                     e.Handled = true;
                 }
-            }
-        }
-
-        private void EditWorldPointSetColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedWorldPointSet != null)
-            {
-                var cp = new ColorPicker(this, SelectedWorldPointSet.Color);
-                if (cp.ShowDialog() == true)
-                    SelectedWorldPointSet.Color = cp.NewColor;
             }
         }
 

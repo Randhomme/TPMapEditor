@@ -11,7 +11,7 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private Group selectedGroup;
 
-        public RuleFieldGroupUnit(string? realLabel, string? label, Group selectedGroup, NamedElement value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldGroupUnit(WorldMap map, string? realLabel, string? label, Group selectedGroup, NamedElement value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(map, realLabel, label, value, isOptional, optionalLabel, isShown)
         {
             this.selectedGroup = selectedGroup;
         }

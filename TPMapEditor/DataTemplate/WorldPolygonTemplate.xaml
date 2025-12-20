@@ -1,0 +1,70 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    x:Class="TPMapEditor.DataTemplate.WorldPolygonTemplate"
+                    xmlns:controls="clr-namespace:TPMapEditor.Controls"
+                    xmlns:data="clr-namespace:TPMapEditor.Data"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate DataType="{x:Type data:WorldPolygon}">
+        <TabControl>
+            <TabItem Header="Properties">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="3">
+                        <Label Margin="-5,0,0,0" Content="Name"/>
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                        <Label Margin="-5,5,0,0" Content="Color"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{Binding Color}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Button Width="70" Content="Edit" Grid.Column="1" Click="EditWorldPolygonColor_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Points">
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding Points}" Factory="{Binding WorldPolygonPointFactory}">
+                    <controls:CollectionEditorControl.Columns>
+                        <DataGridTextColumn Binding="{Binding Item.X}" Header="X" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding Item.Y}" Header="Y" Width="*"/>
+                    </controls:CollectionEditorControl.Columns>
+                </controls:CollectionEditorControl>
+            </TabItem>
+        </TabControl>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type data:WorldPolygon}" x:Key="WorldPolygonNoPointTemplate">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Label Margin="-5,0,0,0" Content="Name"/>
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                <Label Margin="-5,5,0,0" Content="Color"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding Color}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Button Width="70" Content="Edit" Grid.Column="1" Click="EditWorldPolygonColor_Click"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+</ResourceDictionary>

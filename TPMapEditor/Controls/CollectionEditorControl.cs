@@ -15,6 +15,7 @@ namespace TPMapEditor.Controls
 {
     [TemplatePart(Name = "PART_DataGrid", Type = typeof(DataGrid))]
     [TemplatePart(Name = "PART_AddButton", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_DeleteSelectedButton", Type = typeof(Button))]
     [TemplatePart(Name = "PART_MoveUpButton", Type = typeof(Button))]
     [TemplatePart(Name = "PART_MoveDownButton", Type = typeof(Button))]
     public partial class CollectionEditorControl : Control
@@ -22,12 +23,15 @@ namespace TPMapEditor.Controls
         private IList? EditableList => ItemsSource as IList;
         private IList<ItemWrapper> SelectedWrappers => dataGrid?.SelectedItems.OfType<ItemWrapper>().ToList() ?? Array.Empty<ItemWrapper>().ToList();
         private INotifyCollectionChanged? observableItemsSource;
+        private Type? itemsType;
         private DataGrid? dataGrid;
         private Button? addButton;
+        private Button? deleteSelectedButton;
         private Button? moveUpButton;
         private Button? moveDownButton;
         private readonly RelayCommand addCommand;
         private readonly RelayCommand<object> deleteCommand;
+        private readonly RelayCommand deleteSelectedCommand;
         private readonly RelayCommand moveUpCommand;
         private readonly RelayCommand moveDownCommand;
         private readonly DataGridColumn deleteButtonColumn;
@@ -35,7 +39,8 @@ namespace TPMapEditor.Controls
         public CollectionEditorControl()
         {
             Columns = new ObservableCollection<DataGridColumn>();
-            addCommand = new RelayCommand(AddNewItem);
+            addCommand = new RelayCommand(AddNewItem, CanAddNewItem);
+            deleteSelectedCommand = new RelayCommand(DeleteSelectedItems, CanDeleteSelectedItems);
             deleteCommand = new RelayCommand<object>(DeleteItem);
             moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItems(-1));
             moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItems(1));
@@ -100,7 +105,7 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(CollectionEditorControl), new FrameworkPropertyMetadata(null, OnSelectedItemChanged) { BindsTwoWayByDefault = true, DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
 
-        public Func<object> Factory
+        public Func<object>? Factory
         {
             get { return (Func<object>)GetValue(FactoryProperty); }
             set { SetValue(FactoryProperty, value); }
@@ -118,11 +123,21 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty ColumnsProperty =
             DependencyProperty.Register(nameof(Columns), typeof(ObservableCollection<DataGridColumn>), typeof(CollectionEditorControl));
 
+        public bool OverrideColumnsFromTemplate
+        {
+            get { return (bool)GetValue(OverrideColumnsFromTemplateProperty); }
+            set { SetValue(OverrideColumnsFromTemplateProperty, value); }
+        }
+
+        public static readonly DependencyProperty OverrideColumnsFromTemplateProperty =
+            DependencyProperty.Register(nameof(OverrideColumnsFromTemplate), typeof(bool), typeof(CollectionEditorControl), new PropertyMetadata(true));
+
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (CollectionEditorControl)d;
             control.DetachFromOldItemsSource(e.OldValue);
             control.AttachToNewItemsSource(e.NewValue);
+            control.GetItemsType();
         }
 
         private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -246,26 +261,28 @@ namespace TPMapEditor.Controls
 
             dataGrid = GetTemplateChild("PART_DataGrid") as DataGrid;
             addButton = GetTemplateChild("PART_AddButton") as Button;
+            deleteSelectedButton = GetTemplateChild("PART_DeleteSelectedButton") as Button;
             moveUpButton = GetTemplateChild("PART_MoveUpButton") as Button;
             moveDownButton = GetTemplateChild("PART_MoveDownButton") as Button;
             if (dataGrid != null)
             {
                 dataGrid.SelectionChanged += DataGrid_SelectionChanged;
-                if (GridOnlyMode)
+                if (Columns.Count > 0)
                 {
-                    if (Columns != null)
+                    if (OverrideColumnsFromTemplate)
+                        dataGrid.Columns.Clear();
+                    foreach (var column in Columns)
                     {
-                        foreach (var column in Columns)
-                        {
-                            //dataGrid.Columns.Add(CloneColumn(column));
-                            dataGrid.Columns.Add(column);
-                        }
+                        //dataGrid.Columns.Add(CloneColumn(column));
+                        dataGrid.Columns.Add(column);
                     }
                 }
                 dataGrid.Columns.Add(deleteButtonColumn);
             }
             if (addButton != null)
                 addButton.Command = addCommand;
+            if (deleteSelectedButton != null)
+                deleteSelectedButton.Command = deleteSelectedCommand;
             if (moveUpButton != null)
                 moveUpButton.Command = moveUpCommand;
             if (moveDownButton != null)
@@ -276,11 +293,38 @@ namespace TPMapEditor.Controls
         {
             moveUpCommand.NotifyCanExecuteChanged();
             moveDownCommand.NotifyCanExecuteChanged();
+            deleteSelectedCommand.NotifyCanExecuteChanged();
+        }
+
+        private void GetItemsType()
+        {
+            itemsType = ItemsSource?.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>))?.GetGenericArguments()[0];
+        }
+
+        private object? CreateItem()
+        {
+            if (Factory != null)
+                return Factory.Invoke();
+
+            if (itemsType == null)
+                return null;
+
+            var ctor = itemsType.GetConstructor(Type.EmptyTypes);
+            if (ctor == null)
+                throw new InvalidOperationException(
+                    $"No factory provided and type {itemsType.Name} has no parameterless constructor.");
+
+            return ctor.Invoke(null);
         }
 
         private void AddNewItem()
         {
-            EditableList?.Add(Factory());
+            EditableList?.Add(CreateItem());
+        }
+
+        private bool CanAddNewItem()
+        {
+            return Factory != null || itemsType?.GetConstructor(Type.EmptyTypes) != null;
         }
 
         private void DeleteItem(object? item)
@@ -288,6 +332,19 @@ namespace TPMapEditor.Controls
             //var item = e.Parameter;
             //editableList?.Remove(item);
             EditableList?.Remove(item);
+        }
+
+        private void DeleteSelectedItems()
+        {
+            foreach(var wrapper in SelectedWrappers)
+            {
+                EditableList?.Remove(wrapper.Item);
+            }
+        }
+
+        private bool CanDeleteSelectedItems()
+        {
+            return dataGrid?.SelectedItems.Count > 0;
         }
 
         private void MoveSelectedItems(int direction)

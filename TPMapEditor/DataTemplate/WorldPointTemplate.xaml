@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:data="clr-namespace:TPMapEditor.Data"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate DataType="{x:Type data:WorldPoint}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Label Margin="-5,0,0,0" Content="X"/>
+                <Slider Value="{Binding X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                <Label Margin="-5,5,0,0" Content="Y"/>
+                <Slider Value="{Binding Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                <Label Margin="-5,5,0,0" Content="Z"/>
+                <Slider Value="{Binding Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
+                <Label Margin="-5,5,0,0" Content="Rotation X (Euler XYZ)"/>
+                <Slider Value="{Binding XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                <Label Margin="-5,5,0,0" Content="Rotation Y (Euler XYZ)"/>
+                <Slider Value="{Binding YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                <Label Margin="-5,5,0,0" Content="Rotation Z (Euler XYZ)"/>
+                <Slider Value="{Binding ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+</ResourceDictionary>

@@ -16,8 +16,11 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private string? optionalLabel;
 
-        protected RuleField(string? realLabel, string? label, bool isOptional, string? optionalLabel, bool isShown)
+        public WorldMap Map { get; }
+
+        protected RuleField(WorldMap map, string? realLabel, string? label, bool isOptional, string? optionalLabel, bool isShown)
         {
+            Map = map;
             this.realLabel = realLabel;
             this.label = label;
             this.isOptional = isOptional;
@@ -32,7 +35,7 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private T? value;
 
-        protected RuleField(string? realLabel, string? label, T? value, bool isOptional, string? optionalLabel, bool isShown) : base(realLabel, label, isOptional, optionalLabel, isShown)
+        protected RuleField(WorldMap map, string? realLabel, string? label, T? value, bool isOptional, string? optionalLabel, bool isShown) : base(map, realLabel, label, isOptional, optionalLabel, isShown)
         {
             this.value = value;
         }

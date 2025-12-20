@@ -2,17 +2,34 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:TPMapEditor"
+             xmlns:converter="clr-namespace:TPMapEditor.Converter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Converter/Converters.xaml"/>
                 <ResourceDictionary Source="/Styles/TextBoxStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/DataGridStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/TextGroupBoxStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/SliderTextBoxControl.xaml"/>
                 <ResourceDictionary Source="/Styles/ScrollViewerStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/CollectionEditorControlStyle.xaml"/>
-                <ResourceDictionary Source="/DataTemplate/DataTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/GroupTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/PlayerTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/WorldObjectTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MapTextPointTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/ObjectivePointTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/ObjectiveTaskTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/SpeechEventTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/WaypointPathTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/PointTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/WorldPointSetTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/WorldPointTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/WorldPolygonTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/RuleFieldTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/RuleConditionTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/RuleActionTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/WorldRuleTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

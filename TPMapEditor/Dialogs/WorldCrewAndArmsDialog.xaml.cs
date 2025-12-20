@@ -31,7 +31,7 @@ namespace TPMapEditor.Dialogs
         [ObservableProperty]
         private WorldObjectType selectedArmType;
         public WorldMap Map { get; }
-        public WorldCrewAndArmsDialog(Window owner, WorldMap map) : base(owner)
+        public WorldCrewAndArmsDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             selectedCrewType = WorldObjectType.WotTypes.FirstOrDefault((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.CrewCustomInfoFactory);
             selectedArmType = WorldObjectType.WotTypes.FirstOrDefault((t) => t.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.GunCustomInfoFactory);

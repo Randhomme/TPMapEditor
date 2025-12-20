@@ -2,7 +2,7 @@
 {
     public class RuleFieldWaypointPath : RuleField<WaypointPath>
     {
-        public RuleFieldWaypointPath(string? realLabel, string? label, WaypointPath value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(realLabel, label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldWaypointPath(WorldMap map, string? realLabel, string? label, WaypointPath value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(map, realLabel, label, value, isOptional, optionalLabel, isShown)
         {
         }
 

@@ -61,12 +61,12 @@ namespace TPMapEditor.Data
         {
             if(value == null)
             {
-                if (!HasSelectableTeam)
+                if (HasSelectableTeam)
                     HasSelectableTeam = false;
             }
             else
             {
-                if (HasSelectableTeam)
+                if (!HasSelectableTeam)
                     HasSelectableTeam = true;
             }
         }
@@ -87,13 +87,12 @@ namespace TPMapEditor.Data
         {
             if (value == null)
             {
-                if (!HasInGameTeam)
+                if (HasInGameTeam)
                     HasInGameTeam = false;
             }
-            else
+            else if (!HasInGameTeam)
             {
-                if (HasInGameTeam)
-                    HasInGameTeam = true;
+                HasInGameTeam = true;
             }
         }
 

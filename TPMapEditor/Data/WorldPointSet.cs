@@ -20,8 +20,11 @@ namespace TPMapEditor.Data
 
         public ObservableCollection<WorldPoint> Points { get; }
 
+        public Func<WorldPoint> WorldPointFactory { get; }
+
         public WorldPointSet(WorldMap map, string name) : base(map, name)
         {
+            WorldPointFactory = () => new(this, 0, 0, 0, 0);
             Points = new ObservableCollection<WorldPoint>();
             Points.CollectionChanged += (s, e) =>
             {
