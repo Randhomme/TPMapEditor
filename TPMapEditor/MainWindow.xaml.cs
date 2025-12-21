@@ -387,9 +387,9 @@ namespace TPMapEditor
                 var progressDialog = new ProgressDialog(this, "Reload TPGame folder");
                 progressDialog.RunActionSameThread(() =>
                 {
-                    progressDialog.Progress.Report("Reloading ...");
+                    progressDialog.ProgressOperation.Report("Reloading ...");
                     settings.ReloadAll();
-                    progressDialog.Progress.Report("Done");
+                    progressDialog.ProgressOperation.Report("Done");
                 });
             }
         }
@@ -400,9 +400,9 @@ namespace TPMapEditor
             var progressDialog = new ProgressDialog(this, "Reload TPGame folder");
             progressDialog.RunActionSameThread(() =>
             {
-                progressDialog.Progress.Report("Reloading ...");
+                progressDialog.ProgressOperation.Report("Reloading ...");
                 settings.ReloadAll();
-                progressDialog.Progress.Report("Done");
+                progressDialog.ProgressOperation.Report("Done");
             });
         }
 
