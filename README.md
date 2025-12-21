@@ -2,6 +2,7 @@
 
 ## Todo list
 - [ ] Write a complete documentation (values in the map file, values in the map editor)
+- [ ] Add a list of element on latteral bar to show/hide elements
 - [ ] Drag and drop selection by drawing a rectangle with the mouse
 - [ ] Undo/Redo feature
 - [ ] Add mini map export
