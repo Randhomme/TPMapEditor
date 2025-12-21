@@ -115,7 +115,7 @@ namespace TPMapEditor
                     ClearSelections();
                     var _lock = new object();
                     Map.EnableCollectionSynchronization(_lock);
-                    progressDialog.RunAction(() =>
+                    progressDialog.RunActionSameThread(() =>
                     {
                         using var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation, _lock);
                         di.ReadMapFileAndAddData();
