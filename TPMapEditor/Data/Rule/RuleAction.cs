@@ -237,6 +237,50 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(field);
         }
 
+        private void AddRuleFieldWorldObjectEtheriumCurrent(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        {
+            worldObject ??= map.WorldObjects.FirstOrDefault((wot)=>wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.EtheriumCurrentCustomInfoFactory);
+            var field = new RuleFieldWorldObjectEtheriumCurrent(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
+        }
+
+        private void AddRuleFieldWorldObjectIsland(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        {
+            worldObject ??= map.WorldObjects.FirstOrDefault((wot) => wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.IslandCustomInfoFactory);
+            var field = new RuleFieldWorldObjectIsland(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
+        }
+
+        private void AddRuleFieldWorldObjectNebula(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        {
+            worldObject ??= map.WorldObjects.FirstOrDefault((wot) => wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.NebulaCustomInfoFactory);
+            var field = new RuleFieldWorldObjectNebula(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
+        }
+
+        private void AddRuleFieldWorldObjectShip(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        {
+            worldObject ??= map.WorldObjects.FirstOrDefault((wot) => wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.ShipCustomInfoFactory);
+            var field = new RuleFieldWorldObjectShip(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
+        }
+
         private void AddRuleFieldWorldObjectType(string? realLabel, string? label, KillableWorldObjectType worldObjectType = KillableWorldObjectType.Ship, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             RuleFields.Add(new RuleFieldWorldObjectType(map, realLabel, label, worldObjectType, isOptional, optionalLabel, isShown));
@@ -265,13 +309,13 @@ namespace TPMapEditor.Data.Rule
             {
                 case Enums.RuleAction.StateInitSetupEtheriumCurrent:
                     RuleFields.Clear();
-                    AddRuleFieldWorldObject("World Object ID Int", "World object");
+                    AddRuleFieldWorldObjectEtheriumCurrent("World Object ID Int", "World object");
                     AddRuleFieldString("Etherium Name String", "Etherium current name");
                     AddRuleFieldPath("Etherium Path String", "Etherium current path");
                     break;
                 case Enums.RuleAction.StateInitSetupIsland:
                     RuleFields.Clear();
-                    AddRuleFieldWorldObject("World Object ID Int", "World object");
+                    AddRuleFieldWorldObjectIsland("World Object ID Int", "World object");
                     AddRuleFieldInt("Combat Strength Int", "Combat strength", min: 0);
                     AddRuleFieldPlayer("Player/Owner String", "Player/Owner", isOptional: true, optionalLabel: "Has player/owner");
                     AddRuleFieldCrewSkillLevel("Gunnery Level String", "Gunnery level");
@@ -279,7 +323,7 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.StateInitSetupNebula:
                     RuleFields.Clear();
-                    AddRuleFieldWorldObject("World Object ID Int", "World object");
+                    AddRuleFieldWorldObjectNebula("World Object ID Int", "World object");
                     AddRuleFieldString("New Nebula Name String", "Nebula name");
                     AddRuleFieldPolygon("Polygon Name String", "Polygon");
                     AddRuleFieldObservableCollection("Lightning On/Off String", "Has lightning", new()
@@ -309,7 +353,7 @@ namespace TPMapEditor.Data.Rule
                     RuleFields.Clear();
                     ShipUnit = new(map, NamedElement.GenerateName("Ship", map.ShipUnits));
                     map.ShipUnits.Add(ShipUnit);
-                    AddRuleFieldWorldObject("World Object ID Int", "World object", ShipUnit.WorldObject, propertyChanged: (s, e) =>
+                    AddRuleFieldWorldObjectShip("World Object ID Int", "World object", ShipUnit.WorldObject, propertyChanged: (s, e) =>
                     {
                         if (s is RuleFieldWorldObject rfwo && e.PropertyName == "Value")
                         {

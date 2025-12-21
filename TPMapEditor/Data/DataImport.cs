@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using System.Xml.Linq;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
@@ -1223,7 +1224,11 @@ namespace TPMapEditor.Data
                 case RuleFieldGroup ruleField:
                     {
                         var groupName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
-                        var group = map.Groups.FirstOrDefault(g => g.Name == groupName);
+                        Group group;
+                        if (groupName.Equals(Group.DefaultName))
+                            group = Group.DefaultGroup;
+                        else
+                            group = map.Groups.FirstOrDefault(g => g.Name == groupName);
                         if (group == null)
                         {
                             if (ruleField.IsOptional)
@@ -1242,7 +1247,11 @@ namespace TPMapEditor.Data
                 case RuleFieldGroupUnit ruleField:
                     {
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
-                        var group = map.Groups.FirstOrDefault(g => g.Name == name);
+                        Group group;
+                        if (name.Equals(Group.DefaultName))
+                            group = Group.DefaultGroup;
+                        else
+                            group = map.Groups.FirstOrDefault(g => g.Name == name);
                         if (group != null)
                         {
                             ruleField.Value = group;
@@ -1253,21 +1262,33 @@ namespace TPMapEditor.Data
                             var nameSplit = name.Split(',');
                             var unitGroupName = nameSplit.First();
                             var unitName = nameSplit.Last();
-                            var unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
-                            if(unitGroup != null)
+                            Group unitGroup;
+                            if (unitGroupName.Equals(Group.DefaultName))
+                                unitGroup = Group.DefaultGroup;
+                            else
+                                unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
+                            if (unitGroup != null)
                             {
-                                var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                ShipUnit unit;
+                                if (unitName.Equals(ShipUnit.DefaultName))
+                                    unit = ShipUnit.DefaultShipUnit;
+                                else
+                                    unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                                 if (unit != null)
                                 {
                                     ruleField.SelectedGroup = unitGroup;
                                     ruleField.Value = unit;
                                     ruleField.IsGroupUnitUnit = true;
                                 }
+                                else
+                                {
+                                    progress.Report($"Warning: Unit '{unitName}' not found.");
+                                }
                             }
                             else
                             {
-                                progress.Report($"Warning: Group/Unit '{name}' not found.");
-                                if(ruleField.IsOptional) ruleField.IsShown = false;
+                                if (ruleField.IsOptional) ruleField.IsShown = false;
+                                else progress.Report($"Warning: Group/Unit '{name}' not found.");
                                 ruleField.Value = null;
                             }
                         }
@@ -1497,20 +1518,32 @@ namespace TPMapEditor.Data
                         var nameSplit = name.Split(',');
                         var unitGroupName = nameSplit.First();
                         var unitName = nameSplit.Last();
-                        var unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
+                        Group unitGroup;
+                        if (unitGroupName.Equals(Group.DefaultName))
+                            unitGroup = Group.DefaultGroup;
+                        else
+                            unitGroup = map.Groups.FirstOrDefault(g => g.Name == unitGroupName);
                         if (unitGroup != null)
                         {
-                            var unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                            ShipUnit unit;
+                            if (unitName.Equals(ShipUnit.DefaultName))
+                                unit = ShipUnit.DefaultShipUnit;
+                            else
+                                unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                             if (unit != null)
                             {
                                 ruleField.SelectedGroup = unitGroup;
                                 ruleField.Value = unit;
                             }
+                            else
+                            {
+                                progress.Report($"Warning: Unit '{unitName}' not found.");
+                            }
                         }
                         else
                         {
-                            progress.Report($"Warning: Unit '{name}' not found.");
                             if (ruleField.IsOptional) ruleField.IsShown = false;
+                            else progress.Report($"Warning: Group/Unit '{name}' not found.");
                             ruleField.Value = null;
                         }
                     }
@@ -1557,6 +1590,98 @@ namespace TPMapEditor.Data
                             }
                             ruleField.Value = obj;
                         }
+                    }
+                    break;
+
+                case RuleFieldWorldObjectEtheriumCurrent ruleField:
+                    {
+                        var id = DataImportExtensions.ParseInt(ruleField.RealLabel + " ", line);
+                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (wot == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: WorldObject with id '{id}' not found.");
+                            }
+                        }
+                        else if(wot.Type.CustomInfoDefinition != CustomInfoDefinition.EtheriumCurrentCustomInfoFactory)
+                        {
+                            progress.Report($"Warning: WorldObject '{wot}' is used as etherium current.");
+                        }
+                        ruleField.Value = wot;
+                    }
+                    break;
+
+                case RuleFieldWorldObjectIsland ruleField:
+                    {
+                        var id = DataImportExtensions.ParseInt(ruleField.RealLabel + " ", line);
+                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (wot == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: WorldObject with id '{id}' not found.");
+                            }
+                        }
+                        else if (wot.Type.CustomInfoDefinition != CustomInfoDefinition.IslandCustomInfoFactory)
+                        {
+                            progress.Report($"Warning: WorldObject '{wot}' is used as island.");
+                        }
+                        ruleField.Value = wot;
+                    }
+                    break;
+
+                case RuleFieldWorldObjectNebula ruleField:
+                    {
+                        var id = DataImportExtensions.ParseInt(ruleField.RealLabel + " ", line);
+                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (wot == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: WorldObject with id '{id}' not found.");
+                            }
+                        }
+                        else if (wot.Type.CustomInfoDefinition != CustomInfoDefinition.NebulaCustomInfoFactory)
+                        {
+                            progress.Report($"Warning: WorldObject '{wot}' is used as nebula.");
+                        }
+                        ruleField.Value = wot;
+                    }
+                    break;
+
+                case RuleFieldWorldObjectShip ruleField:
+                    {
+                        var id = DataImportExtensions.ParseInt(ruleField.RealLabel + " ", line);
+                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (wot == null)
+                        {
+                            if (ruleField.IsOptional)
+                            {
+                                ruleField.IsShown = false;
+                            }
+                            else
+                            {
+                                progress.Report($"Warning: WorldObject with id '{id}' not found.");
+                            }
+                        }
+                        else if (wot.Type.CustomInfoDefinition != CustomInfoDefinition.ShipCustomInfoFactory)
+                        {
+                            progress.Report($"Warning: WorldObject '{wot}' is used as ship.");
+                        }
+                        ruleField.Value = wot;
                     }
                     break;
 

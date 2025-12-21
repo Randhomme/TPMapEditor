@@ -18,7 +18,7 @@ namespace TPMapEditor.Converter
                 if (shipUnitsSource is IList<ShipUnit> shipUnits)
                 {
                     if (!shipUnits.Contains(ShipUnit.DefaultShipUnit))
-                        shipUnits.Prepend(ShipUnit.DefaultShipUnit);
+                        shipUnits.Insert(0, ShipUnit.DefaultShipUnit);
                     return shipUnits;
                 }
                 return shipUnitsSource;

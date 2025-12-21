@@ -18,7 +18,7 @@ namespace TPMapEditor.Converter
                 if (groupsSource is IList<Group> groups)
                 {
                     if (!groups.Contains(Group.DefaultGroup))
-                        groups.Prepend(Group.DefaultGroup);
+                        groups.Insert(0, Group.DefaultGroup);
                     return groups;
                 }
                 return groupsSource;

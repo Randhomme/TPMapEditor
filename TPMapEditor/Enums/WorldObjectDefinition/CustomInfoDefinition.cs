@@ -27,6 +27,5 @@ namespace TPMapEditor.Enums.WorldObjectDefinition
         BlackHoleCustomInfoFactory,
         EtheriumCurrentCustomInfoFactory,
         NebulaCustomInfoFactory,
-
     }
 }

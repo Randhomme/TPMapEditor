@@ -3,6 +3,7 @@
                     xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
                     xmlns:data="clr-namespace:TPMapEditor.Data"
                     xmlns:datarule="clr-namespace:TPMapEditor.Data.Rule"
+                    xmlns:definitions="clr-namespace:TPMapEditor.Enums.WorldObjectDefinition"
                     xmlns:enums="clr-namespace:TPMapEditor.Enums"
                     xmlns:settings="clr-namespace:TPMapEditor.Settings"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -289,6 +290,58 @@
     <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObject}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
             <ComboBox ItemsSource="{Binding Map.WorldObjects}" SelectedItem="{Binding Value}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldObjectEtheriumCurrent-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectEtheriumCurrent}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldObjects, Converter={StaticResource WotTypesToParameterType}, ConverterParameter={x:Static definitions:CustomInfoDefinition.EtheriumCurrentCustomInfoFactory}}" SelectedItem="{Binding Value}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldObjectIsland-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectIsland}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldObjects, Converter={StaticResource WotTypesToParameterType}, ConverterParameter={x:Static definitions:CustomInfoDefinition.IslandCustomInfoFactory}}" SelectedItem="{Binding Value}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldObjectNebula-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectNebula}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldObjects, Converter={StaticResource WotTypesToParameterType}, ConverterParameter={x:Static definitions:CustomInfoDefinition.NebulaCustomInfoFactory}}" SelectedItem="{Binding Value}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </ContentControl>
+    </DataTemplate>
+
+    <!--WorldObjectShip-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldWorldObjectShip}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <ComboBox ItemsSource="{Binding Map.WorldObjects, Converter={StaticResource WotTypesToParameterType}, ConverterParameter={x:Static definitions:CustomInfoDefinition.ShipCustomInfoFactory}}" SelectedItem="{Binding Value}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}"/>

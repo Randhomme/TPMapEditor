@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TPMapEditor.Data;
 using TPMapEditor.Dialogs;
+using TPMapEditor.Enums.WorldObjectDefinition;
 using TPMapEditor.Settings;
 
 namespace TPMapEditor
@@ -54,43 +54,36 @@ namespace TPMapEditor
         [ObservableProperty]
         private UIElement? selectedElement;
 
-        public IList<WorldObject> SelectedWorldObjects { get; }
-        public IList<Player> SelectedPlayers { get; }
-        public IList<WaypointPathPoint> SelectedWaypointPathPoints { get; }
-        public IList<WaypointPath> SelectedWaypointPaths { get; }
-        public IList<WorldPolygonPoint> SelectedWorldPolygonPoints { get; }
-        public IList<WorldPolygon> SelectedWorldPolygons { get; }
-        public IList<WorldPoint> SelectedWorldPoints { get; }
-        public IList<WorldPointSet> SelectedWorldPointSets { get; }
-        public IList<ObjectivePoint> SelectedObjectivePoints { get; }
-        public IList<MapTextPoint> SelectedMapTextPoints { get; }
+        public IList<WorldObject> SelectedWorldObjects { get; } = new List<WorldObject>();
+        public IList<Player> SelectedPlayers { get; } = new List<Player>();
+        public IList<WaypointPathPoint> SelectedWaypointPathPoints { get; } = new List<WaypointPathPoint>();
+        public IList<WaypointPath> SelectedWaypointPaths { get; } = new List<WaypointPath>();
+        public IList<WorldPolygonPoint> SelectedWorldPolygonPoints { get; } = new List<WorldPolygonPoint>();
+        public IList<WorldPolygon> SelectedWorldPolygons { get; } = new List<WorldPolygon>();
+        public IList<WorldPoint> SelectedWorldPoints { get; } = new List<WorldPoint>();
+        public IList<WorldPointSet> SelectedWorldPointSets { get; } = new List<WorldPointSet>();
+        public IList<ObjectivePoint> SelectedObjectivePoints { get; } = new List<ObjectivePoint>();
+        public IList<MapTextPoint> SelectedMapTextPoints { get; } = new List<MapTextPoint>();
 
-        public WorldMap Map { get; }
+        public WorldMap Map { get; private set; }
         
         private void LoadSettings()
         {
             settings = settings.Load();
+            settings.ReloadAll();
         }
 
         public MainWindow()
         {
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var wotTypesItemsView = CollectionViewSource.GetDefaultView(WorldObjectType.WotTypes);
+            wotTypesItemsView.Filter = IsSelectableWorldObjectType;
             settings = new AppSettings();
             LoadSettings();
             Map = new WorldMap();
-            SelectedWorldObjects = new List<WorldObject>();
-            SelectedPlayers = new List<Player>();
-            SelectedWaypointPathPoints = new List<WaypointPathPoint>();
-            SelectedWaypointPaths = new List<WaypointPath>();
-            SelectedWorldPolygonPoints = new List<WorldPolygonPoint>();
-            SelectedWorldPolygons = new List<WorldPolygon>();
-            SelectedWorldPoints = new List<WorldPoint>();
-            SelectedWorldPointSets = new List<WorldPointSet>();
-            SelectedObjectivePoints = new List<ObjectivePoint>();
-            SelectedMapTextPoints = new List<MapTextPoint>();
             InitializeComponent();
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = $"{Title} v{version.Major}.{version.Minor}.{version.Build}";
             WorldObjectRadioButton.IsChecked = true;
             HidePlayerElements();
@@ -117,21 +110,17 @@ namespace TPMapEditor
             {
                 if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    var progressDialog = new ProgressDialog(this, "Importing map");
+                    var progressDialog = new ProgressDialog(this, "Import map");
                     Map.Reset();
                     ClearSelections();
                     var _lock = new object();
                     Map.EnableCollectionSynchronization(_lock);
-                    Task.Run(() =>
+                    progressDialog.RunAction(() =>
                     {
-                        using (var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation, _lock))
-                        {
-                            di.ReadMapFileAndAddData();
-                        }
-                        progressDialog.CanClose = true;
+                        using var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation, _lock);
+                        di.ReadMapFileAndAddData();
                     });
-                    progressDialog.ShowDialog();
-                    Map.DisableCollectionSynchronization();
+                    Map.EnableCollectionSynchronization(_lock);
                 }
             }
         }
@@ -147,16 +136,14 @@ namespace TPMapEditor
             };
             if (sfd.ShowDialog(this) == true)
             {
-                var progressDialog = new ProgressDialog(this, "Exporting map");
-                Task.Run(() =>
+                var progressDialog = new ProgressDialog(this, "Export map");
+                progressDialog.RunAction(() =>
                 {
                     using (var de = new DataExport(sfd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation))
                     {
                         de.CreateMapFileAndWriteData();
                     }
-                    progressDialog.CanClose = true;
                 });
-                progressDialog.ShowDialog();
             }
         }
 
@@ -391,8 +378,102 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnAppSettingsEdit()
         {
+            var tpGamePath = settings.TpGamePath;
             var asd = new AppSettingsDialog(this, "Settings", settings);
             asd.ShowDialog();
+            settings.Save();
+            if (settings.TpGamePath != tpGamePath)
+            {
+                var progressDialog = new ProgressDialog(this, "Reload TPGame folder");
+                progressDialog.RunActionSameThread(() =>
+                {
+                    progressDialog.Progress.Report("Reloading ...");
+                    settings.ReloadAll();
+                    progressDialog.Progress.Report("Done");
+                });
+            }
+        }
+
+        [RelayCommand]
+        private void OnReloadAll()
+        {
+            var progressDialog = new ProgressDialog(this, "Reload TPGame folder");
+            progressDialog.RunActionSameThread(() =>
+            {
+                progressDialog.Progress.Report("Reloading ...");
+                settings.ReloadAll();
+                progressDialog.Progress.Report("Done");
+            });
+        }
+
+        [RelayCommand]
+        private void OnReloadDialogueFilesList()
+        {
+            settings.ReloadDialogueFilesList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadEffectList()
+        {
+            settings.ReloadEffectList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadFlagTexturesList()
+        {
+            settings.ReloadFlagTexturesList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadGuiTexturesList()
+        {
+            settings.ReloadGuiTexturesList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadHudTexturesList()
+        {
+            settings.ReloadHudTexturesList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadMeshesList()
+        {
+            settings.ReloadMeshesList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadMusicsList()
+        {
+            settings.ReloadMusicsList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadSinglePlayerMissionsList()
+        {
+            settings.ReloadSinglePlayerMissionsList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadStrings()
+        {
+            settings.UpdateStringsDictionnaries();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void OnReloadWorldObjectTypeList()
+        {
+            settings.ReloadWorldObjectTypeList();
+            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         [RelayCommand]
@@ -535,7 +616,7 @@ namespace TPMapEditor
         {
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
-                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset + e.Delta);
+                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset - e.Delta);
                 e.Handled = true;
             }
         }
@@ -559,6 +640,29 @@ namespace TPMapEditor
             if (rotation > 180) rotation -= 360;
             else if (rotation < -180) rotation += 360;
             return rotation;
+        }
+
+        private bool IsSelectableWorldObjectType(object o)
+        {
+            if(o is WorldObjectType wot)
+            {
+                return wot.CustomInfoDefinition == CustomInfoDefinition.AsteroidCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.BlackHoleCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.BulletCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.DragonCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.EtheriumCurrentCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.IslandCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.MineCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.NebulaCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.NovaMortarCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.ShipCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.ShipDebrisCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.SpaceAnimalCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.StarMortarCustomInfoFactory ||
+                   wot.CustomInfoDefinition == CustomInfoDefinition.TorpedoCustomInfoFactory;
+            }
+            return false;
+            
         }
 
         #endregion

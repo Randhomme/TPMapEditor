@@ -45,7 +45,7 @@ namespace TPMapEditor.Settings
         [XmlIgnore]
         public string FlagTexturesDirectory { get; set; } = string.Empty;
         [XmlIgnore]
-        public string GameHeadersFiles { get; set; } = string.Empty;
+        public string GameHeadersDirectory { get; set; } = string.Empty;
         [XmlIgnore]
         public string GameStringsEnglish { get; set; } = string.Empty;
         [XmlIgnore]
@@ -59,7 +59,26 @@ namespace TPMapEditor.Settings
         [XmlIgnore]
         public string WorldObjectFilesDirectory { get; set; } = string.Empty;
 
-        partial void OnTpGamePathChanged(string? old, string newv)
+        public void UpdateStringsDictionnaries()
+        {
+            UpdateAppSettingsStrings();
+            UpdateGameHeadersFilesList();
+            var gameStrings = new Dictionary<string, string>();
+            UpdateGameStringsDictionary(gameStrings);
+            UpdateTeamNamesDictionary(gameStrings);
+            UpdateSpeechEventDictionnary(gameStrings);
+            UpdateSpeakersDictionnary(gameStrings);
+            UpdateShipNamesDictionnary(gameStrings);
+            UpdateInGameMessagesDictionary(gameStrings);
+            UpdateJournalTitlesDictionary(gameStrings);
+            UpdateObjectiveTasksDictionary(gameStrings);
+            UpdateSpeechEventsJournalsDictionary(gameStrings);
+            UpdateMapTextItemsDictionary(gameStrings);
+            UpdateWorldNamesDictionary(gameStrings);
+            UpdateWorldDescriptionsDictionary(gameStrings);
+        }
+
+        public void ReloadAll()
         {
             UpdateAppSettingsStrings();
             UpdateAppSettingsFolders();
@@ -76,21 +95,58 @@ namespace TPMapEditor.Settings
             UpdateMeshesList();
         }
 
-        public void UpdateStringsDictionnaries()
+        public void ReloadDialogueFilesList()
         {
-            var gameStrings = new Dictionary<string, string>();
-            UpdateGameStringsDictionary(gameStrings);
-            UpdateTeamNamesDictionary(gameStrings);
-            UpdateSpeechEventDictionnary(gameStrings);
-            UpdateSpeakersDictionnary(gameStrings);
-            UpdateShipNamesDictionnary(gameStrings);
-            UpdateInGameMessagesDictionary(gameStrings);
-            UpdateJournalTitlesDictionary(gameStrings);
-            UpdateObjectiveTasksDictionary(gameStrings);
-            UpdateSpeechEventsJournalsDictionary(gameStrings);
-            UpdateMapTextItemsDictionary(gameStrings);
-            UpdateWorldNamesDictionary(gameStrings);
-            UpdateWorldDescriptionsDictionary(gameStrings);
+            UpdateAppSettingsFolders();
+            UpdateDialogueFilesList();
+        }
+
+        public void ReloadEffectList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateEffectsList();
+        }
+
+        public void ReloadFlagTexturesList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateFlagTexturesList();
+        }
+
+        public void ReloadGuiTexturesList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateGuiTexturesList();
+        }
+
+        public void ReloadHudTexturesList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateHudTexturesList();
+        }
+
+        public void ReloadMeshesList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateMeshesList();
+        }
+
+        public void ReloadMusicsList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateMusicsList();
+        }
+
+        public void ReloadSinglePlayerMissionsList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateSinglePlayerMissionsList();
+        }
+
+        public void ReloadWorldObjectTypeList()
+        {
+            UpdateAppSettingsFolders();
+            UpdateWorldObjectTypeList();
         }
 
         private void UpdateAppSettingsStrings()
@@ -108,7 +164,7 @@ namespace TPMapEditor.Settings
                             if (line.StartsWith("Game Header Files:"))
                             {
                                 var gameHeadersFiles = Path.Combine(TpGamePath, line.Substring("Game Header Files:".Length).Trim());
-                                this.GameHeadersFiles = gameHeadersFiles;
+                                this.GameHeadersDirectory = gameHeadersFiles;
                             }
                             if (line.StartsWith("Game Strings - English:"))
                             {
@@ -185,10 +241,10 @@ namespace TPMapEditor.Settings
 
         private void UpdateGameHeadersFilesList()
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 GameHeadersFile.GameHeadersFilesList.Clear();
-                foreach (var file in Directory.GetFiles(GameHeadersFiles, "*.h"))
+                foreach (var file in Directory.GetFiles(GameHeadersDirectory, "*.h"))
                 {
                     var fileName = Path.GetFileName(file);
                     if (!string.IsNullOrEmpty(fileName))
@@ -199,7 +255,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -458,14 +514,14 @@ namespace TPMapEditor.Settings
 
         private void UpdateTeamNamesDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.TeamNames.Clear();
                 foreach (var file in this.TPTeamNames)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -489,20 +545,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateSpeechEventDictionnary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.SpeechEvents.Clear();
                 foreach (var file in this.TPSpeechEvents)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -530,20 +586,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateSpeakersDictionnary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.SpeakerNames.Clear();
                 foreach (var file in this.TPSpeakerNames)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -571,13 +627,13 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateShipNamesDictionnary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.ShipNames.Clear();
                 StringDictionnary.ShipNames.Add("LOCALIZED SHIP NAME", "LOCALIZED SHIP NAME");
@@ -585,7 +641,7 @@ namespace TPMapEditor.Settings
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -613,13 +669,13 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateInGameMessagesDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.InGameMessagesDictionnary.Clear();
                 StringDictionnary.InGameMessagesDictionnary.Add("GAME STRING", "GAME STRING");
@@ -627,7 +683,7 @@ namespace TPMapEditor.Settings
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -651,20 +707,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateJournalTitlesDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.JournalTitles.Clear();
                 foreach (var file in this.TPJournalTitles)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -688,20 +744,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateObjectiveTasksDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.ObjectiveTasks.Clear();
                 foreach (var file in this.TPObjectiveTasks)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -725,20 +781,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateSpeechEventsJournalsDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.SpeechEventsJournals.Clear();
                 foreach (var file in this.TPSpeechEventsJournals)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -762,20 +818,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateMapTextItemsDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.MapTextItems.Clear();
                 foreach (var file in this.TPMapTextItems)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -799,20 +855,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateWorldNamesDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.WorldNames.Clear();
                 foreach (var file in this.TPWorldNames)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -836,20 +892,20 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void UpdateWorldDescriptionsDictionary(Dictionary<string, string> gameStrings)
         {
-            if (Directory.Exists(GameHeadersFiles))
+            if (Directory.Exists(GameHeadersDirectory))
             {
                 StringDictionnary.WorldDescriptions.Clear();
                 foreach (var file in this.TPWorldDescriptions)
                 {
                     try
                     {
-                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersFiles, file.FileName))))
+                        using (var reader = new StreamReader(File.OpenRead(Path.Combine(GameHeadersDirectory, file.FileName))))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -873,7 +929,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersFiles}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 

@@ -23,7 +23,7 @@ namespace TPMapEditor.Dialogs
     public partial class ProgressDialog : DialogWindow
     {
         [ObservableProperty]
-        private bool canClose, progressBarIndeterminate = true;
+        private bool canClose, autoClose, progressBarIndeterminate = true;
 
         [ObservableProperty]
         private string logs, currentOperation = "Working...";
@@ -38,6 +38,26 @@ namespace TPMapEditor.Dialogs
             Progress = new Progress<string>(ProgressReport);
             ProgressOperation = new Progress<string>(ProgressOperationReport);
             InitializeComponent();
+        }
+
+        public void RunAction(Action action)
+        {
+            Task.Run(() =>
+            {
+                action?.Invoke();
+                CanClose = true;
+            });
+            this.ShowDialog();
+        }
+
+        public void RunActionSameThread(Action action)
+        {
+            this.Dispatcher.InvokeAsync(() =>
+            {
+                action?.Invoke();
+                CanClose = true;
+            });
+            this.ShowDialog();
         }
 
         [RelayCommand]
@@ -59,7 +79,13 @@ namespace TPMapEditor.Dialogs
         partial void OnCanCloseChanged(bool value)
         {
             if (value)
+            {
                 ProgressBarIndeterminate = false;
+                if (AutoClose)
+                {
+                    this.Dispatcher.Invoke(() => this.Close());
+                }
+            }
         }
     }
 }

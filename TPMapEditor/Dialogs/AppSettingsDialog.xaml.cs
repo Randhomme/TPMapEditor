@@ -23,7 +23,7 @@ namespace TPMapEditor.Dialogs
         {
             var ofd = new WF.FolderBrowserDialog()
             {
-                Description = "Select the TPGame folder.",
+                Description = "Select the TPGame folder",
                 ShowNewFolderButton = false,
                 SelectedPath = AppSettings.TpGamePath
             };
@@ -35,7 +35,7 @@ namespace TPMapEditor.Dialogs
 
         private void DialogWindow_Closed(object sender, EventArgs e)
         {
-            AppSettings.Save();
+                
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -43,6 +43,11 @@ namespace TPMapEditor.Dialogs
             var gshd = new GameStringsHeadersDialog(this, "Game strings headers", AppSettings);
             gshd.ShowDialog();
             AppSettings.UpdateStringsDictionnaries();
+        }
+
+        private void DialogWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            
         }
     }
 }
