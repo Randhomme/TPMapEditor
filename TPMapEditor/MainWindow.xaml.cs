@@ -66,21 +66,14 @@ namespace TPMapEditor
         public IList<MapTextPoint> SelectedMapTextPoints { get; } = new List<MapTextPoint>();
 
         public WorldMap Map { get; private set; }
-        
-        private void LoadSettings()
-        {
-            settings = settings.Load();
-            settings.ReloadAll();
-        }
 
         public MainWindow()
         {
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			
             var wotTypesItemsView = CollectionViewSource.GetDefaultView(WorldObjectType.WotTypes);
             wotTypesItemsView.Filter = IsSelectableWorldObjectType;
             settings = new AppSettings();
-            LoadSettings();
+            //LoadSettings();
             Map = new WorldMap();
             InitializeComponent();
             var version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -110,17 +103,16 @@ namespace TPMapEditor
             {
                 if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    var progressDialog = new ProgressDialog(this, "Import map");
                     Map.Reset();
                     ClearSelections();
                     var _lock = new object();
                     Map.EnableCollectionSynchronization(_lock);
-                    progressDialog.RunActionSameThread(() =>
+                    new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation, _lock);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock);
                         di.ReadMapFileAndAddData();
                     });
-                    Map.EnableCollectionSynchronization(_lock);
+                    Map.DisableCollectionSynchronization();
                 }
             }
         }
@@ -136,10 +128,9 @@ namespace TPMapEditor
             };
             if (sfd.ShowDialog(this) == true)
             {
-                var progressDialog = new ProgressDialog(this, "Export map");
-                progressDialog.RunAction(() =>
+                new ProgressDialog(this, "Export map").RunAction((progress, progressLogs) =>
                 {
-                    using (var de = new DataExport(sfd.FileName, Map, progressDialog.Progress, progressDialog.ProgressOperation))
+                    using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
                     {
                         de.CreateMapFileAndWriteData();
                     }
@@ -384,96 +375,204 @@ namespace TPMapEditor
             settings.Save();
             if (settings.TpGamePath != tpGamePath)
             {
-                var progressDialog = new ProgressDialog(this, "Reload TPGame folder");
-                progressDialog.RunActionSameThread(() =>
+                new ProgressDialog(this, "Reload TPGame folder").RunActionSameThread((progress, progressLogs) =>
                 {
-                    progressDialog.ProgressOperation.Report("Reloading ...");
-                    settings.ReloadAll();
-                    progressDialog.ProgressOperation.Report("Done");
-                });
+                    progress.Report("Reloading ...");
+                    settings.ReloadAll(progress, progressLogs);
+                    progress.Report("Reloading complete");
+                }, true);
             }
         }
 
         [RelayCommand]
         private void OnReloadAll()
         {
-            var progressDialog = new ProgressDialog(this, "Reload TPGame folder");
-            progressDialog.RunActionSameThread(() =>
+            new ProgressDialog(this, "Reload TPGame folder").RunActionSameThread((progress, progressLogs) =>
             {
-                progressDialog.ProgressOperation.Report("Reloading ...");
-                settings.ReloadAll();
-                progressDialog.ProgressOperation.Report("Done");
-            });
+                progress.Report("Reloading ...");
+                settings.ReloadAll(progress, progressLogs);
+                progress.Report("Reloading complete");
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadDialogueFilesList()
         {
-            settings.ReloadDialogueFilesList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadDialogueFilesList();
+                    progress.Report("Reloading complete");
+                }
+                catch(Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadEffectList()
         {
-            settings.ReloadEffectList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadEffectList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadFlagTexturesList()
         {
-            settings.ReloadFlagTexturesList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadFlagTexturesList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadGuiTexturesList()
         {
-            settings.ReloadGuiTexturesList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadGuiTexturesList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadHudTexturesList()
         {
-            settings.ReloadHudTexturesList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadHudTexturesList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadMeshesList()
         {
-            settings.ReloadMeshesList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadMeshesList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadMusicsList()
         {
-            settings.ReloadMusicsList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadMusicsList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadSinglePlayerMissionsList()
         {
-            settings.ReloadSinglePlayerMissionsList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadSinglePlayerMissionsList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadStrings()
         {
-            settings.UpdateStringsDictionnaries();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadStringsDictionnaries(progress, logs);
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
         private void OnReloadWorldObjectTypeList()
         {
-            settings.ReloadWorldObjectTypeList();
-            MessageBox.Show("Reloading complete", "Reload", MessageBoxButton.OK, MessageBoxImage.Information);
+            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
+            {
+                try
+                {
+                    progress.Report("Reloading ...");
+                    settings.ReloadWorldObjectTypeList();
+                    progress.Report("Reloading complete");
+                }
+                catch (Exception ex)
+                {
+                    logs.Report($"Error: {ex.Message}");
+                }
+            }, true);
         }
 
         [RelayCommand]
@@ -522,10 +621,38 @@ namespace TPMapEditor
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
+            settings = settings.Load();
             if (string.IsNullOrEmpty(settings.TpGamePath))
             {
                 MessageBox.Show("You should set the TPGame path in the application settings before using the map editor.", "TPGame Path Not Set", MessageBoxButton.OK, MessageBoxImage.Warning);
                 OnAppSettingsEdit();
+            }
+            else
+            {
+                new ProgressDialog(this, "Load TPGame folder").RunActionSameThread((progress, logs) =>
+                {
+                    var errCount = 0;
+                    try
+                    {
+                        progress.Report("Loading strings ...");
+                        settings.ReloadStringsDictionnaries(progress, logs);
+                    }
+                    catch (Exception ex)
+                    {
+                        logs.Report($"Error: {ex.Message}");
+                        errCount++;
+                    }
+                    try
+                    {
+                        progress.Report("Loading folders ...");
+                        settings.ReloadGameFolders(progress, logs);
+                    }
+                    catch (Exception ex)
+                    {
+                        logs.Report($"Error: {ex.Message}");
+                        errCount++;
+                    }
+                }, true, false);
             }
         }
 
