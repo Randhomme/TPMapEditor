@@ -23,40 +23,46 @@ namespace TPMapEditor.Dialogs
     public partial class ProgressDialog : DialogWindow
     {
         [ObservableProperty]
-        private bool canClose, autoClose, progressBarIndeterminate = true;
+        private bool canClose, autoClose, notifyOnAutoClose = true, progressBarIndeterminate = true;
 
         [ObservableProperty]
         private string logs, currentOperation = "Working...";
 
         public IProgress<string> Progress { get; }
 
-        public IProgress<string> ProgressOperation { get; }
+        public IProgress<string> ProgressLogs { get; }
 
         public ProgressDialog(Window owner, string title) : base(owner, title)
         {
-            logs = "";
+            logs = string.Empty;
             Progress = new Progress<string>(ProgressReport);
-            ProgressOperation = new Progress<string>(ProgressOperationReport);
+            ProgressLogs = new Progress<string>(ProgressLogsReport);
             InitializeComponent();
         }
 
-        public void RunAction(Action action)
+        public void RunAction(Action<IProgress<string>, IProgress<string>> action, bool autoClose = false, bool notifyOnAutoClose = true)
         {
+            Logs = string.Empty;
+            this.AutoClose = autoClose;
+            this.NotifyOnAutoClose = notifyOnAutoClose;
             Task.Run(() =>
             {
-                action?.Invoke();
-                CanClose = true;
+                action?.Invoke(this.Progress, this.ProgressLogs);
+                this.Dispatcher.Invoke(() => { CanClose = true; }, System.Windows.Threading.DispatcherPriority.SystemIdle);
             });
             this.ShowDialog();
         }
 
-        public void RunActionSameThread(Action action)
+        public void RunActionSameThread(Action<IProgress<string>, IProgress<string>> action, bool autoClose = false, bool notifyOnAutoClose = true)
         {
+            Logs = string.Empty;
+            this.AutoClose = autoClose;
+            this.NotifyOnAutoClose = notifyOnAutoClose;
             this.Dispatcher.InvokeAsync(() =>
             {
-                action?.Invoke();
-                CanClose = true;
-            });
+                action?.Invoke(this.Progress, this.ProgressLogs);
+                this.Dispatcher.Invoke(() => { CanClose = true; }, System.Windows.Threading.DispatcherPriority.SystemIdle);
+            }, System.Windows.Threading.DispatcherPriority.SystemIdle);
             this.ShowDialog();
         }
 
@@ -68,12 +74,12 @@ namespace TPMapEditor.Dialogs
 
         private void ProgressReport(string s)
         {
-            Logs += s + Environment.NewLine;
+            CurrentOperation = s;
         }
 
-        private void ProgressOperationReport(string s)
+        private void ProgressLogsReport(string s)
         {
-            CurrentOperation = s;
+            Logs += s + Environment.NewLine;
         }
 
         partial void OnCanCloseChanged(bool value)
@@ -81,9 +87,11 @@ namespace TPMapEditor.Dialogs
             if (value)
             {
                 ProgressBarIndeterminate = false;
-                if (AutoClose)
+                if (AutoClose && string.IsNullOrEmpty(Logs))
                 {
                     this.Dispatcher.Invoke(() => this.Close());
+                    if (NotifyOnAutoClose)
+                        MessageBox.Show($"{CurrentOperation}", Title, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }

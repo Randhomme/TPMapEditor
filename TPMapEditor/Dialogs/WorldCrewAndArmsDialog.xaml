@@ -9,7 +9,7 @@
         xmlns:wotDefinition="clr-namespace:TPMapEditor.Enums.WorldObjectDefinition"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="WorldCrewAndArmsDialog" Height="450" Width="800">
+        Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>

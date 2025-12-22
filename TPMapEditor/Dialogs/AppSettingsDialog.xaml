@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="AppSettingsDialog" Height="330" Width="416" Closing="DialogWindow_Closing">
+        Height="330" Width="416" Closing="DialogWindow_Closing">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>

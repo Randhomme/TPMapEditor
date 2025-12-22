@@ -10,7 +10,7 @@
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="WorldInfoDialog" Height="450" Width="800">
+        Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>

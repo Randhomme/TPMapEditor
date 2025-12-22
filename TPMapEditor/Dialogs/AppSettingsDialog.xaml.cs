@@ -42,7 +42,12 @@ namespace TPMapEditor.Dialogs
         {
             var gshd = new GameStringsHeadersDialog(this, "Game strings headers", AppSettings);
             gshd.ShowDialog();
-            AppSettings.UpdateStringsDictionnaries();
+            new ProgressDialog(this, "Reload string").RunActionSameThread((progress, logs) =>
+            {
+                progress.Report("Reloading strings ...");
+                AppSettings.ReloadStringsDictionnaries(progress, logs);
+                progress.Report("Reloading complete");
+            }, true);
         }
 
         private void DialogWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
