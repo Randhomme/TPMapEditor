@@ -53,13 +53,13 @@ namespace TPMapEditor.Data
             isMultiplayer = mustAssembleFleet = useCustomName = useCustomDescription = islandsMakeSounds = true;
             playerPlayableCount = roofLightOrientationYaw = roofLightOrientationPitch = 0;
             worldName = StringDictionnary.WorldNames.Keys.FirstOrDefault();
-            worldDescription = StringDictionnary.WorldDescriptions.Keys.FirstOrDefault();
+            worldDescription = StringDictionnary.WorldDescriptions.Keys.FirstOrDefault() ?? string.Empty;
             customName = "My new map";
             customDescription = "The map description.";
-            skybox = AppSettings.Meshes.FirstOrDefault();
-            starmapTexture = AppSettings.GuiTextures.FirstOrDefault();
-            journalMusic = AppSettings.Musics.FirstOrDefault();
-            journalTitle = StringDictionnary.JournalTitles.Keys.FirstOrDefault();
+            skybox = AppSettings.Meshes.FirstOrDefault() ?? string.Empty;
+            starmapTexture = AppSettings.GuiTextures.FirstOrDefault() ?? string.Empty;
+            journalMusic = AppSettings.Musics.FirstOrDefault() ?? string.Empty;
+            journalTitle = StringDictionnary.JournalTitles.Keys.FirstOrDefault() ?? string.Empty;
             size = 2500;
             zSize = 1500;
             worldBuffer = 500;
