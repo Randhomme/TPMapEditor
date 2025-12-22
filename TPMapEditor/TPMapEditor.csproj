@@ -599,11 +599,14 @@
   <ItemGroup>
     <PackageReference Include="CalcBinding" Version="2.5.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="LibZ.Tool" Version="1.2.0" />
+    <PackageReference Include="ILRepack" Version="2.0.44">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
-  <Target Name="Libz" AfterTargets="AfterBuild" Condition="$(Configuration) == Release">
-    <Exec Command="$(PkgLibz_Tool)\Tools\libz.exe inject-dll --assembly $(ProjectDir)bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).exe --include $(ProjectDir)bin\$(Configuration)\$(TargetFramework)\*.dll --move" />
+	<Target Name="Ilrepack" AfterTargets="AfterBuild" Condition="$(Configuration) == Release">
+	  <Exec Command="$(PkgILRepack)\Tools\ILRepack.exe /target:winexe /out:$(TargetDir)TPMapEditor.exe $(TargetDir)\$(AssemblyName).exe $(TargetDir)\*.dll /wildcards" />
   </Target>
 
   <ItemGroup>
