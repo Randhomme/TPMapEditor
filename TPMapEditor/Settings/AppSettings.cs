@@ -59,40 +59,59 @@ namespace TPMapEditor.Settings
         [XmlIgnore]
         public string WorldObjectFilesDirectory { get; set; } = string.Empty;
 
-        public void UpdateStringsDictionnaries()
+        public void ReloadStringsDictionnaries(IProgress<string> progress, IProgress<string> logs)
         {
-            UpdateAppSettingsStrings();
-            UpdateGameHeadersFilesList();
-            var gameStrings = new Dictionary<string, string>();
-            UpdateGameStringsDictionary(gameStrings);
-            UpdateTeamNamesDictionary(gameStrings);
-            UpdateSpeechEventDictionnary(gameStrings);
-            UpdateSpeakersDictionnary(gameStrings);
-            UpdateShipNamesDictionnary(gameStrings);
-            UpdateInGameMessagesDictionary(gameStrings);
-            UpdateJournalTitlesDictionary(gameStrings);
-            UpdateObjectiveTasksDictionary(gameStrings);
-            UpdateSpeechEventsJournalsDictionary(gameStrings);
-            UpdateMapTextItemsDictionary(gameStrings);
-            UpdateWorldNamesDictionary(gameStrings);
-            UpdateWorldDescriptionsDictionary(gameStrings);
+            try
+            {
+                progress.Report("Loading strings ...");
+                UpdateAppSettingsStrings();
+                UpdateGameHeadersFilesList();
+                var gameStrings = new Dictionary<string, string>();
+                UpdateGameStringsDictionary(gameStrings);
+                UpdateTeamNamesDictionary(gameStrings);
+                UpdateSpeechEventDictionnary(gameStrings);
+                UpdateSpeakersDictionnary(gameStrings);
+                UpdateShipNamesDictionnary(gameStrings);
+                UpdateInGameMessagesDictionary(gameStrings);
+                UpdateJournalTitlesDictionary(gameStrings);
+                UpdateObjectiveTasksDictionary(gameStrings);
+                UpdateSpeechEventsJournalsDictionary(gameStrings);
+                UpdateMapTextItemsDictionary(gameStrings);
+                UpdateWorldNamesDictionary(gameStrings);
+                UpdateWorldDescriptionsDictionary(gameStrings);
+            }
+            catch(Exception ex)
+            {
+                logs.Report($"Error: {ex.Message}");
+            }
         }
 
-        public void ReloadAll()
+        public void ReloadGameFolders(IProgress<string> progress, IProgress<string> logs)
         {
-            UpdateAppSettingsStrings();
-            UpdateAppSettingsFolders();
-            UpdateGameHeadersFilesList();
-            UpdateDialogueFilesList();
-            UpdateHudTexturesList();
-            UpdateFlagTexturesList();
-            UpdateEffectsList();
-            UpdateStringsDictionnaries();
-            UpdateWorldObjectTypeList();
-            UpdateSinglePlayerMissionsList();
-            UpdateGuiTexturesList();
-            UpdateMusicsList();
-            UpdateMeshesList();
+            try
+            {
+                progress.Report("Loading folders ...");
+                UpdateAppSettingsFolders();
+                UpdateDialogueFilesList();
+                UpdateEffectsList();
+                UpdateFlagTexturesList();
+                UpdateGuiTexturesList();
+                UpdateHudTexturesList();
+                UpdateMeshesList();
+                UpdateMusicsList();
+                UpdateSinglePlayerMissionsList();
+                UpdateWorldObjectTypeList();
+            }
+            catch (Exception ex)
+            {
+                logs.Report($"Error: {ex.Message}");
+            }
+        }
+
+        public void ReloadAll(IProgress<string> progress, IProgress<string> logs)
+        {
+            ReloadStringsDictionnaries(progress, logs);
+            ReloadGameFolders(progress, logs);
         }
 
         public void ReloadDialogueFilesList()
@@ -176,12 +195,12 @@ namespace TPMapEditor.Settings
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error reading Strings.ini: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw new Exception($"Error reading Strings.ini: {ex.Message}", ex);
                 }
             }
             else
             {
-                MessageBox.Show("Strings.ini file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new FileNotFoundException("Strings.ini file not found in the selected folder.");
             }
         }
 
@@ -235,7 +254,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show("AppSettings.ini file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new FileNotFoundException("AppSettings.ini file not found in the selected folder.", "Error");
             }
         }
 
@@ -255,7 +274,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -275,7 +294,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Directory '{MeshesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Directory '{MeshesDirectory}' does not exist.");
             }
         }
 
@@ -297,7 +316,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Directory '{directory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Directory '{directory}' does not exist.");
             }
         }
 
@@ -336,7 +355,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Directory '{GuiTexturesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Directory '{GuiTexturesDirectory}' does not exist.");
             }
         }
 
@@ -357,7 +376,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Directory '{directory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Directory '{directory}' does not exist.");
             }
         }
 
@@ -378,7 +397,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Dialogue directory '{dialogueDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Dialogue directory '{dialogueDirectory}' does not exist.");
             }
         }
 
@@ -436,7 +455,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show("hud.hdt file not found in the selected folder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new FileNotFoundException("hud.hdt file not found in the selected folder.");
             }
         }
 
@@ -456,7 +475,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Flag textures directory '{FlagTexturesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Flag textures directory '{FlagTexturesDirectory}' does not exist.");
             }
         }
 
@@ -477,7 +496,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Effects directory '{EffectsDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Effects directory '{EffectsDirectory}' does not exist.");
             }
         }
 
@@ -508,7 +527,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game strings file '{GameStringsEnglish}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new FileNotFoundException($"Game strings file '{GameStringsEnglish}' does not exist.");
             }
         }
 
@@ -545,7 +564,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -586,7 +605,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -627,7 +646,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -669,7 +688,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -707,7 +726,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -744,7 +763,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -781,7 +800,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -818,7 +837,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -855,7 +874,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -892,7 +911,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -929,7 +948,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"Game headers folder '{GameHeadersDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"Game headers folder '{GameHeadersDirectory}' does not exist.");
             }
         }
 
@@ -1006,7 +1025,7 @@ namespace TPMapEditor.Settings
             }
             else
             {
-                MessageBox.Show($"World object files directory '{WorldObjectFilesDirectory}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                throw new DirectoryNotFoundException($"World object files directory '{WorldObjectFilesDirectory}' does not exist.");
             }
         }
 
