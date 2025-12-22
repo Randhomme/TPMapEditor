@@ -13,16 +13,20 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                <Button x:Name="PART_AddButton" MinWidth="85" Content="Add"/>
-                <Button x:Name="PART_DeleteSelectedButton" MinWidth="85" Margin="0,5,0,0" Content="Remove selected"/>
-                <Button x:Name="PART_MoveUpButton" Margin="0,5,0,0" Width="25" HorizontalAlignment="Right">
+                <Button x:Name="PART_AddButton" Width="25">
+                    <Image Source="/Images/Plus.png"/>
+                </Button>
+                <Button x:Name="PART_DeleteSelectedButton" Margin="0,5,0,0" Width="25">
+                    <Image Source="/Images/Minus.png"/>
+                </Button>
+                <Button x:Name="PART_MoveUpButton" Margin="0,5,0,0" Width="25">
                     <Image Source="/Images/ArrowUp.png"/>
                 </Button>
-                <Button x:Name="PART_MoveDownButton" Margin="0,5,0,0" Width="25" HorizontalAlignment="Right">
+                <Button x:Name="PART_MoveDownButton" Margin="0,5,0,0" Width="25">
                     <Image Source="/Images/ArrowDown.png"/>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="PART_DataGrid" Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" RowHeight="25" Grid.Column="1" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" CanUserAddRows="False" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow">
+            <DataGrid x:Name="PART_DataGrid" Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" MinRowHeight="25" MinColumnWidth="25" Grid.Column="1" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" CanUserAddRows="False" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Objects" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
@@ -32,6 +36,11 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="MinHeight" Value="25"/>
+                    </Style>
+                </DataGrid.RowStyle>
             </DataGrid>
         </Grid>
     </ControlTemplate>
@@ -51,12 +60,12 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
+                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" MinRowHeight="25" MinColumnWidth="25" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Objects" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Margin="4,0,0,0" Text="{Binding Display}"/>
+                                    <TextBlock Margin="4,0,0,0" Text="{Binding Display}" VerticalAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

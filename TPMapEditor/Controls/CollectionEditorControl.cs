@@ -6,10 +6,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Xml;
 
 namespace TPMapEditor.Controls
 {
@@ -45,14 +50,10 @@ namespace TPMapEditor.Controls
             moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItems(-1));
             moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItems(1));
             var buttonFactory = new FrameworkElementFactory(typeof(Button));
-            buttonFactory.SetValue(Button.ContentProperty, "Remove");
-
-            // Binding vers la commande Delete du contrôle
-            buttonFactory.SetValue(
-                Button.CommandProperty,
-                deleteCommand);
-
-            // CommandParameter = item métier (DataContext de la ligne)
+            var imageFactory = new FrameworkElementFactory(typeof(Image));
+            imageFactory.SetValue(Image.SourceProperty, new BitmapImage(new Uri("pack://application:,,,/Images/Cross.png")));
+            buttonFactory.AppendChild(imageFactory);
+            buttonFactory.SetValue(Button.CommandProperty, deleteCommand);
             buttonFactory.SetBinding(
                 Button.CommandParameterProperty,
                 new Binding("Item")
@@ -61,9 +62,9 @@ namespace TPMapEditor.Controls
             {
                 CellTemplate = new System.Windows.DataTemplate()
                 {
-                    VisualTree = buttonFactory
+                    VisualTree = buttonFactory,
+                    
                 },
-                MinWidth = 70,
             };
         }
 
@@ -468,26 +469,26 @@ namespace TPMapEditor.Controls
     }
 
 
-    public static class DataGridColumnRegistry
-    {
-        private static readonly Dictionary<Type, Func<IList<DataGridColumn>>> _map
-            = new();
+    //public static class DataGridColumnRegistry
+    //{
+    //    private static readonly Dictionary<Type, Func<IList<DataGridColumn>>> _map
+    //        = new();
 
-        public static void Register<T>(Func<IList<DataGridColumn>> factory)
-        {
-            _map[typeof(T)] = factory;
-        }
+    //    public static void Register<T>(Func<IList<DataGridColumn>> factory)
+    //    {
+    //        _map[typeof(T)] = factory;
+    //    }
 
-        public static bool TryGet(Type type, out IList<DataGridColumn> columns)
-        {
-            if (_map.TryGetValue(type, out var factory))
-            {
-                columns = factory();
-                return true;
-            }
+    //    public static bool TryGet(Type type, out IList<DataGridColumn> columns)
+    //    {
+    //        if (_map.TryGetValue(type, out var factory))
+    //        {
+    //            columns = factory();
+    //            return true;
+    //        }
 
-            columns = null!;
-            return false;
-        }
-    }
+    //        columns = null!;
+    //        return false;
+    //    }
+    //}
 }

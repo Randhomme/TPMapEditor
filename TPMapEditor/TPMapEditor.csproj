@@ -619,10 +619,14 @@
     <Resource Include="Images\ArrowDown.png" />
     <Resource Include="Images\ArrowUp.png" />
     <Resource Include="Images\bg.png" />
+    <Resource Include="Images\Cross.png" />
     <Resource Include="Images\Default.png" />
+    <Resource Include="Images\Minus.png" />
     <Resource Include="Images\Move.png" />
     <Resource Include="Images\ObjectivePoint.png" />
     <Resource Include="Images\Player.png" />
+    <Resource Include="Images\Plus.png" />
+    <Resource Include="Images\RedCross.png" />
     <Resource Include="Images\Rotate.png" />
     <Resource Include="Images\WotPlaceholder.png" />
   </ItemGroup>

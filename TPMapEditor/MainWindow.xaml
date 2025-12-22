@@ -95,7 +95,9 @@
                     <CheckBox x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0" Width="25" Style="{StaticResource {x:Type ToggleButton}}">
                         <Image Margin="2.5" Source="/Images/Rotate.png"/>
                     </CheckBox>
-                    <Button x:Name="DeleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25" Content="X" Foreground="Red"/>
+                    <Button x:Name="DeleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25">
+                        <Image Source="/Images/RedCross.png"/>
+                    </Button>
                     <StackPanel Orientation="Horizontal" IsEnabled="{c:Binding 'SelectedElement!=null'}" ToolTip="Z index">
                         <Button ToolTip="Delete" Margin="10,0,-1,0" Width="25" Content="-" Click="DecreaseZIndexButton_Click"/>
                         <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding SelectedElement.(Panel.ZIndex)}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
