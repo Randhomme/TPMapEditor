@@ -614,6 +614,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Ai.png" />
     <Resource Include="Images\AlphaBg.png" />
     <Resource Include="Images\Arrow.png" />
     <Resource Include="Images\ArrowDown.png" />
