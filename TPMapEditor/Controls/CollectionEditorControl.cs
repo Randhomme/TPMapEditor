@@ -6,15 +6,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Markup;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Xml;
 
 namespace TPMapEditor.Controls
 {
@@ -27,7 +23,7 @@ namespace TPMapEditor.Controls
     {
         private IList? EditableList => ItemsSource as IList;
         private IList<ItemWrapper> SelectedWrappers => dataGrid?.SelectedItems.OfType<ItemWrapper>().ToList() ?? Array.Empty<ItemWrapper>().ToList();
-        private INotifyCollectionChanged? observableItemsSource;
+        private INotifyCollectionChanged? observableItemsSource, _selectedItemsNotifier;
         private Type? itemsType;
         private DataGrid? dataGrid;
         private Button? addButton;
@@ -40,6 +36,7 @@ namespace TPMapEditor.Controls
         private readonly RelayCommand moveUpCommand;
         private readonly RelayCommand moveDownCommand;
         private readonly DataGridColumn deleteButtonColumn;
+        private bool isUpdatingSelection, wrappersReady, pendingSelectionApply;
 
         public CollectionEditorControl()
         {
@@ -51,7 +48,7 @@ namespace TPMapEditor.Controls
             moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItems(1));
             var buttonFactory = new FrameworkElementFactory(typeof(Button));
             var imageFactory = new FrameworkElementFactory(typeof(Image));
-            imageFactory.SetValue(Image.SourceProperty, new BitmapImage(new Uri("pack://application:,,,/Images/Cross.png")));
+            imageFactory.SetValue(Image.SourceProperty, new BitmapImage(new Uri("pack://application:,,,/TPMapEditor;component/Images/Cross.png")));
             buttonFactory.AppendChild(imageFactory);
             buttonFactory.SetValue(Button.CommandProperty, deleteCommand);
             buttonFactory.SetBinding(
@@ -133,6 +130,17 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty OverrideColumnsFromTemplateProperty =
             DependencyProperty.Register(nameof(OverrideColumnsFromTemplate), typeof(bool), typeof(CollectionEditorControl), new PropertyMetadata(true));
 
+        public IList SelectedItems
+        {
+            get { return (IList)GetValue(SelectedItemsProperty); }
+            set { SetValue(SelectedItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedItemsProperty =
+            DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(CollectionEditorControl), new PropertyMetadata(null, OnSelectedItemsChanged));
+
+
+
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (CollectionEditorControl)d;
@@ -150,8 +158,35 @@ namespace TPMapEditor.Controls
             }
         }
 
+        private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (CollectionEditorControl)d;
+
+            control.OnSelectedItemsSourceChanged(e.OldValue, e.NewValue);
+
+            control.ApplySelectedItemsToDataGridSelectionIfPossible();
+        }
+
+        private void OnSelectedItemsSourceChanged(object? oldValue, object? newValue)
+        {
+            if (_selectedItemsNotifier != null)
+                _selectedItemsNotifier.CollectionChanged -= OnSelectedItemsCollectionChanged;
+
+            _selectedItemsNotifier = newValue as INotifyCollectionChanged;
+
+            if (_selectedItemsNotifier != null)
+                _selectedItemsNotifier.CollectionChanged += OnSelectedItemsCollectionChanged;
+        }
+
+        private void OnSelectedItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            ApplySelectedItemsToDataGridSelectionIfPossible();
+        }
+
         private void DetachFromOldItemsSource(object oldValue)
         {
+            wrappersReady = false;
+
             if (observableItemsSource != null)
                 observableItemsSource.CollectionChanged -= OnItemsSourceCollectionChanged;
 
@@ -180,6 +215,8 @@ namespace TPMapEditor.Controls
             observableItemsSource = newValue as INotifyCollectionChanged;
             if (observableItemsSource != null)
                 observableItemsSource.CollectionChanged += OnItemsSourceCollectionChanged;
+
+            wrappersReady = true;
         }
 
         private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -256,6 +293,7 @@ namespace TPMapEditor.Controls
             {
                 dataGrid.SelectionChanged -= DataGrid_SelectionChanged;
                 dataGrid.Columns.Clear();
+                dataGrid.SelectedItems.Clear();
             }
 
             base.OnApplyTemplate();
@@ -268,6 +306,8 @@ namespace TPMapEditor.Controls
             if (dataGrid != null)
             {
                 dataGrid.SelectionChanged += DataGrid_SelectionChanged;
+                if (pendingSelectionApply)
+                    ApplySelectedItemsToDataGridSelectionIfPossible();
                 if (Columns.Count > 0)
                 {
                     if (OverrideColumnsFromTemplate)
@@ -292,9 +332,62 @@ namespace TPMapEditor.Controls
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ApplyDataGridSelectionToSelectedItemsIfPossible(e.AddedItems, e.RemovedItems);
             moveUpCommand.NotifyCanExecuteChanged();
             moveDownCommand.NotifyCanExecuteChanged();
             deleteSelectedCommand.NotifyCanExecuteChanged();
+        }
+
+        private void ApplyDataGridSelectionToSelectedItemsIfPossible(IList addedItems, IList removedItems)
+        {
+            if (isUpdatingSelection || dataGrid == null || SelectedItems == null)
+                return;
+
+            isUpdatingSelection = true;
+
+            try
+            {
+                foreach (var w in addedItems.OfType<ItemWrapper>())
+                    SelectedItems.Add(w.Item);
+                foreach (var w in removedItems.OfType<ItemWrapper>())
+                    SelectedItems.Remove(w.Item);
+            }
+            finally
+            {
+                isUpdatingSelection = false;
+            }
+        }
+
+        private void ApplySelectedItemsToDataGridSelectionIfPossible()
+        {
+            if (!wrappersReady || dataGrid == null || Wrappers == null)
+            {
+                pendingSelectionApply = true;
+                return;
+            }
+
+            if (isUpdatingSelection)
+                return;
+
+            isUpdatingSelection = true;
+
+            try
+            {
+                dataGrid.SelectedItems.Clear();
+
+                foreach(var item in SelectedItems)
+                {
+                    var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
+                    dataGrid.SelectedItems.Add(wrapper);
+                }
+                if (dataGrid.SelectedItems.Count > 0)
+                    dataGrid.ScrollIntoView(dataGrid.SelectedItems[dataGrid.SelectedItems.Count - 1]);
+            }
+            finally
+            {
+                isUpdatingSelection = false;
+                pendingSelectionApply = false;
+            }
         }
 
         private void GetItemsType()
