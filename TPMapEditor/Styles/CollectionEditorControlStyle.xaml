@@ -26,7 +26,7 @@
                     <Image Source="/Images/ArrowDown.png"/>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="PART_DataGrid" Style="{StaticResource DataGridNoSelectedForeground}" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" MinRowHeight="25" MinColumnWidth="25" Grid.Column="1" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" CanUserAddRows="False" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow">
+            <DataGrid x:Name="PART_DataGrid" Grid.Column="1" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" MinRowHeight="25" MinColumnWidth="25" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" CanUserAddRows="False" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Objects" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
@@ -36,11 +36,6 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="MinHeight" Value="25"/>
-                    </Style>
-                </DataGrid.RowStyle>
             </DataGrid>
         </Grid>
     </ControlTemplate>
@@ -57,10 +52,24 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <DataGrid x:Name="PART_DataGrid" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" MinRowHeight="25" MinColumnWidth="25" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
+                <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                    <Button x:Name="PART_AddButton" Margin="0,0,0,0" Width="25">
+                        <Image Source="/Images/Plus.png"/>
+                    </Button>
+                    <Button x:Name="PART_DeleteSelectedButton" Margin="0,5,0,0" Width="25">
+                        <Image Source="/Images/Minus.png"/>
+                    </Button>
+                    <Button x:Name="PART_MoveUpButton" Margin="0,5,0,0" Width="25">
+                        <Image Source="/Images/ArrowUp.png"/>
+                    </Button>
+                    <Button x:Name="PART_MoveDownButton" Margin="0,5,0,0" Width="25">
+                        <Image Source="/Images/ArrowDown.png"/>
+                    </Button>
+                </StackPanel>
+                <DataGrid x:Name="PART_DataGrid" Grid.Column="1"  AutoGenerateColumns="False" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" MinRowHeight="25" MinColumnWidth="25" CanUserDeleteRows="False" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Objects" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -71,18 +80,6 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <StackPanel Grid.Row="1">
-                    <Button x:Name="PART_AddButton" Margin="0,5,0,0" MinWidth="85" Content="Add"/>
-                    <Button x:Name="PART_DeleteSelectedButton" Margin="0,5,0,0" MinWidth="85" Content="Remove selected"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <Button x:Name="PART_MoveUpButton" Margin="5,0,0,0" Width="25">
-                        <Image Source="/Images/ArrowUp.png"/>
-                    </Button>
-                    <Button x:Name="PART_MoveDownButton" Margin="5,5,0,0" Width="25">
-                        <Image Source="/Images/ArrowDown.png"/>
-                    </Button>
-                </StackPanel>
             </Grid>
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
             <ContentControl Grid.Column="2" x:Name="PART_SelectedItemContentControl" Content="{TemplateBinding SelectedItem}"/>
