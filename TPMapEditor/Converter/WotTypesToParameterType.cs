@@ -12,15 +12,15 @@ namespace TPMapEditor.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is IEnumerable<WorldObject> wots)
+            if(value is IEnumerable<WorldObjectType> wots)
             {
                 if(parameter is CustomInfoDefinition cid)
                 {
-                    return wots.Where((wot) => wot.Type.CustomInfoDefinition == cid);
+                    return wots.Where((wot) => wot.CustomInfoDefinition == cid);
                 }
                 else if(parameter is IEnumerable<CustomInfoDefinition> cids)
                 {
-                    return wots.Where((wot) => CheckWotCustomInfo(wot.Type, cids));
+                    return wots.Where((wot) => CheckWotCustomInfo(wot, cids));
                 }
             }
             return value;
