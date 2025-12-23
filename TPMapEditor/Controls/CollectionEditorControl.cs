@@ -456,22 +456,22 @@ namespace TPMapEditor.Controls
 
             if (direction < 0)
             {
-                // UP → parcourir du haut vers le bas
                 for (int i = 0; i < indices.Count; i++)
                 {
                     var index = indices[i];
+                    var item = EditableList[index];
                     EditableList.RemoveAt(index);
-                    EditableList.Insert(index - 1, items[i]);
+                    EditableList.Insert(index + direction, item);
                 }
             }
             else
             {
-                // DOWN → parcourir à l’envers
                 for (int i = indices.Count - 1; i >= 0; i--)
                 {
                     var index = indices[i];
+                    var item = EditableList[index];
                     EditableList.RemoveAt(index);
-                    EditableList.Insert(index + 1, items[i]);
+                    EditableList.Insert(index + direction, item);
                 }
             }
 
