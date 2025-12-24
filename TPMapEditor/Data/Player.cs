@@ -20,7 +20,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Team? selectableTeam, inGameTeam;
         [ObservableProperty]
-        private bool isPlayable, isSelected, isLastSelected, hasSelectableTeam, hasInGameTeam;
+        private bool isPlayable, isSelected, isLastSelected, isShownOnUi = true, hasSelectableTeam, hasInGameTeam;
 
         public int TeamIndex { get; set; } //only used for data import
 

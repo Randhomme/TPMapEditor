@@ -106,19 +106,19 @@
                     <Rectangle Width="1" Fill="Gray" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
-                    <RadioButton x:Name="WorldObjectRadioButton" Width="95" Height="25" Margin="0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WotRadioButton_Checked" Unchecked="WotRadioButton_Unchecked">
+                    <RadioButton x:Name="WorldObjectRadioButton" Width="95" Height="25" Margin="0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WorldObjectRadioButton_Checked" Unchecked="WorldObjectRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World object"/>
                     </RadioButton>
                     <RadioButton x:Name="PlayerRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PlayerRadioButton_Checked" Unchecked="PlayerRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Player"/>
                     </RadioButton>
-                    <RadioButton x:Name="WaypointPathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PathRadioButton_Checked" Unchecked="PathRadioButton_Unchecked">
+                    <RadioButton x:Name="WaypointPathRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WaypointPathRadioButton_Checked" Unchecked="WaypointPathRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="Waypoint path"/>
                     </RadioButton>
-                    <RadioButton x:Name="WorldPolygonRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PolygonRadioButton_Checked" Unchecked="PolygonRadioButton_Unchecked">
+                    <RadioButton x:Name="WorldPolygonRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WorldPolygonRadioButton_Checked" Unchecked="WorldPolygonRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World polygon"/>
                     </RadioButton>
-                    <RadioButton x:Name="WorldPointSetRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="PointRadioButton_Checked" Unchecked="PointRadioButton_Unchecked">
+                    <RadioButton x:Name="WorldPointSetRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="WorldPointRadioButton_Checked" Unchecked="WorldPointRadioButton_Unchecked">
                         <TextBlock Margin="5,0,5,0" Text="World point set"/>
                     </RadioButton>
                     <RadioButton x:Name="ObjectivePointRadioButton" Width="95" Height="25" Margin="-1,0,0,0" Style="{StaticResource {x:Type ToggleButton}}" Checked="ObjectivePointRadioButton_Checked" Unchecked="ObjectivePointRadioButton_Unchecked">
@@ -132,14 +132,14 @@
         </ScrollViewer>
 
         <!-- Row 2 (map) -->
-        <Grid Grid.Row="2" Margin="5,0,5,5" RenderOptions.BitmapScalingMode="NearestNeighbor">
+        <Grid Grid.Row="2" Margin="5,0,5,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
             <!-- Column 0 -->
-            <ScrollViewer x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="MapScrollViewer_PreviewMouseWheel">
+            <ScrollViewer RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="MapScrollViewer_PreviewMouseWheel" MouseEnter="MapScrollViewer_MouseEnter">
                 <Grid x:Name="MapGridOutside" Background="Transparent">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
                         <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="True" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
@@ -176,7 +176,7 @@
                                     <Border x:Name="WorldPolygonPointPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=AddWorldPolygonPointRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown"/>
                                     
                                     <!-- Preview PointSet -->
-                                    <Border x:Name="WorldPointSetPreviewControl" RenderTransformOrigin="0.5,0.5" Background="Black" Visibility="{c:Binding ElementName=NewWorldPointSetRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
+                                    <Border x:Name="WorldPointSetPreviewControl" RenderTransformOrigin="0.5,0.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetRadioButton, Path=IsChecked}" MouseLeftButtonDown="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
                                         </Border.RenderTransform>
@@ -251,6 +251,9 @@
                                                 <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="border" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -314,6 +317,9 @@
                                                 <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="border" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -335,7 +341,7 @@
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWaypointPathClicked">
+                                                <Path x:Name="Path" StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWaypointPathClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -345,7 +351,7 @@
                                                 </Path>
 
                                                 <!-- Points -->
-                                                <ItemsControl ItemsSource="{Binding Points}">
+                                                <ItemsControl x:Name="Points" ItemsSource="{Binding Points}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -399,6 +405,15 @@
                                                 <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="OutlinePath" Property="Stroke" Value="Orange"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="OutlinePath" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="Path" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="Points" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -420,7 +435,7 @@
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWorldPolygonClicked">
+                                                <Path x:Name="Path" StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" MouseLeftButtonDown="OnWorldPolygonClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -433,7 +448,7 @@
                                                 </Path>
 
                                                 <!-- Points -->
-                                                <ItemsControl ItemsSource="{Binding Points}">
+                                                <ItemsControl x:Name="Points" ItemsSource="{Binding Points}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -487,6 +502,15 @@
                                                 <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="OutlinePath" Property="Stroke" Value="Orange"/>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="OutlinePath" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="Path" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="Points" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -503,7 +527,7 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Points -->
-                                                <ItemsControl ItemsSource="{Binding Points}">
+                                                <ItemsControl x:Name="Points" ItemsSource="{Binding Points}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -559,6 +583,11 @@
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
                                             </Canvas>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="Points" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -604,6 +633,9 @@
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsLastSelected}" Value="True">
                                                     <Setter TargetName="border" Property="BorderBrush" Value="Orange"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="border" Property="Visibility" Value="Collapsed"/>
                                                 </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
@@ -661,6 +693,9 @@
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsShownOnUi}" Value="False">
+                                                    <Setter TargetName="border" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
                                             </DataTemplate.Triggers>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -712,7 +747,7 @@
                                             <Slider x:Name="WotSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" IsSnapToTickEnabled="True" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                         </GroupBox>
                                         <GroupBox Header="World objects" Grid.Row="1">
-                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{Binding Source={x:Static data:WorldObjectType.WotTypes}}" SelectedItem="{Binding SelectedWorldObjectType}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single">
+                                            <DataGrid x:Name="WotDataGrid" Margin="5" ItemsSource="{Binding SelectableWorldObjectTypes}" SelectedItem="{Binding SelectedWorldObjectType}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" SelectionMode="Single" RenderOptions.BitmapScalingMode="NearestNeighbor">
                                                 <DataGrid.Columns>
                                                     <DataGridTemplateColumn Width="60">
                                                         <DataGridTemplateColumn.CellTemplate>
@@ -754,7 +789,7 @@
                                         </GroupBox>
                                         <GroupBox Header="World point">
                                             <StackPanel>
-                                                <RadioButton x:Name="NewWorldPointSetRadioButton" Margin="5" Content="New point set" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
+                                                <RadioButton x:Name="AddWorldPointSetRadioButton" Margin="5" Content="New point set" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
                                                 <RadioButton x:Name="AddWorldPointSetPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedWorldPointSet!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                             </StackPanel>
                                         </GroupBox>
@@ -766,61 +801,197 @@
                                     </GroupBox>
                                     <GroupBox Header="Map text point" Grid.Row="6" Visibility="{c:Binding ElementName=MapTextPointRadioButton,Path=IsChecked}">
                                         <StackPanel>
-                                            <ComboBox x:Name="MapTextPointPreviewTextComboBox" Margin="5" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValuePath="Value" DisplayMemberPath="Value" SelectedIndex="0"/>
+                                            <ComboBox x:Name="MapTextPointPreviewTextComboBox" Margin="5" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValuePath="Value" DisplayMemberPath="Value"/>
                                             <CheckBox x:Name="AddMapTextPointCheckBox" Margin="5" Content="New map text point" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>
                                 </Grid>
                             </TabItem>
                             <TabItem Header="Selected object">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <StackPanel Margin="0,0,0,0">
-                                        <Grid Visibility="{c:Binding ElementName=WorldObjectRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected world object" Visibility="{c:Binding 'SelectedWorldObject!=null'}">
-                                                <ContentControl Content="{Binding SelectedWorldObject}"/>
-                                            </GroupBox>
-                                        </Grid>
-                                        <Grid Visibility="{c:Binding ElementName=PlayerRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected player" Visibility="{c:Binding 'SelectedPlayer!=null'}">
-                                                <ContentControl Content="{Binding SelectedPlayer}"/>
-                                            </GroupBox>
-                                        </Grid>
-                                        <StackPanel Visibility="{c:Binding ElementName=WaypointPathRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected path" Visibility="{c:Binding 'SelectedWaypointPath!=null'}">
-                                                <ContentControl Content="{Binding SelectedWaypointPath}" ContentTemplate="{StaticResource WaypointPathNoPointsTemplate}"/>
-                                            </GroupBox>
-                                            <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedWaypointPathPoint!=null'}">
-                                                <ContentControl Content="{Binding SelectedWaypointPathPoint}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                        <StackPanel Visibility="{c:Binding ElementName=WorldPolygonRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected polygon" Visibility="{c:Binding 'SelectedWorldPolygon!=null'}">
-                                                <ContentControl Content="{Binding SelectedWorldPolygon}" ContentTemplate="{StaticResource WorldPolygonNoPointTemplate}"/>
-                                            </GroupBox>
-                                            <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'SelectedWorldPolygonPoint!=null'}">
-                                                <ContentControl Content="{Binding SelectedWorldPolygonPoint}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                        <StackPanel Visibility="{c:Binding ElementName=WorldPointSetRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected world point set" Visibility="{c:Binding 'SelectedWorldPointSet!=null'}">
-                                                <ContentControl Content="{Binding SelectedWorldPointSet}" ContentTemplate="{StaticResource WorldPointSetNoPointsTemplate}"/>
-                                            </GroupBox>
-                                            <GroupBox Header="World point" Visibility="{c:Binding 'SelectedWorldPoint!=null'}">
-                                                <ContentControl Content="{Binding SelectedWorldPoint}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                        <StackPanel Visibility="{c:Binding ElementName=ObjectivePointRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedObjectivePoint!=null'}">
-                                                <ContentControl Content="{Binding SelectedObjectivePoint}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                        <StackPanel Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}">
-                                            <GroupBox Header="Selected objective point" Visibility="{c:Binding 'SelectedMapTextPoint!=null'}">
-                                                <ContentControl Content="{Binding SelectedMapTextPoint}"/>
-                                            </GroupBox>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </ScrollViewer>
+                                <Grid>
+                                    <Grid Visibility="{c:Binding ElementName=WorldObjectRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedWorldObjects}" ItemsSource="{Binding Map.WorldObjects}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="WorldObjectVisibilityCheckBox_Checked" Unchecked="WorldObjectVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <GroupBox Grid.Row="1" Header="Selected world object" Visibility="{c:Binding 'SelectedWorldObject!=null'}">
+                                            <ContentControl Content="{Binding SelectedWorldObject}"/>
+                                        </GroupBox>
+                                    </Grid>
+                                    <Grid Visibility="{c:Binding ElementName=PlayerRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedPlayers}" ItemsSource="{Binding Map.Players}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="PlayerVisibilityCheckBox_Checked" Unchecked="PlayerVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <GroupBox Grid.Row="1" Header="Selected player" Visibility="{c:Binding 'SelectedPlayer!=null'}">
+                                            <ContentControl Content="{Binding SelectedPlayer}"/>
+                                        </GroupBox>
+                                    </Grid>
+                                    <Grid Visibility="{c:Binding ElementName=WaypointPathRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedWaypointPaths}" ItemsSource="{Binding Map.WaypointPaths}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="WaypointPathVisibilityCheckBox_Checked" Unchecked="WaypointPathVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                            <StackPanel>
+                                                <GroupBox Header="Selected path" Visibility="{c:Binding 'SelectedWaypointPath!=null'}">
+                                                    <ContentControl Content="{Binding SelectedWaypointPath}" ContentTemplate="{StaticResource WaypointPathNoPointsTemplate}"/>
+                                                </GroupBox>
+                                                <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedWaypointPathPoint!=null'}">
+                                                    <ContentControl Content="{Binding SelectedWaypointPathPoint}"/>
+                                                </GroupBox>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Grid>
+                                    <Grid Visibility="{c:Binding ElementName=WorldPolygonRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedWorldPolygons}" ItemsSource="{Binding Map.WorldPolygons}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="WorldPolygonVisibilityCheckBox_Checked" Unchecked="WorldPolygonVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                            <StackPanel>
+                                                <GroupBox Header="Selected polygon" Visibility="{c:Binding 'SelectedWorldPolygon!=null'}">
+                                                    <ContentControl Content="{Binding SelectedWorldPolygon}" ContentTemplate="{StaticResource WorldPolygonNoPointTemplate}"/>
+                                                </GroupBox>
+                                                <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'SelectedWorldPolygonPoint!=null'}">
+                                                    <ContentControl Content="{Binding SelectedWorldPolygonPoint}"/>
+                                                </GroupBox>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Grid>
+                                    <Grid Visibility="{c:Binding ElementName=WorldPointSetRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.WorldPointSets}" SelectedItems="{Binding SelectedWorldPointSets}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="WorldPointSetVisibilityCheckBox_Checked" Unchecked="WorldPointSetVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                            <StackPanel>
+                                                <GroupBox Header="Selected world point set" Visibility="{c:Binding 'SelectedWorldPointSet!=null'}">
+                                                    <ContentControl Content="{Binding SelectedWorldPointSet}" ContentTemplate="{StaticResource WorldPointSetNoPointsTemplate}"/>
+                                                </GroupBox>
+                                                <GroupBox Header="World point" Visibility="{c:Binding 'SelectedWorldPoint!=null'}">
+                                                    <ContentControl Content="{Binding SelectedWorldPoint}"/>
+                                                </GroupBox>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Grid>
+                                    <Grid Visibility="{c:Binding ElementName=ObjectivePointRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.ObjectivePoints}" SelectedItems="{Binding SelectedObjectivePoints}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="ObjectivePointVisibilityCheckBox_Checked" Unchecked="ObjectivePointVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'SelectedObjectivePoint!=null'}">
+                                            <ContentControl Content="{Binding SelectedObjectivePoint}"/>
+                                        </GroupBox>
+                                    </Grid>
+                                    <Grid Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.MapTextPoints}" SelectedItems="{Binding SelectedMapTextPoints}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                            <controls:CollectionEditorControl.Columns>
+                                                <DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn.Header>
+                                                        <CheckBox HorizontalAlignment="Center" IsChecked="True" Checked="MapTextPointVisibilityCheckBox_Checked" Unchecked="MapTextPointVisibilityCheckBox_Unchecked"/>
+                                                    </DataGridTemplateColumn.Header>
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Item.IsShownOnUi, UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </controls:CollectionEditorControl.Columns>
+                                        </controls:CollectionEditorControl>
+                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'SelectedMapTextPoint!=null'}">
+                                            <ContentControl Content="{Binding SelectedMapTextPoint}"/>
+                                        </GroupBox>
+                                    </Grid>
+                                </Grid>
                             </TabItem>
                         </TabControl>
                         <!--<GroupBox Grid.Row="1" Header="Mini map">

@@ -16,7 +16,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Player? player;
         [ObservableProperty]
-        private bool isSelected, isLastSelected, hasGroup, hasPlayer;
+        private bool isSelected, isLastSelected, hasGroup, hasPlayer, isShownOnUi = true;
 
         public WorldMap Map { get; }
 

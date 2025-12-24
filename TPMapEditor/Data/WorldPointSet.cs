@@ -16,7 +16,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Color color = Colors.Black;
         [ObservableProperty]
-        private bool isSelected, isLastSelected;
+        private bool isSelected, isLastSelected, isShownOnUi = true;
 
         public ObservableCollection<WorldPoint> Points { get; }
 

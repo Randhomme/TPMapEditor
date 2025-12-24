@@ -8,6 +8,11 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private double z;
 
+        partial void OnZChanged(double value)
+        {
+            OnPropertyChanged();
+        }
+
         public Point3(double x, double y, double z) : base(x, y)
         {
             Z = z;

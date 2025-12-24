@@ -14,7 +14,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private double x, y, z;
         [ObservableProperty]
-        private bool isSelected, isLastSelected;
+        private bool isSelected, isLastSelected, isShownOnUi = true;
 
         public ObjectivePoint(WorldMap map) : base(map, GenerateName("ObjectivePoint", map.ObjectivePoints)) { }
 
