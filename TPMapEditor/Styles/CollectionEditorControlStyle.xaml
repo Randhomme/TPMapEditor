@@ -31,7 +31,7 @@
                     <DataGridTemplateColumn Header="Objects" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Margin="4,0,0,0" Text="{Binding Display}"/>
+                                <TextBlock Margin="4,0,0,0" Text="{Binding Display}" VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
