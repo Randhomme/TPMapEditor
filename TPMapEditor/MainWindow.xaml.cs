@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -731,6 +732,18 @@ namespace TPMapEditor
                     logs.Report($"Error: {ex.Message}");
                 }
             }, true);
+        }
+
+        [RelayCommand]
+        private void OnWiki()
+        {
+            Process.Start("https://github.com/Randhomme/TPMapEditor/wiki");
+        }
+
+        [RelayCommand]
+        private void OnChangelogs()
+        {
+            Process.Start("https://github.com/Randhomme/TPMapEditor/releases");
         }
 
         [RelayCommand]

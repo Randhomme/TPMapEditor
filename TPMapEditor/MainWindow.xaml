@@ -73,7 +73,10 @@
                     <Separator/>
                     <MenuItem Header="Reload all" Command="{Binding ReloadAllCommand}"/>
                 </MenuItem>
-                <Separator/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Wiki" Command="{Binding WikiCommand}"/>
+                <MenuItem Header="Changelogs" Command="{Binding ChangelogsCommand}"/>
                 <MenuItem Header="About" Command="{Binding AboutAppShowCommand}"/>
             </MenuItem>
         </Menu>
