@@ -1,7 +1,9 @@
 # TPMapEditor
 
 ## Get started
-Download the latest release (TPMapEditor.zip). On the first opening, the app will ask you to set the TPGame path. Select your TPGame folder (where the game is located), and enjoy map editing !
+Download the [latest release](https://github.com/Randhomme/TPMapEditor/releases/latest) (TPMapEditor.zip). On the first opening, the app will ask you to set the TPGame path. Select your TPGame folder (where the game is located), and enjoy map editing !
+
+Don't forget to read the wiki : https://github.com/Randhomme/TPMapEditor/wiki
 
 Found a bug or have a suggestion ? Contact Randhomme on Discord.
 
@@ -10,7 +12,7 @@ Found a bug or have a suggestion ? Contact Randhomme on Discord.
 - You can scroll the map horizontally by using Shift + Mouse wheel
 - Something on the map blocks the view ? You can modify it's Z index using +/- button on the top left of the editor, or simply hide it using the right tab (checkbox in the list)
 - When rotation is enabled, use ALT + Mouse wheel to rotate selected elements. You can also rotate the preview of an element using ALT + rotate (even if rotation is not enabled)
-- You can give color to WaypointPath and WorldPolygon to make them easier to see/recognize (colors are not used in game)
+- You can give color to WaypointPath, WorldPolygon and WorldPointSet to make them easier to see/recognize (colors are not used in game)
 - If you don't find the string you are looking for, you can edit which header file is used for what in App>Settings>Edit game headers
 
 ## In the future
