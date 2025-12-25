@@ -15,7 +15,9 @@ using System.Windows.Media;
 using TPMapEditor.Data;
 using TPMapEditor.Dialogs;
 using TPMapEditor.Enums.WorldObjectDefinition;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Settings;
+using TPMapEditor.Utils.KeyboardShortcuts;
 
 namespace TPMapEditor
 {
@@ -28,6 +30,13 @@ namespace TPMapEditor
         private Point moveActionPoint;
         private DateTime lastWheelTime = DateTime.MinValue;
         private AppSettings settings;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<WorldObject> worldObjectKeyboardShortcutApplier;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<Player> playerKeyboardShortcutApplier;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<WaypointPath> waypointPathKeyboardShortcutApplier;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<WorldPolygon> worldPolygonKeyboardShortcutApplier;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<WorldPointSet> worldPointSetKeyboardShortcutApplier;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<ObjectivePoint> objectivePointKeyboardShortcutApplier;
+        private readonly SelectableMapObjectKeyboardShortcutApplier<MapTextPoint> mapTextPointKeyboardShortcutApplier;
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
         [ObservableProperty]
@@ -83,6 +92,13 @@ namespace TPMapEditor
             HideWorldPointSetElements();
             HideObjectivePointElements();
             HideMapTextPointElements();
+            worldObjectKeyboardShortcutApplier = new(Map.WorldObjects, SelectedWorldObjects);
+            playerKeyboardShortcutApplier = new(Map.Players, SelectedPlayers);
+            waypointPathKeyboardShortcutApplier = new(Map.WaypointPaths, SelectedWaypointPaths);
+            worldPolygonKeyboardShortcutApplier = new(Map.WorldPolygons, SelectedWorldPolygons);
+            worldPointSetKeyboardShortcutApplier = new(Map.WorldPointSets, SelectedWorldPointSets);
+            objectivePointKeyboardShortcutApplier = new(Map.ObjectivePoints, SelectedObjectivePoints);
+            mapTextPointKeyboardShortcutApplier = new(Map.MapTextPoints, SelectedMapTextPoints);
 
             SelectedWorldObjects.CollectionChanged += (s, e) =>
             {
@@ -233,7 +249,7 @@ namespace TPMapEditor
             };
         }
 
-        #region MenuCommand
+        #region MenuCommands
 
         [RelayCommand]
         private void OnMapImport()
@@ -333,7 +349,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnMapTextPointsEdit()
         {
-            new CollectionEditorDialog(this, "Map text points", Map.MapTextPoints, () => new MapTextPoint(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault())).ShowDialog();
+            new CollectionEditorDialog(this, "Map text points", Map.MapTextPoints, () => new MapTextPoint(Map, NamedMapObject.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault())).ShowDialog();
             if (SelectedMapTextPoint != null)
             {
                 if (!Map.MapTextPoints.Contains(SelectedMapTextPoint))
@@ -348,7 +364,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnObjectiveTasksEdit()
         {
-            new CollectionEditorDialog(this, "Objective tasks", Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedElement.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault())).ShowDialog();
+            new CollectionEditorDialog(this, "Objective tasks", Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedMapObject.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault())).ShowDialog();
         }
 
         [RelayCommand]
@@ -393,7 +409,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnSpeechEventsEdit()
         {
-            new CollectionEditorDialog(this, "Speech events", Map.SpeechEvents, () => new SpeechEvent(Map, NamedElement.GenerateName("SpeechEvent", Map.SpeechEvents))).ShowDialog();
+            new CollectionEditorDialog(this, "Speech events", Map.SpeechEvents, () => new SpeechEvent(Map, NamedMapObject.GenerateName("SpeechEvent", Map.SpeechEvents))).ShowDialog();
         }
 
         [RelayCommand]
@@ -413,7 +429,7 @@ namespace TPMapEditor
         {
             new CollectionEditorDialog(this, "Waypoint paths", Map.WaypointPaths, () =>
             {
-                var wp = new WaypointPath(Map, NamedElement.GenerateName("WaypointPath", Map.WaypointPaths));
+                var wp = new WaypointPath(Map, NamedMapObject.GenerateName("WaypointPath", Map.WaypointPaths));
                 wp.Points.Add(new(wp, 0, 0, 0));
                 return wp;
             }).ShowDialog();
@@ -459,7 +475,7 @@ namespace TPMapEditor
         {
             new CollectionEditorDialog(this, "World point sets", Map.WorldPointSets, () =>
             {
-                var wps = new WorldPointSet(Map, NamedElement.GenerateName("WorldPointSet", Map.WorldPointSets));
+                var wps = new WorldPointSet(Map, NamedMapObject.GenerateName("WorldPointSet", Map.WorldPointSets));
                 wps.Points.Add(new(wps, 0, 0, 0, 0));
                 return wps;
             }).ShowDialog();
@@ -486,7 +502,7 @@ namespace TPMapEditor
         {
             new CollectionEditorDialog(this, "World polygons", Map.WorldPolygons, () =>
             {
-                var wp = new WorldPolygon(Map, NamedElement.GenerateName("WorldPolygon", Map.WorldPolygons));
+                var wp = new WorldPolygon(Map, NamedMapObject.GenerateName("WorldPolygon", Map.WorldPolygons));
                 wp.Points.Add(new(wp, 0, 0));
                 return wp;
             }).ShowDialog();
@@ -509,7 +525,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldRulesEdit()
         {
-            new CollectionEditorDialog(this, "World rules", Map.WorldRules, () => new WorldRule(Map, NamedElement.GenerateName("WorldRule", Map.WorldRules))).ShowDialog();
+            new CollectionEditorDialog(this, "World rules", Map.WorldRules, () => new WorldRule(Map, NamedMapObject.GenerateName("WorldRule", Map.WorldRules))).ShowDialog();
         }
 
         [RelayCommand]
@@ -724,7 +740,47 @@ namespace TPMapEditor
             MessageBox.Show($"TPMapEditor version {v.Major}.{v.Minor}.{v.Build}\nAuthor : Randhomme", "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        #endregion MenuCommand
+        #endregion
+
+        #region KeyboardShortcutCommands
+
+        [RelayCommand]
+        private void OnHKey()
+        {
+            GetKeyboardShortcutApplier()?.OnHKey();
+        }
+
+        [RelayCommand]
+        private void OnShiftHKey()
+        {
+            GetKeyboardShortcutApplier()?.OnShiftHKey();
+        }
+
+        [RelayCommand]
+        private void OnCtrlHKey()
+        {
+            GetKeyboardShortcutApplier()?.OnCtrlHKey();
+        }
+
+        [RelayCommand]
+        private void OnAKey()
+        {
+            GetKeyboardShortcutApplier()?.OnAKey();
+        }
+
+        [RelayCommand]
+        private void OnShiftAKey()
+        {
+            GetKeyboardShortcutApplier()?.OnShiftAKey();
+        }
+
+        [RelayCommand]
+        private void OnCtrlAKey()
+        {
+            GetKeyboardShortcutApplier()?.OnCtrlAKey();
+        }
+
+        #endregion
 
         #region MainWindow events
 
@@ -927,6 +983,61 @@ namespace TPMapEditor
             }, true, notifyOnFinish);
         }
 
+        private KeyboardShortcutApplier? GetKeyboardShortcutApplier()
+        {
+            if (WorldObjectRadioButton.IsChecked == true)
+            {
+                return worldObjectKeyboardShortcutApplier;
+            }
+            else if (PlayerRadioButton.IsChecked == true)
+            {
+                return playerKeyboardShortcutApplier;
+            }
+            else if (WaypointPathRadioButton.IsChecked == true)
+            {
+                return waypointPathKeyboardShortcutApplier;
+            }
+            else if (WorldPolygonRadioButton.IsChecked == true)
+            {
+                return worldPolygonKeyboardShortcutApplier;
+            }
+            else if (WorldPointSetRadioButton.IsChecked == true)
+            {
+                return worldPointSetKeyboardShortcutApplier;
+            }
+            else if (ObjectivePointRadioButton.IsChecked == true)
+            {
+                return objectivePointKeyboardShortcutApplier;
+            }
+            else if (MapTextPointRadioButton.IsChecked == true)
+            {
+                return mapTextPointKeyboardShortcutApplier;
+            }
+            return null;
+        }
+
+        //private void OnSelectionCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Add)
+        //    {
+        //        foreach (ISelectableMapObject obj in e.NewItems)
+        //        {
+        //            SelectObject(obj);
+        //        }
+        //        var last = SelectedPlayers.LastOrDefault();
+        //        MakeObjectLastSelected(last);
+        //    }
+        //    else if (e.Action == NotifyCollectionChangedAction.Remove)
+        //    {
+        //        foreach (ISelectableMapObject obj in e.OldItems)
+        //        {
+        //            UnselecObject(obj);
+        //        }
+        //        var last = SelectedPlayers.LastOrDefault();
+        //        MakeObjectLastSelected(last);
+        //    }
+        //}
+
         #endregion
 
         #region WorldObject
@@ -959,7 +1070,6 @@ namespace TPMapEditor
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
             SelectedElement = (UIElement)WorldObjectItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldObject);
-            MapScrollViewer.KeyDown += MapScrollViewerWorldObject_KeyDown;
         }
 
         private void HideWorldObjectElements()
@@ -980,7 +1090,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldObjectButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerWorldObject_KeyDown;
         }
 
         private void MapGridOutsideWorldObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1211,19 +1320,6 @@ namespace TPMapEditor
             }
         }
 
-        //Keyboard shortcut
-        private void MapScrollViewerWorldObject_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if(e.Key == Key.H)
-            {
-                foreach(var worldObject in SelectedWorldObjects)
-                {
-                    worldObject.IsShownOnUi = !worldObject.IsShownOnUi;
-                }
-            }
-        }
-
         private void WorldObjectVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             foreach (var obj in Map.WorldObjects)
@@ -1272,7 +1368,6 @@ namespace TPMapEditor
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerButton_Click;
             SelectedElement = (UIElement)PlayerItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedPlayer);
-            MapScrollViewer.KeyDown += MapScrollViewerPlayer_KeyDown;
         }
 
         private void HidePlayerElements()
@@ -1293,7 +1388,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsidePlayer_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click -= DeletePlayerButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerPlayer_KeyDown;
         }
 
         private void MapGridOutsidePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1467,7 +1561,7 @@ namespace TPMapEditor
 
         private void PlayerPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var player = new Player(Map, NamedElement.GenerateName("Player", Map.Players), Canvas.GetLeft(PlayerPreviewControl) + PlayerPreviewControl.ActualWidth / 2, -Canvas.GetTop(PlayerPreviewControl) - PlayerPreviewControl.ActualHeight / 2, 0, PlayerSliderRotate.Value, Colors.Red);
+            var player = new Player(Map, NamedMapObject.GenerateName("Player", Map.Players), Canvas.GetLeft(PlayerPreviewControl) + PlayerPreviewControl.ActualWidth / 2, -Canvas.GetTop(PlayerPreviewControl) - PlayerPreviewControl.ActualHeight / 2, 0, PlayerSliderRotate.Value, Colors.Red);
             Map.Players.Add(player);
             SelectAndMakePlayerLastSelected(player);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
@@ -1524,19 +1618,6 @@ namespace TPMapEditor
             }
         }
 
-        //Keyboard shortcut
-        private void MapScrollViewerPlayer_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if (e.Key == Key.H)
-            {
-                foreach (var obj in SelectedPlayers)
-                {
-                    obj.IsShownOnUi = !obj.IsShownOnUi;
-                }
-            }
-        }
-
         private void PlayerVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             foreach (var obj in Map.Players)
@@ -1585,7 +1666,6 @@ namespace TPMapEditor
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWaypointPathPoint();
             SelectedElement = (UIElement)WaypointPathItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWaypointPath);
-            MapScrollViewer.KeyDown += MapScrollViewerWaypointPath_KeyDown;
         }
 
         private void HideWaypointPathElements()
@@ -1604,7 +1684,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWaypointPathPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWaypointPathPointButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerWaypointPath_KeyDown;
         }
 
         private void OnWaypointPathClicked(object sender, MouseButtonEventArgs e)
@@ -1922,7 +2001,7 @@ namespace TPMapEditor
 
         private void WaypointPathPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var waypointPath = new WaypointPath(Map, NamedElement.GenerateName("WaypointPath", Map.WaypointPaths));
+            var waypointPath = new WaypointPath(Map, NamedMapObject.GenerateName("WaypointPath", Map.WaypointPaths));
             var point = new WaypointPathPoint(waypointPath, Canvas.GetLeft(WaypointPathPreviewControl) + WaypointPathPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPreviewControl) - WaypointPathPreviewControl.ActualHeight / 2, 0);
             waypointPath.Points.Add(point);
             Map.WaypointPaths.Add(waypointPath);
@@ -1954,19 +2033,6 @@ namespace TPMapEditor
         private void WaypointPathPointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddWaypointPathPointRadioButton.IsChecked = false;
-        }
-
-        //Keyboard shortcut
-        private void MapScrollViewerWaypointPath_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if (e.Key == Key.H)
-            {
-                foreach (var obj in SelectedWaypointPaths)
-                {
-                    obj.IsShownOnUi = !obj.IsShownOnUi;
-                }
-            }
         }
 
         private void WaypointPathVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -2013,7 +2079,6 @@ namespace TPMapEditor
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPolygonPoint();
             SelectedElement = (UIElement)WorldPolygonItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPolygon);
-            MapScrollViewer.KeyDown += MapScrollViewerWorldPolygon_KeyDown;
         }
 
         private void HideWorldPolygonElements()
@@ -2030,7 +2095,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPolygonPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldPolygonPointButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerWorldPolygon_KeyDown;
         }
 
         private void OnWorldPolygonClicked(object sender, MouseButtonEventArgs e)
@@ -2348,7 +2412,7 @@ namespace TPMapEditor
 
         private void WorldPolygonPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPolygon = new WorldPolygon(Map, NamedElement.GenerateName("WorldPolygon", Map.WorldPolygons));
+            var worldPolygon = new WorldPolygon(Map, NamedMapObject.GenerateName("WorldPolygon", Map.WorldPolygons));
             var point = new WorldPolygonPoint(worldPolygon, Canvas.GetLeft(WorldPolygonPreviewControl) + WorldPolygonPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPreviewControl) - WorldPolygonPreviewControl.ActualHeight / 2);
             worldPolygon.Points.Add(point);
             Map.WorldPolygons.Add(worldPolygon);
@@ -2380,19 +2444,6 @@ namespace TPMapEditor
         private void WorldPolygonPointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddWorldPolygonPointRadioButton.IsChecked = false;
-        }
-
-        //Keyboard shortcut
-        private void MapScrollViewerWorldPolygon_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if (e.Key == Key.H)
-            {
-                foreach (var obj in SelectedWorldPolygons)
-                {
-                    obj.IsShownOnUi = !obj.IsShownOnUi;
-                }
-            }
         }
 
         private void WorldPolygonVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -2443,7 +2494,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
             SelectedElement = (UIElement)WorldPointSetItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPointSet);
-            MapScrollViewer.KeyDown += MapScrollViewerWorldPointSet_KeyDown;
         }
 
         private void HideWorldPointSetElements()
@@ -2464,7 +2514,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldPointButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerWorldPointSet_KeyDown;
         }
 
         private void OnWorldPointSetClicked(object sender, MouseButtonEventArgs e)
@@ -2782,7 +2831,7 @@ namespace TPMapEditor
 
         private void WorldPointSetPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPolygon = new WorldPointSet(Map, NamedElement.GenerateName("WorldPointSet", Map.WorldPointSets));
+            var worldPolygon = new WorldPointSet(Map, NamedMapObject.GenerateName("WorldPointSet", Map.WorldPointSets));
             var point = new WorldPoint(worldPolygon, Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
             worldPolygon.Points.Add(point);
             Map.WorldPointSets.Add(worldPolygon);
@@ -2862,19 +2911,6 @@ namespace TPMapEditor
             }
         }
 
-        //Keyboard shortcut
-        private void MapScrollViewerWorldPointSet_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if (e.Key == Key.H)
-            {
-                foreach (var obj in SelectedWorldPointSets)
-                {
-                    obj.IsShownOnUi = !obj.IsShownOnUi;
-                }
-            }
-        }
-
         private void WorldPointSetVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             foreach (var obj in Map.WorldPointSets)
@@ -2919,7 +2955,6 @@ namespace TPMapEditor
             MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click += DeleteObjectivePointButton_Click;
             SelectedElement = (UIElement)ObjectivePointItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedObjectivePoint);
-            MapScrollViewer.KeyDown += MapScrollViewerObjectivePoint_KeyDown;
         }
 
         private void HideObjectivePointElements()
@@ -2936,7 +2971,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideObjectivePoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click -= DeleteObjectivePointButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerObjectivePoint_KeyDown;
         }
 
         private void MapGridOutsideObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -3110,7 +3144,7 @@ namespace TPMapEditor
 
         private void ObjectivePointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var wot = new ObjectivePoint(Map, NamedElement.GenerateName("ObjectivePoint", Map.ObjectivePoints), Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2, -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2);
+            var wot = new ObjectivePoint(Map, NamedMapObject.GenerateName("ObjectivePoint", Map.ObjectivePoints), Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2, -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2);
             Map.ObjectivePoints.Add(wot);
             SelectAndMakeObjectivePointLastSelected(wot);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
@@ -3119,19 +3153,6 @@ namespace TPMapEditor
         private void ObjectivePointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddObjectivePointCheckBox.IsChecked = false;
-        }
-
-        //Keyboard shortcut
-        private void MapScrollViewerObjectivePoint_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if (e.Key == Key.H)
-            {
-                foreach (var objectivePoint in SelectedObjectivePoints)
-                {
-                    objectivePoint.IsShownOnUi = !objectivePoint.IsShownOnUi;
-                }
-            }
         }
 
         private void ObjectivePointVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -3178,7 +3199,6 @@ namespace TPMapEditor
             MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click += DeleteMapTextPointButton_Click;
             SelectedElement = (UIElement)MapTextPointItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedMapTextPoint);
-            MapScrollViewer.KeyDown += MapScrollViewerMapTextPoint_KeyDown;
         }
 
         private void HideMapTextPointElements()
@@ -3195,7 +3215,6 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown -= MapGridOutsideMapTextPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove -= MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click -= DeleteMapTextPointButton_Click;
-            MapScrollViewer.KeyDown -= MapScrollViewerMapTextPoint_KeyDown;
         }
 
         private void MapGridOutsideMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -3370,7 +3389,7 @@ namespace TPMapEditor
         private void MapTextPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var text = StringDictionnary.MapTextItems.Keys.ElementAt(MapTextPointPreviewTextComboBox.SelectedIndex);
-            var point = new MapTextPoint(Map, NamedElement.GenerateName("MapTextPoint", Map.MapTextPoints), text, Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2);
+            var point = new MapTextPoint(Map, NamedMapObject.GenerateName("MapTextPoint", Map.MapTextPoints), text, Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2);
             SelectAndMakeMapTextPointLastSelected(point);
             Map.MapTextPoints.Add(point);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
@@ -3379,19 +3398,6 @@ namespace TPMapEditor
         private void MapTextPointPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             AddMapTextPointCheckBox.IsChecked = false;
-        }
-
-        //Keyboard shortcut
-        private void MapScrollViewerMapTextPoint_KeyDown(object sender, KeyEventArgs e)
-        {
-            //Toggle selected objects visibility
-            if (e.Key == Key.H)
-            {
-                foreach (var objectivePoint in SelectedMapTextPoints)
-                {
-                    objectivePoint.IsShownOnUi = !objectivePoint.IsShownOnUi;
-                }
-            }
         }
 
         private void MapTextPointVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)

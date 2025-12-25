@@ -140,6 +140,14 @@
             
             <!-- Column 0 -->
             <ScrollViewer RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="MapScrollViewer_PreviewMouseWheel" MouseEnter="MapScrollViewer_MouseEnter">
+                <ScrollViewer.InputBindings>
+                    <KeyBinding Key="H" Command="{Binding HKeyCommand}"/>
+                    <KeyBinding Key="H" Modifiers="Shift" Command="{Binding ShiftHKeyCommand}"/>
+                    <KeyBinding Key="H" Modifiers="Ctrl" Command="{Binding CtrlHKeyCommand}"/>
+                    <KeyBinding Key="A" Command="{Binding AKeyCommand}"/>
+                    <KeyBinding Key="A" Modifiers="Shift" Command="{Binding ShiftAKeyCommand}"/>
+                    <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding CtrlAKeyCommand}"/>
+                </ScrollViewer.InputBindings>
                 <Grid x:Name="MapGridOutside" Background="Transparent">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
                         <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="True" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
