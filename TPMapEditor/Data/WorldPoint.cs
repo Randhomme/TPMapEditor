@@ -1,15 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldPoint : Point3
+    public partial class WorldPoint : Point3, ISelectableMapObject
     {
         [ObservableProperty]
         private double xRotation, yRotation, zRotation, magnitude; // still have to figure out the purpose of magnitude
         [ObservableProperty]
         private WorldPointSet parent;
         [ObservableProperty]
-        private bool isSelected, isLastSelected;
+        private bool isSelected, isLastSelected, isShownOnUi = true;
 
         public WorldPoint(WorldPointSet parent, double x, double y, double z, double zRotation) : base(x, y, z)
         {

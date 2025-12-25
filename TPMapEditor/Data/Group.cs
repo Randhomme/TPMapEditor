@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace TPMapEditor.Data
 {
-    public partial class Group : NamedElement
+    public partial class Group : NamedMapObject
     {
         public static string DefaultName => "Player0 Group";
 

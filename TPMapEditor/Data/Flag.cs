@@ -2,7 +2,7 @@
 
 namespace TPMapEditor.Data
 {
-    public partial class Flag : NamedElement
+    public partial class Flag : NamedMapObject
     {
         [ObservableProperty]
         private bool value;

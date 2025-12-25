@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldPolygonPoint : Point2
+    public partial class WorldPolygonPoint : Point2, ISelectableMapObject
     {
         [ObservableProperty]
-        private bool isSelected, isLastSelected;
+        private bool isSelected, isLastSelected, isShownOnUi = true;
         [ObservableProperty]
         private WorldPolygon parent;
 

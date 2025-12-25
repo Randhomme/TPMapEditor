@@ -7,7 +7,7 @@ using TPMapEditor.Enums;
 
 namespace TPMapEditor.Data
 {
-    public partial class Player : NamedElement
+    public partial class Player : SelectableNamedMapObject
     {
         public static string DefaultName => "NO PLAYER";
 
@@ -20,7 +20,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Team? selectableTeam, inGameTeam;
         [ObservableProperty]
-        private bool isPlayable, isSelected, isLastSelected, isShownOnUi = true, hasSelectableTeam, hasInGameTeam;
+        private bool isPlayable, hasSelectableTeam, hasInGameTeam;
 
         public int TeamIndex { get; set; } //only used for data import
 

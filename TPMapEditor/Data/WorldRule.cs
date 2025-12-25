@@ -9,7 +9,7 @@ using TPMapEditor.Data.Rule;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldRule : NamedElement
+    public partial class WorldRule : NamedMapObject
     {
         [ObservableProperty]
         private bool runOnce = true;

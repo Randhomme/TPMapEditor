@@ -95,7 +95,7 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldGroup(map, realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedElement? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedMapObject? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             value ??= map.Groups.FirstOrDefault();
             selectedGroup ??= map.Groups.FirstOrDefault();
@@ -351,7 +351,7 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.StateInitSetupShip:
                     RuleFields.Clear();
-                    ShipUnit = new(map, NamedElement.GenerateName("Ship", map.ShipUnits));
+                    ShipUnit = new(map, NamedMapObject.GenerateName("Ship", map.ShipUnits));
                     map.ShipUnits.Add(ShipUnit);
                     AddRuleFieldWorldObjectShip("World Object ID Int", "World object", ShipUnit.WorldObject, propertyChanged: (s, e) =>
                     {

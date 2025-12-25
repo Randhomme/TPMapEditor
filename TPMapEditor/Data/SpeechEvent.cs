@@ -10,7 +10,7 @@ using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
-    public partial class SpeechEvent : NamedElement
+    public partial class SpeechEvent : NamedMapObject
     {
         [ObservableProperty]
         private string soundFileName, faceTexture, textStringID, speakerID;

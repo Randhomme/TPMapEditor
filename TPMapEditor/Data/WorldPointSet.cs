@@ -9,14 +9,12 @@ using System.Windows.Media;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldPointSet : NamedElement
+    public partial class WorldPointSet : SelectableNamedMapObject
     {
         public static string DefaultName => "POINT SET";
 
         [ObservableProperty]
         private Color color = Colors.Black;
-        [ObservableProperty]
-        private bool isSelected, isLastSelected, isShownOnUi = true;
 
         public ObservableCollection<WorldPoint> Points { get; }
 

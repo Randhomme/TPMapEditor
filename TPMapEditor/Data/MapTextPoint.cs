@@ -2,14 +2,14 @@
 
 namespace TPMapEditor.Data
 {
-    public partial class MapTextPoint : NamedElement
+    public partial class MapTextPoint : SelectableNamedMapObject
     {
         [ObservableProperty]
         private string realText;
         [ObservableProperty]
         private double x, y, z;
         [ObservableProperty]
-        private bool visible, isSelected, isLastSelected, isShownOnUi = true;
+        private bool visible;
 
         public string DisplayedText
         {

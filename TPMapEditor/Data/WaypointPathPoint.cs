@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Data
 {
-    public partial class WaypointPathPoint : Point3
+    public partial class WaypointPathPoint : Point3, ISelectableMapObject
     {
         [ObservableProperty]
-        private bool isSelected, isLastSelected;
+        private bool isSelected, isLastSelected, isShownOnUi = true;
         [ObservableProperty]
         private WaypointPath parent;
 

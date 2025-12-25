@@ -28,7 +28,7 @@ namespace TPMapEditor.Dialogs
         public TimerDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             Map = map;
-            Factory = () => new Data.Timer(Map, NamedElement.GenerateName("Timer", Map.Timers), false, 0);
+            Factory = () => new Data.Timer(Map, NamedMapObject.GenerateName("Timer", Map.Timers), false, 0);
             InitializeComponent();
         }
     }

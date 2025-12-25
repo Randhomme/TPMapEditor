@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TPMapEditor.Data
 {
-    public partial class Timer : NamedElement
+    public partial class Timer : NamedMapObject
     {
         [ObservableProperty]
         private bool status;

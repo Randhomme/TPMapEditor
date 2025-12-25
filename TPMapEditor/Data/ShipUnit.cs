@@ -10,7 +10,7 @@ namespace TPMapEditor.Data
     /// <summary>
     /// Class representing a unit in world rules
     /// </summary>
-    public partial class ShipUnit : NamedElement
+    public partial class ShipUnit : NamedMapObject
     {
         public static string DefaultName => "HUMAN CONTROLLED COMMAND SHIP";
 

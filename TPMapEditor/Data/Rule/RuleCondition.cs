@@ -54,7 +54,7 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldGroup(map, realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedElement? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedMapObject? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             value ??= map.Groups.FirstOrDefault();
             selectedGroup ??= map.Groups.FirstOrDefault();

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldObject : ObservableObject
+    public partial class WorldObject : SelectableMapObject
     {
         private static int nextId = 0;
 
@@ -16,7 +16,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Player? player;
         [ObservableProperty]
-        private bool isSelected, isLastSelected, hasGroup, hasPlayer, isShownOnUi = true;
+        private bool hasGroup, hasPlayer;
 
         public WorldMap Map { get; }
 

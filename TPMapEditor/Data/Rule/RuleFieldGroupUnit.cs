@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace TPMapEditor.Data.Rule
 {
-    public partial class RuleFieldGroupUnit : RuleField<NamedElement>
+    public partial class RuleFieldGroupUnit : RuleField<NamedMapObject>
     {
         [ObservableProperty]
         private bool isGroupUnitUnit = false; //true if Unit, false if Group
         [ObservableProperty]
         private Group selectedGroup;
 
-        public RuleFieldGroupUnit(WorldMap map, string? realLabel, string? label, Group selectedGroup, NamedElement value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(map, realLabel, label, value, isOptional, optionalLabel, isShown)
+        public RuleFieldGroupUnit(WorldMap map, string? realLabel, string? label, Group selectedGroup, NamedMapObject value, bool isOptional = false, string? optionalLabel = null, bool isShown = true) : base(map, realLabel, label, value, isOptional, optionalLabel, isShown)
         {
             this.selectedGroup = selectedGroup;
         }

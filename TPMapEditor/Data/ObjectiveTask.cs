@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Data
 {
-    public partial class ObjectiveTask : NamedElement
+    public partial class ObjectiveTask : NamedMapObject
     {
         [ObservableProperty]
         private string textStringId;
