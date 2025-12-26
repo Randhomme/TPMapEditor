@@ -50,6 +50,7 @@ namespace TPMapEditor.Data
             {
                 progressOperation.Report("Map import failed.");
                 progress.Report($"An error has occured.\n{ex.Message}");
+                map.Reset();
             }
         }
 
