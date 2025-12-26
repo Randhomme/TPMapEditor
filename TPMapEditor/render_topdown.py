@@ -144,8 +144,6 @@ scene.render.filepath = output_png
 
 bpy.ops.render.render(write_still=True)
 
-print("✅ Rendu terminé :", output_png)
-
 # ------------------------------------------------------
 # DPI FIX (FOR WPF) AND RESIZE
 # ------------------------------------------------------
@@ -187,3 +185,5 @@ ET.SubElement(obj_node, "PivotY").text = str(round(1-pivot_norm_y, 6))
 tree = ET.ElementTree(obj_node)
 
 tree.write(xml_path, encoding="utf-8", xml_declaration=True)
+
+print("Render done:", output_png)
