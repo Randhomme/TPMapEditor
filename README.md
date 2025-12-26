@@ -12,8 +12,9 @@ Found a bug or have a suggestion ? Contact Randhomme on Discord.
 - You can scroll the map horizontally by using Shift + Mouse wheel
 - Something on the map blocks the view ? You can modify it's Z index using +/- button on the top left of the editor, or simply hide it using the right tab (checkbox in the list)
 - When rotation is enabled, use ALT + Mouse wheel to rotate selected elements. You can also rotate the preview of an element using ALT + rotate (even if rotation is not enabled)
-- You can give color to WaypointPath, WorldPolygon and WorldPointSet to make them easier to see/recognize (colors are not used in game)
+- You can give color to Groups, WaypointPath, WorldPolygon and WorldPointSet to make them easier to see/recognize (colors are not used in game)
 - If you don't find the string you are looking for, you can edit which header file is used for what in App>Settings>Edit game headers
+- There is a guide on how to add world object images on the wiki
 
 ## In the future
 I'm sharing this todo list, with things you should expect in next updates
