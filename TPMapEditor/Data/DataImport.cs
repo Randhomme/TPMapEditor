@@ -334,11 +334,16 @@ namespace TPMapEditor.Data
                 var type = WorldObjectType.WotTypes.FirstOrDefault((t)=>t.Type == typeString);
 
                 if (type is null)
-                    throw new TPMapEditorException($"WorldObject type '{type}' not found.");
+                    throw new TPMapEditorException($"Unokwn type '{type}' for WorldObject #{id}.");
 
                 var worldObject = new WorldObject(map, type, 0, 0, 0) { Id = id };
 
-                ReadWorldObjectStateSection(worldObject);
+                try
+                {
+                    ReadWorldObjectStateSection(worldObject);
+                }
+                catch (TPMapEditorException) { throw; }
+                catch(Exception ex) { throw new TPMapEditorException($"Fail to read state section of WorldObject #{worldObject.Id}", ex); }
                 
                 map.WorldObjects.Add(worldObject);
             }
@@ -353,7 +358,7 @@ namespace TPMapEditor.Data
                 //HasState (must be false for now)
                 var hasState = reader.ReadAndParseBool("HasState Bool ");
                 if (hasState)
-                    throw new TPMapEditorException("WorldObject cannot have a state (not yet).");
+                    throw new TPMapEditorException($"WorldObject #{worldObject.Id} cannot have a state (not yet).");
 
                 //Position
                 var position = reader.ReadAndParseVector3("Position Vector3");
