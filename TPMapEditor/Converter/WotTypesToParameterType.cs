@@ -23,7 +23,18 @@ namespace TPMapEditor.Converter
                     return wots.Where((wot) => CheckWotCustomInfo(wot, cids));
                 }
             }
-            return value;
+            else if(value is IEnumerable<WorldObject> worldObjects)
+            {
+                if (parameter is CustomInfoDefinition cid)
+                {
+                    return worldObjects.Where((wot) => wot.Type.CustomInfoDefinition == cid);
+                }
+                else if (parameter is IEnumerable<CustomInfoDefinition> cids)
+                {
+                    return worldObjects.Where((wot) => CheckWotCustomInfo(wot.Type, cids));
+                }
+            }
+                return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
