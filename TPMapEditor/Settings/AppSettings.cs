@@ -993,7 +993,7 @@ namespace TPMapEditor.Settings
                             // Attempt to load the image for the world object type
                             if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Type}.png"))
                             {
-                                wot.Image = new BitmapImage(new Uri($"/ImageData/WorldObjects/{wot.Type}.png", UriKind.Relative));
+                                wot.Image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Type}.png"));
 
                                 //If an image is found, load the rotation data
                                 try
