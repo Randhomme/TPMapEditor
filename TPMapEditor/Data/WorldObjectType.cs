@@ -46,32 +46,6 @@ namespace TPMapEditor.Data
         }
     }
 
-    /*
-    /// <summary>
-    /// Not really a data class, only used to get the list from WorldObjects.xml
-    /// </summary>
-    [XmlRoot("Objects")]
-    public class WorldObjectTypeXmlCollection
-    {
-        [XmlElement("Object")]
-        public List<WorldObjectTypeXml> Items { get; set; } = new();
-    }
-
-    /// <summary>
-    /// Not really a data class, only used to get the pivot from a WorldObjectType
-    /// </summary>
-    public class WorldObjectTypeXml
-    {
-        [XmlElement("Name")]
-        public string Name { get; set; } = string.Empty;
-
-        [XmlElement("PivotX")]
-        public double PivotX { get; set; }
-
-        [XmlElement("PivotY")]
-        public double PivotY { get; set; }
-    }
-    */
     /// <summary>
     /// Not really a data class, only used to get the pivot from a WorldObjectType
     /// </summary>
