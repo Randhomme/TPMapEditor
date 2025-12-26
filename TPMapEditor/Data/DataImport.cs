@@ -1357,11 +1357,14 @@ namespace TPMapEditor.Data
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         if (name.Equals(ObjectivePoint.DefaultName))
                         {
-                            if (!ruleField.IsOptional)
+                            if (ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: ObjectivePoint '{name}' is the default name.\nLine {line}, Pos {reader.CurrentPosition}");
+                                ruleField.IsShown = false;
                             }
-                            ruleField.IsShown = false;
+                            else
+                            {
+                                progress.Report($"Warning: ObjectivePoint '{name}' is the default name.\n'{line}', position {reader.CurrentPosition}");
+                            }
                             ruleField.Value = null;
                         }
                         else
@@ -1567,11 +1570,14 @@ namespace TPMapEditor.Data
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         if (WaypointPath.DefaultName.Contains(name))
                         {
-                            if (!ruleField.IsOptional)
+                            if (ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: WaypointPath '{name}' is a default name.\nLine {line}, Pos {reader.CurrentPosition}");
+                                ruleField.IsShown = false;
                             }
-                            ruleField.IsShown = false;
+                            else
+                            {
+                                progress.Report($"Warning: WaypointPath '{name}' is a default name.\n'{line}', position {reader.CurrentPosition}");
+                            }
                             ruleField.Value = null;
                         }
                         else
@@ -1722,11 +1728,14 @@ namespace TPMapEditor.Data
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         if (name.Equals(WorldPointSet.DefaultName))
                         {
-                            if (!ruleField.IsOptional)
+                            if (ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: WorldPointSet '{name}' is the default name.\nLine {line}, Pos {reader.CurrentPosition}");
+                                ruleField.IsShown = false;
                             }
-                            ruleField.IsShown = false;
+                            else
+                            {
+                                progress.Report($"Warning: WorldPointSet '{name}' is the default name.\n'{line}', position {reader.CurrentPosition}");
+                            }
                             ruleField.Value = null;
                         }
                         else
