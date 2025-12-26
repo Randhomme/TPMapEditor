@@ -25,8 +25,7 @@
                     SelectedItem="{Binding Player}"
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding Map.Players}"
-                    IsEnabled="{Binding HasPlayer}"
-                    SelectedIndex="{c:Binding 'HasPlayer ? 0 : -1', Mode=OneWay}">
+                    IsEnabled="{Binding HasPlayer}">
                 </ComboBox>
                 <Label Margin="-5,5,0,0" Content="Group"/>
                 <CheckBox Content="Is in group ?" IsChecked="{Binding HasGroup}"/>
@@ -35,8 +34,7 @@
                     SelectedItem="{Binding Group}"
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding Map.Groups}"
-                    IsEnabled="{Binding HasGroup}"
-                    SelectedIndex="{c:Binding 'HasGroup ? 0 : -1', Mode=OneWay}"/>
+                    IsEnabled="{Binding HasGroup}"/>
             </StackPanel>
         </ScrollViewer>
     </DataTemplate>

@@ -42,8 +42,7 @@
                 <ComboBox
                     SelectedItem="{Binding SelectableTeam}"
                     ItemsSource="{Binding Map.SelectableTeams}"
-                    IsEnabled="{Binding HasSelectableTeam}"
-                    SelectedIndex="{c:Binding 'HasSelectableTeam ? 0 : -1', Mode=OneWay}">
+                    IsEnabled="{Binding HasSelectableTeam}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding RealName, Converter={StaticResource TeamNameConverter}}"/>
@@ -55,8 +54,7 @@
                 <ComboBox
                     SelectedItem="{Binding InGameTeam}"
                     ItemsSource="{Binding Map.InGameTeams}"
-                    IsEnabled="{Binding HasInGameTeam}"
-                    SelectedIndex="{c:Binding 'HasInGameTeam ? 0 : -1', Mode=OneWay}">
+                    IsEnabled="{Binding HasInGameTeam}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding RealName, Converter={StaticResource TeamNameConverter}}"/>

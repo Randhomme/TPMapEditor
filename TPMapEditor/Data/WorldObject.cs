@@ -72,7 +72,7 @@ namespace TPMapEditor.Data
         {
             if (value)
             {
-                Group = Map.Groups.FirstOrDefault();
+                Group ??= Map.Groups.FirstOrDefault();
             }
             else
             {
@@ -91,6 +91,18 @@ namespace TPMapEditor.Data
             {
                 if (!HasPlayer)
                     HasPlayer = true;
+            }
+        }
+
+        partial void OnHasPlayerChanged(bool value)
+        {
+            if (value)
+            {
+                Player ??= Map.Players.FirstOrDefault();
+            }
+            else
+            {
+                Player = null;
             }
         }
 

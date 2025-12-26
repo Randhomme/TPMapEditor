@@ -75,7 +75,7 @@ namespace TPMapEditor.Data
         {
             if (value)
             {
-                SelectableTeam = Map.SelectableTeams.FirstOrDefault();
+                SelectableTeam ??= Map.SelectableTeams.FirstOrDefault();
             }
             else
             {
@@ -100,7 +100,7 @@ namespace TPMapEditor.Data
         {
             if (value)
             {
-                InGameTeam = Map.InGameTeams.FirstOrDefault();
+                InGameTeam ??= Map.InGameTeams.FirstOrDefault();
             }
             else
             {
