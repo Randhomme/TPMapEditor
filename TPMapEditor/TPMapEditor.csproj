@@ -14,27 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ImageData\WorldObjects\Ship_Civilian_Galleon_Feather.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Civilian_Schooner_Feather.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_CutterNIS.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Cutter_Tutorial.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Frigate_Feather.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Frigate_NIS.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Lifeboat_Mission9.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_ManOWar_Feather.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Tender_Feather.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Torpedo_Jim.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Navy_Torpedo_Tutorial.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Procyon_Destroyer_FastTurn.xml" />
-    <None Remove="ImageData\WorldObjects\Ship_Procyon_Dreadnought_Feather.xml" />
-    <None Remove="ImageData\WorldObjects\Terrain_BlackHole_Big.xml" />
-    <None Remove="ImageData\WorldObjects\Terrain_BlackHole_Med.xml" />
-    <None Remove="ImageData\WorldObjects\Terrain_BlackHole_Small.xml" />
-    <None Remove="render_topdown.py" />
-    <None Remove="render_topdown_1_1.bat" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="render_topdown.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -744,6 +723,9 @@
     <None Update="ImageData\WorldObjects\Ship_Civilian_Galleon_Feather.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Civilian_Galleon_Feather.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Civilian_Galleon_Wrecked.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -777,6 +759,9 @@
     <None Update="ImageData\WorldObjects\Ship_Civilian_Schooner_Feather.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Civilian_Schooner_Feather.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Civilian_Schooner_Wrecked.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -804,7 +789,13 @@
     <None Update="ImageData\WorldObjects\Ship_Navy_CutterNIS.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_CutterNIS.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Cutter_Tutorial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Cutter_Tutorial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_FastFrigate.png">
@@ -822,7 +813,13 @@
     <None Update="ImageData\WorldObjects\Ship_Navy_Frigate_Feather.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Frigate_Feather.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Frigate_NIS.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Frigate_NIS.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Heavy_Escort.png">
@@ -852,6 +849,9 @@
     <None Update="ImageData\WorldObjects\Ship_Navy_Lifeboat_Mission9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Lifeboat_Mission9.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_ManOWar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -859,6 +859,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_ManOWar_Feather.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_ManOWar_Feather.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Minelayer.png">
@@ -894,6 +897,9 @@
     <None Update="ImageData\WorldObjects\Ship_Navy_Tender_Feather.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Tender_Feather.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Tender_Wrecked.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -909,7 +915,13 @@
     <None Update="ImageData\WorldObjects\Ship_Navy_Torpedo_Jim.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Torpedo_Jim.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Torpedo_Tutorial.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ImageData\WorldObjects\Ship_Navy_Torpedo_Tutorial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Navy_Tug.png">
@@ -1041,6 +1053,9 @@
     <None Update="ImageData\WorldObjects\Ship_Procyon_Destroyer_FastTurn.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Ship_Procyon_Destroyer_FastTurn.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Ship_Procyon_Dreadnought.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1048,6 +1063,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Procyon_Dreadnought_Feather.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ImageData\WorldObjects\Ship_Procyon_Dreadnought_Feather.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Ship_Procyon_Frigate.png">
@@ -1125,10 +1143,19 @@
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Big.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Terrain_BlackHole_Big.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Med.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Terrain_BlackHole_Med.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Small.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ImageData\WorldObjects\Terrain_BlackHole_Small.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Terrain_Cresentia_Distant.png">
