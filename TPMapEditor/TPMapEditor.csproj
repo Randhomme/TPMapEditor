@@ -30,6 +30,8 @@
     <None Remove="ImageData\WorldObjects\Terrain_BlackHole_Big.xml" />
     <None Remove="ImageData\WorldObjects\Terrain_BlackHole_Med.xml" />
     <None Remove="ImageData\WorldObjects\Terrain_BlackHole_Small.xml" />
+    <None Remove="render_topdown.py" />
+    <None Remove="render_topdown_1_1.bat" />
   </ItemGroup>
 
   <ItemGroup>
@@ -1183,6 +1185,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ImageData\WorldObjects\Terrain_Planet_Shattered.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="render_topdown.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="render_topdown_1_1.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TPMapEditorIcon.ico" />
