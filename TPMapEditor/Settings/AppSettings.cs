@@ -1011,8 +1011,8 @@ namespace TPMapEditor.Settings
                             else
                             {
                                 wot.Image = new BitmapImage(new Uri("/Images/WotPlaceholder.png", UriKind.Relative));
-                                if (WorldObjectType.IsSelectableWorldObjectType(wot))
-                                    logs.Report($"Warning: type '{wot.Type}' has no image.");
+                                //if (WorldObjectType.IsSelectableWorldObjectType(wot))
+                                //    logs.Report($"Warning: type '{wot.Type}' has no image.");
                             }
                             WorldObjectType.WotTypes.Add(wot);
                         }
