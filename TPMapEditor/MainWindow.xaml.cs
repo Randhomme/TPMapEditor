@@ -80,7 +80,7 @@ namespace TPMapEditor
         public MainWindow()
         {
             SelectableWorldObjectTypes = new CollectionViewSource() { Source = WorldObjectType.WotTypes }.View;
-            SelectableWorldObjectTypes.Filter = IsSelectableWorldObjectType;
+            SelectableWorldObjectTypes.Filter = WorldObjectType.IsSelectableWorldObjectType;
             settings = new AppSettings();
             Map = new WorldMap();
             InitializeComponent();
@@ -550,7 +550,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnReloadAll()
         {
-            ReloadAllSettings();
+            ReloadAllSettings("Reload TPGame folder");
         }
 
         [RelayCommand]
@@ -724,7 +724,7 @@ namespace TPMapEditor
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadWorldObjectTypeList();
+                    settings.ReloadWorldObjectTypeList(logs);
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -840,7 +840,7 @@ namespace TPMapEditor
             }
             else
             {
-                ReloadAllSettings(false);
+                ReloadAllSettings("Load TPGame folder", false);
             }
         }
 
@@ -957,37 +957,14 @@ namespace TPMapEditor
             return rotation;
         }
 
-        private bool IsSelectableWorldObjectType(object o)
-        {
-            if(o is WorldObjectType wot)
-            {
-                return wot.CustomInfoDefinition == CustomInfoDefinition.AsteroidCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.BlackHoleCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.BulletCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.DragonCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.EtheriumCurrentCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.IslandCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.MineCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.NebulaCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.NovaMortarCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.ShipCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.ShipDebrisCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.SpaceAnimalCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.StarMortarCustomInfoFactory ||
-                   wot.CustomInfoDefinition == CustomInfoDefinition.TorpedoCustomInfoFactory;
-            }
-            return false;
-            
-        }
-
         private void MapScrollViewer_MouseEnter(object sender, MouseEventArgs e)
         {
             MapScrollViewer.Focus();
         }
 
-        private void ReloadAllSettings(bool notifyOnFinish = true)
+        private void ReloadAllSettings(string title, bool notifyOnFinish = true)
         {
-            new ProgressDialog(this, "Reload TPGame folder").RunActionSameThread((progress, progressLogs) =>
+            new ProgressDialog(this, title).RunActionSameThread((progress, progressLogs) =>
             {
                 progress.Report("Reloading ...");
                 settings.ReloadAll(progress, progressLogs);
