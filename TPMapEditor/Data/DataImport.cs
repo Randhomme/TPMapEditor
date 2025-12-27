@@ -417,6 +417,8 @@ namespace TPMapEditor.Data
                 var skyboxMeshString = reader.ReadAndParseString("Skybox mesh name String ");
                 map.Skybox = AppSettings.Meshes.FirstOrDefault((meshString) => meshString == skyboxMeshString);
 
+                if (string.IsNullOrEmpty(map.Skybox)) progress.Report($"Warning: skybox '{skyboxMeshString}' is not a valid mesh.");
+
                 //Ambient Light
                 map.AmbientLightColor = reader.ReadAndParseColor("Ambient Light Colour");
 
@@ -863,8 +865,11 @@ namespace TPMapEditor.Data
                 {
                     //World Object IDs - Element
                     var worldObjectId = reader.ReadAndParseInt("World Object IDs - Element Int ");
-                    var worldObject = map.WorldObjects.First((wot) => wot.Id == worldObjectId);
-                    worldObject.Group = group;
+                    var worldObject = map.WorldObjects.FirstOrDefault((wot) => wot.Id == worldObjectId);
+                    if(worldObject == null)
+                        progress.Report($"Warning: No WorldObject found with id {worldObjectId} for group {group.Name}.");
+                    else
+                        worldObject.Group = group;
                 }
 
                 map.Groups.Add(group);
