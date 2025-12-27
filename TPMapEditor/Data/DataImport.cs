@@ -71,7 +71,7 @@ namespace TPMapEditor.Data
                     //progress.Report($"Done reading {sectionName} section.");
                 }
                 else
-                    throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
+                    throw new TPMapEditorException($"{sectionName} section is invalid.");
             }
             catch (TPMapEditorException) { throw; }
             catch (Exception ex) { throw new Exception($"Fail to read {sectionName} section: {ex.Message}"); }
@@ -332,9 +332,12 @@ namespace TPMapEditor.Data
                 //Type
                 var typeString = reader.ReadAndParseString("Type String ");
                 var type = WorldObjectType.WotTypes.FirstOrDefault((t)=>t.Type == typeString);
-
+                var isValidWorldObject = true;
                 if (type is null)
-                    throw new TPMapEditorException($"Unokwn type '{type}' for WorldObject #{id}.");
+                {
+                    progress.Report($"Warning: Unokwn type '{type}' for WorldObject #{id}.");
+                    isValidWorldObject = false;
+                }
 
                 var worldObject = new WorldObject(map, type, 0, 0, 0) { Id = id };
 
@@ -345,7 +348,8 @@ namespace TPMapEditor.Data
                 catch (TPMapEditorException) { throw; }
                 catch(Exception ex) { throw new TPMapEditorException($"Fail to read state section of WorldObject #{worldObject.Id}", ex); }
                 
-                map.WorldObjects.Add(worldObject);
+                if(isValidWorldObject)
+                    map.WorldObjects.Add(worldObject);
             }
             catch (TPMapEditorException) { throw; }
             catch { throw new Exception("Fail to read WorldObject section."); }
@@ -381,7 +385,11 @@ namespace TPMapEditor.Data
                     {
                         worldObject.Player = map.Players[playerIndex];
                     }
-                    catch { throw new TPMapEditorException("PlayerIndex is incorrect."); }
+                    catch 
+                    {
+                        //throw new TPMapEditorException("PlayerIndex is incorrect.");
+                        progress.Report($"Warning: PlayerIndex of world object #{worldObject.Id} is incorrect.");
+                    }
                 }
 
                 //other states
@@ -874,10 +882,10 @@ namespace TPMapEditor.Data
                     map.WorldCrews.Add(wotGridItem);
                 }
                 else
-                    throw new TPMapEditorException($"World object {crewName} is not a valid crew member.");
+                    progress.Report($"Warning: World object {crewName} is not a valid crew member.");
             }
             else
-                throw new TPMapEditorException($"World object {crewName} does not exists in your TPGame folder.");
+                progress.Report($"Warning: World object {crewName} does not exists in your TPGame folder.");
         }
 
         private void ReadWorldArmsListElement()
@@ -891,10 +899,10 @@ namespace TPMapEditor.Data
                     map.WorldArms.Add(wotGridItem);
                 }
                 else
-                    throw new TPMapEditorException($"World object {gunName} is not a valid weapon.");
+                    progress.Report($"Warning: World object {gunName} is not a valid crew member.");
             }
             else
-                throw new TPMapEditorException($"World object {gunName} does not exists in your TPGame folder.");
+                progress.Report($"Warning: World object {gunName} does not exists in your TPGame folder.");
         }
 
         private void ReadMapTextSystemSection()
@@ -981,10 +989,14 @@ namespace TPMapEditor.Data
             {
                 var condition = new Rule.RuleCondition(map);
                 var typeString = reader.ReadAndParseString("Type String ");
+                var isValidCondition = true;
                 if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleCondition>(typeString, out var type))
                     condition.Type = type;
                 else
-                    throw new TPMapEditorException($"Invalid condition type {typeString}");
+                {
+                    progress.Report($"Warning: Invalid condition type {typeString}");
+                    isValidCondition = false;
+                }
 
                 while (!reader.EndOfStream)
                 {
@@ -1022,12 +1034,12 @@ namespace TPMapEditor.Data
                     }
 
                     if (targetField == null)
-                        throw new TPMapEditorException("Unknown condition field: " + line);
-
-                    ProcessRuleField(targetField, line);
-                    
+                        progress.Report($"Warning: Unknown condition field for : " );
+                    else
+                        ProcessRuleField(targetField, line);                    
                 }
-                worldRule.Conditions.Add(condition);
+                if (isValidCondition)
+                    worldRule.Conditions.Add(condition);
             });
         }
 
@@ -1037,10 +1049,14 @@ namespace TPMapEditor.Data
             {
                 var action = new Rule.RuleAction(map);
                 var typeString = reader.ReadAndParseString("Type String ");
+                var isValidAction = true;
                 if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleAction>(typeString, out var type))
                     action.Type = type;
                 else
-                    throw new TPMapEditorException($"Invalid action type {typeString}");
+                {
+                    progress.Report($"Warning: Invalid action type {typeString}");
+                    isValidAction = false;
+                }
 
                 while (!reader.EndOfStream)
                 {
@@ -1079,17 +1095,16 @@ namespace TPMapEditor.Data
 
                     if (targetField == null)
                         throw new TPMapEditorException("Unknown action field: " + line);
-
-                    ProcessRuleField(targetField, line);
-
+                    else
+                        ProcessRuleField(targetField, line);
                 }
-                worldRule.Actions.Add(action);
+                if (isValidAction)
+                    worldRule.Actions.Add(action);
             });
         }
 
         private void ProcessRuleField(RuleField targetField, string line)
         {
-            //Do all the RuleField types from Rule folder
             switch (targetField)
             {
                 case RuleFieldAiStance ruleField:
@@ -1927,13 +1942,9 @@ namespace TPMapEditor.Data
             });
         }
 
-        
-
         public void Dispose()
         {
             reader.Dispose();
         }
     }
-
-    
 }
