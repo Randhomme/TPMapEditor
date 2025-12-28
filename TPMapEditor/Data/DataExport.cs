@@ -145,7 +145,7 @@ namespace TPMapEditor.Data
                 {
                     var worldObject = map.WorldObjects[i];
                     WriteLineLevel($"ID Int {worldObject.Id}", level);
-                    WriteLineLevel($"Type String '{worldObject.Type.Type}'", level);
+                    WriteLineLevel($"Type String '{worldObject.Type.Name}'", level);
                     WriteWorldObjectStateSection(worldObject, level);
                 }
                 WriteGameSpecificSection(level);
@@ -307,13 +307,13 @@ namespace TPMapEditor.Data
                 for(int i = 0; i < map.WorldCrews.Count; i++)
                 {
                     var crew = map.WorldCrews[i];
-                    WriteLineLevel($"World Crew List - Element String '{crew.Type}'", level);
+                    WriteLineLevel($"World Crew List - Element String '{crew.Name}'", level);
                 }
                 WriteLineLevel($"World Arms List - Size Int {map.WorldArms.Count}", level);
                 for(int i = 0; i < map.WorldArms.Count; i++)
                 {
                     var arm = map.WorldArms[i];
-                    WriteLineLevel($"World Arms List - Element String '{arm.Type}'", level);
+                    WriteLineLevel($"World Arms List - Element String '{arm.Name}'", level);
                 }
                 WriteMapTextSystemSection(level);
                 WriteLineLevel("READAIENTITYCOUNTS Bool False", level);

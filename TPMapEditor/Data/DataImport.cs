@@ -331,7 +331,7 @@ namespace TPMapEditor.Data
 
                 //Type
                 var typeString = reader.ReadAndParseString("Type String ");
-                var type = WorldObjectType.WotTypes.FirstOrDefault((t)=>t.Type == typeString);
+                var type = WorldObjectType.WotTypes.FirstOrDefault((t)=>t.Name == typeString);
                 var isValidWorldObject = true;
                 if (type is null)
                 {
@@ -879,7 +879,7 @@ namespace TPMapEditor.Data
         private void ReadWorldCrewListElement()
         {
             var crewName = reader.ReadAndParseString("World Crew List - Element String ");
-            var wotGridItem = WorldObjectType.WotTypes.FirstOrDefault((type) => type.Type == crewName);
+            var wotGridItem = WorldObjectType.WotTypes.FirstOrDefault((type) => type.Name == crewName);
             if (wotGridItem != null)
             {
                 if(wotGridItem.CustomInfoDefinition == CustomInfoDefinition.CrewCustomInfoFactory)
@@ -896,7 +896,7 @@ namespace TPMapEditor.Data
         private void ReadWorldArmsListElement()
         {
             var gunName = reader.ReadAndParseString("World Arms List - Element String ");
-            var wotGridItem = WorldObjectType.WotTypes.FirstOrDefault((type) => type.Type == gunName);
+            var wotGridItem = WorldObjectType.WotTypes.FirstOrDefault((type) => type.Name == gunName);
             if (wotGridItem != null)
             {
                 if (wotGridItem.CustomInfoDefinition == CustomInfoDefinition.GunCustomInfoFactory)
@@ -1628,8 +1628,8 @@ namespace TPMapEditor.Data
                 case RuleFieldWorldObjectEtheriumCurrent ruleField:
                     {
                         var id = DataImportExtensions.ParseInt(ruleField.RealLabel + " ", line);
-                        var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
-                        if (wot == null)
+                        var worldObject = map.WorldObjects.FirstOrDefault(w => w.Id == id);
+                        if (worldObject == null)
                         {
                             if (ruleField.IsOptional)
                             {
@@ -1640,11 +1640,11 @@ namespace TPMapEditor.Data
                                 progress.Report($"Warning: WorldObject with id '{id}' not found.");
                             }
                         }
-                        else if(wot.Type.CustomInfoDefinition != CustomInfoDefinition.EtheriumCurrentCustomInfoFactory)
+                        else if(worldObject.Type.CustomInfoDefinition != CustomInfoDefinition.EtheriumCurrentCustomInfoFactory)
                         {
-                            progress.Report($"Warning: WorldObject '{wot}' is used as etherium current.");
+                            progress.Report($"Warning: WorldObject '{worldObject}' is used as etherium current.");
                         }
-                        ruleField.Value = wot;
+                        ruleField.Value = worldObject;
                     }
                     break;
 
