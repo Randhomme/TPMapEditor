@@ -963,7 +963,7 @@ namespace TPMapEditor.Settings
                     {
                         using (var reader = new StreamReader(File.OpenRead(file)))
                         {
-                            var wot = new WorldObjectType();
+                            var wot = new WorldObjectType(string.Empty);
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
@@ -971,7 +971,7 @@ namespace TPMapEditor.Settings
                                 {
                                     string typeString = line.Substring("Type String:".Length).Trim('\'');
 
-                                    wot.Type = typeString;
+                                    wot.Name = typeString;
                                 }
                                 else if (line.Equals("Definition String 'CUSTOMINFODEFINITION'"))
                                 {
@@ -991,28 +991,22 @@ namespace TPMapEditor.Settings
                                 }
                             }
                             // Attempt to load the image for the world object type
-                            if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Type}.png"))
+                            if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Name}.png"))
                             {
-                                wot.Image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Type}.png"));
+                                wot.Image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Name}.png"));
 
                                 //If an image is found, load the rotation data
                                 try
                                 {
-                                    using var stream = File.OpenRead($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Type}.xml");
+                                    using var stream = File.OpenRead($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Name}.xml");
                                     var serializer = new XmlSerializer(typeof(WorldObjectTypeXml));
                                     var xmlData = (WorldObjectTypeXml)serializer.Deserialize(stream);
                                     wot.Pivot = new(xmlData.PivotX, xmlData.PivotY);
                                 }
                                 catch
                                 {
-                                    logs.Report($"Error while reading {wot.Type}.xml. Z axis rotations might not be accurate for type '{wot.Type}'.");
+                                    logs.Report($"Error while reading {wot.Name}.xml. Z axis rotations might not be accurate for type '{wot.Name}'.");
                                 }
-                            }
-                            else
-                            {
-                                wot.Image = new BitmapImage(new Uri("/Images/WotPlaceholder.png", UriKind.Relative));
-                                //if (WorldObjectType.IsSelectableWorldObjectType(wot))
-                                //    logs.Report($"Warning: type '{wot.Type}' has no image.");
                             }
                             WorldObjectType.WotTypes.Add(wot);
                         }

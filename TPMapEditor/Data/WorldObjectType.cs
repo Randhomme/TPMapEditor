@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -7,20 +9,25 @@ using TPMapEditor.Enums.WorldObjectDefinition;
 
 namespace TPMapEditor.Data
 {
-    /// <summary>
-    /// A class representing a world object in the selection grid.
-    /// </summary>
-    public class WorldObjectType
+    public partial class WorldObjectType : NamedObject
     {
         public static ObservableCollection<WorldObjectType> WotTypes { get; } = new ObservableCollection<WorldObjectType>();
-        public BitmapImage? Image { get; set; }
-        public string Type { get; set; } = string.Empty;
-        public Point Pivot { get; set; } = new Point(0.5, 0.5);
-        public CustomInfoDefinition CustomInfoDefinition { get; set; }
+        public static BitmapImage WotPlaceholder { get; } = new BitmapImage(new Uri("/Images/WotPlaceholder.png", UriKind.Relative));
+
+        [ObservableProperty]
+        private BitmapImage image = WotPlaceholder;
+        [ObservableProperty]
+        private Point pivot;
+        [ObservableProperty]
+        private CustomInfoDefinition customInfoDefinition;
+
+        public WorldObjectType(string name) : base(name)
+        {
+        }
 
         public override string ToString()
         {
-            return Type ?? "WorldObject";
+            return Name ?? "WorldObject";
         }
 
         public static bool IsSelectableWorldObjectType(object o)
@@ -43,6 +50,16 @@ namespace TPMapEditor.Data
             }
             return false;
 
+        }
+
+        protected override bool IsNameTaken(string name)
+        {
+            foreach (var item in WotTypes)
+            {
+                if (item.Name == name && item != this)
+                    return true;
+            }
+            return false;
         }
     }
 
