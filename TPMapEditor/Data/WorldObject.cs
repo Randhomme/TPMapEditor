@@ -18,8 +18,6 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool hasGroup, hasPlayer;
 
-        public WorldMap Map { get; }
-
         private int id;
         public int Id //only used for data import/export
         {
@@ -32,16 +30,14 @@ namespace TPMapEditor.Data
             } 
         }
 
-        public WorldObject(WorldMap map)
+        public WorldObject(WorldMap map) : base(map)
         {
-            Map = map;
             type = WorldObjectType.WotTypes.FirstOrDefault();
             this.id = nextId++;
         }
 
-        public WorldObject(WorldMap map, WorldObjectType type, double x, double y, double zRotation)
+        public WorldObject(WorldMap map, WorldObjectType type, double x, double y, double zRotation) : base(map)
         {
-            Map = map;
             this.type = type;
             this.x = x;
             this.y = y;
