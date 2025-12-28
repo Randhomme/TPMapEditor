@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace TPMapEditor.Interfaces
 {
     /// <summary>
-    /// Represents an object within the map that has a name.
+    /// Represents an object that has a unique name.
     /// </summary>
-    public interface INamedMapObject
+    public interface INamedObject
     {
         public string Name { get; set; }
     }
