@@ -27,11 +27,11 @@ namespace TPMapEditor.Converter
             {
                 if (parameter is CustomInfoDefinition cid)
                 {
-                    return worldObjects.Where((wot) => wot.Type.CustomInfoDefinition == cid);
+                    return worldObjects.Where((worldObject) => worldObject.Type.CustomInfoDefinition == cid);
                 }
                 else if (parameter is IEnumerable<CustomInfoDefinition> cids)
                 {
-                    return worldObjects.Where((wot) => CheckWotCustomInfo(wot.Type, cids));
+                    return worldObjects.Where((worldObject) => CheckWotCustomInfo(worldObject.Type, cids));
                 }
             }
                 return value;
