@@ -1,24 +1,25 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 using TPMapEditor.Settings;
+using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldMap : ObservableObject
+    public partial class WorldMap : CustomObservableValidator
     {
         [ObservableProperty]
         private bool mustAssembleFleet, isMultiplayer, isCampaign, useCustomName, useCustomDescription, playEndMovie, isAllianceChangeAllowed, islandsMakeSounds, isCurrentObjectivePointVisibleOnStarMap;
         [ObservableProperty]
         private int size, zSize, playerPlayableCount, roofLightOrientationYaw, roofLightOrientationPitch;
         [ObservableProperty]
-        private string worldName, worldDescription, customName, customDescription, starmapTexture, skybox, journalMusic, journalTitle;
+        [property: Required]
+        private string worldName, worldDescription, starmapTexture, skybox, journalMusic, journalTitle;
+        [ObservableProperty]
+        private string customName, customDescription;
         [ObservableProperty]
         private Color ambientLightColor, roofLightColor, floorLightColor;
         [ObservableProperty]
@@ -97,6 +98,101 @@ namespace TPMapEditor.Data
                     }
                 }
             };
+        }
+
+        /// <summary>
+        /// Validate everything in the map
+        /// </summary>
+        public void Validate()
+        {
+            this.ValidateAllProperties();
+            foreach (var item in WorldObjects)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in SelectableTeams)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in InGameTeams)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in Players)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in Groups)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in WaypointPaths)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in WorldPolygons)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in WorldPointSets)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in Flags)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in PlayerAlliances)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in Timers)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in SpeechEvents)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in WorldRules)
+            {
+                item.ValidateAllProperties();
+                foreach (var item1 in item.Conditions)
+                {
+                    foreach (var item2 in item1.RuleFields)
+                    {
+                        item2.ValidateAllProperties();
+                    }
+                }
+            }
+            foreach (var item in ShipUnits)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in ObjectivePoints)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in ObjectiveTasks)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in MapTextPoints)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in JournalEntries)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in WorldCrews)
+            {
+                item.ValidateAllProperties();
+            }
+            foreach (var item in WorldArms)
+            {
+                item.ValidateAllProperties();
+            }
         }
 
         public void EnableCollectionSynchronization(object _lock)

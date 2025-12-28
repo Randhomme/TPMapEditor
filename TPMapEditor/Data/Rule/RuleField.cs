@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data.Rule
 {
-    public abstract partial class RuleField : ObservableObject
+    public abstract partial class RuleField : CustomObservableValidator
     {
         [ObservableProperty]
         private string? realLabel, label; //realLabel is from map file, label is displayed text
@@ -33,6 +35,7 @@ namespace TPMapEditor.Data.Rule
     {
 
         [ObservableProperty]
+        [property: Required]
         private T? value;
 
         protected RuleField(WorldMap map, string? realLabel, string? label, T? value, bool isOptional, string? optionalLabel, bool isShown) : base(map, realLabel, label, isOptional, optionalLabel, isShown)

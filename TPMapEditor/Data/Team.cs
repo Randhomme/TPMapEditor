@@ -1,12 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using TPMapEditor.Enums;
+using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data
 {
-    public partial class Team : ObservableObject
+    public partial class Team : CustomObservableValidator
     {
         [ObservableProperty]
+        [property: Required]
         private string realName;
         [ObservableProperty]
         private Race race;

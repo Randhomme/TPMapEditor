@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace TPMapEditor.Data
         public static ShipUnit DefaultShipUnit = new(null, DefaultName);
 
         [ObservableProperty]
+        [property: Required]
         private WorldObject? worldObject;
 
         public ShipUnit(WorldMap map, string name, WorldObject? worldObject = null) : base(map, name)

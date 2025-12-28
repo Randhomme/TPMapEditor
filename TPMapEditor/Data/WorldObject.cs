@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace TPMapEditor.Data
@@ -8,6 +9,7 @@ namespace TPMapEditor.Data
         private static int nextId = 0;
 
         [ObservableProperty]
+        [property: Required(ErrorMessage = "The WorldObjectType is required.")]
         private WorldObjectType type;
         [ObservableProperty]
         private double x, y, z, xRotation, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)

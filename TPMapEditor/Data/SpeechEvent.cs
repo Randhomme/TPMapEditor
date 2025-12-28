@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TPMapEditor.Enums;
@@ -13,6 +10,7 @@ namespace TPMapEditor.Data
     public partial class SpeechEvent : NamedMapObject
     {
         [ObservableProperty]
+        [property: Required]
         private string soundFileName, faceTexture, textStringID, speakerID;
         [ObservableProperty]
         private Color textColor;

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Utils;
 
@@ -40,7 +39,7 @@ namespace TPMapEditor.Data
             if (instance.IsNameTaken(value.ToString()))
                 return new ValidationResult($"A {instance.GetType().Name.ToLowerInvariant()} with the same name already exists.");
             if (instance.IsDefaultName(value.ToString()))
-                return new ValidationResult($"A {value} is already a default name for {instance.GetType().Name}.");
+                return new ValidationResult($"{value} is already a default name for {instance.GetType().Name}.");
             return ValidationResult.Success;
         }        
 
