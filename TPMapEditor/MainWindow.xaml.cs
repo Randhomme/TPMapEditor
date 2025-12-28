@@ -293,6 +293,15 @@ namespace TPMapEditor
             {
                 new ProgressDialog(this, "Export map").RunAction((progress, progressLogs) =>
                 {
+                    try
+                    {
+                        Map.Validate();
+                    }
+                    catch(Exception ex)
+                    {
+                        progress.Report("Map export failed.");
+                        progressLogs.Report($"An error has occured.\n{ex.Message}");
+                    }
                     using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
                     {
                         de.CreateMapFileAndWriteData();
@@ -842,6 +851,7 @@ namespace TPMapEditor
             {
                 ReloadAllSettings("Load TPGame folder", false);
             }
+            Map.Reset();
         }
 
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
