@@ -19,15 +19,18 @@ namespace TPMapEditor.Utils
             Validator.ValidateProperty(value, new(this) { MemberName = propertyName });
         }
 
-        protected void ValidateAllProperties()
-        {
-            Validator.ValidateObject(this, new(this), true);
-        }
-
         protected void SetAndValidateProperty<T>(ref T field, T newValue, [CallerMemberName]string? propertyName = null)
         {
             ValidateProperty(newValue, propertyName);
             SetProperty(ref field, newValue, propertyName);
+        }
+    }
+
+    public static class CustomValidator
+    {
+        public static void ValidateAllProperties(this object instance)
+        {
+            Validator.ValidateObject(instance, new(instance), true);
         }
     }
 }
