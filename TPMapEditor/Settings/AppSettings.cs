@@ -1031,9 +1031,7 @@ namespace TPMapEditor.Settings
 
         private void AddDefaultHeadersToLists()
         {
-            TPTeamNames.Clear();
-            TPSpeechEvents.Clear();
-            TPSpeakerNames.Clear();
+            ClearHeadersLists();
             TPTeamNames.Add(new("TPTEAMNAMES_GameStrings.h"));
             TPSpeechEvents.Add(new("TPSPEECHEVENTS000_GameStrings.h"));
             TPSpeechEvents.Add(new("TPSPEECHEVENTS001_GameStrings.h"));
@@ -1061,6 +1059,21 @@ namespace TPMapEditor.Settings
             TPWorldNames.Add(new("TPWORLDNAMES_GameStrings.h"));
             TPWorldNames.Add(new("TPJOURNALSCREEN_GameStrings.h"));
             TPWorldDescriptions.Add(new("TPWORLDDESCRIPTION_GameStrings.h"));
+        }
+
+        private void ClearHeadersLists()
+        {
+            TPTeamNames.Clear();
+            TPSpeechEvents.Clear();
+            TPSpeakerNames.Clear();
+            TPShipNames.Clear();
+            TPInGameMessages.Clear();
+            TPJournalTitles.Clear();
+            TPObjectiveTasks.Clear();
+            TPSpeechEventsJournals.Clear();
+            TPMapTextItems.Clear();
+            TPWorldNames.Clear();
+            TPWorldDescriptions.Clear();
         }
 
         public AppSettings Load()
