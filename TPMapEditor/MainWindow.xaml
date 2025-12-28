@@ -767,7 +767,7 @@
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-                                                    <DataGridTextColumn Binding="{Binding Type}" Header="Object type" Width="*"/>
+                                                    <DataGridTextColumn Binding="{Binding Name}" Header="Object type" Width="*"/>
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                         </GroupBox>

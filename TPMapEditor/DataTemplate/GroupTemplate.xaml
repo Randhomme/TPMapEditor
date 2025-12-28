@@ -29,7 +29,7 @@
                 <Label Margin="-5,5,0,0" Content="WorldObjects"/>
                 <DataGrid HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" ItemsSource="{Binding WorldObjects}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Width="*" Header="Type" Binding="{Binding Type.Type}" CanUserResize="True"/>
+                        <DataGridTextColumn Width="*" Header="Type" Binding="{Binding Type.Name}" CanUserResize="True"/>
                         <DataGridTemplateColumn MinWidth="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
