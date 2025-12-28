@@ -5,7 +5,9 @@ using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Data
 {
-    public abstract partial class NamedMapObject : ObservableObject, INamedMapObject
+    public abstract partial class MapObject : ObservableValidator { }
+
+    public abstract partial class NamedMapObject : MapObject, INamedMapObject
     {
         [ObservableProperty]
         private string name;
@@ -58,7 +60,7 @@ namespace TPMapEditor.Data
         }
     }
 
-    public abstract partial class SelectableMapObject : ObservableObject, ISelectableMapObject
+    public abstract partial class SelectableMapObject : MapObject, ISelectableMapObject
     {
         [ObservableProperty]
         private bool isSelected, isLastSelected, isShownOnUi = true;
