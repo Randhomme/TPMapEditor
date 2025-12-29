@@ -7,9 +7,9 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
 	<LangVersion>10</LangVersion>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
     <ApplicationIcon>TPMapEditorIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -30,6 +30,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Text.Json" Version="10.0.1" />
   </ItemGroup>
 
 	<Target Name="Ilrepack" AfterTargets="AfterBuild" Condition="$(Configuration) == Release">
@@ -37,6 +38,7 @@
   </Target>
 
   <ItemGroup>
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
