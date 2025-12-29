@@ -50,14 +50,14 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldGroup(string? realLabel, string? label, Group? group = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            group ??= map.Groups.FirstOrDefault();
+            group ??= map.SelectableGroups.FirstOrDefault();
             RuleFields.Add(new RuleFieldGroup(map, realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedMapObject? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= map.Groups.FirstOrDefault();
-            selectedGroup ??= map.Groups.FirstOrDefault();
+            value ??= map.SelectableGroups.FirstOrDefault();
+            selectedGroup ??= map.SelectableGroups.FirstOrDefault();
             RuleFields.Add(new RuleFieldGroupUnit(map, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
@@ -68,7 +68,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldPlayer(string? realLabel, string? label, Player? player = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            player ??= map.Players.FirstOrDefault();
+            player ??= map.SelectablePlayers.FirstOrDefault();
             RuleFields.Add(new RuleFieldPlayer(map, realLabel, label, player, isOptional, optionalLabel, isShown));
         }
 
@@ -93,7 +93,7 @@ namespace TPMapEditor.Data.Rule
         private void AddRuleFieldUnit(string? realLabel, string? label, Group? selectedGroup = null, ShipUnit? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             selectedGroup ??= map.Groups.FirstOrDefault();
-            value ??= map.ShipUnits.FirstOrDefault();
+            value ??= map.SelectableShipUnits.FirstOrDefault();
             RuleFields.Add(new RuleFieldUnit(map, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 

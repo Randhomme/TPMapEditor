@@ -91,14 +91,14 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldGroup(string? realLabel, string? label, Group? group = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            group ??= map.Groups.FirstOrDefault();
+            group ??= map.SelectableGroups.FirstOrDefault();
             RuleFields.Add(new RuleFieldGroup(map, realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedMapObject? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= map.Groups.FirstOrDefault();
-            selectedGroup ??= map.Groups.FirstOrDefault();
+            value ??= map.SelectableGroups.FirstOrDefault();
+            selectedGroup ??= map.SelectableGroups.FirstOrDefault();
             RuleFields.Add(new RuleFieldGroupUnit(map, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
@@ -133,7 +133,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldObjectivePoint(string? realLabel, string? label, ObjectivePoint? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= map.ObjectivePoints.FirstOrDefault();
+            value ??= map.SelectableObjectivePoints.FirstOrDefault();
             RuleFields.Add(new RuleFieldObjectivePoint(map, realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
@@ -150,13 +150,13 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldPath(string? realLabel, string? label, WaypointPath? path = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            path ??= map.WaypointPaths.FirstOrDefault();
+            path ??= map.SelectableWaypointPaths.FirstOrDefault();
             RuleFields.Add(new RuleFieldWaypointPath(map, realLabel, label, path, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldPlayer(string? realLabel, string? label, Player? player = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            player ??= map.Players.FirstOrDefault();
+            player ??= map.SelectablePlayers.FirstOrDefault();
             RuleFields.Add(new RuleFieldPlayer(map, realLabel, label, player, isOptional, optionalLabel, isShown));
         }
 
@@ -211,7 +211,7 @@ namespace TPMapEditor.Data.Rule
         private void AddRuleFieldUnit(string? realLabel, string? label, Group? selectedGroup = null, ShipUnit? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             selectedGroup ??= map.Groups.FirstOrDefault();
-            value ??= map.ShipUnits.FirstOrDefault();
+            value ??= map.SelectableShipUnits.FirstOrDefault();
             RuleFields.Add(new RuleFieldUnit(map, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
@@ -288,7 +288,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldWorldPointSet(string? realLabel, string? label, WorldPointSet? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            value ??= map.WorldPointSets.FirstOrDefault();
+            value ??= map.SelectableWorldPointSets.FirstOrDefault();
             RuleFields.Add(new RuleFieldWorldPointSet(map, realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
