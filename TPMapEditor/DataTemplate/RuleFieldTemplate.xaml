@@ -108,7 +108,7 @@
 
     <!--Group-->
     <DataTemplate x:Key="GroupFieldTemplate">
-        <ComboBox ItemsSource="{Binding Map.Groups, Converter={StaticResource SelectableGroupConverter}}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+        <ComboBox ItemsSource="{Binding Map.SelectableGroups}" SelectedValue="{Binding Value,Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type datarule:RuleFieldGroup}">
@@ -125,8 +125,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ComboBox ItemsSource="{Binding Map.Groups, Converter={StaticResource SelectableGroupConverter}}" SelectedValue="{Binding SelectedGroup, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding Map.ShipUnits, Converter={StaticResource SelectableShipUnitConverter}}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableGroups}" SelectedValue="{Binding SelectedGroup, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Map.SelectableShipUnits}" SelectedValue="{Binding Value, Mode=TwoWay}" DisplayMemberPath="Name" Loaded="GroupUnitComboBox_Loaded"/>
         </Grid>
     </DataTemplate>
 
@@ -205,7 +205,7 @@
     <!--ObjectivePoint-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldObjectivePoint}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.ObjectivePoints}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableObjectivePoints}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
         </ContentControl>
     </DataTemplate>
 
@@ -219,8 +219,13 @@
     <!--Player-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldPlayer}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.Players}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
+            <ComboBox x:Name="cb" ItemsSource="{Binding Map.SelectablePlayers}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
         </ContentControl>
+        <!--<DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsOptional}" Value="False">
+                <Setter TargetName="cb" Property="ItemsSource" Value="{Binding Map.Players}"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>-->
     </DataTemplate>
 
     <!--ShipName-->
@@ -282,7 +287,7 @@
     <!--WaypointPath-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldWaypointPath}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.WaypointPaths}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableWaypointPaths}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
         </ContentControl>
     </DataTemplate>
 
@@ -361,7 +366,7 @@
     <!--WorldPointSet-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPointSet}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.WorldPointSets}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableWorldPointSets}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
         </ContentControl>
     </DataTemplate>
 
