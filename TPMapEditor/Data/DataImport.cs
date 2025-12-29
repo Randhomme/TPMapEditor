@@ -1199,11 +1199,7 @@ namespace TPMapEditor.Data
                         var flag = map.Flags.FirstOrDefault(f => f.Name == flagName);
                         if (flag == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: Flag '{flagName}' does not exist.");
                             }
@@ -1257,11 +1253,7 @@ namespace TPMapEditor.Data
                             group = map.Groups.FirstOrDefault(g => g.Name == groupName);
                         if (group == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: Group '{groupName}' not found.");
                             }
@@ -1313,8 +1305,7 @@ namespace TPMapEditor.Data
                             }
                             else
                             {
-                                if (ruleField.IsOptional) ruleField.IsShown = false;
-                                else progress.Report($"Warning: Group/Unit '{name}' not found.");
+                                if (!ruleField.IsOptional) progress.Report($"Warning: Group/Unit '{name}' not found.");
                                 ruleField.Value = null;
                             }
                         }
@@ -1349,11 +1340,7 @@ namespace TPMapEditor.Data
                         var mt = map.MapTextPoints.FirstOrDefault(m => m.Name == name);
                         if (mt == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: MapTextPoint '{name}' not found.");
                             }
@@ -1383,26 +1370,18 @@ namespace TPMapEditor.Data
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         if (name.Equals(ObjectivePoint.DefaultName))
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: ObjectivePoint '{name}' is the default name.\n'{line}', position {reader.CurrentPosition}");
                             }
-                            ruleField.Value = null;
+                            ruleField.Value = ObjectivePoint.DefaultObjectivePoint;
                         }
                         else
                         {
                             var op = map.ObjectivePoints.FirstOrDefault(o => o.Name == name);
                             if (op == null)
                             {
-                                if (ruleField.IsOptional)
-                                {
-                                    ruleField.IsShown = false;
-                                }
-                                else
+                                if (!ruleField.IsOptional)
                                 {
                                     progress.Report($"Warning: ObjectivePoint '{name}' not found.");
                                 }
@@ -1418,11 +1397,7 @@ namespace TPMapEditor.Data
                         var ot = map.ObjectiveTasks.FirstOrDefault(o => o.Name == name);
                         if (ot == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: ObjectiveTask '{name}' not found.");
                             }
@@ -1434,19 +1409,26 @@ namespace TPMapEditor.Data
                 case RuleFieldPlayer ruleField:
                     {
                         var playerName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
-                        var player = map.Players.FirstOrDefault(p => p.Name == playerName);
-                        if (player == null)
+                        if (playerName.Equals(Player.DefaultName))
                         {
-                            if (ruleField.IsOptional)
+                            if (!ruleField.IsOptional)
                             {
-                                ruleField.IsShown = false;
+                                progress.Report($"Warning: Player '{playerName}' is the default name.\n'{line}', position {reader.CurrentPosition}");
                             }
-                            else
-                            {
-                                progress.Report($"Warning: Player '{playerName}' not found.");
-                            }
+                            ruleField.Value = Player.DefaultPlayer;
                         }
-                        ruleField.Value = player;
+                        else
+                        {
+                            var player = map.Players.FirstOrDefault(p => p.Name == playerName);
+                            if (player == null)
+                            {
+                                if (!ruleField.IsOptional)
+                                {
+                                    progress.Report($"Warning: Player '{playerName}' not found.");
+                                }
+                            }
+                            ruleField.Value = player;
+                        }
                     }
                     break;
 
@@ -1486,11 +1468,7 @@ namespace TPMapEditor.Data
                         var se = map.SpeechEvents.FirstOrDefault(s => s.Name == name);
                         if (se == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: SpeechEvent '{name}' not found.");
                             }
@@ -1509,11 +1487,7 @@ namespace TPMapEditor.Data
                         var team = map.InGameTeams.FirstOrDefault(t => t.RealName == teamName);
                         if (team == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: In game team '{teamName}' not found.");
                             }
@@ -1528,11 +1502,7 @@ namespace TPMapEditor.Data
                         var timer = map.Timers.FirstOrDefault(t => t.Name == timerName);
                         if (timer == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: Timer '{timerName}' not found.");
                             }
@@ -1571,8 +1541,7 @@ namespace TPMapEditor.Data
                         }
                         else
                         {
-                            if (ruleField.IsOptional) ruleField.IsShown = false;
-                            else progress.Report($"Warning: Group/Unit '{name}' not found.");
+                            if (!ruleField.IsOptional) progress.Report($"Warning: Group/Unit '{name}' not found.");
                             ruleField.Value = null;
                         }
                     }
@@ -1596,26 +1565,18 @@ namespace TPMapEditor.Data
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         if (WaypointPath.DefaultName.Contains(name))
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WaypointPath '{name}' is a default name.\n'{line}', position {reader.CurrentPosition}");
                             }
-                            ruleField.Value = null;
+                            ruleField.Value = WaypointPath.DefaultWaypointPath;
                         }
                         else
                         {
                             var obj = map.WaypointPaths.FirstOrDefault(o => o.Name == name);
                             if (obj == null)
                             {
-                                if (ruleField.IsOptional)
-                                {
-                                    ruleField.IsShown = false;
-                                }
-                                else
+                                if (!ruleField.IsOptional)
                                 {
                                     progress.Report($"Warning: WaypointPath '{name}' not found.");
                                 }
@@ -1631,11 +1592,7 @@ namespace TPMapEditor.Data
                         var worldObject = map.WorldObjects.FirstOrDefault(w => w.Id == id);
                         if (worldObject == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldObject with id '{id}' not found.");
                             }
@@ -1654,11 +1611,7 @@ namespace TPMapEditor.Data
                         var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
                         if (wot == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldObject with id '{id}' not found.");
                             }
@@ -1677,11 +1630,7 @@ namespace TPMapEditor.Data
                         var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
                         if (wot == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldObject with id '{id}' not found.");
                             }
@@ -1700,11 +1649,7 @@ namespace TPMapEditor.Data
                         var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
                         if (wot == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldObject with id '{id}' not found.");
                             }
@@ -1723,11 +1668,7 @@ namespace TPMapEditor.Data
                         var wot = map.WorldObjects.FirstOrDefault(w => w.Id == id);
                         if (wot == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldObject with id '{id}' not found.");
                             }
@@ -1754,26 +1695,18 @@ namespace TPMapEditor.Data
                         var name = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                         if (name.Equals(WorldPointSet.DefaultName))
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldPointSet '{name}' is the default name.\n'{line}', position {reader.CurrentPosition}");
                             }
-                            ruleField.Value = null;
+                            ruleField.Value = WorldPointSet.DefaultWorldPointSet;
                         }
                         else
                         {
                             var obj = map.WorldPointSets.FirstOrDefault(o => o.Name == name);
                             if (obj == null)
                             {
-                                if (ruleField.IsOptional)
-                                {
-                                    ruleField.IsShown = false;
-                                }
-                                else
+                                if (!ruleField.IsOptional)
                                 {
                                     progress.Report($"Warning: WorldPointSet '{name}' not found.");
                                 }
@@ -1789,11 +1722,7 @@ namespace TPMapEditor.Data
                         var poly = map.WorldPolygons.FirstOrDefault(p => p.Name == name);
                         if (poly == null)
                         {
-                            if (ruleField.IsOptional)
-                            {
-                                ruleField.IsShown = false;
-                            }
-                            else
+                            if (!ruleField.IsOptional)
                             {
                                 progress.Report($"Warning: WorldPolygon '{name}' not found.");
                             }
