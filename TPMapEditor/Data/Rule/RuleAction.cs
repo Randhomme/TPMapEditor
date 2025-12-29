@@ -145,7 +145,7 @@ namespace TPMapEditor.Data.Rule
 
         private void AddRuleFieldObservableCollection(string? realLabel, string? label, ObservableCollection<RuleField> value, bool isOptional = true)
         {
-            RuleFields.Add(new RuleFieldObservableCollection(map, realLabel, value, isOptional, label, true));
+            RuleFields.Add(new RuleFieldObservableCollection(map, realLabel, value, isOptional, label, false));
         }
 
         private void AddRuleFieldPath(string? realLabel, string? label, WaypointPath? path = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
