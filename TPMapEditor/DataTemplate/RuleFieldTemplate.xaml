@@ -10,10 +10,10 @@
     <!--RuleField-->
     <ControlTemplate x:Key="RuleFieldTemplate" TargetType="ContentControl">
         <StackPanel>
-            <StackPanel Visibility="{c:Binding 'IsOptional'}">
+            <!--<StackPanel Visibility="{c:Binding 'IsOptional'}">
                 <Label Margin="-5,5,0,0" Content="{Binding OptionalLabel}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
                 <CheckBox IsChecked="{Binding IsShown}" Content="{Binding IsShown}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
-            </StackPanel>
+            </StackPanel>-->
             <StackPanel Visibility="{c:Binding 'IsShown'}">
                 <Label Margin="-5,5,0,0" Content="{Binding Label}" Visibility="{c:Binding 'Label!=null'}"/>
                 <ContentPresenter/>
@@ -379,8 +379,21 @@
 
     <!--ObservableCollection-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldObservableCollection}">
-        <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ItemsControl ItemsSource="{Binding Value}"/>
+        <ContentControl>
+            <ContentControl.Template>
+                <ControlTemplate>
+                    <StackPanel>
+                        <StackPanel Visibility="{c:Binding 'IsOptional'}">
+                            <Label Margin="-5,5,0,0" Content="{Binding OptionalLabel}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
+                            <CheckBox IsChecked="{Binding IsShown}" Content="{Binding IsShown}" Visibility="{c:Binding 'OptionalLabel!=null'}"/>
+                        </StackPanel>
+                        <StackPanel Visibility="{c:Binding 'IsShown'}">
+                            <Label Margin="-5,5,0,0" Content="{Binding Label}" Visibility="{c:Binding 'Label!=null'}"/>
+                            <ItemsControl ItemsSource="{Binding Value}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ControlTemplate>
+            </ContentControl.Template>
         </ContentControl>
     </DataTemplate>
 </ResourceDictionary>
