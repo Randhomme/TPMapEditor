@@ -410,10 +410,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnPlayerAlliancesEdit()
         {
-            if (Map.Players.Count > 1)
-                new PlayerAllianceDialog(this, "Player alliances", Map).ShowDialog();
-            else
-                MessageBox.Show("You need at least 2 players to create alliances.");
+            new PlayerAllianceDialog(this, "Player alliances", Map).ShowDialog();
         }
 
         [RelayCommand]
