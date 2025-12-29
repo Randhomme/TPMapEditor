@@ -11,12 +11,14 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "NO OBJECTIVE POINT";
 
+        public static ObjectivePoint DefaultObjectivePoint { get; } = new(null, DefaultName);
+
         [ObservableProperty]
         private double x, y, z;
 
         public ObjectivePoint(WorldMap map) : base(map, GenerateName("ObjectivePoint", map.ObjectivePoints)) { }
 
-        public ObjectivePoint(WorldMap map, string name, double x, double y, double z = 0) : base(map, name)
+        public ObjectivePoint(WorldMap map, string name, double x = 0, double y = 0, double z = 0) : base(map, name)
         {
             this.x = x;
             this.y = y;

@@ -11,6 +11,8 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "NO PLAYER";
 
+        public static Player DefaultPlayer { get; } = new(null, DefaultName);
+
         [ObservableProperty]
         private double x, y, z, rotation;
         [ObservableProperty]
@@ -25,6 +27,11 @@ namespace TPMapEditor.Data
         public int TeamIndex { get; set; } //only used for data import
 
         public Player(WorldMap map) : base(map, GenerateName("Player", map.Players))
+        {
+            Color = Colors.Red;
+        }
+
+        public Player(WorldMap map, string name) : base(map, name)
         {
             Color = Colors.Red;
         }

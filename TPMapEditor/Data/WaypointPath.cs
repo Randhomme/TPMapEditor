@@ -11,6 +11,8 @@ namespace TPMapEditor.Data
     {
         public static string[] DefaultName => new string[] { "NO PATH", "PATH NAME" };
 
+        public static WaypointPath DefaultWaypointPath { get; } = new(null, DefaultName[0]);
+
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
         public ObservableCollection<WaypointPathPoint> Points { get; set; }

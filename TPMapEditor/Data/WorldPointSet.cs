@@ -13,6 +13,8 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "POINT SET";
 
+        public static WorldPointSet DefaultWorldPointSet { get; } = new(null, DefaultName);
+
         [ObservableProperty]
         private Color color = Colors.Black;
 
