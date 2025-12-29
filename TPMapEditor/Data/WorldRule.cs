@@ -26,11 +26,11 @@ namespace TPMapEditor.Data
 
         protected override bool IsNameTaken(string name)
         {
-            foreach (var item in Map.WorldRules)
-            {
-                if (item.Name == name && item != this)
-                    return true;
-            }
+            //foreach (var item in Map.WorldRules)
+            //{
+            //    if (item.Name == name && item != this)
+            //        return true;
+            //}
             return false;
         }
     }
