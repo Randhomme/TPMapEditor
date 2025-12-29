@@ -2,12 +2,14 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
+using System.Net.Http;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,10 +17,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TPMapEditor.Data;
 using TPMapEditor.Dialogs;
-using TPMapEditor.Enums.WorldObjectDefinition;
-using TPMapEditor.Interfaces;
 using TPMapEditor.Settings;
 using TPMapEditor.Utils.KeyboardShortcuts;
+using System.Text.Json;
 
 namespace TPMapEditor
 {
@@ -836,7 +837,7 @@ namespace TPMapEditor
             settings.Save();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             settings = settings.Load();
             if (string.IsNullOrEmpty(settings.TpGamePath))
@@ -849,6 +850,55 @@ namespace TPMapEditor
                 ReloadAllSettings("Load TPGame folder", false);
             }
             Map.Reset();
+
+            var local = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
+            var latest = await GetLatestGitHubVersionAsync();
+            if (latest != null && latest > local)
+            {
+                if (MessageBox.Show(
+                    $"A new update is available (v{latest}).\n" +
+                    "Do you want to check it out ?",
+                    "Update available",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information
+                ) == MessageBoxResult.Yes)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "https://github.com/Randhomme/TPMapEditor/releases/latest",
+                        UseShellExecute = true
+                    });
+                }
+            }
+        }
+
+        private async Task<Version?> GetLatestGitHubVersionAsync()
+        {
+            try
+            {
+                using var http = new HttpClient();
+
+                // GitHub demande obligatoirement un User-Agent
+                http.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp");
+
+                var url = "https://api.github.com/repos/Randhomme/TPMapEditor/releases/latest";
+
+                var json = await http.GetStringAsync(url);
+
+                using var doc = JsonDocument.Parse(json);
+
+                // Récupère "tag_name" => "v1.4.2"
+                var tag = doc.RootElement.GetProperty("tag_name").GetString();
+
+                if (tag == null)
+                    return null;
+
+                // Supprime le "v"
+                tag = tag.TrimStart('v');
+
+                return Version.TryParse(tag, out var version) ? version : null;
+            }
+            catch { return null; }
         }
 
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
