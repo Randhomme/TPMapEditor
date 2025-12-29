@@ -10,7 +10,7 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "Player0 Group";
 
-        public static Group DefaultGroup = new(null, DefaultName);
+        public static Group DefaultGroup { get; } = new(null, DefaultName);
 
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file

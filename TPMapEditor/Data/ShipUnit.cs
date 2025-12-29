@@ -15,7 +15,7 @@ namespace TPMapEditor.Data
     {
         public static string DefaultName => "HUMAN CONTROLLED COMMAND SHIP";
 
-        public static ShipUnit DefaultShipUnit = new(null, DefaultName);
+        public static ShipUnit DefaultShipUnit { get; } = new(null, DefaultName);
 
         [ObservableProperty]
         [property: Required]
