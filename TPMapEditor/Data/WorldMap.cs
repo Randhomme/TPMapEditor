@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
+using TPMapEditor.Data.Rule;
+using TPMapEditor.Enums;
 using TPMapEditor.Settings;
 using TPMapEditor.Utils;
 
@@ -49,7 +51,6 @@ namespace TPMapEditor.Data
         public ObservableCollection<JournalEntry> JournalEntries { get; }
         public ObservableCollection<WorldObjectType> WorldCrews { get; }
         public ObservableCollection<WorldObjectType> WorldArms { get; }
-
         public ObservableCollection<WaypointPath> SelectableWaypointPaths { get; } = new() { WaypointPath.DefaultWaypointPath };
         public ObservableCollection<WorldPointSet> SelectableWorldPointSets { get; } = new() { WorldPointSet.DefaultWorldPointSet };
         public ObservableCollection<Group> SelectableGroups { get; } = new() { Group.DefaultGroup };
@@ -96,23 +97,85 @@ namespace TPMapEditor.Data
             JournalEntries = new ObservableCollection<JournalEntry>();
             WorldCrews = new ObservableCollection<WorldObjectType>();
             WorldArms = new ObservableCollection<WorldObjectType>();
-            Players.CollectionChanged += (s, e) =>
-            {
-                if (e.OldItems != null)
-                {
-                    foreach(Player p in e.OldItems)
-                    {
-                        if (p.IsPlayable)
-                            PlayerPlayableCount--;
-                    }
-                }
-            };
+            Players.CollectionChanged += UpdatePlayerPlayableCount;
             WaypointPaths.CollectionChanged += OnWaypointPathsCollectionChanged;
             WorldPointSets.CollectionChanged += OnWorldPointSetsCollectionChanged;
             Groups.CollectionChanged += OnGroupsCollectionChanged;
             ShipUnits.CollectionChanged += OnShipUnitsCollectionChanged;
             ObjectivePoints.CollectionChanged += OnObjectivePointsCollectionChanged;
             Players.CollectionChanged += OnOPlayersCollectionChanged;
+            Flags.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Flags, e); };
+            Groups.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Groups, e, Group.DefaultGroup); };
+            MapTextPoints.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(MapTextPoints, e); };
+            ObjectivePoints.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(ObjectivePoints, e, ObjectivePoint.DefaultObjectivePoint); };
+            ObjectiveTasks.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(ObjectiveTasks, e); };
+            Players.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Players, e, Player.DefaultPlayer); };
+            ShipUnits.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(ShipUnits, e, ShipUnit.DefaultShipUnit); };
+            SpeechEvents.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(SpeechEvents, e); };
+            InGameTeams.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(InGameTeams, e); };
+            Timers.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Timers, e); };
+            WaypointPaths.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WaypointPaths, e, WaypointPath.DefaultWaypointPath); };
+            WorldObjects.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WorldObjects, e); };
+            WorldPointSets.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WorldPointSets, e, WorldPointSet.DefaultWorldPointSet); };
+            WorldPolygons.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WorldPolygons, e); };
+        }
+
+        private void NullifyRuleFieldOnRemoveItems<T>(ObservableCollection<T> itemSource, NotifyCollectionChangedEventArgs e, T? defaultItem = default)
+        {
+            IList? collection = null;
+            if(e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                collection = e.OldItems;
+            }
+            else if(e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                collection = itemSource;
+            }
+            if (collection != null)
+            {
+                foreach (var rule in WorldRules)
+                {
+                    foreach (var condition in rule.Conditions)
+                    {
+                        foreach (var field in condition.RuleFields)
+                        {
+                            if (field is RuleField<T> ruleField)
+                            {
+                                if (collection.Contains(ruleField.Value))
+                                    ruleField.Value = defaultItem;
+                                else if (ruleField.Value == null && defaultItem != null)
+                                    ruleField.Value = defaultItem;
+                            }
+
+                        }
+                    }
+                    foreach (var action in rule.Actions)
+                    {
+                        foreach (var field in action.RuleFields)
+                        {
+                            if (field is RuleField<T> ruleField)
+                            {
+                                if (collection.Contains(ruleField.Value))
+                                    ruleField.Value = defaultItem;
+                                else if (ruleField.Value == null && defaultItem != null)
+                                    ruleField.Value = defaultItem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UpdatePlayerPlayableCount(object s, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (Player p in e.OldItems)
+                {
+                    if (p.IsPlayable)
+                        PlayerPlayableCount--;
+                }
+            }
         }
 
         /// <summary>
@@ -176,7 +239,62 @@ namespace TPMapEditor.Data
                 {
                     foreach (var item2 in item1.RuleFields)
                     {
-                        item2.ValidateAllProperties();
+                        if (item2 is RuleFieldObservableCollection rfoc && rfoc.Value != null)
+                        {
+                            foreach (var item3 in rfoc.Value)
+                            {
+                                try
+                                {
+                                    item3.ValidateAllProperties();
+                                }
+                                catch (ValidationException ex)
+                                {
+                                    throw new ValidationException($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'", ex);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                item2.ValidateAllProperties();
+                            }
+                            catch (ValidationException ex)
+                            {
+                                throw new ValidationException($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item2.RealLabel}'", ex);
+                            }
+                        }
+                    }
+                }
+                foreach (var item1 in item.Actions)
+                {
+                    foreach (var item2 in item1.RuleFields)
+                    {
+                        if (item2 is RuleFieldObservableCollection rfoc && rfoc.Value != null)
+                        {
+                            foreach (var item3 in rfoc.Value)
+                            {
+                                try
+                                {
+                                    item3.ValidateAllProperties();
+                                }
+                                catch (ValidationException ex)
+                                {
+                                    throw new ValidationException($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'", ex);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                item2.ValidateAllProperties();
+                            }
+                            catch (ValidationException ex)
+                            {
+                                throw new ValidationException($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item2.RealLabel}'", ex);
+                            }
+                        }
                     }
                 }
             }
