@@ -205,7 +205,7 @@
     <!--ObjectivePoint-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldObjectivePoint}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.SelectableObjectivePoints}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableObjectivePoints}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
         </ContentControl>
     </DataTemplate>
 
@@ -287,7 +287,7 @@
     <!--WaypointPath-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldWaypointPath}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.SelectableWaypointPaths}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableWaypointPaths}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
         </ContentControl>
     </DataTemplate>
 
@@ -366,7 +366,7 @@
     <!--WorldPointSet-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldWorldPointSet}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
-            <ComboBox ItemsSource="{Binding Map.SelectableWorldPointSets}" SelectedValue="{Binding Value}" DisplayMemberPath="Name" SelectedIndex="{c:Binding 'IsShown ? 0 : -1', Mode=OneWay}"/>
+            <ComboBox ItemsSource="{Binding Map.SelectableWorldPointSets}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
         </ContentControl>
     </DataTemplate>
 
