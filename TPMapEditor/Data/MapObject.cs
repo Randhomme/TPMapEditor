@@ -37,7 +37,7 @@ namespace TPMapEditor.Data
         {
             var instance = (NamedObject)context.ObjectInstance;
             if (instance.IsNameTaken(value.ToString()))
-                return new ValidationResult($"A {instance.GetType().Name.ToLowerInvariant()} with the same name already exists.");
+                return new ValidationResult($"A {instance.GetType().Name} with the same name already exists.");
             if (instance.IsDefaultName(value.ToString()))
                 return new ValidationResult($"{value} is already a default name for {instance.GetType().Name}.");
             return ValidationResult.Success;
