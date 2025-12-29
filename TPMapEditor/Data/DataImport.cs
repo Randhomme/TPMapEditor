@@ -335,7 +335,7 @@ namespace TPMapEditor.Data
                 var isValidWorldObject = true;
                 if (type is null)
                 {
-                    progress.Report($"Warning: Unokwn type '{type}' for WorldObject #{id}.");
+                    progress.Report($"Warning: Unokwn type '{typeString}' for WorldObject #{id}.");
                     isValidWorldObject = false;
                 }
 
