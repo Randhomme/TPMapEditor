@@ -18,14 +18,14 @@
                 <DataGridTemplateColumn Header="Player 1" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.Map.Players}" SelectedValue="{Binding Item.Player1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.Map.SelectablePlayers}" SelectedValue="{Binding Item.Player1, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Player 2" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.Map.Players}" SelectedValue="{Binding Item.Player2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+                            <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=DataContext.Map.SelectablePlayers}" SelectedValue="{Binding Item.Player2, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

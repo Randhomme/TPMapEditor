@@ -27,7 +27,7 @@ namespace TPMapEditor.Dialogs
         public PlayerAllianceDialog(Window owner, string title, WorldMap map) : base(owner, title)
         {
             this.Map = map;
-            this.Factory = () => new(Map.Players[0], Map.Players[1]);
+            this.Factory = () => new(Player.DefaultPlayer, Player.DefaultPlayer);
             InitializeComponent();
         }
     }
