@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Data;
@@ -47,6 +49,13 @@ namespace TPMapEditor.Data
         public ObservableCollection<JournalEntry> JournalEntries { get; }
         public ObservableCollection<WorldObjectType> WorldCrews { get; }
         public ObservableCollection<WorldObjectType> WorldArms { get; }
+
+        public ObservableCollection<WaypointPath> SelectableWaypointPaths { get; } = new() { WaypointPath.DefaultWaypointPath };
+        public ObservableCollection<WorldPointSet> SelectableWorldPointSets { get; } = new() { WorldPointSet.DefaultWorldPointSet };
+        public ObservableCollection<Group> SelectableGroups { get; } = new() { Group.DefaultGroup };
+        public ObservableCollection<ShipUnit> SelectableShipUnits { get; } = new() { ShipUnit.DefaultShipUnit };
+        public ObservableCollection<ObjectivePoint> SelectableObjectivePoints { get; } = new() { ObjectivePoint.DefaultObjectivePoint };
+        public ObservableCollection<Player> SelectablePlayers { get; } = new() { Player.DefaultPlayer };
 
         public WorldMap()
         {
@@ -98,6 +107,12 @@ namespace TPMapEditor.Data
                     }
                 }
             };
+            WaypointPaths.CollectionChanged += OnWaypointPathsCollectionChanged;
+            WorldPointSets.CollectionChanged += OnWorldPointSetsCollectionChanged;
+            Groups.CollectionChanged += OnGroupsCollectionChanged;
+            ShipUnits.CollectionChanged += OnShipUnitsCollectionChanged;
+            ObjectivePoints.CollectionChanged += OnObjectivePointsCollectionChanged;
+            Players.CollectionChanged += OnOPlayersCollectionChanged;
         }
 
         /// <summary>
@@ -302,6 +317,36 @@ namespace TPMapEditor.Data
             WorldCrews.Clear();
             WorldArms.Clear();
             WorldObject.ResetNextId();
+        }
+
+        private void OnWaypointPathsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableWaypointPaths.SynchronizeFrom(WaypointPaths, e, new[] { WaypointPath.DefaultWaypointPath });
+        }
+
+        private void OnWorldPointSetsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableWorldPointSets.SynchronizeFrom(WorldPointSets, e, new[] { WorldPointSet.DefaultWorldPointSet });
+        }
+
+        private void OnGroupsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableGroups.SynchronizeFrom(Groups, e, new[] { Group.DefaultGroup });
+        }
+
+        private void OnShipUnitsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableShipUnits.SynchronizeFrom(ShipUnits, e, new[] { ShipUnit.DefaultShipUnit });
+        }
+
+        private void OnObjectivePointsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableObjectivePoints.SynchronizeFrom(ObjectivePoints, e, new[] { ObjectivePoint.DefaultObjectivePoint });
+        }
+
+        private void OnOPlayersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectablePlayers.SynchronizeFrom(Players, e, new[] { Player.DefaultPlayer });
         }
     }
 }
