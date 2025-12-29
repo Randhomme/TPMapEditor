@@ -297,15 +297,15 @@ namespace TPMapEditor
                     try
                     {
                         Map.Validate();
+                        using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
+                        {
+                            de.CreateMapFileAndWriteData();
+                        }
                     }
                     catch(Exception ex)
                     {
                         progress.Report("Map export failed.");
                         progressLogs.Report($"An error has occured.\n{ex.Message}");
-                    }
-                    using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
-                    {
-                        de.CreateMapFileAndWriteData();
                     }
                 });
             }
