@@ -1013,7 +1013,7 @@ namespace TPMapEditor.Settings
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Error reading world object file '{file}': {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        logs.Report($"Error reading world object file '{file}': {ex.Message}");
                     }
                 }
             }
