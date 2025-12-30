@@ -7,9 +7,9 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
 	<LangVersion>10</LangVersion>
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2</FileVersion>
     <ApplicationIcon>TPMapEditorIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
