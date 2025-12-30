@@ -24,16 +24,20 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isPlayable, hasSelectableTeam, hasInGameTeam;
 
-        public int TeamIndex { get; set; } //only used for data import
+        public int TeamIndex { get; set; } = -1; //only used for data import
 
         public Player(WorldMap map) : base(map, GenerateName("Player", map.Players))
         {
             Color = Colors.Red;
+            FormationTypeStart = FormationType = FormationType.Column;
+            IsPlayable = true;
         }
 
         public Player(WorldMap map, string name) : base(map, name)
         {
             Color = Colors.Red;
+            FormationTypeStart = FormationType = FormationType.Column;
+            IsPlayable = true;
         }
 
         public Player(WorldMap map, string name, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
@@ -45,7 +49,6 @@ namespace TPMapEditor.Data
             Color = playerColor;
             FormationTypeStart = FormationType = FormationType.Column;
             IsPlayable = true;
-            TeamIndex = -1;
         }
 
         partial void OnIsPlayableChanged(bool value)
