@@ -37,7 +37,7 @@ namespace TPMapEditor.Data
         {
             Color = Colors.Red;
             FormationTypeStart = FormationType = FormationType.Column;
-            IsPlayable = true;
+            if (map != null) IsPlayable = true;
         }
 
         public Player(WorldMap map, string name, double x, double y, double z, double rotation, Color playerColor) : base(map, name)
