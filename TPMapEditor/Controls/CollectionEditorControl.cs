@@ -292,6 +292,7 @@ namespace TPMapEditor.Controls
             if (dataGrid != null)
             {
                 dataGrid.SelectionChanged -= DataGrid_SelectionChanged;
+                dataGrid.LoadingRow -= DataGrid_LoadingRow;
                 dataGrid.Columns.Clear();
                 dataGrid.SelectedItems.Clear();
             }
@@ -306,6 +307,7 @@ namespace TPMapEditor.Controls
             if (dataGrid != null)
             {
                 dataGrid.SelectionChanged += DataGrid_SelectionChanged;
+                dataGrid.LoadingRow += DataGrid_LoadingRow;
                 if (pendingSelectionApply)
                     ApplySelectedItemsToDataGridSelectionIfPossible();
                 if (Columns.Count > 0)
@@ -328,6 +330,11 @@ namespace TPMapEditor.Controls
                 moveUpButton.Command = moveUpCommand;
             if (moveDownButton != null)
                 moveDownButton.Command = moveDownCommand;
+        }
+
+        private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            e.Row.Header = e.Row.GetIndex() + 1;
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
