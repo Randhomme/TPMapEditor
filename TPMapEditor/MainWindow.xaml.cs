@@ -2,13 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
-using System.Net.Http;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,10 +18,11 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using TPMapEditor.Data;
+using TPMapEditor.Enums;
+using TPMapEditor.Data.Rule;
 using TPMapEditor.Dialogs;
 using TPMapEditor.Settings;
 using TPMapEditor.Utils.KeyboardShortcuts;
-using System.Text.Json;
 
 namespace TPMapEditor
 {
@@ -296,7 +299,7 @@ namespace TPMapEditor
                 {
                     try
                     {
-                        Map.Validate();
+                        ValidateMap(progressLogs);
                         using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
                         {
                             de.CreateMapFileAndWriteData();
@@ -1061,6 +1064,172 @@ namespace TPMapEditor
                 return mapTextPointKeyboardShortcutApplier;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Validate everything in the map
+        /// </summary>
+        public void ValidateMap(IProgress<string> progressLogs)
+        {
+            Map.ValidateAllProperties();
+            for (int i = 0; i < Map.WorldObjects.Count; i++)
+            {
+                var item = Map.WorldObjects[i];
+                try { item.ValidateAllProperties(); }
+                catch(Exception ex) { progressLogs.Report($"WorldObject '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.SelectableTeams.Count; i++)
+            {
+                var item = Map.SelectableTeams[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"SelectableTeam '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.InGameTeams.Count; i++)
+            {
+                var item = Map.InGameTeams[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"InGameTeam '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.Players.Count; i++)
+            {
+                var item = Map.Players[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"Player '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.Groups.Count; i++)
+            {
+                var item = Map.Groups[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"Group '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.WaypointPaths.Count; i++)
+            {
+                var item = Map.WaypointPaths[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"WaypointPath '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.WorldPolygons.Count; i++)
+            {
+                var item = Map.WorldPolygons[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"WorldPolygon '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.WorldPointSets.Count; i++)
+            {
+                var item = Map.WorldPointSets[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"WorldPointSet '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.Flags.Count; i++)
+            {
+                var item = Map.Flags[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"Flag '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.PlayerAlliances.Count; i++)
+            {
+                var item = Map.PlayerAlliances[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"PlayerAlliance {i + 1} is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.Timers.Count; i++)
+            {
+                var item = Map.Timers[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"Timer '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.SpeechEvents.Count; i++)
+            {
+                var item = Map.SpeechEvents[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"SpeechEvent {i + 1} is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.WorldRules.Count; i++)
+            {
+                var item = Map.WorldRules[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"WorldRule '{item}' is invalid : {ex.Message}"); }
+                foreach (var item1 in item.Conditions)
+                {
+                    foreach (var item2 in item1.RuleFields)
+                    {
+                        if (item2 is RuleFieldObservableCollection rfoc && rfoc.Value != null)
+                        {
+                            foreach (var item3 in rfoc.Value)
+                            {
+                                try { item3.ValidateAllProperties(); }
+                                catch{ progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'"); }
+                            }
+                        }
+                        else
+                        {
+                            try { item2.ValidateAllProperties(); }
+                            catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item2.RealLabel}'"); }
+                        }
+                    }
+                }
+                foreach (var item1 in item.Actions)
+                {
+                    foreach (var item2 in item1.RuleFields)
+                    {
+                        if (item2 is RuleFieldObservableCollection rfoc && rfoc.Value != null)
+                        {
+                            foreach (var item3 in rfoc.Value)
+                            {
+                                try { item3.ValidateAllProperties(); }
+                                catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'"); }
+                            }
+                        }
+                        else
+                        {
+                            try { item2.ValidateAllProperties(); }
+                            catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item2.RealLabel}'"); }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < Map.ShipUnits.Count; i++)
+            {
+                var item = Map.ShipUnits[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"ShipUnit '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.ObjectivePoints.Count; i++)
+            {
+                var item = Map.ObjectivePoints[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"ObjectivePoint '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.ObjectiveTasks.Count; i++)
+            {
+                var item = Map.ObjectiveTasks[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"ObjectiveTask '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.MapTextPoints.Count; i++)
+            {
+                var item = Map.MapTextPoints[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"MapTextPoint '{item}' is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.JournalEntries.Count; i++)
+            {
+                var item = Map.JournalEntries[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"JournalEntry {i + 1} is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.WorldCrews.Count; i++)
+            {
+                var item = Map.WorldCrews[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"WorldCrew {i + 1} is invalid : {ex.Message}"); }
+            }
+            for (int i = 0; i < Map.WorldArms.Count; i++)
+            {
+                var item = Map.WorldArms[i];
+                try { item.ValidateAllProperties(); }
+                catch (Exception ex) { progressLogs.Report($"WorldArm {i + 1} is invalid : {ex.Message}"); }
+            }
         }
 
         //private void OnSelectionCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
