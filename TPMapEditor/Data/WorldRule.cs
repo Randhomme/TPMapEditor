@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TPMapEditor.Data.Rule;
 
 namespace TPMapEditor.Data
@@ -22,6 +19,17 @@ namespace TPMapEditor.Data
         {
             RuleConditionFactory = () => new(Map);
             RuleActionFactory = () => new(Map);
+            Actions.CollectionChanged += (s, e) =>
+            {
+                if (e.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    foreach(RuleAction action in e.OldItems)
+                    {
+                        if (action.Type == Enums.RuleAction.StateInitSetupShip && action.ShipUnit != null)
+                            map.ShipUnits.Remove(action.ShipUnit);
+                    }
+                }
+            };
         }
 
         protected override bool IsNameTaken(string name)
