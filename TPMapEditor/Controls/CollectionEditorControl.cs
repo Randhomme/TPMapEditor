@@ -44,8 +44,8 @@ namespace TPMapEditor.Controls
             addCommand = new RelayCommand(AddNewItem, CanAddNewItem);
             deleteSelectedCommand = new RelayCommand(DeleteSelectedItems, CanDeleteSelectedItems);
             deleteCommand = new RelayCommand<object>(DeleteItem);
-            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItems(-1));
-            moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItems(1));
+            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-2), () => CanMoveSelectedItems(-2));
+            moveDownCommand = new RelayCommand(() => MoveSelectedItems(2), () => CanMoveSelectedItems(2));
             var buttonFactory = new FrameworkElementFactory(typeof(Button));
             var imageFactory = new FrameworkElementFactory(typeof(Image));
             imageFactory.SetValue(Image.SourceProperty, new BitmapImage(new Uri("pack://application:,,,/TPMapEditor;component/Images/Cross.png")));
@@ -337,6 +337,22 @@ namespace TPMapEditor.Controls
             e.Row.Header = e.Row.GetIndex() + 1;
         }
 
+        private void UpdateFromIndex(int startIndex, int stopIndex = -1)
+        {
+            if (dataGrid != null)
+            {
+                if (stopIndex < 0)
+                    stopIndex = dataGrid.Items.Count;
+                for (int i = startIndex; i < stopIndex; i++)
+                {
+                    if (dataGrid.ItemContainerGenerator.ContainerFromIndex(i) is DataGridRow row)
+                    {
+                        row.Header = i + 1;
+                    }
+                }
+            }
+        }
+
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyDataGridSelectionToSelectedItemsIfPossible(e.AddedItems, e.RemovedItems);
@@ -433,14 +449,27 @@ namespace TPMapEditor.Controls
 
         private void DeleteItem(object? item)
         {
-            EditableList?.Remove(item);
+            if (EditableList != null)
+            {
+                var index = EditableList.IndexOf(item);
+                EditableList.RemoveAt(index);
+                UpdateFromIndex(index);
+            }
         }
 
         private void DeleteSelectedItems()
         {
-            foreach(var wrapper in SelectedWrappers)
+            if (Wrappers != null)
             {
-                EditableList?.Remove(wrapper.Item);
+                var indices = SelectedWrappers
+                    .Select(i => Wrappers.IndexOf(i))
+                    .OrderBy(i => i)
+                    .ToList();
+                foreach (var wrapper in SelectedWrappers)
+                {
+                    EditableList?.Remove(wrapper.Item);
+                }
+                UpdateFromIndex(indices.FirstOrDefault());
             }
         }
 
@@ -462,7 +491,7 @@ namespace TPMapEditor.Controls
                 .OrderBy(i => i)
                 .ToList();
 
-            if (direction < 0)
+            if (direction < 0) // Up
             {
                 for (int i = 0; i < indices.Count; i++)
                 {
@@ -471,8 +500,9 @@ namespace TPMapEditor.Controls
                     EditableList.RemoveAt(index);
                     EditableList.Insert(index + direction, item);
                 }
+                UpdateFromIndex(indices.FirstOrDefault() + direction, indices.LastOrDefault() + 1);
             }
-            else
+            else // Down
             {
                 for (int i = indices.Count - 1; i >= 0; i--)
                 {
@@ -481,6 +511,7 @@ namespace TPMapEditor.Controls
                     EditableList.RemoveAt(index);
                     EditableList.Insert(index + direction, item);
                 }
+                UpdateFromIndex(indices.FirstOrDefault(), indices.LastOrDefault() + direction);
             }
 
             RestoreSelection(items);
@@ -501,7 +532,7 @@ namespace TPMapEditor.Controls
             if (indices.Any(i => i < 0))
                 return false;
 
-            return direction < 0 ? indices.First() > 0 : indices.Last() < EditableList.Count - 1;
+            return direction < 0 ? indices.First() + direction >= 0 : indices.Last() < EditableList.Count - direction;
         }
 
         private void RestoreSelection(IEnumerable<object> items)
