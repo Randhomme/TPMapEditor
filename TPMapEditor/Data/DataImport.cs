@@ -48,7 +48,7 @@ namespace TPMapEditor.Data
             catch (Exception ex)
             {
                 progressOperation.Report("Map import failed.");
-                progress.Report($"An error has occured.\n{ex.Message}\n{ex.StackTrace}");
+                progress.Report($"An error has occured.\n{ex.Message}");
                 map.Reset();
             }
         }
@@ -73,7 +73,7 @@ namespace TPMapEditor.Data
                     throw new TPMapEditorException($"{sectionName} section is invalid.");
             }
             catch (TPMapEditorException) { throw; }
-            catch (Exception ex) { throw ; }
+            catch (Exception ex) { throw new Exception($"Fail to read {sectionName} section: {ex.Message}", ex); }
         }
 
         private void ReadWorldInfoSection()
