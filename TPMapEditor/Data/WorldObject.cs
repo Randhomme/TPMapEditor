@@ -18,8 +18,9 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Player? player;
         [ObservableProperty]
-        private bool hasGroup, hasPlayer, hasState;
+        private bool hasGroup, hasPlayer;
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasState))]
         private string aIEntity = "\t\tType String ''", renderEntity = "\t\tType String ''", physicsEntity = "\t\tType String ''", collisionEntity = "\t\tType String ''", customInfoEntity = "\t\tType String ''";
 
         private int id;
@@ -32,6 +33,18 @@ namespace TPMapEditor.Data
                 if (value >= nextId)
                     nextId = value+1;
             } 
+        }
+
+        public bool HasState { get => !CheckState(); }
+
+        private bool CheckState()
+        {
+            return AIEntity.Trim() == "Type String ''"
+                && RenderEntity.Trim() == "Type String ''"
+                && PhysicsEntity.Trim() == "Type String ''"
+                && PhysicsEntity.Trim() == "Type String ''"
+                && CollisionEntity.Trim() == "Type String ''"
+                && CustomInfoEntity.Trim() == "Type String ''";
         }
 
         public WorldObject(WorldMap map) : base(map)

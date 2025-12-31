@@ -358,8 +358,8 @@ namespace TPMapEditor.Data
         {
             ReadSection("State", () =>
             {
-                //HasState (must be false for now)
-                worldObject.HasState = reader.ReadAndParseBool("HasState Bool ");
+                //HasState (readonly, let the editor calculate it for you)
+                reader.ReadLine();
 
                 //Position
                 var position = reader.ReadAndParseVector3("Position Vector3");
