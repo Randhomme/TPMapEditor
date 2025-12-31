@@ -382,6 +382,8 @@ namespace TPMapEditor.Data
                     catch { progress.Report($"Warning: PlayerIndex of world object #{worldObject.Id} is incorrect."); }
                 }
 
+                worldObject.AIEntity = worldObject.RenderEntity = worldObject.PhysicsEntity = worldObject.CollisionEntity = worldObject.CustomInfoEntity = string.Empty;
+
                 //# AIEntity
                 var firstLine = reader.ReadLine();
                 if (firstLine.Trim().StartsWith("#"))
