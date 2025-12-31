@@ -203,7 +203,7 @@ namespace TPMapEditor.Data
         {
             WriteSection("State", (level) =>
             {
-                WriteLineLevel("HasState Bool False", level); // No state for now, of course
+                WriteLineLevel($"HasState Bool {worldObject.HasState}", level);
                 WriteLineLevel($"Position Vector3( {worldObject.X:F6}, {worldObject.Y:F6}, {worldObject.Z:F6} )", level);
                 var orMat33 = MathUtils.EulerXYZToMatrix33(worldObject.XRotation, worldObject.YRotation, worldObject.ZRotation);
                 WriteLineLevel($"Orientation Matrix33( {orMat33[0,0]:F6}, {orMat33[1, 0]:F6}, {orMat33[2, 0]:F6}, {orMat33[0, 1]:F6}, {orMat33[1, 1]:F6}, {orMat33[2, 1]:F6}, {orMat33[0, 2]:F6}, {orMat33[1, 2]:F6}, {orMat33[2, 2]:F6} )", level);
