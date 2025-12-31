@@ -210,15 +210,15 @@ namespace TPMapEditor.Data
                 var playerIndex = worldObject.Player is null ? -1 : map.Players.IndexOf(worldObject.Player);
                 WriteLineLevel($"PlayerIndex Int {playerIndex}", level);
                 WriteLineLevel("# AIEntity", level);
-                WriteLineLevel("Type String ''", level);
+                WriteLineLevel(worldObject.AIEntity, 0);
                 WriteLineLevel("# RenderEntity", level);
-                WriteLineLevel("Type String ''", level);
+                WriteLineLevel(worldObject.RenderEntity, 0);
                 WriteLineLevel("# PhysicsEntity", level);
-                WriteLineLevel("Type String ''", level);
+                WriteLineLevel(worldObject.PhysicsEntity, 0);
                 WriteLineLevel("# CollisionEntity", level);
-                WriteLineLevel("Type String ''", level);
+                WriteLineLevel(worldObject.CollisionEntity, 0);
                 WriteLineLevel("# CustomInfoEntity", level);
-                WriteLineLevel("Type String ''", level);
+                WriteLineLevel(worldObject.CustomInfoEntity, 0);
             }, level);
         }
 
