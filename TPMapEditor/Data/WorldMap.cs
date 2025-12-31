@@ -257,6 +257,7 @@ namespace TPMapEditor.Data
             JournalTitle = StringDictionnary.JournalTitles.Keys.FirstOrDefault();
             Size = 2500;
             ZSize = 1500;
+            WorldBuffer = 500;
             AmbientLightColor = Colors.Khaki;
             RoofLightColor = Colors.DarkKhaki;
             FloorLightColor = Colors.DarkKhaki;
