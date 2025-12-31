@@ -274,11 +274,14 @@ namespace TPMapEditor
                     ClearSelections();
                     var _lock = new object();
                     Map.EnableCollectionSynchronization(_lock);
-                    new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
+                    var newMap = new WorldMap();
+                    new ProgressDialog(this, "Import map").RunAction((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock);
+                        using var di = new DataImport(ofd.FileName, newMap, progressLogs, progress, _lock);
                         di.ReadMapFileAndAddData();
                     });
+                    Map = newMap;
+                    OnPropertyChanged(nameof(Map));
                     Map.DisableCollectionSynchronization();
                 }
             }
