@@ -35,6 +35,18 @@
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding Map.Groups}"
                     IsEnabled="{Binding HasGroup}"/>
+                <Label Margin="-5,5,0,0" Content="Has state"/>
+                <CheckBox IsChecked="{Binding HasState}" Content="{Binding HasState}"/>
+                <Label Margin="-5,5,0,0" Content="AIEntity"/>
+                <TextBox Text="{Binding AIEntity, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto"/>
+                <Label Margin="-5,5,0,0" Content="RenderEntity"/>
+                <TextBox Text="{Binding RenderEntity, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto"/>
+                <Label Margin="-5,5,0,0" Content="PhysicsEntity"/>
+                <TextBox Text="{Binding PhysicsEntity, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto"/>
+                <Label Margin="-5,5,0,0" Content="CollisionEntity"/>
+                <TextBox Text="{Binding CollisionEntity, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto"/>
+                <Label Margin="-5,5,0,0" Content="CustomInfoEntity"/>
+                <TextBox Text="{Binding CustomInfoEntity, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" HorizontalScrollBarVisibility="Auto"/>
             </StackPanel>
         </ScrollViewer>
     </DataTemplate>
