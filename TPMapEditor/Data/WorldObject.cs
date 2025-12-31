@@ -20,7 +20,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool hasGroup, hasPlayer, hasState;
         [ObservableProperty]
-        private string aIEntity, renderEntity, physicsEntity, collisionEntity, customInfoEntity;
+        private string aIEntity = "\t\tType String ''", renderEntity = "\t\tType String ''", physicsEntity = "\t\tType String ''", collisionEntity = "\t\tType String ''", customInfoEntity = "\t\tType String ''";
 
         private int id;
         public int Id //only used for data import/export
