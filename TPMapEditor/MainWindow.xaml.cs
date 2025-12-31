@@ -840,7 +840,7 @@ namespace TPMapEditor
             settings.Save();
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_ContentRendered(object sender, EventArgs e)
         {
             settings = settings.Load();
             if (string.IsNullOrEmpty(settings.TpGamePath))
