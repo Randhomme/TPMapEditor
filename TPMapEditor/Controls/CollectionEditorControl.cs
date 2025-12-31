@@ -44,8 +44,8 @@ namespace TPMapEditor.Controls
             addCommand = new RelayCommand(AddNewItem, CanAddNewItem);
             deleteSelectedCommand = new RelayCommand(DeleteSelectedItems, CanDeleteSelectedItems);
             deleteCommand = new RelayCommand<object>(DeleteItem);
-            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-2), () => CanMoveSelectedItems(-2));
-            moveDownCommand = new RelayCommand(() => MoveSelectedItems(2), () => CanMoveSelectedItems(2));
+            moveUpCommand = new RelayCommand(() => MoveSelectedItems(-1), () => CanMoveSelectedItems(-1));
+            moveDownCommand = new RelayCommand(() => MoveSelectedItems(1), () => CanMoveSelectedItems(1));
             var buttonFactory = new FrameworkElementFactory(typeof(Button));
             var imageFactory = new FrameworkElementFactory(typeof(Image));
             imageFactory.SetValue(Image.SourceProperty, new BitmapImage(new Uri("pack://application:,,,/TPMapEditor;component/Images/Cross.png")));
