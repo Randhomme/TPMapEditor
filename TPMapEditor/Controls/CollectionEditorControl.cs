@@ -425,13 +425,14 @@ namespace TPMapEditor.Controls
 
         private bool CanAddNewItem()
         {
-            return Factory != null || itemsType?.GetConstructor(Type.EmptyTypes) != null;
+            var result =  Factory != null || itemsType?.GetConstructor(Type.EmptyTypes) != null;
+            if (!result && addButton != null)
+                addButton.Visibility = Visibility.Collapsed;
+            return result;
         }
 
         private void DeleteItem(object? item)
         {
-            //var item = e.Parameter;
-            //editableList?.Remove(item);
             EditableList?.Remove(item);
         }
 
