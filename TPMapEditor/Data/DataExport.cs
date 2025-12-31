@@ -378,7 +378,7 @@ namespace TPMapEditor.Data
                     var point = pointSet.Points[i];
                     WriteSection("World Points - Element", (level) =>
                     {
-                        WriteLineLevel("World Point Magnitude Float 0.000000", level);
+                        WriteLineLevel($"World Point Magnitude Float {point.Magnitude:F6}", level);
                         WriteSection("World Point Basis", (level) =>
                         {
                             WriteLineLevel($"Position Vector3( {point.X:F6}, {point.Y:F6}, {point.Z:F6} )", level);

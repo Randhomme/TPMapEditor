@@ -16,6 +16,8 @@
                 <Slider Value="{Binding YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                 <Label Margin="-5,5,0,0" Content="Rotation Z (Euler XYZ)"/>
                 <Slider Value="{Binding ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                <Label Margin="-5,5,0,0" Content="Magnitude"/>
+                <Slider Value="{Binding Magnitude}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="0" Maximum="9999"/>
             </StackPanel>
         </ScrollViewer>
     </DataTemplate>

@@ -6,7 +6,7 @@ namespace TPMapEditor.Data
     public partial class WorldPoint : Point3, ISelectableMapObject
     {
         [ObservableProperty]
-        private double xRotation, yRotation, zRotation, magnitude; // still have to figure out the purpose of magnitude
+        private double xRotation, yRotation, zRotation, magnitude;
         [ObservableProperty]
         private WorldPointSet parent;
         [ObservableProperty]

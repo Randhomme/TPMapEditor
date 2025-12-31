@@ -798,10 +798,10 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Points - Element", () =>
             {
-                var worldPoint = new WorldPoint(worldPointSet, 0, 0, 0, 0);
-
-                //world point magnitude (probably not used)
-                reader.ReadLine();
+                var worldPoint = new WorldPoint(worldPointSet, 0, 0, 0, 0)
+                {
+                    Magnitude = reader.ReadAndParseDouble("World Point Magnitude Float ")
+                };
 
                 ReadWorldPointBasisSection(worldPoint);
 
