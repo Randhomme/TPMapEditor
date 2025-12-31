@@ -268,20 +268,17 @@ namespace TPMapEditor
             };
             if (ofd.ShowDialog(this) == true)
             {
-                if(MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     Map.Reset();
                     ClearSelections();
                     var _lock = new object();
                     Map.EnableCollectionSynchronization(_lock);
-                    var newMap = new WorldMap();
-                    new ProgressDialog(this, "Import map").RunAction((progress, progressLogs) =>
+                    new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, newMap, progressLogs, progress, _lock);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock);
                         di.ReadMapFileAndAddData();
                     });
-                    Map = newMap;
-                    OnPropertyChanged(nameof(Map));
                     Map.DisableCollectionSynchronization();
                 }
             }
