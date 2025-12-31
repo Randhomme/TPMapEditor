@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
+using TPMapEditor.Exceptions;
 
 namespace TPMapEditor.Utils
 {
@@ -115,7 +111,7 @@ namespace TPMapEditor.Utils
             if (str.StartsWith(val))
                 return str.Substring(val.Length);
             else
-                throw new ArgumentException($"'{val.Trim()}' not found in '{str}'");
+                throw new TPMapEditorException($"'{val.Trim()}' not found in '{str}'");
         }
     }
 }
