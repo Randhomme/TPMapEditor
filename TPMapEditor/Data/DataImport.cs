@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
-using System.Xml.Linq;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
@@ -49,7 +48,7 @@ namespace TPMapEditor.Data
             catch (Exception ex)
             {
                 progressOperation.Report("Map import failed.");
-                progress.Report($"An error has occured.\n{ex.Message}");
+                progress.Report($"An error has occured.\n{ex.Message}\n{ex.StackTrace}");
                 map.Reset();
             }
         }
@@ -74,7 +73,7 @@ namespace TPMapEditor.Data
                     throw new TPMapEditorException($"{sectionName} section is invalid.");
             }
             catch (TPMapEditorException) { throw; }
-            catch (Exception ex) { throw new Exception($"Fail to read {sectionName} section: {ex.Message}"); }
+            catch (Exception ex) { throw ; }
         }
 
         private void ReadWorldInfoSection()
@@ -360,9 +359,7 @@ namespace TPMapEditor.Data
             ReadSection("State", () =>
             {
                 //HasState (must be false for now)
-                var hasState = reader.ReadAndParseBool("HasState Bool ");
-                if (hasState)
-                    throw new TPMapEditorException($"WorldObject #{worldObject.Id} cannot have a state (not yet).");
+                worldObject.HasState = reader.ReadAndParseBool("HasState Bool ");
 
                 //Position
                 var position = reader.ReadAndParseVector3("Position Vector3");
@@ -381,20 +378,88 @@ namespace TPMapEditor.Data
                 var playerIndex = reader.ReadAndParseInt("PlayerIndex Int ");
                 if (playerIndex >= 0)
                 {
-                    try
-                    {
-                        worldObject.Player = map.Players[playerIndex];
-                    }
-                    catch 
-                    {
-                        //throw new TPMapEditorException("PlayerIndex is incorrect.");
-                        progress.Report($"Warning: PlayerIndex of world object #{worldObject.Id} is incorrect.");
-                    }
+                    try { worldObject.Player = map.Players[playerIndex]; }
+                    catch { progress.Report($"Warning: PlayerIndex of world object #{worldObject.Id} is incorrect."); }
                 }
 
-                //other states
-                for (int i = 0; i < 10; i++)
-                    reader.ReadLine();
+                //# AIEntity
+                var firstLine = reader.ReadLine();
+                if (firstLine.Trim().StartsWith("#"))
+                    worldObject.AIEntity += reader.ReadLine() + Environment.NewLine;
+                else
+                    worldObject.AIEntity += firstLine + Environment.NewLine;
+
+                try
+                {
+                    //SkipNamedSection("State");
+                    SkipNamedSection("State", (line) =>
+                    {
+                        worldObject.AIEntity += line + Environment.NewLine;
+                    });
+                }
+                catch { }
+                worldObject.AIEntity = worldObject.AIEntity.TrimEnd();
+
+                reader.ReadLine(); //skip line between state section (it's normally a comment line)
+
+                //# RenderEntity
+                worldObject.RenderEntity += reader.ReadLine() + Environment.NewLine;
+                try
+                {
+                    //SkipNamedSection("State");
+                    SkipNamedSection("State", (line) =>
+                    {
+                        worldObject.RenderEntity += line + Environment.NewLine;
+                    });
+                }
+                catch { }
+                worldObject.RenderEntity = worldObject.RenderEntity.TrimEnd();
+
+                reader.ReadLine(); //skip line between state section (it's normally a comment line)
+
+                //# PhysicsEntity
+                worldObject.PhysicsEntity += reader.ReadLine() + Environment.NewLine;
+                try
+                {
+                    //SkipNamedSection("State");
+                    SkipNamedSection("State", (line) =>
+                    {
+                        worldObject.PhysicsEntity += line + Environment.NewLine;
+                    });
+                }
+                catch { }
+                worldObject.PhysicsEntity = worldObject.PhysicsEntity.TrimEnd();
+
+                reader.ReadLine(); //skip line between state section (it's normally a comment line)
+
+                //# CollisionEntity
+                worldObject.CollisionEntity += reader.ReadLine() + Environment.NewLine;
+                try
+                {
+                    //SkipNamedSection("State");
+                    SkipNamedSection("State", (line) =>
+                    {
+                        worldObject.CollisionEntity += line + Environment.NewLine;
+                    });
+                }
+                catch { }
+                worldObject.CollisionEntity = worldObject.CollisionEntity.TrimEnd();
+
+                reader.ReadLine(); //skip line between state section (it's normally a comment line)
+
+                //# CustomInfoEntity
+                worldObject.CustomInfoEntity += reader.ReadLine() + Environment.NewLine;
+                try
+                {
+                    //SkipNamedSection("State");
+                    SkipNamedSection("State", (line) =>
+                    {
+                        worldObject.CustomInfoEntity += line + Environment.NewLine;
+                    });
+                }
+                catch { }
+                worldObject.CustomInfoEntity = worldObject.CustomInfoEntity.TrimEnd();
+
             });
         }
 
@@ -539,7 +604,7 @@ namespace TPMapEditor.Data
                 //Set the InGameTeam for each player
                 foreach (var player in map.Players)
                 {
-                    player.InGameTeam = player.TeamIndex < 0 ? null : map.InGameTeams[player.TeamIndex];
+                    player.InGameTeam = player.TeamIndex < 0 ? null : map.InGameTeams.ElementAtOrDefault(player.TeamIndex);
                 }
 
                 //Winning team (not used, or state maybe)
@@ -645,8 +710,6 @@ namespace TPMapEditor.Data
                     }
                 }
                 catch (Exception ex) { throw new TPMapEditorException($"Fail to read end of Game Specific section : {ex.Message}", ex); }
-
-                var endPosition = reader.CurrentPosition;
 
                 //go back to read world rules
                 reader.CurrentPosition = worldRulesSectionPosition;
@@ -1738,8 +1801,29 @@ namespace TPMapEditor.Data
             }
         }
 
+        private void SkipNamedSection(string sectionName, Action<string>? action)
+        {
+            var pos = reader.CurrentPosition;
+            try
+            {
+                var line = reader.ReadLine();
+                var trimmedLine = line.Trim();
+                if (trimmedLine.EndsWith(sectionName))
+                {
+                    action?.Invoke(line);
+                    action?.Invoke(reader.ReadLine()); //start of section
+                    SkipSection(action);
+                }
+                else
+                    throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
+            }
+            catch (TPMapEditorException) { reader.CurrentPosition = pos; throw; }
+            catch { reader.CurrentPosition = pos; throw new Exception($"Fail to skip {sectionName} section."); }
+        }
+
         private void SkipNamedSection(string sectionName)
         {
+            var pos = reader.CurrentPosition;
             try
             {
                 var line = reader.ReadLine().Trim();
@@ -1751,13 +1835,27 @@ namespace TPMapEditor.Data
                 else
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
             }
-            catch (TPMapEditorException) { throw; }
-            catch { throw new Exception($"Fail to read {sectionName} section."); }
+            catch (TPMapEditorException) { reader.CurrentPosition = pos; throw; }
+            catch { reader.CurrentPosition = pos; throw new Exception($"Fail to skip {sectionName} section."); }
+        }
+
+        private void SkipSection(Action<string>? action)
+        {
+            while(!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                action?.Invoke(line);
+                var trimmedLine = line.Trim();
+                if (trimmedLine.Equals("{"))
+                    SkipSection(action);
+                else if (trimmedLine.Equals("}"))
+                    break;
+            }
         }
 
         private void SkipSection()
         {
-            while(!reader.EndOfStream)
+            while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine().Trim();
                 if (line.Equals("{"))
