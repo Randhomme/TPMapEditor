@@ -97,7 +97,8 @@ namespace TPMapEditor.Data
             JournalEntries = new ObservableCollection<JournalEntry>();
             WorldCrews = new ObservableCollection<WorldObjectType>();
             WorldArms = new ObservableCollection<WorldObjectType>();
-            Players.CollectionChanged += UpdatePlayerPlayableCount;
+            WorldObjects.CollectionChanged += OnWorldObjectsCollectionChanged;
+            Players.CollectionChanged += OnPlayersCollectionChanged;
             WaypointPaths.CollectionChanged += OnWaypointPathsCollectionChanged;
             WorldPointSets.CollectionChanged += OnWorldPointSetsCollectionChanged;
             Groups.CollectionChanged += OnGroupsCollectionChanged;
@@ -166,7 +167,18 @@ namespace TPMapEditor.Data
             }
         }
 
-        private void UpdatePlayerPlayableCount(object s, NotifyCollectionChangedEventArgs e)
+        private void OnWorldObjectsCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        {
+            if(e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (WorldObject item in e.OldItems)
+                {
+                    item.Group = null;
+                }
+            }
+        }
+
+        private void OnPlayersCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)
             {
