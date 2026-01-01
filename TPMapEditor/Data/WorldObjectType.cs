@@ -17,7 +17,7 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private BitmapImage image = WotPlaceholder;
         [ObservableProperty]
-        private Point pivot;
+        private Point pivot = new(0.5, 0.5);
         [ObservableProperty]
         private CustomInfoDefinition customInfoDefinition;
 
