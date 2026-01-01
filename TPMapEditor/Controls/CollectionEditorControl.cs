@@ -496,9 +496,7 @@ namespace TPMapEditor.Controls
                 for (int i = 0; i < indices.Count; i++)
                 {
                     var index = indices[i];
-                    var item = EditableList[index];
-                    EditableList.RemoveAt(index);
-                    EditableList.Insert(index + direction, item);
+                    (EditableList[index], EditableList[index + direction]) = (EditableList[index + direction], EditableList[index]);
                 }
                 UpdateFromIndex(indices.FirstOrDefault() + direction, indices.LastOrDefault() + 1);
             }
@@ -507,9 +505,7 @@ namespace TPMapEditor.Controls
                 for (int i = indices.Count - 1; i >= 0; i--)
                 {
                     var index = indices[i];
-                    var item = EditableList[index];
-                    EditableList.RemoveAt(index);
-                    EditableList.Insert(index + direction, item);
+                    (EditableList[index], EditableList[index + direction]) = (EditableList[index + direction], EditableList[index]);
                 }
                 UpdateFromIndex(indices.FirstOrDefault(), indices.LastOrDefault() + direction);
             }
