@@ -11,6 +11,16 @@
     <AssemblyVersion>1.1.1</AssemblyVersion>
     <FileVersion>1.1.1</FileVersion>
     <ApplicationIcon>TPMapEditorIcon.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+	<GenerateApplicationConfigurationFile>false</GenerateApplicationConfigurationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,15 +36,18 @@
   <ItemGroup>
     <PackageReference Include="CalcBinding" Version="2.5.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="ILRepack" Version="2.0.44">
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Text.Json" Version="10.0.1" />
   </ItemGroup>
 
-	<Target Name="Ilrepack" AfterTargets="AfterBuild" Condition="$(Configuration) == Release">
-	  <Exec Command="$(PkgILRepack)\Tools\ILRepack.exe /target:winexe /out:$(TargetDir)TPMapEditor.exe $(TargetDir)\$(AssemblyName).exe $(TargetDir)\*.dll /wildcards" />
+  <Target Name="ILRepack" AfterTargets="Build" Condition="$(Configuration.Contains('Release')) and !Exists('$(ILRepackTargetsFile)')">
+	<ItemGroup>
+	  <InputAssemblies Include="$(OutputPath)*.dll" />
+	</ItemGroup>
+    <ILRepack AllowDuplicateResources="false" DebugInfo="false" Internalize="true" InputAssemblies="@(InputAssemblies)" OutputFile="$(TargetPath)" Parallel="true" TargetKind="SameAsPrimaryAssembly" />
   </Target>
 
   <ItemGroup>
@@ -1213,7 +1226,6 @@
     </None>
     <None Update="ImageData\WorldObjects\Terrain_Planet_Shattered.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    </None>  </ItemGroup>
 
 </Project>
