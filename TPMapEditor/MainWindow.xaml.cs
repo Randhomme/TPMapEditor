@@ -24,6 +24,7 @@ using TPMapEditor.Settings;
 using TPMapEditor.Utils.KeyboardShortcuts;
 using TPMapEditor.Services;
 using TPMapEditor.Services.Implementations;
+using TPMapEditor.Interfaces;
 
 namespace TPMapEditor
 {
@@ -38,17 +39,13 @@ namespace TPMapEditor
         private AppSettings settings;
         private readonly ISelectionKeyboardShortcutService worldObjectSelectionKeyboadShortcutService;
         private readonly ISelectionKeyboardShortcutService playerSelectionKeyboardShortcutService;
-        private readonly SelectableMapObjectKeyboardShortcutApplier<WaypointPath> waypointPathKeyboardShortcutApplier;
-        private readonly SelectableMapObjectKeyboardShortcutApplier<WorldPolygon> worldPolygonKeyboardShortcutApplier;
-        private readonly SelectableMapObjectKeyboardShortcutApplier<WorldPointSet> worldPointSetKeyboardShortcutApplier;
+        private readonly ISelectionKeyboardShortcutService waypointPathSelectionKeyboardShortcutService;
+        private readonly ISelectionKeyboardShortcutService worldPolygonSelectionKeyboardShortcutService;
+        private readonly ISelectionKeyboardShortcutService worldPointSetSelectionKeyboardShortcutService;
         private readonly ISelectionKeyboardShortcutService objectivePointSelectionKeyboardShortcutService;
         private readonly ISelectionKeyboardShortcutService mapTextPointSelectionKeyboardShortcutService;
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
-        [ObservableProperty]
-        private WaypointPathPoint? selectedWaypointPathPoint;
-        [ObservableProperty]
-        private WaypointPath? selectedWaypointPath;
         [ObservableProperty]
         private WorldPolygonPoint? selectedWorldPolygonPoint;
         [ObservableProperty]
@@ -62,11 +59,15 @@ namespace TPMapEditor
 
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
+        public ISelectionService<WaypointPath> WaypointPathSelectionService { get; } = new SelectionService<WaypointPath>();
+        public ISelectionService<WaypointPathPoint> WaypointPathPointSelectionService { get; } = new SelectionService<WaypointPathPoint>();
+        public ISelectionService<WorldPolygon> WorldPolygonSelectionService { get; } = new SelectionService<WorldPolygon>();
+        public ISelectionService<WorldPolygonPoint> WorldPolygonPointSelectionService { get; } = new SelectionService<WorldPolygonPoint>();
+        public ISelectionService<WorldPointSet> WorldPointSetSelectionService { get; } = new SelectionService<WorldPointSet>();
+        public ISelectionService<WorldPoint> WorldPointSelectionService { get; } = new SelectionService<WorldPoint>();
         public ISelectionService<ObjectivePoint> ObjectivePointSelectionService { get; } = new SelectionService<ObjectivePoint>();
         public ISelectionService<MapTextPoint> MapTextPointSelectionService { get; } = new SelectionService<MapTextPoint>();
 
-        public ObservableCollection<WaypointPathPoint> SelectedWaypointPathPoints { get; } = new();
-        public ObservableCollection<WaypointPath> SelectedWaypointPaths { get; } = new();
         public ObservableCollection<WorldPolygonPoint> SelectedWorldPolygonPoints { get; } = new();
         public ObservableCollection<WorldPolygon> SelectedWorldPolygons { get; } = new();
         public ObservableCollection<WorldPoint> SelectedWorldPoints { get; } = new();
@@ -94,33 +95,12 @@ namespace TPMapEditor
             //currentSelectionService = worldObjectSelectionService;
             worldObjectSelectionKeyboadShortcutService = new SelectionKeyboardShortcutService<WorldObject>(Map.WorldObjects, WorldObjectSelectionService);
             playerSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<Player>(Map.Players, PlayerSelectionService);
-            waypointPathKeyboardShortcutApplier = new(Map.WaypointPaths, SelectedWaypointPaths);
-            worldPolygonKeyboardShortcutApplier = new(Map.WorldPolygons, SelectedWorldPolygons);
-            worldPointSetKeyboardShortcutApplier = new(Map.WorldPointSets, SelectedWorldPointSets);
+            waypointPathSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WaypointPath>(Map.WaypointPaths, WaypointPathSelectionService);
+            worldPolygonSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPolygon>(Map.WorldPolygons, WorldPolygonSelectionService);
+            worldPointSetSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService);
             objectivePointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService);
             mapTextPointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService);
             
-            SelectedWaypointPaths.CollectionChanged += (s, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    foreach (WaypointPath obj in e.NewItems)
-                    {
-                        SelectWaypointPath(obj);
-                    }
-                    var last = SelectedWaypointPaths.LastOrDefault();
-                    MakeWaypointPathLastSelected(last);
-                }
-                else if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    foreach (WaypointPath obj in e.OldItems)
-                    {
-                        UnselectWaypointPath(obj);
-                    }
-                    var last = SelectedWaypointPaths.LastOrDefault();
-                    MakeWaypointPathLastSelected(last);
-                }
-            };
             SelectedWorldPolygons.CollectionChanged += (s, e) =>
             {
                 if (e.Action == NotifyCollectionChangedAction.Add)
@@ -349,18 +329,17 @@ namespace TPMapEditor
                 wp.Points.Add(new(wp, 0, 0, 0));
                 return wp;
             }).ShowDialog();
-            if (SelectedWaypointPath != null)
+            if (WaypointPathSelectionService.SelectedMapObject != null)
             {
-                if (!Map.WaypointPaths.Contains(SelectedWaypointPath))
+                if (!Map.WaypointPaths.Contains(WaypointPathSelectionService.SelectedMapObject))
                 {
-                    SelectedWaypointPathPoint = null;
-                    SelectedWaypointPath = null;
-                    if (WaypointPathRadioButton.IsChecked == true)
-                        SelectedElement = null;
+                    WaypointPathSelectionService.RemoveFromSelection(WaypointPathSelectionService.SelectedMapObject);
+                    if (WaypointPathPointSelectionService.SelectedMapObject != null)
+                        WaypointPathPointSelectionService.RemoveFromSelection(WaypointPathPointSelectionService.SelectedMapObject);
                 }
-                else if (SelectedWaypointPathPoint != null && !SelectedWaypointPath.Points.Contains(SelectedWaypointPathPoint))
+                else if (WaypointPathPointSelectionService.SelectedMapObject != null && !WaypointPathSelectionService.SelectedMapObject.Points.Contains(WaypointPathPointSelectionService.SelectedMapObject))
                 {
-                    SelectedWaypointPathPoint = null;
+                    WaypointPathPointSelectionService.RemoveFromSelection(WaypointPathPointSelectionService.SelectedMapObject);
                 }
             }
         }
@@ -671,6 +650,22 @@ namespace TPMapEditor
 
         #endregion
 
+        #region MainUICommands
+
+        [RelayCommand]
+        private void IncreaseZIndex(ISelectableMapObject mapObject)
+        {
+            mapObject.ZIndex++;
+        }
+
+        [RelayCommand]
+        private void DecreaseZIndex(ISelectableMapObject mapObject)
+        {
+            mapObject.ZIndex--;
+        }
+
+        #endregion
+
         #region KeyboardShortcutCommands
 
         [RelayCommand]
@@ -845,36 +840,20 @@ namespace TPMapEditor
         {
             WorldObjectSelectionService.ClearSelection();
             PlayerSelectionService.ClearSelection();
+            WaypointPathSelectionService.ClearSelection();
+            WaypointPathPointSelectionService.ClearSelection();
             ObjectivePointSelectionService.ClearSelection();
             MapTextPointSelectionService.ClearSelection();
 
-            SelectedWaypointPathPoints.Clear();
-            SelectedWaypointPaths.Clear();
             SelectedWorldPolygonPoints.Clear();
             SelectedWorldPolygons.Clear();
             SelectedWorldPoints.Clear();
             SelectedWorldPointSets.Clear();
-            SelectedWaypointPathPoint = null;
-            SelectedWaypointPath = null;
             SelectedWorldPolygonPoint = null;
             SelectedWorldPolygon = null;
             SelectedWorldPoint = null;
             SelectedWorldPointSet = null;
             SelectedElement = null;
-        }
-
-        private void IncreaseZIndexButton_Click(object sender, RoutedEventArgs e)
-        {
-            Canvas.SetZIndex(SelectedElement, Panel.GetZIndex(SelectedElement) + 1);
-            //if (SelectedElement != null)
-            //    SelectedElement.Opacity += 0.1;
-        }
-
-        private void DecreaseZIndexButton_Click(object sender, RoutedEventArgs e)
-        {
-            Canvas.SetZIndex(SelectedElement, Panel.GetZIndex(SelectedElement) - 1);
-            //if (SelectedElement != null)
-            //    SelectedElement.Opacity -= 0.1;
         }
 
         //Disable default Alt behaviour to allow rotation
@@ -1610,10 +1589,6 @@ namespace TPMapEditor
             Panel.SetZIndex(WaypointPathItemsControl, 1);
             WaypointPathItemsControl.Opacity = 1;
             WaypointPathItemsControl.IsEnabled = true;
-            //for (int i = 0; i < SelectedWots.Count; i++)
-            //    SelectedWots[i].BorderBrush = Brushes.OrangeRed;
-            //if (SelectedWot != null)
-            //    SelectedWot.BorderBrush = Brushes.Orange;
             MoveCheckBox.Checked += MoveWaypointPathPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWaypointPathPointCheckBox_Unchecked;
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
@@ -1621,7 +1596,6 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWaypointPathPoint();
-            SelectedElement = (UIElement)WaypointPathItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWaypointPath);
         }
 
         private void HideWaypointPathElements()
@@ -1648,12 +1622,32 @@ namespace TPMapEditor
 
                 if (ctrlPressed)
                 {
-                    CtrlSelectWaypointPath(clickedObject);
+                    if (clickedObject.IsLastSelected)
+                    {
+                        WaypointPathSelectionService.RemoveFromSelection(clickedObject);
+                        foreach (var item in clickedObject.Points)
+                        {
+                            WaypointPathPointSelectionService.RemoveFromSelection(item);
+                        }
+                    }
+                    else
+                    {
+                        WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject);
+                        foreach (var item in clickedObject.Points)
+                        {
+                            WaypointPathPointSelectionService.SelectAndMakeLastSelected(item);
+                        }
+                    }
                 }
                 else
                 {
-                    ClearWaypointPathSelection();
-                    AddWaypointPathToSelection(clickedObject);
+                    WaypointPathSelectionService.ClearSelection();
+                    WaypointPathPointSelectionService.ClearSelection();
+                    WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    foreach (var item in clickedObject.Points)
+                    {
+                        WaypointPathPointSelectionService.SelectAndMakeLastSelected(item);
+                    }
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -1669,13 +1663,23 @@ namespace TPMapEditor
 
                 if (ctrlPressed)
                 {
-                    CtrlSelectWaypointPathPoint(clickedObject);
+                    if (clickedObject.IsLastSelected)
+                    {
+                        WaypointPathPointSelectionService.RemoveFromSelection(clickedObject);
+                        WaypointPathSelectionService.RemoveFromSelection(clickedObject.Parent);
+                    }
+                    else
+                    {
+                        WaypointPathPointSelectionService.SelectAndMakeLastSelected(clickedObject);
+                        WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject.Parent);
+                    }
                 }
                 else
                 {
-                    ClearWaypointPathSelection();
-                    AddWaypointPathPointToSelection(clickedObject, false);
-                    MakeWaypointPathPointLastSelected(clickedObject);
+                    WaypointPathSelectionService.ClearSelection();
+                    WaypointPathPointSelectionService.ClearSelection();
+                    WaypointPathPointSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject.Parent);
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -1685,189 +1689,10 @@ namespace TPMapEditor
 
         private void MapGridOutsideWaypointPathPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ClearWaypointPathSelection();
+            WaypointPathSelectionService.ClearSelection();
+            WaypointPathPointSelectionService.ClearSelection();
         }
         
-        private void CtrlSelectWaypointPath(WaypointPath waypointPath)
-        {
-            if (waypointPath.IsSelected)
-            {
-                if (waypointPath.IsLastSelected)
-                {
-                    RemoveWaypointPathFromSelection(waypointPath);
-                }
-                else
-                {
-                    MakeWaypointPathLastSelected(waypointPath);
-                }
-            }
-            else
-            {
-                AddWaypointPathToSelection(waypointPath); //Make last selected from ObservableCollection on CollectionChanged
-            }
-        }
-
-        private void RemoveWaypointPathFromSelection(WaypointPath waypointPath)
-        {
-            SelectedWaypointPaths.Remove(waypointPath);
-        }
-
-        private void UnselectWaypointPath(WaypointPath waypointPath)
-        {
-            waypointPath.IsSelected = false;
-            foreach (var p in waypointPath.Points)
-            {
-                RemoveWaypointPathPointFromSelection(p);
-            }
-        }
-
-        private void MakeWaypointPathLastSelected(WaypointPath waypointPath)
-        {
-            if (SelectedWaypointPath != null)
-            {
-                SelectedWaypointPath.IsLastSelected = false;
-            }
-            SelectedWaypointPath = waypointPath;
-            if (SelectedWaypointPath != null)
-            {
-                SelectedWaypointPath.IsLastSelected = true;
-                SelectedElement = (UIElement)WaypointPathItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWaypointPath);
-            }
-        }
-
-        private void AddWaypointPathToSelection(WaypointPath waypointPath)
-        {
-            if (!waypointPath.IsSelected)
-                SelectedWaypointPaths.Add(waypointPath);
-        }
-
-        private void AddWaypointPathNoPointsToSelection(WaypointPath waypointPath)
-        {
-            if (!waypointPath.IsSelected)
-            {
-                var selectedPoints = waypointPath.Points.Where((p) => p.IsSelected == true).ToArray(); //Save current selection
-                SelectedWaypointPaths.Add(waypointPath); //Triggers selection on all points
-                foreach(var p in waypointPath.Points)
-                {
-                    if (p.IsSelected && !selectedPoints.Contains(p))
-                    {
-                        RemoveWaypointPathPointFromSelection(p);
-                    }
-                    else if(!p.IsSelected && selectedPoints.Contains(p))
-                    {
-                        AddWaypointPathPointToSelection(p);
-                    }
-                }
-            }
-        }
-
-        private void SelectWaypointPath(WaypointPath waypointPath)
-        {
-            waypointPath.IsSelected = true;
-            foreach(var p in waypointPath.Points)
-            {
-                AddWaypointPathPointToSelection(p);
-            }
-        }
-
-        private void AddWaypointPathPointToSelection(WaypointPathPoint waypointPathPoint, bool selectOtherPathPoints = true)
-        {
-            if (!waypointPathPoint.IsSelected)
-            {
-                SelectWaypointPathPoint(waypointPathPoint);
-                SelectedWaypointPathPoints.Add(waypointPathPoint);
-                if (selectOtherPathPoints)
-                    AddWaypointPathToSelection(waypointPathPoint.Parent);
-                else
-                    AddWaypointPathNoPointsToSelection(waypointPathPoint.Parent);
-            }
-        }
-
-        private void SelectWaypointPathPoint(WaypointPathPoint waypointPathPoint)
-        {
-            waypointPathPoint.IsSelected = true;
-        }
-
-        private void RemoveWaypointPathPointFromSelection(WaypointPathPoint waypointPathPoint)
-        {
-            UnselectWaypointPathPoint(waypointPathPoint);
-            SelectedWaypointPathPoints.Remove(waypointPathPoint);
-            if(!HasWaypointPathOneSelectedPoint(waypointPathPoint.Parent))
-                RemoveWaypointPathFromSelection(waypointPathPoint.Parent);
-        }
-
-        private bool HasWaypointPathOneSelectedPoint(WaypointPath waypointPath)
-        {
-            foreach(var p in waypointPath.Points)
-            {
-                if (p.IsSelected) return true;
-            }
-            return false;
-        }
-
-        private void UnselectWaypointPathPoint(WaypointPathPoint waypointPathPoint)
-        {
-            waypointPathPoint.IsSelected = false;
-            if (waypointPathPoint.IsLastSelected)
-            {
-                waypointPathPoint.IsLastSelected = false;
-                SelectedWaypointPathPoint = null;
-            }
-        }
-
-        private void CtrlSelectWaypointPathPoint(WaypointPathPoint waypointPathPoint)
-        {
-            if (waypointPathPoint.IsSelected)
-            {
-                if (waypointPathPoint.IsLastSelected)
-                {
-                    RemoveWaypointPathPointFromSelection(waypointPathPoint);
-                }
-                else
-                {
-                    MakeWaypointPathPointLastSelected(waypointPathPoint);
-                }
-            }
-            else
-            {
-                AddWaypointPathPointToSelection(waypointPathPoint, false);
-                MakeWaypointPathPointLastSelected(waypointPathPoint);
-            }
-        }
-
-        private void MakeWaypointPathPointLastSelected(WaypointPathPoint waypointPathPoint)
-        {
-            if (SelectedWaypointPathPoint != null)
-            {
-                SelectedWaypointPathPoint.IsLastSelected = false;
-            }
-            waypointPathPoint.IsLastSelected = true;
-            SelectedWaypointPathPoint = waypointPathPoint;
-            MakeWaypointPathLastSelected(waypointPathPoint.Parent);
-        }
-
-        private void ClearWaypointPathSelection()
-        {
-            foreach (var v in SelectedWaypointPaths)
-            {
-                v.IsSelected = v.IsLastSelected = false;
-            }
-            SelectedWaypointPaths.Clear();
-            SelectedWaypointPath = null;
-            SelectedElement = null;
-            ClearWaypointPathPointSelection();
-        }
-
-        private void ClearWaypointPathPointSelection()
-        {
-            foreach (var v in SelectedWaypointPathPoints)
-            {
-                v.IsSelected = v.IsLastSelected = false;
-            }
-            SelectedWaypointPathPoints.Clear();
-            SelectedWaypointPathPoint = null;
-        }
-
         private void MoveWaypointPathPointCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             EnableMoveWaypointPathPoint();
@@ -1914,10 +1739,9 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < SelectedWaypointPathPoints.Count; i++)
+            for (var i = 0; i < WaypointPathPointSelectionService.SelectedMapObjects.Count; i++)
             {
-                var selectedObject = SelectedWaypointPathPoints[i];
+                var selectedObject = WaypointPathPointSelectionService.SelectedMapObjects[i];
                 selectedObject.X += x;
                 selectedObject.Y -= y;
             }
@@ -1926,7 +1750,7 @@ namespace TPMapEditor
 
         private void DeleteWaypointPathPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in SelectedWaypointPathPoints)
+            foreach (var p in WaypointPathPointSelectionService.SelectedMapObjects)
             {
                 p.Parent.Points.Remove(p);
                 //remove path if no more points
@@ -1935,13 +1759,12 @@ namespace TPMapEditor
                     Map.WaypointPaths.Remove(p.Parent);
                     if (p.Parent.IsLastSelected)
                     {
-                        SelectedWaypointPath = null;
-                        SelectedElement = null;
+                        WaypointPathSelectionService.RemoveFromSelection(p.Parent);
                     }
                 }
             }
-            SelectedWaypointPathPoints.Clear();
-            SelectedWaypointPathPoint = null;
+            WaypointPathSelectionService.ClearSelection();
+            WaypointPathPointSelectionService.ClearSelection();
         }
 
         private void MapGridOutsideWaypointPathPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -1959,9 +1782,10 @@ namespace TPMapEditor
             var point = new WaypointPathPoint(waypointPath, Canvas.GetLeft(WaypointPathPreviewControl) + WaypointPathPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPreviewControl) - WaypointPathPreviewControl.ActualHeight / 2, 0);
             waypointPath.Points.Add(point);
             Map.WaypointPaths.Add(waypointPath);
-            ClearWaypointPathSelection();
-            AddWaypointPathToSelection(waypointPath);
-            MakeWaypointPathPointLastSelected(point);
+            WaypointPathSelectionService.ClearSelection();
+            WaypointPathPointSelectionService.ClearSelection();
+            WaypointPathSelectionService.SelectAndMakeLastSelected(waypointPath);
+            WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
             AddWaypointPathPointRadioButton.IsChecked = true;
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
@@ -1974,12 +1798,11 @@ namespace TPMapEditor
 
         private void WaypointPathPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedWaypointPath != null)
+            if (WaypointPathSelectionService.SelectedMapObject != null)
             {
-                var point = new WaypointPathPoint(SelectedWaypointPath, Canvas.GetLeft(WaypointPathPointPreviewControl) + WaypointPathPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPointPreviewControl) - WaypointPathPointPreviewControl.ActualHeight / 2, 0);
-                AddWaypointPathPointToSelection(point, false);
-                MakeWaypointPathPointLastSelected(point);
-                SelectedWaypointPath.Points.Add(point);
+                var point = new WaypointPathPoint(WaypointPathSelectionService.SelectedMapObject, Canvas.GetLeft(WaypointPathPointPreviewControl) + WaypointPathPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPointPreviewControl) - WaypointPathPointPreviewControl.ActualHeight / 2, 0);
+                WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
+                WaypointPathSelectionService.SelectedMapObject.Points.Add(point);
             }
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }

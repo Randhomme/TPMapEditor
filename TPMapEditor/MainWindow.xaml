@@ -101,11 +101,28 @@
                     <Button x:Name="DeleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25">
                         <Image Source="/Images/RedCross.png"/>
                     </Button>
-                    <StackPanel Orientation="Horizontal" IsEnabled="{c:Binding 'SelectedElement!=null'}" ToolTip="Z index">
-                        <Button ToolTip="Delete" Margin="10,0,-1,0" Width="25" Content="-" Click="DecreaseZIndexButton_Click"/>
-                        <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding SelectedElement.(Panel.ZIndex)}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-                        <Button ToolTip="Delete" Margin="-1,0,0,0" Width="25" Content="+" Click="IncreaseZIndexButton_Click"/>
-                    </StackPanel>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=WorldObjectRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'WorldObjectSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding WorldObjectSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding WorldObjectSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding WorldObjectSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=PlayerRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'PlayerSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding PlayerSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding PlayerSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding PlayerSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=ObjectivePointRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'ObjectivePointSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding ObjectivePointSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding ObjectivePointSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding ObjectivePointSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'MapTextPointSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding MapTextPointSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding MapTextPointSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding MapTextPointSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                    </Grid>
                     <Rectangle Width="1" Fill="Gray" Margin="10,0,10,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
@@ -236,6 +253,7 @@
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
                                         </Style>
                                     </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
@@ -295,6 +313,7 @@
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
                                         </Style>
                                     </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
@@ -343,6 +362,11 @@
                                             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Canvas>
@@ -437,6 +461,11 @@
                                             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Canvas>
@@ -534,6 +563,11 @@
                                             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Canvas>
@@ -628,6 +662,7 @@
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
                                         </Style>
                                     </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
@@ -678,6 +713,7 @@
                                                     </MultiBinding>
                                                 </Setter.Value>
                                             </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
                                         </Style>
                                     </ItemsControl.ItemContainerStyle>
                                     <ItemsControl.ItemTemplate>
@@ -785,7 +821,7 @@
                                     <GroupBox Header="Waypoint path" Grid.Row="2" Visibility="{c:Binding ElementName=WaypointPathRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="NewWaypointPathRadioButton" Margin="5" Content="New path" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
-                                            <RadioButton x:Name="AddWaypointPathPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedWaypointPath!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
+                                            <RadioButton x:Name="AddWaypointPathPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'WaypointPathSelectionService.SelectedMapObject!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="World polygon" Grid.Row="3" Visibility="{c:Binding ElementName=WorldPolygonRadioButton,Path=IsChecked}">
@@ -871,7 +907,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedWaypointPaths}" ItemsSource="{Binding Map.WaypointPaths}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl SelectedItems="{Binding WaypointPathSelectionService.SelectedMapObjects}" ItemsSource="{Binding Map.WaypointPaths}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -887,11 +923,11 @@
                                         </controls:CollectionEditorControl>
                                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <StackPanel>
-                                                <GroupBox Header="Selected path" Visibility="{c:Binding 'SelectedWaypointPath!=null'}">
-                                                    <ContentControl Content="{Binding SelectedWaypointPath}" ContentTemplate="{StaticResource WaypointPathNoPointsTemplate}"/>
+                                                <GroupBox Header="Selected path" Visibility="{c:Binding 'WaypointPathSelectionService.SelectedMapObject!=null'}">
+                                                    <ContentControl Content="{Binding WaypointPathSelectionService.SelectedMapObject}" ContentTemplate="{StaticResource WaypointPathNoPointsTemplate}"/>
                                                 </GroupBox>
-                                                <GroupBox Header="Selected path point" Visibility="{c:Binding 'SelectedWaypointPathPoint!=null'}">
-                                                    <ContentControl Content="{Binding SelectedWaypointPathPoint}"/>
+                                                <GroupBox Header="Selected path point" Visibility="{c:Binding 'WaypointPathPointSelectionService.SelectedMapObject!=null'}">
+                                                    <ContentControl Content="{Binding WaypointPathPointSelectionService.SelectedMapObject}"/>
                                                 </GroupBox>
                                             </StackPanel>
                                         </ScrollViewer>
