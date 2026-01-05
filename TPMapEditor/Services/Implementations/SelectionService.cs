@@ -49,12 +49,12 @@ namespace TPMapEditor.Services.Implementations
             };
         }
 
-        public void Select(T mapObject)
+        public virtual void Select(T mapObject)
         {
             mapObject.IsSelected = true;
         }
 
-        public void AddToSelection(T mapObject)
+        public virtual void AddToSelection(T mapObject)
         {
             if (!mapObject.IsSelected)
             {
@@ -62,7 +62,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void AddAllToSelection(IEnumerable<T> mapObjects)
+        public virtual void AddAllToSelection(IEnumerable<T> mapObjects)
         {
             foreach (var item in mapObjects)
             {
@@ -70,7 +70,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void CtrlSelect(T mapObject)
+        public virtual void CtrlSelect(T mapObject)
         {
             if (mapObject.IsLastSelected)
             {
@@ -82,13 +82,13 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void SelectAndMakeLastSelected(T mapObject)
+        public virtual void SelectAndMakeLastSelected(T mapObject)
         {
             AddToSelection(mapObject);
             MakeLastSelected(mapObject);
         }
 
-        public void MakeLastSelected(T mapObject)
+        public virtual void MakeLastSelected(T mapObject)
         {
             if (SelectedMapObject != null)
             {
@@ -101,12 +101,12 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void Unselect(T mapObject)
+        public virtual void Unselect(T mapObject)
         {
             mapObject.IsSelected = mapObject.IsLastSelected = false;
         }
 
-        public void RemoveFromSelection(T mapObject)
+        public virtual void RemoveFromSelection(T mapObject)
         {
             if (mapObject.IsSelected)
             {
@@ -114,7 +114,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void InvertSelection(IEnumerable<T> mapObjects)
+        public virtual void InvertSelection(IEnumerable<T> mapObjects)
         {
             foreach (var item in mapObjects)
             {
@@ -126,7 +126,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void HideSelection()
+        public virtual void HideSelection()
         {
             foreach (var item in SelectedMapObjects)
             {
@@ -134,7 +134,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void ShowAll(IEnumerable<T> mapObjects)
+        public virtual void ShowAll(IEnumerable<T> mapObjects)
         {
             foreach (var item in mapObjects)
             {
@@ -142,7 +142,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void ToggleSelectionVisibility()
+        public virtual void ToggleSelectionVisibility()
         {
             foreach (var item in SelectedMapObjects)
             {
@@ -150,7 +150,7 @@ namespace TPMapEditor.Services.Implementations
             }
         }
 
-        public void ClearSelection()
+        public virtual void ClearSelection()
         {
             foreach (var item in SelectedMapObjects)
             {
