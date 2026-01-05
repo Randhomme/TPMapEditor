@@ -825,7 +825,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedWorldObjects}" ItemsSource="{Binding Map.WorldObjects}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl SelectedItems="{Binding WorldObjectSelectionService.SelectedMapObjects}" ItemsSource="{Binding Map.WorldObjects}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -839,8 +839,8 @@
                                                 </DataGridTemplateColumn>
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
-                                        <GroupBox Grid.Row="1" Header="Selected world object" Visibility="{c:Binding 'SelectedWorldObject!=null'}">
-                                            <ContentControl Content="{Binding SelectedWorldObject}"/>
+                                        <GroupBox Grid.Row="1" Header="Selected world object" Visibility="{c:Binding 'WorldObjectSelectionService.SelectedMapObject!=null'}">
+                                            <ContentControl Content="{Binding WorldObjectSelectionService.SelectedMapObject}"/>
                                         </GroupBox>
                                     </Grid>
                                     <Grid Visibility="{c:Binding ElementName=PlayerRadioButton, Path=IsChecked}">
@@ -848,7 +848,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedPlayers}" ItemsSource="{Binding Map.Players}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl SelectedItems="{Binding PlayerSelectionService.SelectedMapObjects}" ItemsSource="{Binding Map.Players}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -862,8 +862,8 @@
                                                 </DataGridTemplateColumn>
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
-                                        <GroupBox Grid.Row="1" Header="Selected player" Visibility="{c:Binding 'SelectedPlayer!=null'}">
-                                            <ContentControl Content="{Binding SelectedPlayer}"/>
+                                        <GroupBox Grid.Row="1" Header="Selected player" Visibility="{c:Binding 'PlayerSelectionService.SelectedMapObject!=null'}">
+                                            <ContentControl Content="{Binding PlayerSelectionService.SelectedMapObject}"/>
                                         </GroupBox>
                                     </Grid>
                                     <Grid Visibility="{c:Binding ElementName=WaypointPathRadioButton, Path=IsChecked}">
@@ -961,7 +961,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.ObjectivePoints}" SelectedItems="{Binding SelectedObjectivePoints}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.ObjectivePoints}" SelectedItems="{Binding ObjectivePointSelectionService.SelectedMapObjects}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -975,8 +975,8 @@
                                                 </DataGridTemplateColumn>
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
-                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'SelectedObjectivePoint!=null'}">
-                                            <ContentControl Content="{Binding SelectedObjectivePoint}"/>
+                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'ObjectivePointSelectionService.SelectedMapObject!=null'}">
+                                            <ContentControl Content="{Binding ObjectivePointSelectionService.SelectedMapObject}"/>
                                         </GroupBox>
                                     </Grid>
                                     <Grid Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}">
@@ -984,7 +984,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.MapTextPoints}" SelectedItems="{Binding SelectedMapTextPoints}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.MapTextPoints}" SelectedItems="{Binding MapTextPointSelectionService.SelectedMapObjects}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -998,8 +998,8 @@
                                                 </DataGridTemplateColumn>
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
-                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'SelectedMapTextPoint!=null'}">
-                                            <ContentControl Content="{Binding SelectedMapTextPoint}"/>
+                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'MapTextPointSelectionService.SelectedMapObject!=null'}">
+                                            <ContentControl Content="{Binding MapTextPointSelectionService.SelectedMapObject}"/>
                                         </GroupBox>
                                     </Grid>
                                 </Grid>
