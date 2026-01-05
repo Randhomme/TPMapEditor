@@ -827,7 +827,7 @@
                                     <GroupBox Header="World polygon" Grid.Row="3" Visibility="{c:Binding ElementName=WorldPolygonRadioButton,Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="NewWorldPolygonRadioButton" Margin="5" Content="New polygon" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
-                                            <RadioButton x:Name="AddWorldPolygonPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedWorldPolygon!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
+                                            <RadioButton x:Name="AddWorldPolygonPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'WorldPolygonSelectionService.SelectedMapObject!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <StackPanel Grid.Row="4" Visibility="{c:Binding ElementName=WorldPointSetRadioButton,Path=IsChecked}">
@@ -837,7 +837,7 @@
                                         <GroupBox Header="World point">
                                             <StackPanel>
                                                 <RadioButton x:Name="AddWorldPointSetRadioButton" Margin="5" Content="New point set" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
-                                                <RadioButton x:Name="AddWorldPointSetPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'SelectedWorldPointSet!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
+                                                <RadioButton x:Name="AddWorldPointSetPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'WorldPointSetSelectionService.SelectedMapObject!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                             </StackPanel>
                                         </GroupBox>
                                     </StackPanel>
@@ -937,7 +937,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl SelectedItems="{Binding SelectedWorldPolygons}" ItemsSource="{Binding Map.WorldPolygons}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl SelectedItems="{Binding WorldPolygonSelectionService.SelectedMapObjects}" ItemsSource="{Binding Map.WorldPolygons}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -953,11 +953,11 @@
                                         </controls:CollectionEditorControl>
                                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <StackPanel>
-                                                <GroupBox Header="Selected polygon" Visibility="{c:Binding 'SelectedWorldPolygon!=null'}">
-                                                    <ContentControl Content="{Binding SelectedWorldPolygon}" ContentTemplate="{StaticResource WorldPolygonNoPointTemplate}"/>
+                                                <GroupBox Header="Selected polygon" Visibility="{c:Binding 'WorldPolygonSelectionService.SelectedMapObject!=null'}">
+                                                    <ContentControl Content="{Binding WorldPolygonSelectionService.SelectedMapObject}" ContentTemplate="{StaticResource WorldPolygonNoPointTemplate}"/>
                                                 </GroupBox>
-                                                <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'SelectedWorldPolygonPoint!=null'}">
-                                                    <ContentControl Content="{Binding SelectedWorldPolygonPoint}"/>
+                                                <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'WorldPolygonPointSelectionService.SelectedMapObject!=null'}">
+                                                    <ContentControl Content="{Binding WorldPolygonPointSelectionService.SelectedMapObject}"/>
                                                 </GroupBox>
                                             </StackPanel>
                                         </ScrollViewer>
@@ -967,7 +967,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.WorldPointSets}" SelectedItems="{Binding SelectedWorldPointSets}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
+                                        <controls:CollectionEditorControl ItemsSource="{Binding Map.WorldPointSets}" SelectedItems="{Binding WorldPointSetSelectionService.SelectedMapObjects}" GridOnlyMode="True" OverrideColumnsFromTemplate="False">
                                             <controls:CollectionEditorControl.Columns>
                                                 <DataGridTemplateColumn>
                                                     <DataGridTemplateColumn.Header>
@@ -983,11 +983,11 @@
                                         </controls:CollectionEditorControl>
                                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <StackPanel>
-                                                <GroupBox Header="Selected world point set" Visibility="{c:Binding 'SelectedWorldPointSet!=null'}">
-                                                    <ContentControl Content="{Binding SelectedWorldPointSet}" ContentTemplate="{StaticResource WorldPointSetNoPointsTemplate}"/>
+                                                <GroupBox Header="Selected world point set" Visibility="{c:Binding 'WorldPointSetSelectionService.SelectedMapObject!=null'}">
+                                                    <ContentControl Content="{Binding WorldPointSetSelectionService.SelectedMapObject}" ContentTemplate="{StaticResource WorldPointSetNoPointsTemplate}"/>
                                                 </GroupBox>
-                                                <GroupBox Header="World point" Visibility="{c:Binding 'SelectedWorldPoint!=null'}">
-                                                    <ContentControl Content="{Binding SelectedWorldPoint}"/>
+                                                <GroupBox Header="World point" Visibility="{c:Binding 'WorldPointSelectionService.SelectedMapObject!=null'}">
+                                                    <ContentControl Content="{Binding WorldPointSelectionService.SelectedMapObject}"/>
                                                 </GroupBox>
                                             </StackPanel>
                                         </ScrollViewer>

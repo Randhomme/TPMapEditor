@@ -46,32 +46,18 @@ namespace TPMapEditor
         private readonly ISelectionKeyboardShortcutService mapTextPointSelectionKeyboardShortcutService;
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
-        [ObservableProperty]
-        private WorldPolygonPoint? selectedWorldPolygonPoint;
-        [ObservableProperty]
-        private WorldPolygon? selectedWorldPolygon;
-        [ObservableProperty]
-        private WorldPoint? selectedWorldPoint;
-        [ObservableProperty]
-        private WorldPointSet? selectedWorldPointSet;
-        [ObservableProperty]
-        private UIElement? selectedElement;
 
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
-        public ISelectionService<WaypointPath> WaypointPathSelectionService { get; } = new SelectionService<WaypointPath>();
+        public IMultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint> WaypointPathSelectionService { get; }
         public ISelectionService<WaypointPathPoint> WaypointPathPointSelectionService { get; } = new SelectionService<WaypointPathPoint>();
-        public ISelectionService<WorldPolygon> WorldPolygonSelectionService { get; } = new SelectionService<WorldPolygon>();
+        public IMultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint> WorldPolygonSelectionService { get; }
         public ISelectionService<WorldPolygonPoint> WorldPolygonPointSelectionService { get; } = new SelectionService<WorldPolygonPoint>();
-        public ISelectionService<WorldPointSet> WorldPointSetSelectionService { get; } = new SelectionService<WorldPointSet>();
+        public IMultiPointMapObjectSelectionService<WorldPointSet, WorldPoint> WorldPointSetSelectionService { get; }
         public ISelectionService<WorldPoint> WorldPointSelectionService { get; } = new SelectionService<WorldPoint>();
         public ISelectionService<ObjectivePoint> ObjectivePointSelectionService { get; } = new SelectionService<ObjectivePoint>();
         public ISelectionService<MapTextPoint> MapTextPointSelectionService { get; } = new SelectionService<MapTextPoint>();
 
-        public ObservableCollection<WorldPolygonPoint> SelectedWorldPolygonPoints { get; } = new();
-        public ObservableCollection<WorldPolygon> SelectedWorldPolygons { get; } = new();
-        public ObservableCollection<WorldPoint> SelectedWorldPoints { get; } = new();
-        public ObservableCollection<WorldPointSet> SelectedWorldPointSets { get; } = new();
         public ICollectionView SelectableWorldObjectTypes { get; }
 
         public WorldMap Map { get; private set; }
@@ -82,6 +68,16 @@ namespace TPMapEditor
             SelectableWorldObjectTypes.Filter = WorldObjectType.IsSelectableWorldObjectType;
             settings = new AppSettings();
             Map = new WorldMap();
+            WaypointPathSelectionService = new MultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint>(WaypointPathPointSelectionService);
+            WorldPolygonSelectionService = new MultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint>(WorldPolygonPointSelectionService);
+            WorldPointSetSelectionService = new MultiPointMapObjectSelectionService<WorldPointSet, WorldPoint>(WorldPointSelectionService);
+            worldObjectSelectionKeyboadShortcutService = new SelectionKeyboardShortcutService<WorldObject>(Map.WorldObjects, WorldObjectSelectionService);
+            playerSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<Player>(Map.Players, PlayerSelectionService);
+            waypointPathSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WaypointPath>(Map.WaypointPaths, WaypointPathSelectionService);
+            worldPolygonSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPolygon>(Map.WorldPolygons, WorldPolygonSelectionService);
+            worldPointSetSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService);
+            objectivePointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService);
+            mapTextPointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService);
             InitializeComponent();
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = $"{Title} v{version.Major}.{version.Minor}.{version.Build}";
@@ -92,57 +88,6 @@ namespace TPMapEditor
             HideWorldPointSetElements();
             HideObjectivePointElements();
             HideMapTextPointElements();
-            //currentSelectionService = worldObjectSelectionService;
-            worldObjectSelectionKeyboadShortcutService = new SelectionKeyboardShortcutService<WorldObject>(Map.WorldObjects, WorldObjectSelectionService);
-            playerSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<Player>(Map.Players, PlayerSelectionService);
-            waypointPathSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WaypointPath>(Map.WaypointPaths, WaypointPathSelectionService);
-            worldPolygonSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPolygon>(Map.WorldPolygons, WorldPolygonSelectionService);
-            worldPointSetSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService);
-            objectivePointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService);
-            mapTextPointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService);
-            
-            SelectedWorldPolygons.CollectionChanged += (s, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    foreach (WorldPolygon obj in e.NewItems)
-                    {
-                        SelectWorldPolygon(obj);
-                    }
-                    var last = SelectedWorldPolygons.LastOrDefault();
-                    MakeWorldPolygonLastSelected(last);
-                }
-                else if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    foreach (WorldPolygon obj in e.OldItems)
-                    {
-                        UnselectWorldPolygon(obj);
-                    }
-                    var last = SelectedWorldPolygons.LastOrDefault();
-                    MakeWorldPolygonLastSelected(last);
-                }
-            };
-            SelectedWorldPointSets.CollectionChanged += (s, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add)
-                {
-                    foreach (WorldPointSet obj in e.NewItems)
-                    {
-                        SelectWorldPointSet(obj);
-                    }
-                    var last = SelectedWorldPointSets.LastOrDefault();
-                    MakeWorldPointSetLastSelected(last);
-                }
-                else if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    foreach (WorldPointSet obj in e.OldItems)
-                    {
-                        UnselectWorldPointSet(obj);
-                    }
-                    var last = SelectedWorldPointSets.LastOrDefault();
-                    MakeWorldPointSetLastSelected(last);
-                }
-            };
         }
 
         #region MenuCommands
@@ -375,20 +320,17 @@ namespace TPMapEditor
                 wps.Points.Add(new(wps, 0, 0, 0, 0));
                 return wps;
             }).ShowDialog();
-            if (SelectedWorldPointSet != null)
+            if (WorldPointSetSelectionService.SelectedMapObject != null)
             {
-                if (!Map.WorldPointSets.Contains(SelectedWorldPointSet))
+                if (!Map.WorldPointSets.Contains(WorldPointSetSelectionService.SelectedMapObject))
                 {
-                    SelectedWorldPoint = null;
-                    SelectedWorldPointSet = null;
-                    if (WorldPointSetRadioButton.IsChecked == true)
-                        SelectedElement = null;
+                    WorldPointSetSelectionService.RemoveFromSelection(WorldPointSetSelectionService.SelectedMapObject);
+                    if (WorldPointSelectionService.SelectedMapObject != null)
+                        WorldPointSelectionService.RemoveFromSelection(WorldPointSelectionService.SelectedMapObject);
                 }
-                else if(SelectedWorldPoint!=null && !SelectedWorldPointSet.Points.Contains(SelectedWorldPoint))
+                else if(WorldPointSelectionService.SelectedMapObject != null && !WorldPointSetSelectionService.SelectedMapObject.Points.Contains(WorldPointSelectionService.SelectedMapObject))
                 {
-                    SelectedWorldPoint = null;
-                    if (WorldPointSetRadioButton.IsChecked == true)
-                        SelectedElement = null;
+                    WorldPointSelectionService.RemoveFromSelection(WorldPointSelectionService.SelectedMapObject);
                 }
             }
         }
@@ -402,18 +344,17 @@ namespace TPMapEditor
                 wp.Points.Add(new(wp, 0, 0));
                 return wp;
             }).ShowDialog();
-            if (SelectedWorldPolygon != null)
+            if (WorldPolygonSelectionService.SelectedMapObject != null)
             {
-                if (!Map.WorldPolygons.Contains(SelectedWorldPolygon))
+                if (!Map.WorldPolygons.Contains(WorldPolygonSelectionService.SelectedMapObject))
                 {
-                    SelectedWorldPolygonPoint = null;
-                    SelectedWorldPolygon = null;
-                    if (WorldPolygonRadioButton.IsChecked == true)
-                        SelectedElement = null;
+                    WorldPolygonSelectionService.RemoveFromSelection(WorldPolygonSelectionService.SelectedMapObject);
+                    if (WorldPolygonPointSelectionService.SelectedMapObject != null)
+                        WorldPolygonPointSelectionService.RemoveFromSelection(WorldPolygonPointSelectionService.SelectedMapObject);
                 }
-                else if (SelectedWorldPolygonPoint != null && !SelectedWorldPolygon.Points.Contains(SelectedWorldPolygonPoint))
+                else if (WorldPolygonPointSelectionService.SelectedMapObject != null && !WorldPolygonSelectionService.SelectedMapObject.Points.Contains(WorldPolygonPointSelectionService.SelectedMapObject))
                 {
-                    SelectedWorldPolygonPoint = null;
+                    WorldPolygonPointSelectionService.RemoveFromSelection(WorldPolygonPointSelectionService.SelectedMapObject);
                 }
             }
         }
@@ -842,18 +783,12 @@ namespace TPMapEditor
             PlayerSelectionService.ClearSelection();
             WaypointPathSelectionService.ClearSelection();
             WaypointPathPointSelectionService.ClearSelection();
+            WorldPolygonSelectionService.ClearSelection();
+            WorldPolygonPointSelectionService.ClearSelection();
+            WorldPointSetSelectionService.ClearSelection();
+            WorldPointSelectionService.ClearSelection();
             ObjectivePointSelectionService.ClearSelection();
             MapTextPointSelectionService.ClearSelection();
-
-            SelectedWorldPolygonPoints.Clear();
-            SelectedWorldPolygons.Clear();
-            SelectedWorldPoints.Clear();
-            SelectedWorldPointSets.Clear();
-            SelectedWorldPolygonPoint = null;
-            SelectedWorldPolygon = null;
-            SelectedWorldPoint = null;
-            SelectedWorldPointSet = null;
-            SelectedElement = null;
         }
 
         //Disable default Alt behaviour to allow rotation
@@ -1625,18 +1560,10 @@ namespace TPMapEditor
                     if (clickedObject.IsLastSelected)
                     {
                         WaypointPathSelectionService.RemoveFromSelection(clickedObject);
-                        foreach (var item in clickedObject.Points)
-                        {
-                            WaypointPathPointSelectionService.RemoveFromSelection(item);
-                        }
                     }
                     else
                     {
                         WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject);
-                        foreach (var item in clickedObject.Points)
-                        {
-                            WaypointPathPointSelectionService.SelectAndMakeLastSelected(item);
-                        }
                     }
                 }
                 else
@@ -1666,20 +1593,22 @@ namespace TPMapEditor
                     if (clickedObject.IsLastSelected)
                     {
                         WaypointPathPointSelectionService.RemoveFromSelection(clickedObject);
-                        WaypointPathSelectionService.RemoveFromSelection(clickedObject.Parent);
+                        WaypointPathSelectionService.RemoveFromSelectionWithoutPoints(clickedObject.Parent);
+                        if (WaypointPathPointSelectionService.SelectedMapObject != null)
+                            WaypointPathSelectionService.MakeLastSelected(WaypointPathPointSelectionService.SelectedMapObject.Parent);
                     }
                     else
                     {
+                        WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
                         WaypointPathPointSelectionService.SelectAndMakeLastSelected(clickedObject);
-                        WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject.Parent);
                     }
                 }
                 else
                 {
                     WaypointPathSelectionService.ClearSelection();
                     WaypointPathPointSelectionService.ClearSelection();
+                    WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
                     WaypointPathPointSelectionService.SelectAndMakeLastSelected(clickedObject);
-                    WaypointPathSelectionService.SelectAndMakeLastSelected(clickedObject.Parent);
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -1855,7 +1784,6 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPolygonPoint();
-            SelectedElement = (UIElement)WorldPolygonItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPolygon);
         }
 
         private void HideWorldPolygonElements()
@@ -1882,12 +1810,24 @@ namespace TPMapEditor
 
                 if (ctrlPressed)
                 {
-                    CtrlSelectWorldPolygon(clickedObject);
+                    if (clickedObject.IsLastSelected)
+                    {
+                        WorldPolygonSelectionService.RemoveFromSelection(clickedObject);
+                    }
+                    else
+                    {
+                        WorldPolygonSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    }
                 }
                 else
                 {
-                    ClearWorldPolygonSelection();
-                    AddWorldPolygonToSelection(clickedObject);
+                    WorldPolygonSelectionService.ClearSelection();
+                    WorldPolygonPointSelectionService.ClearSelection();
+                    WorldPolygonSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    foreach (var item in clickedObject.Points)
+                    {
+                        WorldPolygonPointSelectionService.SelectAndMakeLastSelected(item);
+                    }
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -1903,13 +1843,25 @@ namespace TPMapEditor
 
                 if (ctrlPressed)
                 {
-                    CtrlSelectWorldPolygonPoint(clickedObject);
+                    if (clickedObject.IsLastSelected)
+                    {
+                        WorldPolygonPointSelectionService.RemoveFromSelection(clickedObject);
+                        WorldPolygonSelectionService.RemoveFromSelectionWithoutPoints(clickedObject.Parent);
+                        if (WorldPolygonPointSelectionService.SelectedMapObject != null)
+                            WorldPolygonSelectionService.MakeLastSelected(WorldPolygonPointSelectionService.SelectedMapObject.Parent);
+                    }
+                    else
+                    {
+                        WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
+                        WorldPolygonPointSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    }
                 }
                 else
                 {
-                    ClearWorldPolygonSelection();
-                    AddWorldPolygonPointToSelection(clickedObject, false);
-                    MakeWorldPolygonPointLastSelected(clickedObject);
+                    WorldPolygonSelectionService.ClearSelection();
+                    WorldPolygonPointSelectionService.ClearSelection();
+                    WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
+                    WorldPolygonPointSelectionService.SelectAndMakeLastSelected(clickedObject);
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -1919,187 +1871,8 @@ namespace TPMapEditor
 
         private void MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ClearWorldPolygonSelection();
-        }
-
-        private void CtrlSelectWorldPolygon(WorldPolygon worldPolygon)
-        {
-            if (worldPolygon.IsSelected)
-            {
-                if (worldPolygon.IsLastSelected)
-                {
-                    RemoveWorldPolygonFromSelection(worldPolygon);
-                }
-                else
-                {
-                    MakeWorldPolygonLastSelected(worldPolygon);
-                }
-            }
-            else
-            {
-                AddWorldPolygonToSelection(worldPolygon); //Make last selected from ObservableCollection on CollectionChanged
-            }
-        }
-
-        private void RemoveWorldPolygonFromSelection(WorldPolygon worldPolygon)
-        {
-            SelectedWorldPolygons.Remove(worldPolygon);
-        }
-
-        private void UnselectWorldPolygon(WorldPolygon worldPolygon)
-        {
-            worldPolygon.IsSelected = false;
-            foreach (var p in worldPolygon.Points)
-            {
-                RemoveWorldPolygonPointFromSelection(p);
-            }
-        }
-
-        private void MakeWorldPolygonLastSelected(WorldPolygon worldPolygon)
-        {
-            if (SelectedWorldPolygon != null)
-            {
-                SelectedWorldPolygon.IsLastSelected = false;
-            }
-            SelectedWorldPolygon = worldPolygon;
-            if (SelectedWorldPolygon != null)
-            {
-                SelectedWorldPolygon.IsLastSelected = true;
-                SelectedElement = (UIElement)WorldPolygonItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPolygon);
-            }
-        }
-
-        private void AddWorldPolygonToSelection(WorldPolygon worldPolygon)
-        {
-            if (!worldPolygon.IsSelected)
-                SelectedWorldPolygons.Add(worldPolygon);
-        }
-
-        private void AddWorldPolygonNoPointsToSelection(WorldPolygon worldPolygon)
-        {
-            if (!worldPolygon.IsSelected)
-            {
-                var selectedPoints = worldPolygon.Points.Where((p) => p.IsSelected == true).ToArray(); //Save current selection
-                SelectedWorldPolygons.Add(worldPolygon); //Triggers selection on all points
-                foreach (var p in worldPolygon.Points)
-                {
-                    if (p.IsSelected && !selectedPoints.Contains(p))
-                    {
-                        RemoveWorldPolygonPointFromSelection(p);
-                    }
-                    else if (!p.IsSelected && selectedPoints.Contains(p))
-                    {
-                        AddWorldPolygonPointToSelection(p);
-                    }
-                }
-            }
-        }
-
-        private void SelectWorldPolygon(WorldPolygon worldPolygon)
-        {
-            worldPolygon.IsSelected = true;
-            foreach (var p in worldPolygon.Points)
-            {
-                AddWorldPolygonPointToSelection(p);
-            }
-        }
-
-        private void AddWorldPolygonPointToSelection(WorldPolygonPoint worldPolygonPoint, bool selectOtherPathPoints = true)
-        {
-            if (!worldPolygonPoint.IsSelected)
-            {
-                SelectWorldPolygonPoint(worldPolygonPoint);
-                SelectedWorldPolygonPoints.Add(worldPolygonPoint);
-                if (selectOtherPathPoints)
-                    AddWorldPolygonToSelection(worldPolygonPoint.Parent);
-                else
-                    AddWorldPolygonNoPointsToSelection(worldPolygonPoint.Parent);
-            }
-        }
-
-        private void SelectWorldPolygonPoint(WorldPolygonPoint worldPolygonPoint)
-        {
-            worldPolygonPoint.IsSelected = true;
-        }
-
-        private void RemoveWorldPolygonPointFromSelection(WorldPolygonPoint worldPolygonPoint)
-        {
-            UnselectWorldPolygonPoint(worldPolygonPoint);
-            SelectedWorldPolygonPoints.Remove(worldPolygonPoint);
-            if (!HasWorldPolygonOneSelectedPoint(worldPolygonPoint.Parent))
-                RemoveWorldPolygonFromSelection(worldPolygonPoint.Parent);
-        }
-
-        private bool HasWorldPolygonOneSelectedPoint(WorldPolygon worldPolygon)
-        {
-            foreach (var p in worldPolygon.Points)
-            {
-                if (p.IsSelected) return true;
-            }
-            return false;
-        }
-
-        private void UnselectWorldPolygonPoint(WorldPolygonPoint worldPolygonPoint)
-        {
-            worldPolygonPoint.IsSelected = false;
-            if (worldPolygonPoint.IsLastSelected)
-            {
-                worldPolygonPoint.IsLastSelected = false;
-                SelectedWorldPolygonPoint = null;
-            }
-        }
-
-        private void CtrlSelectWorldPolygonPoint(WorldPolygonPoint worldPolygonPoint)
-        {
-            if (worldPolygonPoint.IsSelected)
-            {
-                if (worldPolygonPoint.IsLastSelected)
-                {
-                    RemoveWorldPolygonPointFromSelection(worldPolygonPoint);
-                }
-                else
-                {
-                    MakeWorldPolygonPointLastSelected(worldPolygonPoint);
-                }
-            }
-            else
-            {
-                AddWorldPolygonPointToSelection(worldPolygonPoint, false);
-                MakeWorldPolygonPointLastSelected(worldPolygonPoint);
-            }
-        }
-
-        private void MakeWorldPolygonPointLastSelected(WorldPolygonPoint worldPolygonPoint)
-        {
-            if (SelectedWorldPolygonPoint != null)
-            {
-                SelectedWorldPolygonPoint.IsLastSelected = false;
-            }
-            worldPolygonPoint.IsLastSelected = true;
-            SelectedWorldPolygonPoint = worldPolygonPoint;
-            MakeWorldPolygonLastSelected(worldPolygonPoint.Parent);
-        }
-
-        private void ClearWorldPolygonSelection()
-        {
-            foreach (var v in SelectedWorldPolygons)
-            {
-                v.IsSelected = v.IsLastSelected = false;
-            }
-            SelectedWorldPolygons.Clear();
-            SelectedWorldPolygon = null;
-            SelectedElement = null;
-            ClearWorldPolygonPointSelection();
-        }
-
-        private void ClearWorldPolygonPointSelection()
-        {
-            foreach (var v in SelectedWorldPolygonPoints)
-            {
-                v.IsSelected = v.IsLastSelected = false;
-            }
-            SelectedWorldPolygonPoints.Clear();
-            SelectedWorldPolygonPoint = null;
+            WorldPolygonSelectionService.ClearSelection();
+            WorldPolygonPointSelectionService.ClearSelection();
         }
 
         private void MoveWorldPolygonPointCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -2149,9 +1922,9 @@ namespace TPMapEditor
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
             //move wot selection
-            for (var i = 0; i < SelectedWorldPolygonPoints.Count; i++)
+            for (var i = 0; i < WorldPolygonPointSelectionService.SelectedMapObjects.Count; i++)
             {
-                var selectedObject = SelectedWorldPolygonPoints[i];
+                var selectedObject = WorldPolygonPointSelectionService.SelectedMapObjects[i];
                 selectedObject.X += x;
                 selectedObject.Y -= y;
             }
@@ -2160,7 +1933,7 @@ namespace TPMapEditor
 
         private void DeleteWorldPolygonPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in SelectedWorldPolygonPoints)
+            foreach (var p in WorldPolygonPointSelectionService.SelectedMapObjects)
             {
                 p.Parent.Points.Remove(p);
                 //remove path if no more points
@@ -2169,13 +1942,12 @@ namespace TPMapEditor
                     Map.WorldPolygons.Remove(p.Parent);
                     if (p.Parent.IsLastSelected)
                     {
-                        SelectedWorldPolygon = null;
-                        SelectedElement = null;
+                        WorldPolygonSelectionService.RemoveFromSelection(p.Parent);
                     }
                 }
             }
-            SelectedWorldPolygonPoints.Clear();
-            SelectedWorldPolygonPoint = null;
+            WorldPolygonSelectionService.ClearSelection();
+            WorldPolygonPointSelectionService.ClearSelection();
         }
 
         private void MapGridOutsideWorldPolygonPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2193,9 +1965,10 @@ namespace TPMapEditor
             var point = new WorldPolygonPoint(worldPolygon, Canvas.GetLeft(WorldPolygonPreviewControl) + WorldPolygonPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPreviewControl) - WorldPolygonPreviewControl.ActualHeight / 2);
             worldPolygon.Points.Add(point);
             Map.WorldPolygons.Add(worldPolygon);
-            ClearWorldPolygonSelection();
-            AddWorldPolygonToSelection(worldPolygon);
-            MakeWorldPolygonPointLastSelected(point);
+            WorldPolygonSelectionService.ClearSelection();
+            WorldPolygonPointSelectionService.ClearSelection();
+            WorldPolygonSelectionService.SelectAndMakeLastSelected(worldPolygon);
+            WorldPolygonPointSelectionService.SelectAndMakeLastSelected(point);
             AddWorldPolygonPointRadioButton.IsChecked = true;
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
@@ -2208,12 +1981,12 @@ namespace TPMapEditor
 
         private void WorldPolygonPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedWorldPolygon != null)
+            if (WorldPolygonSelectionService.SelectedMapObject != null)
             {
-                var point = new WorldPolygonPoint(SelectedWorldPolygon, Canvas.GetLeft(WorldPolygonPointPreviewControl) + WorldPolygonPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPointPreviewControl) - WorldPolygonPointPreviewControl.ActualHeight / 2);
-                AddWorldPolygonPointToSelection(point, false);
-                MakeWorldPolygonPointLastSelected(point);
-                SelectedWorldPolygon.Points.Add(point);
+                var point = new WorldPolygonPoint(WorldPolygonSelectionService.SelectedMapObject, Canvas.GetLeft(WorldPolygonPointPreviewControl) + WorldPolygonPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPointPreviewControl) - WorldPolygonPointPreviewControl.ActualHeight / 2);
+                WorldPolygonPointSelectionService.SelectAndMakeLastSelected(point);
+                WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(WorldPolygonSelectionService.SelectedMapObject);
+                WorldPolygonSelectionService.SelectedMapObject.Points.Add(point);
             }
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
@@ -2270,7 +2043,6 @@ namespace TPMapEditor
                 EnableRotateWorldPoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
-            SelectedElement = (UIElement)WorldPointSetItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPointSet);
         }
 
         private void HideWorldPointSetElements()
@@ -2301,12 +2073,24 @@ namespace TPMapEditor
 
                 if (ctrlPressed)
                 {
-                    CtrlSelectWorldPointSet(clickedObject);
+                    if (clickedObject.IsLastSelected)
+                    {
+                        WorldPointSetSelectionService.RemoveFromSelection(clickedObject);
+                    }
+                    else
+                    {
+                        WorldPointSetSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    }
                 }
                 else
                 {
-                    ClearWorldPointSetSelection();
-                    AddWorldPointSetToSelection(clickedObject);
+                    WorldPointSetSelectionService.ClearSelection();
+                    WorldPointSelectionService.ClearSelection();
+                    WorldPointSetSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    foreach (var item in clickedObject.Points)
+                    {
+                        WorldPointSelectionService.SelectAndMakeLastSelected(item);
+                    }
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -2322,13 +2106,25 @@ namespace TPMapEditor
 
                 if (ctrlPressed)
                 {
-                    CtrlSelectWorldPoint(clickedObject);
+                    if (clickedObject.IsLastSelected)
+                    {
+                        WorldPointSelectionService.RemoveFromSelection(clickedObject);
+                        WorldPointSetSelectionService.RemoveFromSelectionWithoutPoints(clickedObject.Parent);
+                        if (WorldPointSelectionService.SelectedMapObject != null)
+                            WorldPointSetSelectionService.MakeLastSelected(WorldPointSelectionService.SelectedMapObject.Parent);
+                    }
+                    else
+                    {
+                        WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
+                        WorldPointSelectionService.SelectAndMakeLastSelected(clickedObject);
+                    }
                 }
                 else
                 {
-                    ClearWorldPointSetSelection();
-                    AddWorldPointToSelection(clickedObject, false);
-                    MakeWorldPointLastSelected(clickedObject);
+                    WorldPointSetSelectionService.ClearSelection();
+                    WorldPointSelectionService.ClearSelection();
+                    WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
+                    WorldPointSelectionService.SelectAndMakeLastSelected(clickedObject);
                 }
 
                 if (MoveCheckBox.IsChecked == false)
@@ -2338,187 +2134,8 @@ namespace TPMapEditor
 
         private void MapGridOutsideWorldPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ClearWorldPointSetSelection();
-        }
-
-        private void CtrlSelectWorldPointSet(WorldPointSet worldPolygon)
-        {
-            if (worldPolygon.IsSelected)
-            {
-                if (worldPolygon.IsLastSelected)
-                {
-                    RemoveWorldPointSetFromSelection(worldPolygon);
-                }
-                else
-                {
-                    MakeWorldPointSetLastSelected(worldPolygon);
-                }
-            }
-            else
-            {
-                AddWorldPointSetToSelection(worldPolygon); //Make last selected from ObservableCollection on CollectionChanged
-            }
-        }
-
-        private void RemoveWorldPointSetFromSelection(WorldPointSet worldPolygon)
-        {
-            SelectedWorldPointSets.Remove(worldPolygon);
-        }
-
-        private void UnselectWorldPointSet(WorldPointSet worldPolygon)
-        {
-            worldPolygon.IsSelected = false;
-            foreach (var p in worldPolygon.Points)
-            {
-                RemoveWorldPointFromSelection(p);
-            }
-        }
-
-        private void MakeWorldPointSetLastSelected(WorldPointSet worldPolygon)
-        {
-            if (SelectedWorldPointSet != null)
-            {
-                SelectedWorldPointSet.IsLastSelected = false;
-            }
-            SelectedWorldPointSet = worldPolygon;
-            if (SelectedWorldPointSet != null)
-            {
-                SelectedWorldPointSet.IsLastSelected = true;
-                SelectedElement = (UIElement)WorldPointSetItemsControl.ItemContainerGenerator.ContainerFromItem(SelectedWorldPointSet);
-            }
-        }
-
-        private void AddWorldPointSetToSelection(WorldPointSet worldPolygon)
-        {
-            if (!worldPolygon.IsSelected)
-                SelectedWorldPointSets.Add(worldPolygon);
-        }
-
-        private void AddWorldPointSetNoPointsToSelection(WorldPointSet worldPolygon)
-        {
-            if (!worldPolygon.IsSelected)
-            {
-                var selectedPoints = worldPolygon.Points.Where((p) => p.IsSelected == true).ToArray(); //Save current selection
-                SelectedWorldPointSets.Add(worldPolygon); //Triggers selection on all points
-                foreach (var p in worldPolygon.Points)
-                {
-                    if (p.IsSelected && !selectedPoints.Contains(p))
-                    {
-                        RemoveWorldPointFromSelection(p);
-                    }
-                    else if (!p.IsSelected && selectedPoints.Contains(p))
-                    {
-                        AddWorldPointToSelection(p);
-                    }
-                }
-            }
-        }
-
-        private void SelectWorldPointSet(WorldPointSet worldPolygon)
-        {
-            worldPolygon.IsSelected = true;
-            foreach (var p in worldPolygon.Points)
-            {
-                AddWorldPointToSelection(p);
-            }
-        }
-
-        private void AddWorldPointToSelection(WorldPoint worldPolygonPoint, bool selectOtherPathPoints = true)
-        {
-            if (!worldPolygonPoint.IsSelected)
-            {
-                SelectWorldPoint(worldPolygonPoint);
-                SelectedWorldPoints.Add(worldPolygonPoint);
-                if (selectOtherPathPoints)
-                    AddWorldPointSetToSelection(worldPolygonPoint.Parent);
-                else
-                    AddWorldPointSetNoPointsToSelection(worldPolygonPoint.Parent);
-            }
-        }
-
-        private void SelectWorldPoint(WorldPoint worldPolygonPoint)
-        {
-            worldPolygonPoint.IsSelected = true;
-        }
-
-        private void RemoveWorldPointFromSelection(WorldPoint worldPolygonPoint)
-        {
-            UnselectWorldPoint(worldPolygonPoint);
-            SelectedWorldPoints.Remove(worldPolygonPoint);
-            if (!HasWorldPointSetOneSelectedPoint(worldPolygonPoint.Parent))
-                RemoveWorldPointSetFromSelection(worldPolygonPoint.Parent);
-        }
-
-        private bool HasWorldPointSetOneSelectedPoint(WorldPointSet worldPolygon)
-        {
-            foreach (var p in worldPolygon.Points)
-            {
-                if (p.IsSelected) return true;
-            }
-            return false;
-        }
-
-        private void UnselectWorldPoint(WorldPoint worldPolygonPoint)
-        {
-            worldPolygonPoint.IsSelected = false;
-            if (worldPolygonPoint.IsLastSelected)
-            {
-                worldPolygonPoint.IsLastSelected = false;
-                SelectedWorldPoint = null;
-            }
-        }
-
-        private void CtrlSelectWorldPoint(WorldPoint worldPolygonPoint)
-        {
-            if (worldPolygonPoint.IsSelected)
-            {
-                if (worldPolygonPoint.IsLastSelected)
-                {
-                    RemoveWorldPointFromSelection(worldPolygonPoint);
-                }
-                else
-                {
-                    MakeWorldPointLastSelected(worldPolygonPoint);
-                }
-            }
-            else
-            {
-                AddWorldPointToSelection(worldPolygonPoint, false);
-                MakeWorldPointLastSelected(worldPolygonPoint);
-            }
-        }
-
-        private void MakeWorldPointLastSelected(WorldPoint worldPolygonPoint)
-        {
-            if (SelectedWorldPoint != null)
-            {
-                SelectedWorldPoint.IsLastSelected = false;
-            }
-            worldPolygonPoint.IsLastSelected = true;
-            SelectedWorldPoint = worldPolygonPoint;
-            MakeWorldPointSetLastSelected(worldPolygonPoint.Parent);
-        }
-
-        private void ClearWorldPointSetSelection()
-        {
-            foreach (var v in SelectedWorldPointSets)
-            {
-                v.IsSelected = v.IsLastSelected = false;
-            }
-            SelectedWorldPointSets.Clear();
-            SelectedWorldPointSet = null;
-            SelectedElement = null;
-            ClearWorldPointSelection();
-        }
-
-        private void ClearWorldPointSelection()
-        {
-            foreach (var v in SelectedWorldPoints)
-            {
-                v.IsSelected = v.IsLastSelected = false;
-            }
-            SelectedWorldPoints.Clear();
-            SelectedWorldPoint = null;
+            WorldPointSetSelectionService.ClearSelection();
+            WorldPointSelectionService.ClearSelection();
         }
 
         private void MoveWorldPointCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -2568,9 +2185,9 @@ namespace TPMapEditor
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
             //move wot selection
-            for (var i = 0; i < SelectedWorldPoints.Count; i++)
+            for (var i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
             {
-                var selectedObject = SelectedWorldPoints[i];
+                var selectedObject = WorldPointSelectionService.SelectedMapObjects[i];
                 selectedObject.X += x;
                 selectedObject.Y -= y;
             }
@@ -2579,7 +2196,7 @@ namespace TPMapEditor
 
         private void DeleteWorldPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in SelectedWorldPoints)
+            foreach (var p in WorldPointSelectionService.SelectedMapObjects)
             {
                 p.Parent.Points.Remove(p);
                 //remove path if no more points
@@ -2588,13 +2205,12 @@ namespace TPMapEditor
                     Map.WorldPointSets.Remove(p.Parent);
                     if (p.Parent.IsLastSelected)
                     {
-                        SelectedWorldPointSet = null;
-                        SelectedElement = null;
+                        WorldPointSetSelectionService.RemoveFromSelection(p.Parent);
                     }
                 }
             }
-            SelectedWorldPoints.Clear();
-            SelectedWorldPoint = null;
+            WorldPointSetSelectionService.ClearSelection();
+            WorldPointSelectionService.ClearSelection();
         }
 
         private void MapGridOutsideWorldPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2608,13 +2224,14 @@ namespace TPMapEditor
 
         private void WorldPointSetPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPolygon = new WorldPointSet(Map, NamedMapObject.GenerateName("WorldPointSet", Map.WorldPointSets));
-            var point = new WorldPoint(worldPolygon, Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
-            worldPolygon.Points.Add(point);
-            Map.WorldPointSets.Add(worldPolygon);
-            ClearWorldPointSetSelection();
-            AddWorldPointSetToSelection(worldPolygon);
-            MakeWorldPointLastSelected(point);
+            var worldPointSet = new WorldPointSet(Map, NamedMapObject.GenerateName("WorldPointSet", Map.WorldPointSets));
+            var point = new WorldPoint(worldPointSet, Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
+            worldPointSet.Points.Add(point);
+            Map.WorldPointSets.Add(worldPointSet);
+            WorldPointSetSelectionService.ClearSelection();
+            WorldPointSelectionService.ClearSelection();
+            WorldPointSetSelectionService.SelectAndMakeLastSelected(worldPointSet);
+            WorldPointSelectionService.SelectAndMakeLastSelected(point);
             AddWorldPointSetPointRadioButton.IsChecked = true;
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
@@ -2627,12 +2244,12 @@ namespace TPMapEditor
 
         private void WorldPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedWorldPointSet != null)
+            if (WorldPointSetSelectionService.SelectedMapObject != null)
             {
-                var point = new WorldPoint(SelectedWorldPointSet, Canvas.GetLeft(WorldPointPreviewControl) + WorldPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointPreviewControl) - WorldPointPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
-                AddWorldPointToSelection(point, false);
-                MakeWorldPointLastSelected(point);
-                SelectedWorldPointSet.Points.Add(point);
+                var point = new WorldPoint(WorldPointSetSelectionService.SelectedMapObject, Canvas.GetLeft(WorldPointPreviewControl) + WorldPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointPreviewControl) - WorldPointPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
+                WorldPointSelectionService.SelectAndMakeLastSelected(point);
+                WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(WorldPointSetSelectionService.SelectedMapObject);
+                WorldPointSetSelectionService.SelectedMapObject.Points.Add(point);
             }
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
@@ -2678,9 +2295,9 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                for (int i = 0; i < SelectedWorldPoints.Count; i++)
+                for (int i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
                 {
-                    var worldPoint = SelectedWorldPoints[i];
+                    var worldPoint = WorldPointSelectionService.SelectedMapObjects[i];
                     var newRotation = worldPoint.ZRotation + (e.Delta > 0 ? step : -step);
                     worldPoint.ZRotation = GetRotation(newRotation);
                     e.Handled = true;
