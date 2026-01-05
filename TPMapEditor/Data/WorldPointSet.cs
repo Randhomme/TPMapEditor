@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldPointSet : SelectableNamedMapObject
+    public partial class WorldPointSet : MultiPointNamedMapObject<WorldPoint>
     {
         public static string DefaultName => "POINT SET";
 
@@ -18,18 +18,11 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private Color color = Colors.Black;
 
-        public ObservableCollection<WorldPoint> Points { get; }
-
         public Func<WorldPoint> WorldPointFactory { get; }
 
         public WorldPointSet(WorldMap map, string name) : base(map, name)
         {
             WorldPointFactory = () => new(this, 0, 0, 0, 0);
-            Points = new ObservableCollection<WorldPoint>();
-            Points.CollectionChanged += (s, e) =>
-            {
-                OnPropertyChanged(nameof(Points));
-            };
         }
 
         protected override bool IsNameTaken(string name)

@@ -6,20 +6,14 @@ using System.Windows.Media;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldPolygon : SelectableNamedMapObject
+    public partial class WorldPolygon : MultiPointNamedMapObject<WorldPolygonPoint>
     {
         [ObservableProperty]
         private Color color; // for visual purpose only, not used in the map file
-        public ObservableCollection<WorldPolygonPoint> Points { get; set; }
         public Func<WorldPolygonPoint> WorldPolygonPointFactory { get; }
         public WorldPolygon(WorldMap map, string name) : base(map, name)
         {
             WorldPolygonPointFactory = () => new(this, 0, 0);
-            Points = new ObservableCollection<WorldPolygonPoint>();
-            Points.CollectionChanged += (s, e) =>
-            {
-                OnPropertyChanged(nameof(Points));
-            };
             this.color = Colors.Black;
         }
 
