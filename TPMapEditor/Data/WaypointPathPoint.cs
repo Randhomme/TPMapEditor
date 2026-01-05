@@ -13,6 +13,8 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isSelected, isLastSelected, isShownOnUi = true;
         [ObservableProperty]
+        private int zIndex = 0;
+        [ObservableProperty]
         private WaypointPath parent;
 
         public WaypointPathPoint(WaypointPath parent, double x, double y, double z) : base(x, y, z)

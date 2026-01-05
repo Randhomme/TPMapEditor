@@ -14,6 +14,8 @@ namespace TPMapEditor.Data
         private bool isSelected, isLastSelected, isShownOnUi = true;
         [ObservableProperty]
         private WorldPolygon parent;
+        [ObservableProperty]
+        private int zIndex = 0;
 
         public WorldPolygonPoint(WorldPolygon parent, double x, double y) : base(x, y)
         {

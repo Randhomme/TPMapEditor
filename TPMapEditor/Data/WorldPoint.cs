@@ -11,6 +11,8 @@ namespace TPMapEditor.Data
         private WorldPointSet parent;
         [ObservableProperty]
         private bool isSelected, isLastSelected, isShownOnUi = true;
+        [ObservableProperty]
+        private int zIndex = 0;
 
         public WorldPoint(WorldPointSet parent, double x, double y, double z, double zRotation) : base(x, y, z)
         {
