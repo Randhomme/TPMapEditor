@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Ink;
 using TPMapEditor.Enums;
+using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data.Rule

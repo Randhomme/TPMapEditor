@@ -3,6 +3,7 @@ using System;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using TPMapEditor.Data.Rule;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {

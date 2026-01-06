@@ -6,6 +6,7 @@ using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
 using TPMapEditor.Exceptions;
+using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Settings;
 using TPMapEditor.Utils;
 
@@ -901,7 +902,9 @@ namespace TPMapEditor.Data
         {
             ReadSection("PlayerAllianceInfoVector - Element", () =>
             {
-                var playerAlliance = new PlayerAlliance(map.Players[reader.ReadAndParseInt("Player0 Int ")], map.Players[reader.ReadAndParseInt("Player1 Int ")]);
+                var player0 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player0 Int ")) ?? Player.DefaultPlayer;
+                var player1 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player1 Int ")) ?? Player.DefaultPlayer;
+                var playerAlliance = new PlayerAlliance(player0, player1);
                 map.PlayerAlliances.Add(playerAlliance);
             });
         }

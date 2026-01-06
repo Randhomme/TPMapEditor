@@ -1,6 +1,7 @@
-﻿using TPMapEditor.Interfaces;
+﻿using TPMapEditor.Data;
+using TPMapEditor.Interfaces;
 
-namespace TPMapEditor.Data
+namespace TPMapEditor.Interfaces.Implementations
 {
     public abstract partial class NamedMapObject : NamedObject, IMapObject
     {

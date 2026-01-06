@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using TPMapEditor.Enums;
+using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data.Rule

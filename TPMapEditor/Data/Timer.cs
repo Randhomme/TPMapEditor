@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
     public partial class Timer : NamedMapObject
     {
         [ObservableProperty]
-        private bool status;
+        private bool status = false;
         [ObservableProperty]
-        private double startTime;
+        private double startTime = 0;
+
+        public Timer(WorldMap map) : base(map, GenerateName("Timer", map.Timers))
+        {
+        }
 
         public Timer(WorldMap map, string name, bool status, float startTime) : base(map, name)
         {

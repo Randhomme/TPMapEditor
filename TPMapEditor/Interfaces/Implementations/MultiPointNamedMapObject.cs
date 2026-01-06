@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TPMapEditor.Interfaces;
+using TPMapEditor.Data;
 
-namespace TPMapEditor.Data
+namespace TPMapEditor.Interfaces.Implementations
 {
     public abstract class MultiPointNamedMapObject<T> : SelectableNamedMapObject, IMultiPointMapObject<T> where T : ISelectableMapObject
     {

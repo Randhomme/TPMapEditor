@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Utils;
 
-namespace TPMapEditor.Data
+namespace TPMapEditor.Interfaces.Implementations
 {
     public abstract partial class NamedObject : CustomObservableValidator, INamedObject
     {

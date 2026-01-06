@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
 using TPMapEditor.Interfaces;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {

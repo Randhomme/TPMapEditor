@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {

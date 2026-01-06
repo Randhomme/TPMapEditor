@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using TPMapEditor.Enums.WorldObjectDefinition;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {

@@ -1,16 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using TPMapEditor.Interfaces;
+using TPMapEditor.Data;
 
-namespace TPMapEditor.Data
+namespace TPMapEditor.Interfaces.Implementations
 {
-    public abstract partial class SelectableNamedMapObject : NamedMapObject, ISelectableMapObject
+    public abstract partial class SelectableMapObject : MapObject, ISelectableMapObject
     {
         [ObservableProperty]
         private bool isSelected, isLastSelected, isShownOnUi = true;
         [ObservableProperty]
         private int zIndex = 0;
 
-        protected SelectableNamedMapObject(WorldMap map, string name) : base(map, name)
+        protected SelectableMapObject(WorldMap map) : base(map)
         {
         }
     }

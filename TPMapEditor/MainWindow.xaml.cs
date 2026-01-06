@@ -25,6 +25,7 @@ using TPMapEditor.Utils.KeyboardShortcuts;
 using TPMapEditor.Services;
 using TPMapEditor.Services.Implementations;
 using TPMapEditor.Interfaces;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor
 {
@@ -612,37 +613,37 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnHKey()
         {
-            GetKeyboardShortcutApplier()?.OnHKey();
+            GetKeyboardShortcutService()?.OnHKey();
         }
 
         [RelayCommand]
         private void OnShiftHKey()
         {
-            GetKeyboardShortcutApplier()?.OnShiftHKey();
+            GetKeyboardShortcutService()?.OnShiftHKey();
         }
 
         [RelayCommand]
         private void OnCtrlHKey()
         {
-            GetKeyboardShortcutApplier()?.OnCtrlHKey();
+            GetKeyboardShortcutService()?.OnCtrlHKey();
         }
 
         [RelayCommand]
         private void OnAKey()
         {
-            GetKeyboardShortcutApplier()?.OnAKey();
+            GetKeyboardShortcutService()?.OnAKey();
         }
 
         [RelayCommand]
         private void OnShiftAKey()
         {
-            GetKeyboardShortcutApplier()?.OnShiftAKey();
+            GetKeyboardShortcutService()?.OnShiftAKey();
         }
 
         [RelayCommand]
         private void OnCtrlAKey()
         {
-            GetKeyboardShortcutApplier()?.OnCtrlAKey();
+            GetKeyboardShortcutService()?.OnCtrlAKey();
         }
 
         #endregion
@@ -850,7 +851,7 @@ namespace TPMapEditor
             }, true, notifyOnFinish);
         }
 
-        private ISelectionKeyboardShortcutService? GetKeyboardShortcutApplier()
+        private ISelectionKeyboardShortcutService? GetKeyboardShortcutService()
         {
             if (WorldObjectRadioButton.IsChecked == true)
             {
@@ -860,18 +861,18 @@ namespace TPMapEditor
             {
                 return playerSelectionKeyboardShortcutService;
             }
-            //else if (WaypointPathRadioButton.IsChecked == true)
-            //{
-            //    return waypointPathKeyboardShortcutApplier;
-            //}
-            //else if (WorldPolygonRadioButton.IsChecked == true)
-            //{
-            //    return worldPolygonKeyboardShortcutApplier;
-            //}
-            //else if (WorldPointSetRadioButton.IsChecked == true)
-            //{
-            //    return worldPointSetKeyboardShortcutApplier;
-            //}
+            else if (WaypointPathRadioButton.IsChecked == true)
+            {
+                return waypointPathSelectionKeyboardShortcutService;
+            }
+            else if (WorldPolygonRadioButton.IsChecked == true)
+            {
+                return worldPolygonSelectionKeyboardShortcutService;
+            }
+            else if (WorldPointSetRadioButton.IsChecked == true)
+            {
+                return worldPointSetSelectionKeyboardShortcutService;
+            }
             else if (ObjectivePointRadioButton.IsChecked == true)
             {
                 return objectivePointSelectionKeyboardShortcutService;
