@@ -30,6 +30,7 @@
                 <ResourceDictionary Source="/DataTemplate/RuleConditionTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/RuleActionTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/WorldRuleTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/SelectionTransformViewModelTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
