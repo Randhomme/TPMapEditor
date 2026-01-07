@@ -57,6 +57,15 @@
                 <MenuItem Header="World polygons" Command="{Binding WorldPolygonsEditCommand}"/>
                 <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
             </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Transform">
+                    <MenuItem Header="Align" Command="{Binding AlignTransformCommand}"/>
+                    <MenuItem Header="Distribute" Command="{Binding DistributeTransformCommand}"/>
+                    <MenuItem Header="Move" Command="{Binding TranslateTransformCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
+            </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
                 <MenuItem Header="Reload">
@@ -111,6 +120,21 @@
                             <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding PlayerSelectionService.SelectedMapObject}"/>
                             <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding PlayerSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                             <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding PlayerSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=WaypointPathRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'WaypointPathSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding WaypointPathSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding WaypointPathSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding WaypointPathSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=WorldPolygonRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'WorldPolygonSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding WorldPolygonSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding WorldPolygonSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding WorldPolygonSelectionService.SelectedMapObject}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=WorldPointSetRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'WorldPointSetSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
+                            <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding WorldPointSetSelectionService.SelectedMapObject}"/>
+                            <TextBox Margin="0" Width="25" Panel.ZIndex="-1" Text="{Binding WorldPointSetSelectionService.SelectedMapObject.ZIndex}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                            <Button ToolTip="Increase Z index" Margin="-1,0,0,0" Width="25" Content="+" Command="{Binding IncreaseZIndexCommand}" CommandParameter="{Binding WorldPointSetSelectionService.SelectedMapObject}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Visibility="{c:Binding ElementName=ObjectivePointRadioButton, Path=IsChecked}" IsEnabled="{c:Binding 'ObjectivePointSelectionService.SelectedMapObject!=null'}" ToolTip="Z index">
                             <Button ToolTip="Decrease Z index" Margin="10,0,-1,0" Width="25" Content="-" Command="{Binding DecreaseZIndexCommand}" CommandParameter="{Binding ObjectivePointSelectionService.SelectedMapObject}"/>

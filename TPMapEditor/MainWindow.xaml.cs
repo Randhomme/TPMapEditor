@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -21,11 +19,12 @@ using TPMapEditor.Enums;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Dialogs;
 using TPMapEditor.Settings;
-using TPMapEditor.Utils.KeyboardShortcuts;
 using TPMapEditor.Services;
 using TPMapEditor.Services.Implementations;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
+using TPMapEditor.ViewModel.SelectionTransform;
+using System.Collections.Generic;
 
 namespace TPMapEditor
 {
@@ -35,9 +34,12 @@ namespace TPMapEditor
     [ObservableObject]
     public partial class MainWindow : Window
     {
+        [ObservableProperty]
+        private WorldObjectType? selectedWorldObjectType;
         private Point moveActionPoint;
         private DateTime lastWheelTime = DateTime.MinValue;
         private AppSettings settings;
+
         private readonly ISelectionKeyboardShortcutService worldObjectSelectionKeyboadShortcutService;
         private readonly ISelectionKeyboardShortcutService playerSelectionKeyboardShortcutService;
         private readonly ISelectionKeyboardShortcutService waypointPathSelectionKeyboardShortcutService;
@@ -45,9 +47,7 @@ namespace TPMapEditor
         private readonly ISelectionKeyboardShortcutService worldPointSetSelectionKeyboardShortcutService;
         private readonly ISelectionKeyboardShortcutService objectivePointSelectionKeyboardShortcutService;
         private readonly ISelectionKeyboardShortcutService mapTextPointSelectionKeyboardShortcutService;
-        [ObservableProperty]
-        private WorldObjectType? selectedWorldObjectType;
-
+        private readonly IUndoManagerService undoManagerService = new UndoManagerService(10);
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
         public IMultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint> WaypointPathSelectionService { get; }
@@ -60,6 +60,9 @@ namespace TPMapEditor
         public ISelectionService<MapTextPoint> MapTextPointSelectionService { get; } = new SelectionService<MapTextPoint>();
 
         public ICollectionView SelectableWorldObjectTypes { get; }
+
+        private ISelectionKeyboardShortcutService currenSelectionKeyboardShortcutService;
+        private IEnumerable<IMovableMapObject> currentMovableSelection;
 
         public WorldMap Map { get; private set; }
 
@@ -79,6 +82,7 @@ namespace TPMapEditor
             worldPointSetSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService);
             objectivePointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService);
             mapTextPointSelectionKeyboardShortcutService = new SelectionKeyboardShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService);
+            undoManagerService.PropertyChanged += UndoManagerService_PropertyChanged;
             InitializeComponent();
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = $"{Title} v{version.Major}.{version.Minor}.{version.Build}";
@@ -89,6 +93,8 @@ namespace TPMapEditor
             HideWorldPointSetElements();
             HideObjectivePointElements();
             HideMapTextPointElements();
+            currenSelectionKeyboardShortcutService = worldObjectSelectionKeyboadShortcutService;
+            currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
         }
 
         #region MenuCommands
@@ -367,6 +373,40 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
+        private void OnAlignTransform()
+        {
+            new SelectionTransformWindow(this, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D() }).Show();
+        }
+
+        [RelayCommand]
+        private void OnDistributeTransform()
+        {
+            new SelectionTransformWindow(this, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D() }).Show();
+        }
+
+        [RelayCommand]
+        private void OnTranslateTransform()
+        {
+            new SelectionTransformWindow(this, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D()}).Show();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanUndo))]
+        private void OnUndo()
+        {
+            undoManagerService.Undo();
+            UndoCommand.NotifyCanExecuteChanged();
+            RedoCommand.NotifyCanExecuteChanged();
+        }
+
+        [RelayCommand(CanExecute = nameof(CanRedo))]
+        private void OnRedo()
+        {
+            undoManagerService.Redo();
+            UndoCommand.NotifyCanExecuteChanged();
+            RedoCommand.NotifyCanExecuteChanged();
+        }
+
+        [RelayCommand]
         private void OnAppSettingsEdit()
         {
             var tpGamePath = settings.TpGamePath;
@@ -613,37 +653,37 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnHKey()
         {
-            GetKeyboardShortcutService()?.OnHKey();
+            currenSelectionKeyboardShortcutService?.OnHKey();
         }
 
         [RelayCommand]
         private void OnShiftHKey()
         {
-            GetKeyboardShortcutService()?.OnShiftHKey();
+            currenSelectionKeyboardShortcutService?.OnShiftHKey();
         }
 
         [RelayCommand]
         private void OnCtrlHKey()
         {
-            GetKeyboardShortcutService()?.OnCtrlHKey();
+            currenSelectionKeyboardShortcutService?.OnCtrlHKey();
         }
 
         [RelayCommand]
         private void OnAKey()
         {
-            GetKeyboardShortcutService()?.OnAKey();
+            currenSelectionKeyboardShortcutService?.OnAKey();
         }
 
         [RelayCommand]
         private void OnShiftAKey()
         {
-            GetKeyboardShortcutService()?.OnShiftAKey();
+            currenSelectionKeyboardShortcutService?.OnShiftAKey();
         }
 
         [RelayCommand]
         private void OnCtrlAKey()
         {
-            GetKeyboardShortcutService()?.OnCtrlAKey();
+            currenSelectionKeyboardShortcutService?.OnCtrlAKey();
         }
 
         #endregion
@@ -851,39 +891,6 @@ namespace TPMapEditor
             }, true, notifyOnFinish);
         }
 
-        private ISelectionKeyboardShortcutService? GetKeyboardShortcutService()
-        {
-            if (WorldObjectRadioButton.IsChecked == true)
-            {
-                return worldObjectSelectionKeyboadShortcutService;
-            }
-            else if (PlayerRadioButton.IsChecked == true)
-            {
-                return playerSelectionKeyboardShortcutService;
-            }
-            else if (WaypointPathRadioButton.IsChecked == true)
-            {
-                return waypointPathSelectionKeyboardShortcutService;
-            }
-            else if (WorldPolygonRadioButton.IsChecked == true)
-            {
-                return worldPolygonSelectionKeyboardShortcutService;
-            }
-            else if (WorldPointSetRadioButton.IsChecked == true)
-            {
-                return worldPointSetSelectionKeyboardShortcutService;
-            }
-            else if (ObjectivePointRadioButton.IsChecked == true)
-            {
-                return objectivePointSelectionKeyboardShortcutService;
-            }
-            else if (MapTextPointRadioButton.IsChecked == true)
-            {
-                return mapTextPointSelectionKeyboardShortcutService;
-            }
-            return null;
-        }
-
         /// <summary>
         /// Validate everything in the map
         /// </summary>
@@ -1050,6 +1057,32 @@ namespace TPMapEditor
             }
         }
 
+        private bool CanUndo() => undoManagerService.CanUndo;
+
+        private bool CanRedo() => undoManagerService.CanRedo;
+
+        private void UndoManagerService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IUndoManagerService.CanUndo))
+            {
+                UndoCommand.NotifyCanExecuteChanged();
+                RedoCommand.NotifyCanExecuteChanged();
+            }
+
+            if (e.PropertyName == nameof(IUndoManagerService.CanRedo))
+            {
+                UndoCommand.NotifyCanExecuteChanged();
+                RedoCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        private bool IsMovableSelection3D()
+        {
+            if (WorldPolygonRadioButton.IsChecked == true)
+                return false;
+            return true;
+        }
+
         #endregion
 
         #region WorldObject
@@ -1081,7 +1114,8 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
-            //CurrentSelectionService = worldObjectSelectionService;
+            currenSelectionKeyboardShortcutService = worldObjectSelectionKeyboadShortcutService;
+            currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
         }
 
         private void HideWorldObjectElements()
@@ -1309,6 +1343,8 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerButton_Click;
+            currenSelectionKeyboardShortcutService = playerSelectionKeyboardShortcutService;
+            currentMovableSelection = PlayerSelectionService.SelectedMapObjects;
         }
 
         private void HidePlayerElements()
@@ -1532,6 +1568,8 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWaypointPathPoint();
+            currenSelectionKeyboardShortcutService = waypointPathSelectionKeyboardShortcutService;
+            currentMovableSelection = WaypointPathPointSelectionService.SelectedMapObjects;
         }
 
         private void HideWaypointPathElements()
@@ -1785,6 +1823,8 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPolygonPoint();
+            currenSelectionKeyboardShortcutService = worldPolygonSelectionKeyboardShortcutService;
+            currentMovableSelection = WorldPolygonPointSelectionService.SelectedMapObjects;
         }
 
         private void HideWorldPolygonElements()
@@ -2044,6 +2084,8 @@ namespace TPMapEditor
                 EnableRotateWorldPoint();
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
+            currenSelectionKeyboardShortcutService = worldPointSetSelectionKeyboardShortcutService;
+            currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
         }
 
         private void HideWorldPointSetElements()
@@ -2349,6 +2391,8 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideObjectivePoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click += DeleteObjectivePointButton_Click;
+            currenSelectionKeyboardShortcutService = objectivePointSelectionKeyboardShortcutService;
+            currentMovableSelection = ObjectivePointSelectionService.SelectedMapObjects;
         }
 
         private void HideObjectivePointElements()
@@ -2522,6 +2566,8 @@ namespace TPMapEditor
             MapGridOutside.MouseLeftButtonDown += MapGridOutsideMapTextPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click += DeleteMapTextPointButton_Click;
+            currenSelectionKeyboardShortcutService = mapTextPointSelectionKeyboardShortcutService;
+            currentMovableSelection = MapTextPointSelectionService.SelectedMapObjects;
         }
 
         private void HideMapTextPointElements()
