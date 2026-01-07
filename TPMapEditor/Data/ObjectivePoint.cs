@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class ObjectivePoint : SelectableNamedMapObject
+    public partial class ObjectivePoint : SelectableNamedMapObject, IMovableMapObject
     {
         public static string DefaultName => "NO OBJECTIVE POINT";
 

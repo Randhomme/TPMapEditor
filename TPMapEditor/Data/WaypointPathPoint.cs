@@ -3,7 +3,7 @@ using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Data
 {
-    public partial class WaypointPathPoint : Point3, ISelectableMapObject
+    public partial class WaypointPathPoint : Point3, ISelectableMapObject, IMovableMapObject
     {
         [ObservableProperty]
         private bool isSelected, isLastSelected, isShownOnUi = true;

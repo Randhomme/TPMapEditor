@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldObject : SelectableMapObject
+    public partial class WorldObject : SelectableMapObject, IMovableMapObject
     {
         private static int nextId = 0;
 

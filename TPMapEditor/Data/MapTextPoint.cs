@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class MapTextPoint : SelectableNamedMapObject
+    public partial class MapTextPoint : SelectableNamedMapObject, IMovableMapObject
     {
         [ObservableProperty]
         private string realText;

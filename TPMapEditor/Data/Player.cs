@@ -3,11 +3,12 @@ using System;
 using System.Linq;
 using System.Windows.Media;
 using TPMapEditor.Enums;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class Player : SelectableNamedMapObject
+    public partial class Player : SelectableNamedMapObject, IMovableMapObject
     {
         public static string DefaultName => "NO PLAYER";
 
