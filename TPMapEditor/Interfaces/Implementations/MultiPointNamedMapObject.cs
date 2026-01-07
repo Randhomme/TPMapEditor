@@ -6,7 +6,7 @@ namespace TPMapEditor.Interfaces.Implementations
 {
     public abstract class MultiPointNamedMapObject<T> : SelectableNamedMapObject, IMultiPointMapObject<T> where T : ISelectableMapObject
     {
-        private readonly ObservableCollection<T> points;
+        private ObservableCollection<T> points;
         public IList<T> Points { get => points; }
 
         protected MultiPointNamedMapObject(WorldMap map, string name) : base(map, name)
@@ -17,5 +17,16 @@ namespace TPMapEditor.Interfaces.Implementations
                 OnPropertyChanged(nameof(Points));
             };
         }
+
+        //public override ISelectableMapObject Copy()
+        //{
+        //    var copy = (MultiPointNamedMapObject<T>)this.MemberwiseClone();
+        //    points = new ObservableCollection<T>();
+        //    for (int i = 0; i < copy.Points.Count; i++)
+        //    {
+        //        points.Add((T)copy.Points[i].Copy());
+        //    }
+        //    return copy;
+        //}
     }
 }

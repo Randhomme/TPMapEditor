@@ -39,5 +39,21 @@ namespace TPMapEditor.Data
         {
             return DefaultName.Contains(name);
         }
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = new WaypointPath(Map, GenerateName($"{Name}_", Map.WaypointPaths))
+            {
+                Color = this.Color
+            };
+            for (int i = 0; i < Points.Count; i++)
+            {
+                var p = (WaypointPathPoint)Points[i].Copy();
+                p.IsSelected = p.IsLastSelected = false;
+                p.Parent = copy;
+                copy.Points.Add(p);
+            }
+            return copy;
+        }
     }
 }

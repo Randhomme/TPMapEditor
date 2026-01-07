@@ -20,5 +20,10 @@ namespace TPMapEditor.Data
             this.zRotation = zRotation;
             this.parent = parent;
         }
+
+        public ISelectableMapObject Copy()
+        {
+            return (ISelectableMapObject)this.MemberwiseClone();
+        }
     }
 }

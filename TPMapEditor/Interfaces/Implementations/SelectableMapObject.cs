@@ -13,5 +13,10 @@ namespace TPMapEditor.Interfaces.Implementations
         protected SelectableMapObject(WorldMap map) : base(map)
         {
         }
+
+        public virtual ISelectableMapObject Copy()
+        {
+            return (ISelectableMapObject)this.MemberwiseClone();
+        }
     }
 }

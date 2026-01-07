@@ -15,5 +15,6 @@ namespace TPMapEditor.Interfaces
         public bool IsLastSelected { get; set; }
         public bool IsShownOnUi { get; set; }
         public int ZIndex { get; set; }
+        public ISelectableMapObject Copy();
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
@@ -39,6 +40,22 @@ namespace TPMapEditor.Data
         public override bool IsDefaultName(string name)
         {
             return name.Equals(DefaultName);
+        }
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = new WorldPointSet(Map, GenerateName($"{Name}_", Map.WorldPointSets))
+            {
+                Color = this.Color
+            };
+            for (int i = 0; i < Points.Count; i++)
+            {
+                var p = (WorldPoint)Points[i].Copy();
+                p.IsSelected = p.IsLastSelected = false;
+                p.Parent = copy;
+                copy.Points.Add(p);
+            }
+            return copy;
         }
     }
 }

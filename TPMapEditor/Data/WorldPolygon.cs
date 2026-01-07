@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
@@ -26,6 +27,22 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = new WorldPolygon(Map, GenerateName($"{Name}_", Map.WaypointPaths))
+            {
+                Color = this.Color
+            };
+            for (int i = 0; i < Points.Count; i++)
+            {
+                var p = (WorldPolygonPoint)Points[i].Copy();
+                p.IsSelected = p.IsLastSelected = false;
+                p.Parent = copy;
+                copy.Points.Add(p);
+            }
+            return copy;
         }
     }
 }
