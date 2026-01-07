@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Services
 {
-    public interface ISelectionKeyboardShortcutService
+    public interface ISelectionKBShortcutService
     {
         /// <summary>
         /// Hides selected objects

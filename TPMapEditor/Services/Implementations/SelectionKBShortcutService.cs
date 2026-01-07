@@ -4,12 +4,12 @@ using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Services.Implementations
 {
-    public class SelectionKeyboardShortcutService<T> : ISelectionKeyboardShortcutService where T : ISelectableMapObject
+    public class SelectionKBShortcutService<T> : ISelectionKBShortcutService where T : ISelectableMapObject
     {
         private IEnumerable<T> mapObjects;
         private ISelectionService<T> selectionService;
 
-        public SelectionKeyboardShortcutService(IEnumerable<T> mapObjects, ISelectionService<T> selectionService)
+        public SelectionKBShortcutService(IEnumerable<T> mapObjects, ISelectionService<T> selectionService)
         {
             this.mapObjects = mapObjects;
             this.selectionService = selectionService;
