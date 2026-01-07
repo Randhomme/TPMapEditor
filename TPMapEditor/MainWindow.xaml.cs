@@ -47,6 +47,7 @@ namespace TPMapEditor
         private readonly ISelectionKBShortcutService worldPointSetSelectionKBShortcutService;
         private readonly ISelectionKBShortcutService objectivePointSelectionKBShortcutService;
         private readonly ISelectionKBShortcutService mapTextPointSelectionKBShortcutService;
+        private readonly ICopyPasteService copyPasteService;
         private readonly IUndoManagerService undoManagerService = new UndoManagerService(10);
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
@@ -72,16 +73,17 @@ namespace TPMapEditor
             SelectableWorldObjectTypes.Filter = WorldObjectType.IsSelectableWorldObjectType;
             settings = new AppSettings();
             Map = new WorldMap();
+            copyPasteService = new CopyPasteService();
             WaypointPathSelectionService = new MultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint>(WaypointPathPointSelectionService);
             WorldPolygonSelectionService = new MultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint>(WorldPolygonPointSelectionService);
             WorldPointSetSelectionService = new MultiPointMapObjectSelectionService<WorldPointSet, WorldPoint>(WorldPointSelectionService);
-            worldObjectSelectionKBShortcutService = new SelectionKBShortcutService<WorldObject>(Map.WorldObjects, WorldObjectSelectionService);
-            playerSelectionKBShortcutService = new SelectionKBShortcutService<Player>(Map.Players, PlayerSelectionService);
-            waypointPathSelectionKBShortcutService = new SelectionKBShortcutService<WaypointPath>(Map.WaypointPaths, WaypointPathSelectionService);
-            worldPolygonSelectionKBShortcutService = new SelectionKBShortcutService<WorldPolygon>(Map.WorldPolygons, WorldPolygonSelectionService);
-            worldPointSetSelectionKBShortcutService = new SelectionKBShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService);
-            objectivePointSelectionKBShortcutService = new SelectionKBShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService);
-            mapTextPointSelectionKBShortcutService = new SelectionKBShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService);
+            worldObjectSelectionKBShortcutService = new SelectionKBShortcutService<WorldObject>(Map.WorldObjects, WorldObjectSelectionService, copyPasteService);
+            playerSelectionKBShortcutService = new SelectionKBShortcutService<Player>(Map.Players, PlayerSelectionService, copyPasteService);
+            waypointPathSelectionKBShortcutService = new SelectionKBShortcutService<WaypointPath>(Map.WaypointPaths, WaypointPathSelectionService, copyPasteService);
+            worldPolygonSelectionKBShortcutService = new SelectionKBShortcutService<WorldPolygon>(Map.WorldPolygons, WorldPolygonSelectionService, copyPasteService);
+            worldPointSetSelectionKBShortcutService = new SelectionKBShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService, copyPasteService);
+            objectivePointSelectionKBShortcutService = new SelectionKBShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService, copyPasteService);
+            mapTextPointSelectionKBShortcutService = new SelectionKBShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService, copyPasteService);
             undoManagerService.PropertyChanged += UndoManagerService_PropertyChanged;
             InitializeComponent();
             var version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -684,6 +686,18 @@ namespace TPMapEditor
         private void OnCtrlAKey()
         {
             currenSelectionKBShortcutService?.OnCtrlAKey();
+        }
+
+        [RelayCommand]
+        private void OnCtrlC()
+        {
+            currenSelectionKBShortcutService.OnCtrlC();
+        }
+
+        [RelayCommand]
+        private void OnCtrlV()
+        {
+            currenSelectionKBShortcutService.OnCtrlV();
         }
 
         #endregion
