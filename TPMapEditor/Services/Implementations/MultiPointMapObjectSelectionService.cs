@@ -53,5 +53,17 @@ namespace TPMapEditor.Services.Implementations
             if (!mapObject.Points.Any((p) => p.IsSelected))
                 base.RemoveFromSelection(mapObject);
         }
+
+        public override void ClearSelection()
+        {
+            foreach (var item in SelectedMapObjects)
+            {
+                foreach (var p in item.Points)
+                {
+                    pointSelectionService.RemoveFromSelection(p);
+                }
+            }
+            base.ClearSelection();
+        }
     }
 }
