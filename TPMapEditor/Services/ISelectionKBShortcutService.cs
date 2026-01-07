@@ -37,5 +37,15 @@ namespace TPMapEditor.Services
         /// Inverts selection.
         /// </summary>
         public void OnCtrlAKey();
+
+        /// <summary>
+        /// Makes a copy of the selection
+        /// </summary>
+        public void OnCtrlC();
+
+        /// <summary>
+        /// Pastes the selection onto the map
+        /// </summary>
+        public void OnCtrlV();
     }
 }

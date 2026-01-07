@@ -6,13 +6,15 @@ namespace TPMapEditor.Services.Implementations
 {
     public class SelectionKBShortcutService<T> : ISelectionKBShortcutService where T : ISelectableMapObject
     {
-        private IEnumerable<T> mapObjects;
-        private ISelectionService<T> selectionService;
+        private readonly IList<T> mapObjects;
+        private readonly ISelectionService<T> selectionService;
+        private readonly ICopyPasteService copyPasteService;
 
-        public SelectionKBShortcutService(IEnumerable<T> mapObjects, ISelectionService<T> selectionService)
+        public SelectionKBShortcutService(IList<T> mapObjects, ISelectionService<T> selectionService, ICopyPasteService copyPasteService)
         {
             this.mapObjects = mapObjects;
             this.selectionService = selectionService;
+            this.copyPasteService = copyPasteService;
         }
 
         public void OnHKey()
@@ -43,6 +45,23 @@ namespace TPMapEditor.Services.Implementations
         public void OnCtrlAKey()
         {
             selectionService.InvertSelection(mapObjects);
+        }
+
+        public void OnCtrlC()
+        {
+            copyPasteService.Copy(selectionService.SelectedMapObjects);
+        }
+
+        public void OnCtrlV()
+        {
+            var pastedItems = copyPasteService.Paste<T>();
+            foreach (var item in pastedItems)
+            {
+                selectionService.RemoveFromSelection(item);
+                mapObjects.Add(item);
+            }
+            selectionService.ClearSelection();
+            selectionService.AddAllToSelection(pastedItems);
         }
     }
 }
