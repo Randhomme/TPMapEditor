@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TPMapEditor.Interfaces
+{
+    /// <summary>
+    /// Represents a map command that can be undone/redone. Cycle is Apply, Commit, Undo/Redo.
+    /// </summary>
+    public interface IUndoableMapCommand
+    {
+        /// <summary>
+        /// Apply the command
+        /// </summary>
+        public void Apply();
+
+        /// <summary>
+        /// Save the changes on the targets
+        /// </summary>
+        public void Commit();
+
+        /// <summary>
+        /// Undo the command
+        /// </summary>
+        public void Undo();
+
+        /// <summary>
+        /// Redo the command
+        /// </summary>
+        public void Redo();
+    }
+}
