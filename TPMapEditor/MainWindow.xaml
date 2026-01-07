@@ -63,8 +63,8 @@
                     <MenuItem Header="Distribute" Command="{Binding DistributeTransformCommand}"/>
                     <MenuItem Header="Move" Command="{Binding TranslateTransformCommand}"/>
                 </MenuItem>
-                <MenuItem Header="Undo" Command="{Binding UndoCommand}"/>
-                <MenuItem Header="Redo" Command="{Binding RedoCommand}"/>
+                <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Redo" InputGestureText="Ctrl+Shift+Z" Command="{Binding RedoCommand}"/>
             </MenuItem>
             <MenuItem Header="App">
                 <MenuItem Header="Settings" Command="{Binding AppSettingsEditCommand}"/>
@@ -191,6 +191,8 @@
                     <KeyBinding Key="A" Command="{Binding AKeyCommand}"/>
                     <KeyBinding Key="A" Modifiers="Shift" Command="{Binding ShiftAKeyCommand}"/>
                     <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding CtrlAKeyCommand}"/>
+                    <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}"/>
+                    <KeyBinding Key="Z" Modifiers="Ctrl+Shift" Command="{Binding RedoCommand}"/>
                 </ScrollViewer.InputBindings>
                 <Grid x:Name="MapGridOutside" Background="Transparent">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
