@@ -237,6 +237,7 @@ namespace TPMapEditor.Controls
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var item in e.OldItems)
                         RemoveWrapper(item);
+                    UpdateFromIndex(e.OldStartingIndex);
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
