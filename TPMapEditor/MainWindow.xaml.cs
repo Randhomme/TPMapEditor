@@ -25,6 +25,7 @@ using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.ViewModel.SelectionTransform;
 using System.Collections.Generic;
+using System.Windows.Controls.Primitives;
 
 namespace TPMapEditor
 {
@@ -39,6 +40,8 @@ namespace TPMapEditor
         private Point moveActionPoint;
         private DateTime lastWheelTime = DateTime.MinValue;
         private AppSettings settings;
+
+        private readonly IReadOnlyList<(Key key, ModifierKeys modifiers, ICommand command)> keyboardShortcut;
 
         private readonly ISelectionKBShortcutService worldObjectSelectionKBShortcutService;
         private readonly ISelectionKBShortcutService playerSelectionKBShortcutService;
@@ -97,6 +100,20 @@ namespace TPMapEditor
             HideMapTextPointElements();
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
             currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
+
+            keyboardShortcut = new List<(Key key, ModifierKeys modifiers, ICommand command)>()
+            {
+                (Key.H, ModifierKeys.None, HKeyCommand),
+                (Key.H, ModifierKeys.Shift, ShiftHKeyCommand),
+                (Key.H, ModifierKeys.Control, CtrlHKeyCommand),
+                (Key.A, ModifierKeys.None, AKeyCommand),
+                (Key.A, ModifierKeys.Shift, ShiftAKeyCommand),
+                (Key.A, ModifierKeys.Control, CtrlAKeyCommand),
+                (Key.C, ModifierKeys.Control, CtrlCKeyCommand),
+                (Key.V, ModifierKeys.Control, CtrlVKeyCommand),
+                (Key.Z, ModifierKeys.Control, UndoCommand),
+                (Key.Z, ModifierKeys.Control | ModifierKeys.Shift, RedoCommand),
+            };
         }
 
         #region MenuCommands
@@ -689,13 +706,13 @@ namespace TPMapEditor
         }
 
         [RelayCommand]
-        private void OnCtrlC()
+        private void OnCtrlCKey()
         {
             currenSelectionKBShortcutService.OnCtrlC();
         }
 
         [RelayCommand]
-        private void OnCtrlV()
+        private void OnCtrlVKey()
         {
             currenSelectionKBShortcutService.OnCtrlV();
         }
@@ -772,35 +789,6 @@ namespace TPMapEditor
             }
         }
 
-        private async Task<Version?> GetLatestGitHubVersionAsync()
-        {
-            try
-            {
-                using var http = new HttpClient();
-
-                // GitHub demande obligatoirement un User-Agent
-                http.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp");
-
-                var url = "https://api.github.com/repos/Randhomme/TPMapEditor/releases/latest";
-
-                var json = await http.GetStringAsync(url);
-
-                using var doc = JsonDocument.Parse(json);
-
-                // Récupère "tag_name" => "v1.4.2"
-                var tag = doc.RootElement.GetProperty("tag_name").GetString();
-
-                if (tag == null)
-                    return null;
-
-                // Supprime le "v"
-                tag = tag.TrimStart('v');
-
-                return Version.TryParse(tag, out var version) ? version : null;
-            }
-            catch { return null; }
-        }
-
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
@@ -832,6 +820,96 @@ namespace TPMapEditor
             e.Handled = true;
         }
 
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            //Disable default Alt behaviour to allow rotation
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) &&
+                (RotateCheckBox.IsChecked == true ||
+                (WorldObjectPreviewControl.Visibility == Visibility.Visible) ||
+                (PlayerPreviewControl.Visibility == Visibility.Visible) ||
+                (WorldPointSetPreviewControl.Visibility == Visibility.Visible) ||
+                (WorldPointPreviewControl.Visibility == Visibility.Visible)))
+                e.Handled = true;
+
+            //Keyboard shortcuts
+            var command = GetKBShortcutCommand(e.Key, Keyboard.Modifiers);
+            if(command!=null && command.CanExecute(null) && !IsTextInputActive())
+            {
+                command.Execute(null);
+                e.Handled = true;
+            }
+        }
+
+        //Scroll horizontally by pressing Shift and using MouseWheel
+        private void MapScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset - e.Delta);
+                e.Handled = true;
+            }
+        }
+
+        private void MapScrollViewer_MouseEnter(object sender, MouseEventArgs e)
+        {
+            MapScrollViewer.Focus();
+        }
+
+        private void UndoManagerService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IUndoManagerService.CanUndo))
+            {
+                UndoCommand.NotifyCanExecuteChanged();
+                RedoCommand.NotifyCanExecuteChanged();
+            }
+
+            if (e.PropertyName == nameof(IUndoManagerService.CanRedo))
+            {
+                UndoCommand.NotifyCanExecuteChanged();
+                RedoCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        #endregion
+
+        #region UtilsMethods
+
+        /// <summary>
+        /// Check for a new release
+        /// </summary>
+        /// <returns></returns>
+        private async Task<Version?> GetLatestGitHubVersionAsync()
+        {
+            try
+            {
+                using var http = new HttpClient();
+
+                // GitHub demande obligatoirement un User-Agent
+                http.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp");
+
+                var url = "https://api.github.com/repos/Randhomme/TPMapEditor/releases/latest";
+
+                var json = await http.GetStringAsync(url);
+
+                using var doc = JsonDocument.Parse(json);
+
+                // Récupère "tag_name" => "v1.4.2"
+                var tag = doc.RootElement.GetProperty("tag_name").GetString();
+
+                if (tag == null)
+                    return null;
+
+                // Supprime le "v"
+                tag = tag.TrimStart('v');
+
+                return Version.TryParse(tag, out var version) ? version : null;
+            }
+            catch { return null; }
+        }
+
+        /// <summary>
+        /// Clear all the selections
+        /// </summary>
         private void ClearSelections()
         {
             WorldObjectSelectionService.ClearSelection();
@@ -846,28 +924,22 @@ namespace TPMapEditor
             MapTextPointSelectionService.ClearSelection();
         }
 
-        //Disable default Alt behaviour to allow rotation
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        /// <summary>
+        /// Returns a rotation between -180 and 180
+        /// </summary>
+        /// <param name="rotation"></param>
+        /// <returns></returns>
+        private double GetRotation(double rotation)
         {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt) &&
-                (RotateCheckBox.IsChecked == true ||
-                (WorldObjectPreviewControl.Visibility == Visibility.Visible) ||
-                (PlayerPreviewControl.Visibility == Visibility.Visible) ||
-                (WorldPointSetPreviewControl.Visibility == Visibility.Visible) ||
-                (WorldPointPreviewControl.Visibility == Visibility.Visible)))
-                e.Handled = true;
+            if (rotation > 180) rotation -= 360;
+            else if (rotation < -180) rotation += 360;
+            return rotation;
         }
 
-        //Scroll horizontally by pressing Shift and using MouseWheel
-        private void MapScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-            {
-                MapScrollViewer.ScrollToHorizontalOffset(MapScrollViewer.HorizontalOffset - e.Delta);
-                e.Handled = true;
-            }
-        }
-
+        /// <summary>
+        /// Allows a smooth rotation using mouse wheel
+        /// </summary>
+        /// <returns></returns>
         private int GetAcceleratedRotation()
         {
             DateTime now = DateTime.Now;
@@ -881,19 +953,11 @@ namespace TPMapEditor
             return 1;
         }
 
-        //Returns a rotation between -180 and 180
-        private double GetRotation(double rotation)
-        {
-            if (rotation > 180) rotation -= 360;
-            else if (rotation < -180) rotation += 360;
-            return rotation;
-        }
-
-        private void MapScrollViewer_MouseEnter(object sender, MouseEventArgs e)
-        {
-            MapScrollViewer.Focus();
-        }
-
+        /// <summary>
+        /// Reload all the app settings
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="notifyOnFinish"></param>
         private void ReloadAllSettings(string title, bool notifyOnFinish = true)
         {
             new ProgressDialog(this, title).RunActionSameThread((progress, progressLogs) =>
@@ -908,6 +972,7 @@ namespace TPMapEditor
         /// <summary>
         /// Validate everything in the map
         /// </summary>
+        /// <param name="progressLogs"></param>
         public void ValidateMap(IProgress<string> progressLogs)
         {
             Map.ValidateAllProperties();
@@ -915,7 +980,7 @@ namespace TPMapEditor
             {
                 var item = Map.WorldObjects[i];
                 try { item.ValidateAllProperties(); }
-                catch(Exception ex) { progressLogs.Report($"WorldObject '{item}' is invalid : {ex.Message}"); }
+                catch (Exception ex) { progressLogs.Report($"WorldObject '{item}' is invalid : {ex.Message}"); }
             }
             for (int i = 0; i < Map.SelectableTeams.Count; i++)
             {
@@ -997,7 +1062,7 @@ namespace TPMapEditor
                             foreach (var item3 in rfoc.Value)
                             {
                                 try { item3.ValidateAllProperties(); }
-                                catch{ progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'"); }
+                                catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'"); }
                             }
                         }
                         else
@@ -1071,30 +1136,55 @@ namespace TPMapEditor
             }
         }
 
+        /// <summary>
+        /// CanExecute for UndoCommand
+        /// </summary>
+        /// <returns></returns>
         private bool CanUndo() => undoManagerService.CanUndo;
 
+        /// <summary>
+        /// CanExecute for RedoCommand
+        /// </summary>
+        /// <returns></returns>
         private bool CanRedo() => undoManagerService.CanRedo;
 
-        private void UndoManagerService_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(IUndoManagerService.CanUndo))
-            {
-                UndoCommand.NotifyCanExecuteChanged();
-                RedoCommand.NotifyCanExecuteChanged();
-            }
-
-            if (e.PropertyName == nameof(IUndoManagerService.CanRedo))
-            {
-                UndoCommand.NotifyCanExecuteChanged();
-                RedoCommand.NotifyCanExecuteChanged();
-            }
-        }
-
+        /// <summary>
+        /// Checks if the movable selection is 3D or not (only WorldPolygons are in 2D)
+        /// </summary>
+        /// <returns></returns>
         private bool IsMovableSelection3D()
         {
             if (WorldPolygonRadioButton.IsChecked == true)
                 return false;
             return true;
+        }
+
+        /// <summary>
+        /// Execute the keyboard shortcut if it exists
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="modifiers"></param>
+        /// <returns>True if executed, false otherwise</returns>
+        private ICommand? GetKBShortcutCommand(Key key, ModifierKeys modifiers)
+        {
+            foreach (var kbShortcut in keyboardShortcut)
+            {
+                if(kbShortcut.key == key && kbShortcut.modifiers == modifiers)
+                {
+                    return kbShortcut.command;
+                }
+            }
+            return null;
+        }
+
+        private static bool IsTextInputActive()
+        {
+            DependencyObject? current = Keyboard.FocusedElement as DependencyObject;
+
+            if (current is TextBoxBase textBoxBase)
+                return textBoxBase.IsSelectionActive;
+
+            return false;
         }
 
         #endregion

@@ -18,18 +18,6 @@
         <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
         <converter:FillColorConverter x:Key="FillColorConverter"/>
     </Window.Resources>
-    <Window.InputBindings>
-        <KeyBinding Key="H" Command="{Binding HKeyCommand}"/>
-        <KeyBinding Key="H" Modifiers="Shift" Command="{Binding ShiftHKeyCommand}"/>
-        <KeyBinding Key="H" Modifiers="Ctrl" Command="{Binding CtrlHKeyCommand}"/>
-        <KeyBinding Key="A" Command="{Binding AKeyCommand}"/>
-        <KeyBinding Key="A" Modifiers="Shift" Command="{Binding ShiftAKeyCommand}"/>
-        <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding CtrlAKeyCommand}"/>
-        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}"/>
-        <KeyBinding Key="Z" Modifiers="Ctrl+Shift" Command="{Binding RedoCommand}"/>
-        <KeyBinding Key="C" Modifiers="Ctrl" Command="{Binding CtrlCCommand}" />
-        <KeyBinding Key="V" Modifiers="Ctrl" Command="{Binding CtrlVCommand}"/>
-    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
