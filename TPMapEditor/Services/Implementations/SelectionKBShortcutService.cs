@@ -57,7 +57,7 @@ namespace TPMapEditor.Services.Implementations
             var pastedItems = copyPasteService.Paste<T>();
             foreach (var item in pastedItems)
             {
-                selectionService.RemoveFromSelection(item);
+                selectionService.Unselect(item);
                 mapObjects.Add(item);
             }
             selectionService.ClearSelection();
