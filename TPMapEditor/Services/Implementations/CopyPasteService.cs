@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Services.Implementations
 {
     public class CopyPasteService : ICopyPasteService
     {
-        private IList<ISelectableMapObject> clipboard;
+        private readonly IList<ISelectableMapObject> clipboard;
 
         public CopyPasteService()
         {
