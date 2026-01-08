@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Xml.Linq;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
@@ -122,6 +123,13 @@ namespace TPMapEditor.Data
         }
 
         public override string ToString() => $"#{Id} {Type}";
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = (WorldObject)base.Copy();
+            copy.Id = nextId++;
+            return copy;
+        }
 
         public static void ResetNextId() => nextId = 0;
     }
