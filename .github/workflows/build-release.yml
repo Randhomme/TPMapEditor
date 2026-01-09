@@ -58,7 +58,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ env.VERSION }}
+          name: ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}
           path: artifact
 
   release:
@@ -70,7 +70,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ needs.build.outputs.version }}
+          name: ${{ env.PROJECT_NAME }}-v${{ needs.build.outputs.version }}
           path: release
 
       - name: Zip release
