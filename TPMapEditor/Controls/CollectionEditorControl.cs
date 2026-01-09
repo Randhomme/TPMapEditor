@@ -162,16 +162,19 @@ namespace TPMapEditor.Controls
         {
             var control = (CollectionEditorControl)d;
 
-            control.OnSelectedItemsSourceChanged(e.OldValue, e.NewValue);
-
+            control.DetachFromOldSelectedItems();
+            control.AttachToNewSelectedItems(e.NewValue);
             control.ApplySelectedItemsToDataGridSelectionIfPossible();
         }
 
-        private void OnSelectedItemsSourceChanged(object? oldValue, object? newValue)
+        private void DetachFromOldSelectedItems()
         {
             if (_selectedItemsNotifier != null)
                 _selectedItemsNotifier.CollectionChanged -= OnSelectedItemsCollectionChanged;
+        }
 
+        private void AttachToNewSelectedItems(object newValue)
+        {
             _selectedItemsNotifier = newValue as INotifyCollectionChanged;
 
             if (_selectedItemsNotifier != null)
@@ -180,7 +183,38 @@ namespace TPMapEditor.Controls
 
         private void OnSelectedItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            ApplySelectedItemsToDataGridSelectionIfPossible();
+            if (isUpdatingSelection || dataGrid == null)
+                return;
+
+            isUpdatingSelection = true;
+
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    {
+                        foreach (var item in e.NewItems)
+                        {
+                            var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
+                            dataGrid.SelectedItems.Add(wrapper);
+                        }
+                        break;
+                    }
+                case NotifyCollectionChangedAction.Remove:
+                    {
+                        foreach (var item in e.OldItems)
+                        {
+                            var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
+                            dataGrid.SelectedItems.Remove(wrapper);
+                        }
+                        break;
+                    }
+                case NotifyCollectionChangedAction.Reset:
+                    {
+                        dataGrid.SelectedItems.Clear();
+                        break;
+                    }
+            }
+            isUpdatingSelection = false;
         }
 
         private void DetachFromOldItemsSource(object oldValue)
