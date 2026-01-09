@@ -37,6 +37,7 @@ namespace TPMapEditor
     {
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
+        private Point selectActionPoint;
         private Point moveActionPoint;
         private DateTime lastWheelTime = DateTime.MinValue;
         private AppSettings settings;
@@ -870,6 +871,33 @@ namespace TPMapEditor
             }
         }
 
+        private void MapGridOutsideSelect_MouseMove(object sender, MouseEventArgs e)
+        {
+            Mouse.Capture(MapGridOutside);
+            var pos = e.GetPosition(PreviewCanvas);
+            if (selectActionPoint.X < pos.X)
+            {
+                Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+                SelectionRectangle.Width = pos.X - selectActionPoint.X;
+            }
+            else
+            {
+                Canvas.SetLeft(SelectionRectangle, pos.X);
+                SelectionRectangle.Width = selectActionPoint.X - pos.X;
+            }
+
+            if (selectActionPoint.Y < pos.Y)
+            {
+                Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+                SelectionRectangle.Height = pos.Y - selectActionPoint.Y;
+            }
+            else
+            {
+                Canvas.SetTop(SelectionRectangle, pos.Y);
+                SelectionRectangle.Height = selectActionPoint.Y - pos.Y;
+            }
+        }
+
         #endregion
 
         #region UtilsMethods
@@ -1207,6 +1235,8 @@ namespace TPMapEditor
             Panel.SetZIndex(WorldObjectItemsControl, 1);
             WorldObjectItemsControl.Opacity = 1;
             WorldObjectItemsControl.IsEnabled = true;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
             MoveCheckBox.Checked += MoveWorldObjectCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldObjectCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
@@ -1215,7 +1245,6 @@ namespace TPMapEditor
             RotateCheckBox.Unchecked += RotateWorldObjectCheckBox_Unchecked;
             if (RotateCheckBox.IsChecked == true)
                 EnableRotateWorldObject();
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldObject_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
@@ -1237,14 +1266,40 @@ namespace TPMapEditor
             RotateCheckBox.Unchecked -= RotateWorldObjectCheckBox_Unchecked;
             if (RotateCheckBox.IsChecked == true)
                 DisableRotateWorldObject();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldObjectButton_Click;
         }
 
-        private void MapGridOutsideWorldObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideWorldObject_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            WorldObjectSelectionService.ClearSelection();
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                WorldObjectSelectionService.ClearSelection();
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideWorldObject_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.WorldObjects.Count; i++)
+                {
+                    var obj = Map.WorldObjects[i];
+                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
+                        WorldObjectSelectionService.SelectAndMakeLastSelected(obj);
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
@@ -1280,37 +1335,38 @@ namespace TPMapEditor
 
         private void EnableMoveWorldObject()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldObject_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMoveWorldObject()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldObject_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
         private void MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMoveWorldObject_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMoveWorldObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldObject_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMoveWorldObject_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
@@ -1436,6 +1492,8 @@ namespace TPMapEditor
             Panel.SetZIndex(PlayerItemsControl, 1);
             PlayerItemsControl.Opacity = 1;
             PlayerItemsControl.IsEnabled = true;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsidePlayer_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsidePlayer_PreviewMouseLeftButtonUp;
             MoveCheckBox.Checked += MovePlayerCheckBox_Checked;
             MoveCheckBox.Unchecked += MovePlayerCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
@@ -1444,7 +1502,6 @@ namespace TPMapEditor
             RotateCheckBox.Unchecked += RotatePlayerCheckBox_Unchecked;
             if (RotateCheckBox.IsChecked == true)
                 EnableRotatePlayer();
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerButton_Click;
             currenSelectionKBShortcutService = playerSelectionKBShortcutService;
@@ -1466,14 +1523,40 @@ namespace TPMapEditor
             RotateCheckBox.Unchecked -= RotatePlayerCheckBox_Unchecked;
             if (RotateCheckBox.IsChecked == true)
                 DisableRotatePlayer();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsidePlayer_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsidePlayer_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsidePlayer_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click -= DeletePlayerButton_Click;
         }
 
-        private void MapGridOutsidePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsidePlayer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            PlayerSelectionService.ClearSelection();
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                PlayerSelectionService.ClearSelection();
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsidePlayer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.Players.Count; i++)
+                {
+                    var obj = Map.Players[i];
+                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
+                        PlayerSelectionService.SelectAndMakeLastSelected(obj);
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnPlayerClicked(object sender, MouseButtonEventArgs e)
@@ -1509,37 +1592,38 @@ namespace TPMapEditor
 
         private void EnableMovePlayer()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsidePlayer_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMovePlayer_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMovePlayer_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsidePlayer_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsidePlayer_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMovePlayer_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMovePlayer_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMovePlayer()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsidePlayer_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMovePlayer_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMovePlayer_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsidePlayer_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsidePlayer_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMovePlayer_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMovePlayer_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
-        private void MapGridOutsideBeginMovePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideBeginMovePlayer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMovePlayer_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMovePlayer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMovePlayer_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMovePlayer_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMovePlayer_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
@@ -1667,7 +1751,8 @@ namespace TPMapEditor
             WaypointPathItemsControl.IsEnabled = true;
             MoveCheckBox.Checked += MoveWaypointPathPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWaypointPathPointCheckBox_Unchecked;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove += MapGridOutsideWaypointPathPointPreview_MouseMove;
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
@@ -1687,9 +1772,54 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveWaypointPathPointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveWaypointPathPoint();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideWaypointPathPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWaypointPathPointButton_Click;
+        }
+
+        private void MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && NewWaypointPathRadioButton.IsChecked == false && AddWaypointPathPointRadioButton.IsChecked == false)
+            {
+                WaypointPathSelectionService.ClearSelection();
+                WaypointPathPointSelectionService.ClearSelection();
+            }
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.WaypointPaths.Count; i++)
+                {
+                    var path = Map.WaypointPaths[i];
+                    if (path.IsShownOnUi)
+                    {
+                        for(int j = 0; j < path.Points.Count; j++)
+                        {
+                            var p = path.Points[j];
+                            if (rect.Contains(new Point(p.X, -p.Y)))
+                            {
+                                WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(p.Parent);
+                                WaypointPathPointSelectionService.SelectAndMakeLastSelected(p);
+                            }
+
+                        }
+                    }
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnWaypointPathClicked(object sender, MouseButtonEventArgs e)
@@ -1759,12 +1889,6 @@ namespace TPMapEditor
             }
         }
 
-        private void MapGridOutsideWaypointPathPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            WaypointPathSelectionService.ClearSelection();
-            WaypointPathPointSelectionService.ClearSelection();
-        }
-        
         private void MoveWaypointPathPointCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             EnableMoveWaypointPathPoint();
@@ -1777,37 +1901,38 @@ namespace TPMapEditor
 
         private void EnableMoveWaypointPathPoint()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveWaypointPathPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveWaypointPathPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveWaypointPathPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveWaypointPathPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMoveWaypointPathPoint()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWaypointPathPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveWaypointPathPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveWaypointPathPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWaypointPathPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveWaypointPathPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveWaypointPathPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
-        private void MapGridOutsideBeginMoveWaypointPathPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideBeginMoveWaypointPathPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMoveWaypointPathPoint_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMoveWaypointPathPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMoveWaypointPathPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMoveWaypointPathPoint_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMoveWaypointPathPoint_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
@@ -1922,7 +2047,8 @@ namespace TPMapEditor
             WorldPolygonItemsControl.IsEnabled = true;
             MoveCheckBox.Checked += MoveWorldPolygonPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldPolygonPointCheckBox_Unchecked;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove += MapGridOutsideWorldPolygonPointPreview_MouseMove;
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
@@ -1942,9 +2068,54 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveWorldPolygonPointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveWorldPolygonPoint();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPolygonPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldPolygonPointButton_Click;
+        }
+
+        private void MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && NewWorldPolygonRadioButton.IsChecked == false && AddWorldPolygonPointRadioButton.IsChecked == false)
+            {
+                WorldPolygonSelectionService.ClearSelection();
+                WorldPolygonPointSelectionService.ClearSelection();
+            }
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.WorldPolygons.Count; i++)
+                {
+                    var path = Map.WorldPolygons[i];
+                    if (path.IsShownOnUi)
+                    {
+                        for (int j = 0; j < path.Points.Count; j++)
+                        {
+                            var p = path.Points[j];
+                            if (rect.Contains(new Point(p.X, -p.Y)))
+                            {
+                                WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(p.Parent);
+                                WorldPolygonPointSelectionService.SelectAndMakeLastSelected(p);
+                            }
+
+                        }
+                    }
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnWorldPolygonClicked(object sender, MouseButtonEventArgs e)
@@ -2014,12 +2185,6 @@ namespace TPMapEditor
             }
         }
 
-        private void MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            WorldPolygonSelectionService.ClearSelection();
-            WorldPolygonPointSelectionService.ClearSelection();
-        }
-
         private void MoveWorldPolygonPointCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             EnableMoveWorldPolygonPoint();
@@ -2032,37 +2197,38 @@ namespace TPMapEditor
 
         private void EnableMoveWorldPolygonPoint()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveWorldPolygonPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveWorldPolygonPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveWorldPolygonPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveWorldPolygonPoint_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMoveWorldPolygonPoint()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPolygonPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveWorldPolygonPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveWorldPolygonPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldPolygonPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveWorldPolygonPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveWorldPolygonPoint_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
-        private void MapGridOutsideBeginMoveWorldPolygonPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideBeginMoveWorldPolygonPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMoveWorldPolygonPoint_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMoveWorldPolygonPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMoveWorldPolygonPoint_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldPolygonPoint_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMoveWorldPolygonPoint_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
@@ -2177,6 +2343,8 @@ namespace TPMapEditor
             Panel.SetZIndex(WorldPointSetItemsControl, 1);
             WorldPointSetItemsControl.Opacity = 1;
             WorldPointSetItemsControl.IsEnabled = true;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldPoint_PreviewMouseLeftButtonUp;
             MoveCheckBox.Checked += MoveWorldPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveWorldPointCheckBox_Unchecked;
             DeleteButton.Click += DeleteWorldPointButton_Click;
@@ -2186,7 +2354,6 @@ namespace TPMapEditor
             RotateCheckBox.Unchecked += RotateWorldPointCheckBox_Unchecked;
             if (RotateCheckBox.IsChecked == true)
                 EnableRotateWorldPoint();
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
             currenSelectionKBShortcutService = worldPointSetSelectionKBShortcutService;
             currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
@@ -2207,9 +2374,54 @@ namespace TPMapEditor
             RotateCheckBox.Unchecked -= RotateWorldPointCheckBox_Unchecked;
             if (RotateCheckBox.IsChecked == true)
                 DisableRotateWorldPoint();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPointPreview_MouseMove;
             DeleteButton.Click -= DeleteWorldPointButton_Click;
+        }
+
+        private void MapGridOutsideWorldPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && AddWorldPointSetRadioButton.IsChecked == false && AddWorldPointSetPointRadioButton.IsChecked == false)
+            {
+                WorldPointSetSelectionService.ClearSelection();
+                WorldPointSelectionService.ClearSelection();
+            }
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideWorldPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.WorldPointSets.Count; i++)
+                {
+                    var path = Map.WorldPointSets[i];
+                    if (path.IsShownOnUi)
+                    {
+                        for (int j = 0; j < path.Points.Count; j++)
+                        {
+                            var p = path.Points[j];
+                            if (rect.Contains(new Point(p.X, -p.Y)))
+                            {
+                                WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(p.Parent);
+                                WorldPointSelectionService.SelectAndMakeLastSelected(p);
+                            }
+
+                        }
+                    }
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnWorldPointSetClicked(object sender, MouseButtonEventArgs e)
@@ -2279,12 +2491,6 @@ namespace TPMapEditor
             }
         }
 
-        private void MapGridOutsideWorldPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            WorldPointSetSelectionService.ClearSelection();
-            WorldPointSelectionService.ClearSelection();
-        }
-
         private void MoveWorldPointCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             EnableMoveWorldPoint();
@@ -2297,37 +2503,38 @@ namespace TPMapEditor
 
         private void EnableMoveWorldPoint()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideWorldPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveWorldPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveWorldPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveWorldPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveWorldPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMoveWorldPoint()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideWorldPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveWorldPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveWorldPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveWorldPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveWorldPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
-        private void MapGridOutsideBeginMoveWorldPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideBeginMoveWorldPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMoveWorldPoint_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMoveWorldPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMoveWorldPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldPoint_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMoveWorldPoint_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
@@ -2488,11 +2695,12 @@ namespace TPMapEditor
             Panel.SetZIndex(ObjectivePointItemsControl, 1);
             ObjectivePointItemsControl.Opacity = 1;
             ObjectivePointItemsControl.IsEnabled = true;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideObjectivePoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideObjectivePoint_PreviewMouseLeftButtonUp;
             MoveCheckBox.Checked += MoveObjectivePointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveObjectivePointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveObjectivePoint();
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideObjectivePoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click += DeleteObjectivePointButton_Click;
             currenSelectionKBShortcutService = objectivePointSelectionKBShortcutService;
@@ -2510,14 +2718,40 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveObjectivePointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveObjectivePoint();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideObjectivePoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideObjectivePoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click -= DeleteObjectivePointButton_Click;
         }
 
-        private void MapGridOutsideObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideObjectivePoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ObjectivePointSelectionService.ClearSelection();
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                ObjectivePointSelectionService.ClearSelection();
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideObjectivePoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.ObjectivePoints.Count; i++)
+                {
+                    var obj = Map.ObjectivePoints[i];
+                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
+                        ObjectivePointSelectionService.SelectAndMakeLastSelected(obj);
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnObjectivePointClicked(object sender, MouseButtonEventArgs e)
@@ -2553,37 +2787,38 @@ namespace TPMapEditor
 
         private void EnableMoveObjectivePoint()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideObjectivePoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveObjectivePoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideObjectivePoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideObjectivePoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveObjectivePoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveObjectivePoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMoveObjectivePoint()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideObjectivePoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveObjectivePoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveObjectivePoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideObjectivePoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideObjectivePoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveObjectivePoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveObjectivePoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
-        private void MapGridOutsideBeginMoveObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideBeginMoveObjectivePoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMoveObjectivePoint_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMoveObjectivePoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMoveObjectivePoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMoveObjectivePoint_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMoveObjectivePoint_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
@@ -2663,11 +2898,12 @@ namespace TPMapEditor
             Panel.SetZIndex(MapTextPointItemsControl, 1);
             MapTextPointItemsControl.Opacity = 1;
             MapTextPointItemsControl.IsEnabled = true;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideMapTextPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideMapTextPoint_PreviewMouseLeftButtonUp;
             MoveCheckBox.Checked += MoveMapTextPointCheckBox_Checked;
             MoveCheckBox.Unchecked += MoveMapTextPointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveMapTextPoint();
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideMapTextPoint_MouseLeftButtonDown;
             MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click += DeleteMapTextPointButton_Click;
             currenSelectionKBShortcutService = mapTextPointSelectionKBShortcutService;
@@ -2685,14 +2921,40 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveMapTextPointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveMapTextPoint();
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideMapTextPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideMapTextPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click -= DeleteMapTextPointButton_Click;
         }
 
-        private void MapGridOutsideMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideMapTextPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MapTextPointSelectionService.ClearSelection();
+            if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                MapTextPointSelectionService.ClearSelection();
+            selectActionPoint = e.GetPosition(PreviewCanvas);
+            Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
+            Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
+            MapGridOutside.MouseMove += MapGridOutsideSelect_MouseMove;
+            e.Handled = true;
+        }
+
+        private void MapGridOutsideMapTextPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            MapGridOutside.MouseMove -= MapGridOutsideSelect_MouseMove;
+            Mouse.Capture(null);
+            SelectionRectangle.Width = SelectionRectangle.Height = 0;
+            var pos = e.GetPosition(PreviewCanvas);
+            var rect = new Rect(selectActionPoint, pos);
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            {
+                for (int i = 0; i < Map.MapTextPoints.Count; i++)
+                {
+                    var obj = Map.MapTextPoints[i];
+                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
+                        MapTextPointSelectionService.SelectAndMakeLastSelected(obj);
+                }
+                e.Handled = true;
+            }
         }
 
         private void OnMapTextPointClicked(object sender, MouseButtonEventArgs e)
@@ -2728,37 +2990,38 @@ namespace TPMapEditor
 
         private void EnableMoveMapTextPoint()
         {
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideMapTextPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveMapTextPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideMapTextPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideMapTextPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveMapTextPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveMapTextPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
         private void DisableMoveMapTextPoint()
         {
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideMapTextPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveMapTextPoint_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveMapTextPoint_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideMapTextPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideMapTextPoint_PreviewMouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveMapTextPoint_PreviewMouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveMapTextPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
-        private void MapGridOutsideBeginMoveMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideBeginMoveMapTextPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(MapGridOutside);
             moveActionPoint = e.GetPosition(MapGridInside);
             MapGridOutside.MouseMove += MapGridOutsideMoveMapTextPoint_MouseMove;
-            e.Handled = true;
         }
 
-        private void MapGridOutsideEndMoveMapTextPoint_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MapGridOutsideEndMoveMapTextPoint_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Mouse.Capture(null);
             MapGridOutside.MouseMove -= MapGridOutsideMoveMapTextPoint_MouseMove;
+            Mouse.Capture(null);
             e.Handled = true;
         }
 
         private void MapGridOutsideMoveMapTextPoint_MouseMove(object sender, MouseEventArgs e)
         {
+            Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
