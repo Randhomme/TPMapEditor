@@ -78,7 +78,7 @@ jobs:
         run: |
           Compress-Archive `
             -Path release\* `
-            -DestinationPath ${{ env.PROJECT_NAME }}-${{ needs.build.outputs.version }}.zip
+            -DestinationPath ${{ env.PROJECT_NAME }}-v${{ needs.build.outputs.version }}.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
