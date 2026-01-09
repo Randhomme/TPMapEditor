@@ -769,6 +769,7 @@ namespace TPMapEditor
             }
             Map.Reset();
 
+            #if !DEBUG //Don't check for updates in debug mode
             var local = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
             var latest = await GetLatestGitHubVersionAsync();
             if (latest != null && latest > local)
@@ -788,6 +789,7 @@ namespace TPMapEditor
                     });
                 }
             }
+            #endif
         }
 
         private void Viewbox_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -898,7 +900,7 @@ namespace TPMapEditor
             }
         }
 
-        #endregion
+#endregion
 
         #region UtilsMethods
 
