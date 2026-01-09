@@ -7,9 +7,9 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
 	<LangVersion>10</LangVersion>
-    <Version>1.1.1</Version>
-    <AssemblyVersion>1.1.1</AssemblyVersion>
-    <FileVersion>1.1.1</FileVersion>
+    <Version>$(Version)</Version>
+    <AssemblyVersion>$(AssemblyVersion)</AssemblyVersion>
+    <FileVersion>$(FileVersion)</FileVersion>
     <ApplicationIcon>TPMapEditorIcon.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
 	<GenerateApplicationConfigurationFile>false</GenerateApplicationConfigurationFile>
