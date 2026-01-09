@@ -392,75 +392,76 @@ namespace TPMapEditor.Data
                 else
                     worldObject.AIEntity += firstLine + Environment.NewLine;
 
-                try
+                var pos = reader.CurrentPosition;
+                var line = reader.ReadLine();
+                if (line.Trim().EndsWith("State"))
                 {
-                    //SkipNamedSection("State");
-                    SkipNamedSection("State", (line) =>
-                    {
-                        worldObject.AIEntity += line + Environment.NewLine;
-                    });
+                    worldObject.AIEntity += line + Environment.NewLine;
+                    SkipSection((line) => worldObject.AIEntity += line + Environment.NewLine);
                 }
-                catch { }
-                worldObject.AIEntity = worldObject.AIEntity.TrimEnd();
+                else
+                    reader.CurrentPosition = pos;
+
+                    worldObject.AIEntity = worldObject.AIEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# RenderEntity
                 worldObject.RenderEntity += reader.ReadLine() + Environment.NewLine;
-                try
+                pos = reader.CurrentPosition;
+                line = reader.ReadLine();
+                if (line.Trim().EndsWith("State"))
                 {
-                    //SkipNamedSection("State");
-                    SkipNamedSection("State", (line) =>
-                    {
-                        worldObject.RenderEntity += line + Environment.NewLine;
-                    });
+                    worldObject.RenderEntity += line + Environment.NewLine;
+                    SkipSection((line) => worldObject.RenderEntity += line + Environment.NewLine);
                 }
-                catch { }
+                else
+                    reader.CurrentPosition = pos;
                 worldObject.RenderEntity = worldObject.RenderEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# PhysicsEntity
                 worldObject.PhysicsEntity += reader.ReadLine() + Environment.NewLine;
-                try
+                pos = reader.CurrentPosition;
+                line = reader.ReadLine();
+                if (line.Trim().EndsWith("State"))
                 {
-                    //SkipNamedSection("State");
-                    SkipNamedSection("State", (line) =>
-                    {
-                        worldObject.PhysicsEntity += line + Environment.NewLine;
-                    });
+                    worldObject.PhysicsEntity += line + Environment.NewLine;
+                    SkipSection((line) => worldObject.PhysicsEntity += line + Environment.NewLine);
                 }
-                catch { }
+                else
+                    reader.CurrentPosition = pos;
                 worldObject.PhysicsEntity = worldObject.PhysicsEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# CollisionEntity
                 worldObject.CollisionEntity += reader.ReadLine() + Environment.NewLine;
-                try
+                pos = reader.CurrentPosition;
+                line = reader.ReadLine();
+                if (line.Trim().EndsWith("State"))
                 {
-                    //SkipNamedSection("State");
-                    SkipNamedSection("State", (line) =>
-                    {
-                        worldObject.CollisionEntity += line + Environment.NewLine;
-                    });
+                    worldObject.CollisionEntity += line + Environment.NewLine;
+                    SkipSection((line) => worldObject.CollisionEntity += line + Environment.NewLine);
                 }
-                catch { }
+                else
+                    reader.CurrentPosition = pos;
                 worldObject.CollisionEntity = worldObject.CollisionEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# CustomInfoEntity
                 worldObject.CustomInfoEntity += reader.ReadLine() + Environment.NewLine;
-                try
+                pos = reader.CurrentPosition;
+                line = reader.ReadLine();
+                if (line.Trim().EndsWith("State"))
                 {
-                    //SkipNamedSection("State");
-                    SkipNamedSection("State", (line) =>
-                    {
-                        worldObject.CustomInfoEntity += line + Environment.NewLine;
-                    });
+                    worldObject.CustomInfoEntity += line + Environment.NewLine;
+                    SkipSection((line) => worldObject.CustomInfoEntity += line + Environment.NewLine);
                 }
-                catch { }
+                else
+                    reader.CurrentPosition = pos;
                 worldObject.CustomInfoEntity = worldObject.CustomInfoEntity.TrimEnd();
 
             });
