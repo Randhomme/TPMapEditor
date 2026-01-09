@@ -397,6 +397,7 @@ namespace TPMapEditor.Data
                 if (line.Trim().EndsWith("State"))
                 {
                     worldObject.AIEntity += line + Environment.NewLine;
+                    worldObject.AIEntity += reader.ReadLine() + Environment.NewLine;
                     SkipSection((line) => worldObject.AIEntity += line + Environment.NewLine);
                 }
                 else
@@ -413,6 +414,7 @@ namespace TPMapEditor.Data
                 if (line.Trim().EndsWith("State"))
                 {
                     worldObject.RenderEntity += line + Environment.NewLine;
+                    worldObject.RenderEntity += reader.ReadLine() + Environment.NewLine;
                     SkipSection((line) => worldObject.RenderEntity += line + Environment.NewLine);
                 }
                 else
@@ -428,6 +430,7 @@ namespace TPMapEditor.Data
                 if (line.Trim().EndsWith("State"))
                 {
                     worldObject.PhysicsEntity += line + Environment.NewLine;
+                    worldObject.PhysicsEntity += reader.ReadLine() + Environment.NewLine;
                     SkipSection((line) => worldObject.PhysicsEntity += line + Environment.NewLine);
                 }
                 else
@@ -443,6 +446,7 @@ namespace TPMapEditor.Data
                 if (line.Trim().EndsWith("State"))
                 {
                     worldObject.CollisionEntity += line + Environment.NewLine;
+                    worldObject.CollisionEntity += reader.ReadLine() + Environment.NewLine;
                     SkipSection((line) => worldObject.CollisionEntity += line + Environment.NewLine);
                 }
                 else
@@ -458,6 +462,7 @@ namespace TPMapEditor.Data
                 if (line.Trim().EndsWith("State"))
                 {
                     worldObject.CustomInfoEntity += line + Environment.NewLine;
+                    worldObject.CustomInfoEntity += reader.ReadLine() + Environment.NewLine;
                     SkipSection((line) => worldObject.CustomInfoEntity += line + Environment.NewLine);
                 }
                 else
