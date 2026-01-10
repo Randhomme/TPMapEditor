@@ -214,6 +214,10 @@ namespace TPMapEditor.Controls
                         break;
                     }
             }
+
+            if (dataGrid.SelectedItems.Count > 0)
+                dataGrid.ScrollIntoView(dataGrid.SelectedItems[dataGrid.SelectedItems.Count - 1]);
+
             isUpdatingSelection = false;
         }
 
