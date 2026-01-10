@@ -19,13 +19,13 @@ namespace TPMapEditor.Services.Implementations
             ClearClipboard();
             foreach (var item in values)
             {
-                clipboard.Add(item.Copy());
+                clipboard.Add(item);
             }
         }
 
         public IEnumerable<T> Paste<T>() where T : ISelectableMapObject
         {
-            return clipboard.OfType<T>();
+            return clipboard.Select((o)=>o.Copy()).Cast<T>().ToList();
         }
 
         public void ClearClipboard()
