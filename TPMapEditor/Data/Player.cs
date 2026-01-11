@@ -133,5 +133,12 @@ namespace TPMapEditor.Data
         {
             return name.Equals(DefaultName);
         }
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = (Player)base.Copy();
+            copy.Name = GenerateName($"{this.Name}_", Map.Players);
+            return copy;
+        }
     }
 }

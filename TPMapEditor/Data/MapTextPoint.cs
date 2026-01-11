@@ -45,5 +45,12 @@ namespace TPMapEditor.Data
             }
             return false;
         }
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = (MapTextPoint)base.Copy();
+            copy.Name = GenerateName($"{this.Name}_", Map.MapTextPoints);
+            return copy;
+        }
     }
 }

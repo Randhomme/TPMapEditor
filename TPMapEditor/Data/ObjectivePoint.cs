@@ -36,5 +36,12 @@ namespace TPMapEditor.Data
         {
             return name.Equals(DefaultName);
         }
+
+        public override ISelectableMapObject Copy()
+        {
+            var copy = (ObjectivePoint)base.Copy();
+            copy.Name = GenerateName($"{this.Name}_", Map.ObjectivePoints);
+            return copy;
+        }
     }
 }
