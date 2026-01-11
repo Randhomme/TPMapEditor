@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Utils;
@@ -41,15 +42,25 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public static string GenerateName(string prefix, IEnumerable<INamedObject> collection)
         {
+            int i = prefix.Length - 1;
+            while (i >= 0 && char.IsDigit(prefix[i]))
+            {
+                i--;
+            }
+
+            if (i < prefix.Length - 1)
+            {
+                prefix = prefix.Substring(0, i + 1);
+            }
             var c = 0;
             foreach (var namedMapObject in collection)
             {
                 if (namedMapObject.Name.Length >= prefix.Length)
                 {
                     var s = namedMapObject.Name.Substring(prefix.Length);
-                    if (int.TryParse(s, out int i))
+                    if (int.TryParse(s, out int j))
                     {
-                        if (i > c) c = i;
+                        if (j > c) c = j;
                     }
                 }
             }
