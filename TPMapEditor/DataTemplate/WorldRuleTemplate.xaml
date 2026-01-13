@@ -17,14 +17,14 @@
             <TabItem Header="Conditions">
                 <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding Conditions}" Factory="{Binding RuleConditionFactory}">
                     <controls:CollectionEditorControl.Columns>
-                        <DataGridTextColumn Binding="{Binding Item.Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
+                        <DataGridTextColumn IsReadOnly="True" CanUserSort="False" Binding="{Binding Item.Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
                     </controls:CollectionEditorControl.Columns>
                 </controls:CollectionEditorControl>
             </TabItem>
             <TabItem Header="Actions">
                 <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding Actions}" Factory="{Binding RuleActionFactory}">
                     <controls:CollectionEditorControl.Columns>
-                        <DataGridTextColumn Binding="{Binding Item.Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
+                        <DataGridTextColumn IsReadOnly="True" CanUserSort="False" Binding="{Binding Item.Type, Converter={StaticResource EnumToNameConverter}}" Header="Type" Width="*"/>
                     </controls:CollectionEditorControl.Columns>
                 </controls:CollectionEditorControl>
             </TabItem>
