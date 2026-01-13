@@ -20,8 +20,7 @@ Found a bug or have a suggestion ? Contact Randhomme on Discord.
 I'm sharing this todo list, with things you should expect in next updates
 - [ ] Write a complete documentation (values in the map file, values in the map editor)
 - [ ] Add starmap texture export
-- [ ] Drag and drop selection by drawing a rectangle with the mouse
-- [ ] Undo/Redo feature
+- [ ] Undo/Redo feature (work in progress)
 - [ ] Make the world bigger (5 times should be enough)
 - [ ] Add support for saved game
 - [ ] Add more app settings
