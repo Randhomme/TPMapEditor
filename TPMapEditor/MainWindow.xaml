@@ -181,14 +181,14 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            
+
             <!-- Column 0 -->
-            <ScrollViewer RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="MapScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="MapScrollViewer_PreviewMouseWheel">
-                <Grid x:Name="MapGridOutside" Background="Transparent">
+            <ScrollViewer x:Name="MapScrollViewer" CanContentScroll="False" RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="MapScrollViewer_PreviewMouseWheel">
+                <Grid x:Name="MapGridOutside" Background="Transparent" MouseWheel="Viewbox_MouseWheel">
                     <Viewbox x:Name="MapViewBox" Stretch="Uniform" StretchDirection="Both">
-                        <Grid x:Name="MapGrid" Background="DarkGray" MouseWheel="Viewbox_MouseWheel" ClipToBounds="True" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                        <Grid x:Name="MapGrid" UseLayoutRounding="False" Background="DarkGray" ClipToBounds="True" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
                             <Grid.LayoutTransform>
-                                <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
+                                <ScaleTransform x:Name="ZoomTransform" ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}" />
                             </Grid.LayoutTransform>
                             <Grid Name="MapGridInside" Margin="{Binding Map.WorldBuffer}" Background="Gray">
 
@@ -196,10 +196,10 @@
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                                     <!-- Selection Rectangle-->
-                                    <Rectangle x:Name="SelectionRectangle" Stroke="OrangeRed" StrokeThickness="2.5" Width="0" Height="0"/>
-                                    
+                                    <Rectangle x:Name="SelectionRectangle" Stroke="OrangeRed" StrokeThickness="{Binding ZoomedBorderThicknessSmall}" Width="0" Height="0"/>
+
                                     <!-- Preview WorldObject -->
-                                    <Border x:Name="WorldObjectPreviewControl" RenderTransformOrigin="{Binding SelectedWorldObjectType.Pivot}" Visibility="{c:Binding 'SelectedWorldObjectType!=null'}" PreviewMouseLeftButtonUp="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown" MouseWheel="WorldObjectPreviewControl_MouseWheel">
+                                    <Border x:Name="WorldObjectPreviewControl" BorderThickness="{Binding ZoomedBorderThicknessSmall}" RenderTransformOrigin="{Binding SelectedWorldObjectType.Pivot}" Visibility="{c:Binding 'SelectedWorldObjectType!=null'}" PreviewMouseLeftButtonUp="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown" MouseWheel="WorldObjectPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{Binding ElementName=WotSliderRotate, Path=Value}"/>
                                         </Border.RenderTransform>
@@ -207,43 +207,90 @@
                                     </Border>
 
                                     <!-- Preview Player -->
-                                    <Border x:Name="PlayerPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding ElementName=AddPlayerCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="PlayerPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreviewControl_MouseRightButtonDown" MouseWheel="PlayerPreviewControl_MouseWheel">
+                                    <Border x:Name="PlayerPreviewControl" Width="20" Height="20" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding ElementName=AddPlayerCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="PlayerPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreviewControl_MouseRightButtonDown" MouseWheel="PlayerPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
-                                            <RotateTransform Angle="{Binding ElementName=PlayerSliderRotate, Path=Value}"/>
+                                            <TransformGroup>
+                                                <RotateTransform Angle="{Binding ElementName=PlayerSliderRotate, Path=Value}"/>
+                                                <ScaleTransform
+                                                    ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                    ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                            </TransformGroup>
                                         </Border.RenderTransform>
                                         <Image Source="/Images/Player.png"/>
                                     </Border>
 
                                     <!-- Preview Path -->
-                                    <Border x:Name="WaypointPathPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=NewWaypointPathRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WaypointPathPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPreviewControl_MouseRightButtonDown"/>
-                                    <Border x:Name="WaypointPathPointPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=AddWaypointPathPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WaypointPathPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPointPreviewControl_MouseRightButtonDown"/>
-                                    
-                                    <!-- Preview Polygon -->
-                                    <Border x:Name="WorldPolygonPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=NewWorldPolygonRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown"/>
-                                    <Border x:Name="WorldPolygonPointPreviewControl" Width="20" Height="20" BorderThickness="3" Background="Black" Visibility="{c:Binding ElementName=AddWorldPolygonPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown"/>
-                                    
-                                    <!-- Preview PointSet -->
-                                    <Border x:Name="WorldPointSetPreviewControl" RenderTransformOrigin="0.5,0.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
+                                    <Border x:Name="WaypointPathPreviewControl" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderThickness="2.5" Background="Black" Visibility="{c:Binding ElementName=NewWaypointPathRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WaypointPathPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPreviewControl_MouseRightButtonDown">
                                         <Border.RenderTransform>
-                                            <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
+                                            <ScaleTransform
+                                                ScaleX="{Binding InverseZoom}"
+                                                ScaleY="{Binding InverseZoom}"/>
+                                        </Border.RenderTransform>
+                                    </Border>
+                                    <Border x:Name="WaypointPathPointPreviewControl" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderThickness="2.5" Background="Black" Visibility="{c:Binding ElementName=AddWaypointPathPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WaypointPathPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WaypointPathPointPreviewControl_MouseRightButtonDown">
+                                        <Border.RenderTransform>
+                                            <ScaleTransform
+                                                ScaleX="{Binding InverseZoom}"
+                                                ScaleY="{Binding InverseZoom}"/>
+                                        </Border.RenderTransform>
+                                    </Border>
+
+                                    <!-- Preview Polygon -->
+                                    <Border x:Name="WorldPolygonPreviewControl" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderThickness="2.5" Background="Black" Visibility="{c:Binding ElementName=NewWorldPolygonRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPolygonPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPreviewControl_MouseRightButtonDown">
+                                        <Border.RenderTransform>
+                                            <ScaleTransform
+                                                ScaleX="{Binding InverseZoom}"
+                                                ScaleY="{Binding InverseZoom}"/>
+                                        </Border.RenderTransform>
+                                    </Border>
+                                    <Border x:Name="WorldPolygonPointPreviewControl" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderThickness="2.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPolygonPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPolygonPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPolygonPointPreviewControl_MouseRightButtonDown">
+                                        <Border.RenderTransform>
+                                            <ScaleTransform
+                                                ScaleX="{Binding InverseZoom}"
+                                                ScaleY="{Binding InverseZoom}"/>
+                                        </Border.RenderTransform>
+                                    </Border>
+
+                                    <!-- Preview PointSet -->
+                                    <Border x:Name="WorldPointSetPreviewControl" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderThickness="2.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
+                                        <Border.RenderTransform>
+                                            <TransformGroup>
+                                                <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
+                                                <ScaleTransform ScaleX="{Binding InverseZoom}" ScaleY="{Binding InverseZoom}"/>
+                                            </TransformGroup>
                                         </Border.RenderTransform>
                                         <Image Source="/Images/Arrow.png"/>
                                     </Border>
-                                    <Border x:Name="WorldPointPreviewControl" RenderTransformOrigin="0.5,0.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
+                                    <Border x:Name="WorldPointPreviewControl" Width="15" Height="15" BorderThickness="2.5" RenderTransformOrigin="0.5,0.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
-                                            <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
+                                            <TransformGroup>
+                                                <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
+                                                <ScaleTransform
+                                                    ScaleX="{Binding InverseZoom}"
+                                                    ScaleY="{Binding InverseZoom}"/>
+                                            </TransformGroup>
                                         </Border.RenderTransform>
                                         <Image Source="/Images/Arrow.png"/>
                                     </Border>
 
                                     <!-- Preview ObjectivePoint -->
-                                    <Border x:Name="ObjectivePointPreviewControl" Visibility="{c:Binding ElementName=AddObjectivePointCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="ObjectivePointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="ObjectivePointPreviewControl_MouseRightButtonDown">
+                                    <Border x:Name="ObjectivePointPreviewControl" Width="30" Height="30" BorderThickness="2.5" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding ElementName=AddObjectivePointCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="ObjectivePointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="ObjectivePointPreviewControl_MouseRightButtonDown">
                                         <Image Source="/Images/ObjectivePoint.png"/>
+                                        <Border.RenderTransform>
+                                            <ScaleTransform
+                                                ScaleX="{Binding InverseZoom}"
+                                                ScaleY="{Binding InverseZoom}"/>
+                                        </Border.RenderTransform>
                                     </Border>
-                                    
+
                                     <!-- Preview MapTextPoint -->
-                                    <Border x:Name="MapTextPointPreviewControl" Visibility="{c:Binding ElementName=AddMapTextPointCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="MapTextPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="MapTextPointPreviewControl_MouseRightButtonDown">
-                                        <TextBlock x:Name="MapTextPointPreviewTextBlock" Text="{Binding ElementName=MapTextPointPreviewTextComboBox, Path=SelectedValue}" FontSize="40" Foreground="Khaki"/>
+                                    <Border x:Name="MapTextPointPreviewControl" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding ElementName=AddMapTextPointCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="MapTextPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="MapTextPointPreviewControl_MouseRightButtonDown">
+                                        <Border.RenderTransform>
+                                            <ScaleTransform
+                                                ScaleX="{Binding InverseZoom}"
+                                                ScaleY="{Binding InverseZoom}"/>
+                                        </Border.RenderTransform>
+                                        <TextBlock x:Name="MapTextPointPreviewTextBlock" Text="{Binding ElementName=MapTextPointPreviewTextComboBox, Path=SelectedValue}" Foreground="Khaki"/>
                                     </Border>
                                 </Canvas>
 
@@ -278,7 +325,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                                                BorderThickness="5"
+                                                BorderThickness="2.5"
                                                 BorderBrush="Transparent"
                                                 RenderTransformOrigin="{Binding Type.Pivot}"
                                                 PreviewMouseLeftButtonUp="OnWorldObjectClicked"
@@ -339,13 +386,19 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                                                BorderThickness="5"
+                                                Width="30" Height="30"
+                                                BorderThickness="2.5"
                                                 BorderBrush="Transparent"
                                                 RenderTransformOrigin="0.5,0.5"
                                                 PreviewMouseLeftButtonUp="OnPlayerClicked"
                                                 PreviewMouseLeftButtonDown="OnPlayerClicked">
                                                 <Border.RenderTransform>
-                                                    <RotateTransform Angle="{Binding Rotation}"/>
+                                                    <TransformGroup>
+                                                        <RotateTransform Angle="{Binding Rotation}"/>
+                                                        <ScaleTransform
+                                                            ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                            ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                    </TransformGroup>
                                                 </Border.RenderTransform>
                                                 <Grid>
                                                     <Ellipse>
@@ -358,7 +411,7 @@
                                                             <SolidColorBrush Color="{Binding Color}"/>
                                                         </Ellipse.Fill>
                                                     </Ellipse>
-                                                    <Image Source="/Images/Player.png" Margin="5"/>
+                                                    <Image Source="/Images/Player.png" Margin="2.5"/>
                                                 </Grid>
                                             </Border>
                                             <DataTemplate.Triggers>
@@ -380,7 +433,7 @@
                                 <ItemsControl x:Name="WaypointPathItemsControl" ItemsSource="{Binding Map.WaypointPaths}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Canvas x:Name="WaypointPathCanvas" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemContainerStyle>
@@ -392,12 +445,12 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Path -->
-                                                <Path x:Name="OutlinePath" StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
+                                                <Path x:Name="OutlinePath" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessLarge}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path x:Name="Path" StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWaypointPathClicked" PreviewMouseLeftButtonUp="OnWaypointPathClicked">
+                                                <Path x:Name="Path" UseLayoutRounding="True" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessMed}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWaypointPathClicked" PreviewMouseLeftButtonUp="OnWaypointPathClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -410,12 +463,13 @@
                                                 <ItemsControl x:Name="Points" ItemsSource="{Binding Points}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            <Canvas x:Name="WaypointPathPointCanvas" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
 
                                                     <ItemsControl.ItemContainerStyle>
-                                                        <Style>
+                                                        <Style TargetType="ContentPresenter">
+                                                            <Setter Property="SnapsToDevicePixels" Value="True"/>
                                                             <Setter Property="Canvas.Left">
                                                                 <Setter.Value>
                                                                     <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
@@ -437,10 +491,15 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" Width="20" Height="20" BorderBrush="Transparent" BorderThickness="3" PreviewMouseLeftButtonDown="OnWaypointPathPointClicked" PreviewMouseLeftButtonUp="OnWaypointPathPointClicked">
+                                                            <Border x:Name="border" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWaypointPathPointClicked" PreviewMouseLeftButtonUp="OnWaypointPathPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                 </Border.Background>
+                                                                <Border.RenderTransform>
+                                                                    <ScaleTransform
+                                                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                                </Border.RenderTransform>
                                                             </Border>
                                                             <DataTemplate.Triggers>
                                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
@@ -491,12 +550,12 @@
                                         <DataTemplate>
                                             <Canvas>
                                                 <!-- Path -->
-                                                <Path x:Name="OutlinePath" StrokeThickness="10" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
+                                                <Path x:Name="OutlinePath" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessLarge}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" Visibility="{c:Binding IsSelected}">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path x:Name="Path" StrokeThickness="5" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWorldPolygonClicked" PreviewMouseLeftButtonUp="OnWorldPolygonClicked">
+                                                <Path x:Name="Path" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessMed}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWorldPolygonClicked" PreviewMouseLeftButtonUp="OnWorldPolygonClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -539,10 +598,15 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" Width="20" Height="20" BorderBrush="Transparent" BorderThickness="3" PreviewMouseLeftButtonDown="OnWorldPolygonPointClicked" PreviewMouseLeftButtonUp="OnWorldPolygonPointClicked">
+                                                            <Border x:Name="border" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWorldPolygonPointClicked" PreviewMouseLeftButtonUp="OnWorldPolygonPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                 </Border.Background>
+                                                                <Border.RenderTransform>
+                                                                    <ScaleTransform
+                                                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                                </Border.RenderTransform>
                                                             </Border>
                                                             <DataTemplate.Triggers>
                                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
@@ -623,15 +687,20 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="5" PreviewMouseLeftButtonDown="OnWorldPointClicked" PreviewMouseLeftButtonUp="OnWorldPointClicked">
-                                                                <Border x:Name="borderInside" BorderThickness="3">
+                                                            <Border x:Name="border" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWorldPointClicked" PreviewMouseLeftButtonUp="OnWorldPointClicked">
+                                                                <Border x:Name="borderInside" Width="20" Height="20" BorderThickness="2.5">
                                                                     <Border.Background>
                                                                         <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                     </Border.Background>
                                                                     <Image Source="/Images/Arrow.png"/>
                                                                 </Border>
                                                                 <Border.RenderTransform>
-                                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                    <TransformGroup>
+                                                                        <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                        <ScaleTransform
+                                                            ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                            ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                                    </TransformGroup>
                                                                 </Border.RenderTransform>
                                                             </Border>
                                                             <DataTemplate.Triggers>
@@ -689,11 +758,18 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                                                BorderThickness="5"
-                                                BorderBrush="Transparent"
-                                                PreviewMouseLeftButtonDown="OnObjectivePointClicked"
-                                                PreviewMouseLeftButtonUp="OnObjectivePointClicked">
+                                BorderThickness="2.5"
+                                BorderBrush="Transparent"
+                                RenderTransformOrigin="0.5,0.5"
+                                Width="30" Height="30"
+                                PreviewMouseLeftButtonDown="OnObjectivePointClicked"
+                                PreviewMouseLeftButtonUp="OnObjectivePointClicked">
                                                 <Image Source="/Images/ObjectivePoint.png"/>
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform
+                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                </Border.RenderTransform>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
@@ -741,11 +817,17 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                                                BorderThickness="5"
-                                                BorderBrush="Transparent"
-                                                PreviewMouseLeftButtonDown="OnMapTextPointClicked"
-                                                PreviewMouseLeftButtonUp="OnMapTextPointClicked">
-                                                <TextBlock x:Name="DisplayedTextBlock" Text="{Binding DisplayedText}" FontSize="40" Foreground="Khaki"/>
+                                BorderThickness="2.5"
+                                BorderBrush="Transparent"
+                                RenderTransformOrigin="0.5,0.5"
+                                PreviewMouseLeftButtonDown="OnMapTextPointClicked"
+                                PreviewMouseLeftButtonUp="OnMapTextPointClicked">
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform
+                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                </Border.RenderTransform>
+                                                <TextBlock x:Name="DisplayedTextBlock" Text="{Binding DisplayedText}" Foreground="Khaki"/>
                                             </Border>
                                             <DataTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">

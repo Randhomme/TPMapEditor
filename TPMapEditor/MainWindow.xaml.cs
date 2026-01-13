@@ -26,6 +26,7 @@ using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.ViewModel.SelectionTransform;
 using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
 namespace TPMapEditor
 {
@@ -37,10 +38,21 @@ namespace TPMapEditor
     {
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(InverseZoom))]
+        [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessSmall))]
+        [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessMed))]
+        [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessLarge))]
+        private double zoom = 1;
         private Point selectActionPoint;
         private Point moveActionPoint;
         private DateTime lastWheelTime = DateTime.MinValue;
         private AppSettings settings;
+
+        public double InverseZoom { get => 1 / Zoom; }
+        public double ZoomedBorderThicknessSmall { get => 2.5 / Zoom; }
+        public double ZoomedBorderThicknessMed { get => 5 / Zoom; }
+        public double ZoomedBorderThicknessLarge { get => 10 / Zoom; }
 
         private readonly IReadOnlyList<(Key key, ModifierKeys modifiers, ICommand command)> keyboardShortcut;
 
@@ -810,15 +822,13 @@ namespace TPMapEditor
             double absoluteY = MapScrollViewer.VerticalOffset + mousePos.Y;
             double realScale = MapViewBox.ActualWidth / MapGrid.ActualWidth;
             double newScale = realScale * scale;
-
-            ZoomTransform.ScaleX = newScale;
-            ZoomTransform.ScaleY = newScale;
-
             double newAbsoluteX = absoluteX * scale;
             double newAbsoluteY = absoluteY * scale;
-
-            MapScrollViewer.ScrollToHorizontalOffset(newAbsoluteX - mousePos.X);
-            MapScrollViewer.ScrollToVerticalOffset(newAbsoluteY - mousePos.Y);
+            double targetX = newAbsoluteX - mousePos.X;
+            double targetY = newAbsoluteY - mousePos.Y;
+            Zoom = newScale;
+            MapScrollViewer.ScrollToHorizontalOffset(targetX);
+            MapScrollViewer.ScrollToVerticalOffset(targetY);
 
             e.Handled = true;
         }
@@ -900,7 +910,7 @@ namespace TPMapEditor
             }
         }
 
-#endregion
+        #endregion
 
         #region UtilsMethods
 
@@ -1292,7 +1302,7 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.WorldObjects.Count; i++)
                 {
@@ -1517,6 +1527,7 @@ namespace TPMapEditor
             Panel.SetZIndex(PlayerItemsControl, 0);
             PlayerItemsControl.Opacity = 0.5;
             PlayerItemsControl.IsEnabled = false;
+            AddPlayerCheckBox.IsChecked = false;
             MoveCheckBox.Checked -= MovePlayerCheckBox_Checked;
             MoveCheckBox.Unchecked -= MovePlayerCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
@@ -1549,7 +1560,7 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.Players.Count; i++)
                 {
@@ -1800,8 +1811,8 @@ namespace TPMapEditor
             Mouse.Capture(null);
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
-            var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            var rect = new Rect(selectActionPoint, pos);            
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.WaypointPaths.Count; i++)
                 {
@@ -2097,7 +2108,7 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.WorldPolygons.Count; i++)
                 {
@@ -2403,7 +2414,7 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.WorldPointSets.Count; i++)
                 {
@@ -2744,7 +2755,7 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.ObjectivePoints.Count; i++)
                 {
@@ -2947,7 +2958,7 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance || rect.Height >= SystemParameters.MinimumVerticalDragDistance)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
             {
                 for (int i = 0; i < Map.MapTextPoints.Count; i++)
                 {
