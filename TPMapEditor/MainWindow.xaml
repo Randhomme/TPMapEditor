@@ -12,7 +12,7 @@
         xmlns:Styles="clr-namespace:TPMapEditor.Styles" x:Class="TPMapEditor.MainWindow"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Title="TPMapEditor" Height="500" Width="1000" Closing="Window_Closing" Closed="Window_Closed" WindowState="Maximized" UseLayoutRounding="True" PreviewKeyDown="Window_PreviewKeyDown" ContentRendered="Window_ContentRendered">
+        Title="TPMapEditor" Height="500" Width="1000" Closing="Window_Closing" Closed="Window_Closed" WindowState="Maximized" UseLayoutRounding="True" PreviewKeyDown="Window_PreviewKeyDown" ContentRendered="Window_ContentRendered" Loaded="Window_Loaded">
     <Window.Resources>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
         <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
@@ -328,7 +328,6 @@
                                                 BorderThickness="2.5"
                                                 BorderBrush="Transparent"
                                                 RenderTransformOrigin="{Binding Type.Pivot}"
-                                                PreviewMouseLeftButtonUp="OnWorldObjectClicked"
                                                 PreviewMouseLeftButtonDown="OnWorldObjectClicked">
                                                 <Border.RenderTransform>
                                                     <RotateTransform Angle="{Binding ZRotation}"/>
@@ -390,7 +389,6 @@
                                                 BorderThickness="2.5"
                                                 BorderBrush="Transparent"
                                                 RenderTransformOrigin="0.5,0.5"
-                                                PreviewMouseLeftButtonUp="OnPlayerClicked"
                                                 PreviewMouseLeftButtonDown="OnPlayerClicked">
                                                 <Border.RenderTransform>
                                                     <TransformGroup>
@@ -433,7 +431,7 @@
                                 <ItemsControl x:Name="WaypointPathItemsControl" ItemsSource="{Binding Map.WaypointPaths}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <Canvas x:Name="WaypointPathCanvas" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemContainerStyle>
@@ -450,7 +448,7 @@
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path x:Name="Path" UseLayoutRounding="True" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessMed}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWaypointPathClicked" PreviewMouseLeftButtonUp="OnWaypointPathClicked">
+                                                <Path x:Name="Path" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessMed}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWaypointPathClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -491,7 +489,7 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWaypointPathPointClicked" PreviewMouseLeftButtonUp="OnWaypointPathPointClicked">
+                                                            <Border x:Name="border" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWaypointPathPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                 </Border.Background>
@@ -555,7 +553,7 @@
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
                                                 </Path>
-                                                <Path x:Name="Path" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessMed}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWorldPolygonClicked" PreviewMouseLeftButtonUp="OnWorldPolygonClicked">
+                                                <Path x:Name="Path" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ZoomedBorderThicknessMed}" Data="{Binding Points, Converter={StaticResource PathGeometryConverter}}" PreviewMouseLeftButtonDown="OnWorldPolygonClicked">
                                                     <Path.RenderTransform>
                                                         <ScaleTransform ScaleY="-1" CenterY="0" />
                                                     </Path.RenderTransform>
@@ -598,7 +596,7 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWorldPolygonPointClicked" PreviewMouseLeftButtonUp="OnWorldPolygonPointClicked">
+                                                            <Border x:Name="border" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWorldPolygonPointClicked">
                                                                 <Border.Background>
                                                                     <SolidColorBrush Color="{Binding Parent.Color}"/>
                                                                 </Border.Background>
@@ -687,7 +685,7 @@
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <Border x:Name="border" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWorldPointClicked" PreviewMouseLeftButtonUp="OnWorldPointClicked">
+                                                            <Border x:Name="border" RenderTransformOrigin="0.5,0.5" BorderBrush="Transparent" BorderThickness="2.5" PreviewMouseLeftButtonDown="OnWorldPointClicked">
                                                                 <Border x:Name="borderInside" Width="20" Height="20" BorderThickness="2.5">
                                                                     <Border.Background>
                                                                         <SolidColorBrush Color="{Binding Parent.Color}"/>
@@ -698,8 +696,8 @@
                                                                     <TransformGroup>
                                                                         <RotateTransform Angle="{Binding ZRotation}"/>
                                                                         <ScaleTransform
-                                                            ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
-                                                            ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                                            ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                                            ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
                                                                     </TransformGroup>
                                                                 </Border.RenderTransform>
                                                             </Border>
@@ -758,17 +756,16 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                                BorderThickness="2.5"
-                                BorderBrush="Transparent"
-                                RenderTransformOrigin="0.5,0.5"
-                                Width="30" Height="30"
-                                PreviewMouseLeftButtonDown="OnObjectivePointClicked"
-                                PreviewMouseLeftButtonUp="OnObjectivePointClicked">
+                                                BorderThickness="2.5"
+                                                BorderBrush="Transparent"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                Width="30" Height="30"
+                                                PreviewMouseLeftButtonDown="OnObjectivePointClicked">
                                                 <Image Source="/Images/ObjectivePoint.png"/>
                                                 <Border.RenderTransform>
                                                     <ScaleTransform
-                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
-                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
                                                 </Border.RenderTransform>
                                             </Border>
                                             <DataTemplate.Triggers>
@@ -817,15 +814,14 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border x:Name="border"
-                                BorderThickness="2.5"
-                                BorderBrush="Transparent"
-                                RenderTransformOrigin="0.5,0.5"
-                                PreviewMouseLeftButtonDown="OnMapTextPointClicked"
-                                PreviewMouseLeftButtonUp="OnMapTextPointClicked">
+                                                BorderThickness="2.5"
+                                                BorderBrush="Transparent"
+                                                RenderTransformOrigin="0.5,0.5"
+                                                PreviewMouseLeftButtonDown="OnMapTextPointClicked">
                                                 <Border.RenderTransform>
                                                     <ScaleTransform
-                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
-                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
+                                                        ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
+                                                        ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
                                                 </Border.RenderTransform>
                                                 <TextBlock x:Name="DisplayedTextBlock" Text="{Binding DisplayedText}" Foreground="Khaki"/>
                                             </Border>
