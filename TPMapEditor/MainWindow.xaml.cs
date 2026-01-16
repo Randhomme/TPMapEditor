@@ -1338,10 +1338,10 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if (WorldObjectPreviewControl.Visibility != Visibility.Visible)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
-                if(s!=null)
+                if (s != null)
                     OnWorldObjectClicked(s.VisualHit, e);
             }
         }
@@ -1604,7 +1604,7 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if (AddPlayerCheckBox.IsChecked != true)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
                 if (s != null)
@@ -1875,7 +1875,7 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if (AddWaypointPathPointRadioButton.IsChecked != true && NewWaypointPathRadioButton.IsChecked != true)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
                 if (s != null && SelectCheckBox.IsChecked == true)
@@ -2193,7 +2193,7 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if (AddWorldPolygonPointRadioButton.IsChecked != true && NewWorldPolygonRadioButton.IsChecked != true)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
                 if (s != null && SelectCheckBox.IsChecked == true)
@@ -2521,7 +2521,7 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if (AddWorldPointSetPointRadioButton.IsChecked != true && AddWorldPointSetRadioButton.IsChecked != true)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
                 if (s != null)
@@ -2826,7 +2826,7 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if(AddObjectivePointCheckBox.IsChecked != true)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
                 if (s != null)
@@ -3037,7 +3037,7 @@ namespace TPMapEditor
                 }
                 e.Handled = true;
             }
-            else
+            else if (AddMapTextPointCheckBox.IsChecked != true)
             {
                 var s = VisualTreeHelper.HitTest(currentCanvas, pos);
                 if (s != null)
