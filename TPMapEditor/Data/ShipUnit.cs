@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TPMapEditor.Enums.WorldObjectDefinition;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
@@ -24,7 +25,7 @@ namespace TPMapEditor.Data
 
         public ShipUnit(WorldMap map, string name, WorldObject? worldObject = null) : base(map, name)
         {
-            this.worldObject = worldObject ?? map?.WorldObjects.FirstOrDefault();
+            this.worldObject = worldObject ?? map?.WorldObjects.FirstOrDefault((w) => w.Type.CustomInfoDefinition == CustomInfoDefinition.ShipCustomInfoFactory);
         }
 
         protected override bool IsNameTaken(string name)
