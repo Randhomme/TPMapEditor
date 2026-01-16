@@ -27,6 +27,7 @@ using TPMapEditor.ViewModel.SelectionTransform;
 using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using TPMapEditor.ViewModel;
 
 namespace TPMapEditor
 {
@@ -180,6 +181,12 @@ namespace TPMapEditor
                     }
                 });
             }
+        }
+
+        [RelayCommand]
+        private void OnStarmapExport()
+        {
+            new StarmapExportDialog(this, "Starmap preview") { DataContext = new StarmapExportViewModel(Map) }.ShowDialog();
         }
 
         [RelayCommand]

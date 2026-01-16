@@ -32,6 +32,9 @@
                     <MenuItem Header="Import" Command="{Binding MapImportCommand}"/>
                     <MenuItem Header="Export" Command="{Binding MapExportCommand}"/>
                 </MenuItem>
+                <MenuItem Header="Starmap">
+                    <MenuItem Header="Export" Command="{Binding StarmapExportCommand}"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Map Settings" >
                 <MenuItem Header="Reset map" Command="{Binding ResetMapCommand}"/>
