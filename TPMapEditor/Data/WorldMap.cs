@@ -97,28 +97,20 @@ namespace TPMapEditor.Data
             JournalEntries = new ObservableCollection<JournalEntry>();
             WorldCrews = new ObservableCollection<WorldObjectType>();
             WorldArms = new ObservableCollection<WorldObjectType>();
-            WorldObjects.CollectionChanged += OnWorldObjectsCollectionChanged;
-            Players.CollectionChanged += OnPlayersCollectionChanged;
-            WaypointPaths.CollectionChanged += OnWaypointPathsCollectionChanged;
-            WorldPointSets.CollectionChanged += OnWorldPointSetsCollectionChanged;
+            Flags.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(Flags, e);
             Groups.CollectionChanged += OnGroupsCollectionChanged;
-            ShipUnits.CollectionChanged += OnShipUnitsCollectionChanged;
+            InGameTeams.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(InGameTeams, e);
+            MapTextPoints.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(MapTextPoints, e);
             ObjectivePoints.CollectionChanged += OnObjectivePointsCollectionChanged;
-            Players.CollectionChanged += OnOPlayersCollectionChanged;
-            Flags.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Flags, e); };
-            Groups.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Groups, e, Group.DefaultGroup); };
-            MapTextPoints.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(MapTextPoints, e); };
-            ObjectivePoints.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(ObjectivePoints, e, ObjectivePoint.DefaultObjectivePoint); };
-            ObjectiveTasks.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(ObjectiveTasks, e); };
-            Players.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Players, e, Player.DefaultPlayer); };
-            ShipUnits.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(ShipUnits, e, ShipUnit.DefaultShipUnit); };
-            SpeechEvents.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(SpeechEvents, e); };
-            InGameTeams.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(InGameTeams, e); };
-            Timers.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(Timers, e); };
-            WaypointPaths.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WaypointPaths, e, WaypointPath.DefaultWaypointPath); };
-            WorldObjects.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WorldObjects, e); };
-            WorldPointSets.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WorldPointSets, e, WorldPointSet.DefaultWorldPointSet); };
-            WorldPolygons.CollectionChanged += (s, e) => { NullifyRuleFieldOnRemoveItems(WorldPolygons, e); };
+            ObjectiveTasks.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(ObjectiveTasks, e);
+            Players.CollectionChanged += OnPlayersCollectionChanged;
+            ShipUnits.CollectionChanged += OnShipUnitsCollectionChanged;
+            SpeechEvents.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(SpeechEvents, e);
+            Timers.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(Timers, e);
+            WaypointPaths.CollectionChanged += OnWaypointPathsCollectionChanged;
+            WorldObjects.CollectionChanged += OnWorldObjectsCollectionChanged;
+            WorldPointSets.CollectionChanged += OnWorldPointSetsCollectionChanged;
+            WorldPolygons.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(WorldPolygons, e);
         }
 
         private void NullifyRuleFieldOnRemoveItems<T>(ObservableCollection<T> itemSource, NotifyCollectionChangedEventArgs e, T? defaultItem = default)
@@ -167,15 +159,16 @@ namespace TPMapEditor.Data
             }
         }
 
-        private void OnWorldObjectsCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        private void OnGroupsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if(e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (WorldObject item in e.OldItems)
-                {
-                    item.Group = null;
-                }
-            }
+            SelectableGroups.SynchronizeFrom(Groups, e, new[] { Group.DefaultGroup });
+            NullifyRuleFieldOnRemoveItems(Groups, e, Group.DefaultGroup);
+        }
+
+        private void OnObjectivePointsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableObjectivePoints.SynchronizeFrom(ObjectivePoints, e, new[] { ObjectivePoint.DefaultObjectivePoint });
+            NullifyRuleFieldOnRemoveItems(ObjectivePoints, e, ObjectivePoint.DefaultObjectivePoint);
         }
 
         private void OnPlayersCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
@@ -188,6 +181,38 @@ namespace TPMapEditor.Data
                         PlayerPlayableCount--;
                 }
             }
+            SelectablePlayers.SynchronizeFrom(Players, e, new[] { Player.DefaultPlayer });
+            NullifyRuleFieldOnRemoveItems(Players, e, Player.DefaultPlayer);
+        }
+
+        private void OnShipUnitsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableShipUnits.SynchronizeFrom(ShipUnits, e, new[] { ShipUnit.DefaultShipUnit });
+            NullifyRuleFieldOnRemoveItems(ShipUnits, e, ShipUnit.DefaultShipUnit);
+        }
+
+        private void OnWaypointPathsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableWaypointPaths.SynchronizeFrom(WaypointPaths, e, new[] { WaypointPath.DefaultWaypointPath });
+            NullifyRuleFieldOnRemoveItems(WaypointPaths, e, WaypointPath.DefaultWaypointPath);
+        }
+
+        private void OnWorldObjectsCollectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (WorldObject item in e.OldItems)
+                {
+                    item.Group = null;
+                }
+            }
+            NullifyRuleFieldOnRemoveItems(WorldObjects, e);
+        }
+
+        private void OnWorldPointSetsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectableWorldPointSets.SynchronizeFrom(WorldPointSets, e, new[] { WorldPointSet.DefaultWorldPointSet });
+            NullifyRuleFieldOnRemoveItems(WorldPointSets, e, WorldPointSet.DefaultWorldPointSet);
         }
 
         public void EnableCollectionSynchronization(object _lock)
@@ -298,36 +323,6 @@ namespace TPMapEditor.Data
             WorldCrews.Clear();
             WorldArms.Clear();
             WorldObject.ResetNextId();
-        }
-
-        private void OnWaypointPathsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectableWaypointPaths.SynchronizeFrom(WaypointPaths, e, new[] { WaypointPath.DefaultWaypointPath });
-        }
-
-        private void OnWorldPointSetsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectableWorldPointSets.SynchronizeFrom(WorldPointSets, e, new[] { WorldPointSet.DefaultWorldPointSet });
-        }
-
-        private void OnGroupsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectableGroups.SynchronizeFrom(Groups, e, new[] { Group.DefaultGroup });
-        }
-
-        private void OnShipUnitsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectableShipUnits.SynchronizeFrom(ShipUnits, e, new[] { ShipUnit.DefaultShipUnit });
-        }
-
-        private void OnObjectivePointsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectableObjectivePoints.SynchronizeFrom(ObjectivePoints, e, new[] { ObjectivePoint.DefaultObjectivePoint });
-        }
-
-        private void OnOPlayersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            SelectablePlayers.SynchronizeFrom(Players, e, new[] { Player.DefaultPlayer });
         }
     }
 }
