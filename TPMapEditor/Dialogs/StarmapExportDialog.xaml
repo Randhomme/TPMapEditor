@@ -16,121 +16,196 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="DarkGray">
-            <Grid Background="Gray" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Viewbox x:Name="MapViewbox" Stretch="Uniform" StretchDirection="Both" Width="512" Height="512">
-                    <Grid ClipToBounds="True">
-                        <Grid UseLayoutRounding="False" Margin="{Binding NegativeWorldBuffer}" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
-                            <ItemsControl ItemsSource="{Binding BlackHoles}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="Canvas.Left">
-                                            <Setter.Value>
-                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                    <Binding Path="X" />
-                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Canvas.Bottom">
-                                            <Setter.Value>
-                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                    <Binding Path="Y" />
-                                                    <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid RenderTransformOrigin="{Binding Type.Pivot}">
-                                            <Grid.RenderTransform>
-                                                <RotateTransform Angle="{Binding ZRotation}"/>
-                                            </Grid.RenderTransform>
-                                            <Image Source="{Binding Type.Image}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <ItemsControl ItemsSource="{Binding StarmapWorldObjects}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="Canvas.Left">
-                                            <Setter.Value>
-                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                    <Binding Path="X" />
-                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Canvas.Bottom">
-                                            <Setter.Value>
-                                                <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
-                                                    <Binding Path="Y" />
-                                                    <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid RenderTransformOrigin="{Binding Type.Pivot}">
-                                            <Grid.RenderTransform>
-                                                <RotateTransform Angle="{Binding ZRotation}"/>
-                                            </Grid.RenderTransform>
-                                            <Image Source="{Binding Type.Image}" Visibility="Hidden" Margin="0" Stretch="Uniform" StretchDirection="Both"/>
-                                            <Rectangle Fill="White" Margin="-10">
-                                                <Rectangle.OpacityMask>
-                                                    <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
-                                                </Rectangle.OpacityMask>
-                                                <Rectangle.Effect>
-                                                    <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="50" Opacity="1"/>
-                                                </Rectangle.Effect>
-                                            </Rectangle>
-                                            <Rectangle Fill="Black" Margin="-5">
-                                                <Rectangle.OpacityMask>
-                                                    <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
-                                                </Rectangle.OpacityMask>
-                                                <Rectangle.Effect>
-                                                    <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="50" Opacity="1"/>
-                                                </Rectangle.Effect>
-                                            </Rectangle>
-                                            <Rectangle Margin="0">
-                                                <Rectangle.Fill>
-                                                    <RadialGradientBrush RadiusX="1.5" RadiusY="1.5" Center="{Binding Type.Pivot}">
-                                                        <RadialGradientBrush.GradientStops>
-                                                            <GradientStop Offset="0" Color="Aqua"/>
-                                                            <GradientStop Offset="1" Color="Black"/>
-                                                        </RadialGradientBrush.GradientStops>
-                                                    </RadialGradientBrush>
-                                                </Rectangle.Fill>
-                                                <Rectangle.OpacityMask>
-                                                    <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
-                                                </Rectangle.OpacityMask>
-                                                <Rectangle.Effect>
-                                                    <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="50" Opacity="1"/>
-                                                </Rectangle.Effect>
-                                            </Rectangle>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+            <Grid Background="Gray">
+                <Grid>
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Images/bg.png"/>
+                    </Grid.Background>
+                    <Viewbox x:Name="MapViewbox" Stretch="Uniform" StretchDirection="Both" Width="512" Height="512">
+                        <Grid ClipToBounds="True">
+                            <Grid UseLayoutRounding="False" Margin="{Binding NegativeWorldBuffer}" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                                <ItemsControl ItemsSource="{Binding BlackHoles}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Canvas.Left">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="X" />
+                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Canvas.Bottom">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="Y" />
+                                                        <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid RenderTransformOrigin="{Binding Type.Pivot}">
+                                                <Grid.RenderTransform>
+                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                </Grid.RenderTransform>
+                                                <Image Source="{Binding Type.Image}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding Islands}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Canvas.Left">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="X" />
+                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Canvas.Bottom">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="Y" />
+                                                        <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid RenderTransformOrigin="{Binding Type.Pivot}">
+                                                <Grid.RenderTransform>
+                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                </Grid.RenderTransform>
+                                                <Image Source="{Binding Type.Image}" Visibility="Hidden" Margin="0" Stretch="Uniform" StretchDirection="Both"/>
+                                                <Rectangle Fill="White" Margin="-10">
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Opacity="1"/>
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                                <Rectangle Fill="Black" Margin="-2.5">
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Opacity="1"/>
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                                <Rectangle Margin="0">
+                                                    <Rectangle.Fill>
+                                                        <RadialGradientBrush RadiusX="1" RadiusY="1" Center="{Binding Type.Pivot}">
+                                                            <RadialGradientBrush.GradientStops>
+                                                                <GradientStop Offset="0.25" Color="Cyan"/>
+                                                                <GradientStop Offset="0.75" Color="DarkCyan"/>
+                                                            </RadialGradientBrush.GradientStops>
+                                                        </RadialGradientBrush>
+                                                    </Rectangle.Fill>
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Opacity="1"/>
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding Asteroids}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="Canvas.Left">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="X" />
+                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Canvas.Bottom">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource CenteringMultiConverter}">
+                                                        <Binding Path="Y" />
+                                                        <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}"/>
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid RenderTransformOrigin="{Binding Type.Pivot}">
+                                                <Grid.RenderTransform>
+                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                </Grid.RenderTransform>
+                                                <Image Source="{Binding Type.Image}" Visibility="Hidden" Margin="0" Stretch="Uniform" StretchDirection="Both"/>
+                                                <Rectangle Fill="White" Margin="-10">
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Opacity="1"/>
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                                <Rectangle Fill="White" Margin="0">
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Opacity="1"/>
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                                <Rectangle Margin="0">
+                                                    <Rectangle.Fill>
+                                                        <RadialGradientBrush RadiusX="1" RadiusY="1" Center="{Binding Type.Pivot}">
+                                                            <RadialGradientBrush.GradientStops>
+                                                                <GradientStop Offset="0" Color="Lime"/>
+                                                                <!--<GradientStop Offset="1" Color="White"/>-->
+                                                            </RadialGradientBrush.GradientStops>
+                                                        </RadialGradientBrush>
+                                                    </Rectangle.Fill>
+                                                    <Rectangle.OpacityMask>
+                                                        <ImageBrush ImageSource="{Binding Type.Image}" Stretch="Uniform"/>
+                                                    </Rectangle.OpacityMask>
+                                                    <Rectangle.Effect>
+                                                        <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Opacity="1"/>
+                                                    </Rectangle.Effect>
+                                                </Rectangle>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Viewbox>
+                    </Viewbox>
+                </Grid>
             </Grid>
         </ScrollViewer>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
