@@ -1340,9 +1340,9 @@ namespace TPMapEditor
             }
             else if (WorldObjectPreviewControl.Visibility != Visibility.Visible)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null)
-                    OnWorldObjectClicked(s.VisualHit, e);
+                    OnWorldObjectClicked(s, e);
             }
         }
 
@@ -1606,9 +1606,9 @@ namespace TPMapEditor
             }
             else if (AddPlayerCheckBox.IsChecked != true)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null)
-                    OnPlayerClicked(s.VisualHit, e);
+                    OnPlayerClicked(s, e);
             }
         }
 
@@ -1877,9 +1877,9 @@ namespace TPMapEditor
             }
             else if (AddWaypointPathPointRadioButton.IsChecked != true && NewWaypointPathRadioButton.IsChecked != true)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null && SelectCheckBox.IsChecked == true)
-                    if (s.VisualHit is FrameworkElement element)
+                    if (s is FrameworkElement element)
                         if (element.DataContext is WaypointPath path)
                             WaypointPathClicked(path);
                         else if (element.DataContext is WaypointPathPoint point)
@@ -2195,9 +2195,9 @@ namespace TPMapEditor
             }
             else if (AddWorldPolygonPointRadioButton.IsChecked != true && NewWorldPolygonRadioButton.IsChecked != true)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null && SelectCheckBox.IsChecked == true)
-                    if (s.VisualHit is FrameworkElement element)
+                    if (s is FrameworkElement element)
                         if (element.DataContext is WorldPolygon polygon)
                             WorldPolygonClicked(polygon);
                         else if (element.DataContext is WorldPolygonPoint point)
@@ -2523,9 +2523,9 @@ namespace TPMapEditor
             }
             else if (AddWorldPointSetPointRadioButton.IsChecked != true && AddWorldPointSetRadioButton.IsChecked != true)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null)
-                    OnWorldPointClicked(s.VisualHit, e);
+                    OnWorldPointClicked(s, e);
             }
         }
 
@@ -2828,9 +2828,9 @@ namespace TPMapEditor
             }
             else if(AddObjectivePointCheckBox.IsChecked != true)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null)
-                    OnObjectivePointClicked(s.VisualHit, e);
+                    OnObjectivePointClicked(s, e);
             }
         }
 
@@ -3039,9 +3039,9 @@ namespace TPMapEditor
             }
             else if (AddMapTextPointCheckBox.IsChecked != true)
             {
-                var s = VisualTreeHelper.HitTest(currentCanvas, pos);
+                var s = currentCanvas?.InputHitTest(pos);
                 if (s != null)
-                    OnObjectivePointClicked(s.VisualHit, e);
+                    OnObjectivePointClicked(s, e);
             }
         }
 
