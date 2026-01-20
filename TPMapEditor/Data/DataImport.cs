@@ -1432,6 +1432,17 @@ namespace TPMapEditor.Data
                     ruleField.Value = music;
                     break;
 
+                case RuleFieldNebulaName ruleField:
+                    var nebulaName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (string.IsNullOrEmpty(nebulaName))
+                    {
+                        nebulaName = NamedObject.GenerateName("Nebula", map.Nebulas);
+                        progress.Report($"Warning: Empty nebula name replaced by {nebulaName}.");
+                    }
+                    if (ruleField.Value != null)
+                        ruleField.Value.Name = nebulaName;
+                    break;
+
                 case RuleFieldObservableCollection rfCollection:
                     {
                         var stringValue = DataImportExtensions.ParseString(rfCollection.RealLabel + " ", line);
@@ -1519,7 +1530,7 @@ namespace TPMapEditor.Data
                     var shipUnitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(shipUnitName))
                     {
-                        shipUnitName = NamedMapObject.GenerateName("Ship", map.ShipUnits);
+                        shipUnitName = NamedObject.GenerateName("Ship", map.ShipUnits);
                         progress.Report($"Warning: Empty unit name replaced by {shipUnitName}.");
                     }
                     if(ruleField.Value!=null)

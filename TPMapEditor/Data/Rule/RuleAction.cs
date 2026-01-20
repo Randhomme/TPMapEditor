@@ -11,10 +11,12 @@ namespace TPMapEditor.Data.Rule
 {
     public partial class RuleAction : ObservableObject
     {
-        private WorldMap map;
+        private readonly WorldMap map;
         [ObservableProperty]
         private Enums.RuleAction type;
 
+        [ObservableProperty]
+        private Nebula? nebula; //for nebula creation/edition
         [ObservableProperty]
         private ShipUnit? shipUnit; //for ship unit creation/edition
 
@@ -132,6 +134,12 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldMusic(map, realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
+        private void AddRuleFieldNebulaName(string? realLabel, string? label, Nebula nebula, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        {
+            var field = new RuleFieldNebulaName(map, realLabel, label, nebula, isOptional, optionalLabel, isShown);
+            RuleFields.Add(field);
+        }
+
         private void AddRuleFieldObjectivePoint(string? realLabel, string? label, ObjectivePoint? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             value ??= map.SelectableObjectivePoints.FirstOrDefault();
@@ -161,10 +169,15 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldPlayer(map, realLabel, label, player, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldPolygon(string? realLabel, string? label, WorldPolygon? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldPolygon(string? realLabel, string? label, WorldPolygon? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             value ??= map.WorldPolygons.FirstOrDefault();
-            RuleFields.Add(new RuleFieldWorldPolygon(map, realLabel, label, value, isOptional, optionalLabel, isShown));
+            var field = new RuleFieldWorldPolygon(map, realLabel, label, value, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.AddWeakPropertyChangedHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
         }
 
         private void AddRuleFieldSinglePlayerMission(string? realLabel, string? label, string? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -227,57 +240,57 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldWorldPolygon(map, realLabel, label, volume, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldWorldObject(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        private void AddRuleFieldWorldObject(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             worldObject ??= map.WorldObjects.FirstOrDefault();
             var field = new RuleFieldWorldObject(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
             if (propertyChanged != null)
             {
-                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+                field.AddWeakPropertyChangedHandler(propertyChanged);
             }
             RuleFields.Add(field);
         }
 
-        private void AddRuleFieldWorldObjectEtheriumCurrent(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        private void AddRuleFieldWorldObjectEtheriumCurrent(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             worldObject ??= map.WorldObjects.FirstOrDefault((wot)=>wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.EtheriumCurrentCustomInfoFactory);
             var field = new RuleFieldWorldObjectEtheriumCurrent(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
             if (propertyChanged != null)
             {
-                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+                field.AddWeakPropertyChangedHandler(propertyChanged);
             }
             RuleFields.Add(field);
         }
 
-        private void AddRuleFieldWorldObjectIsland(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        private void AddRuleFieldWorldObjectIsland(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             worldObject ??= map.WorldObjects.FirstOrDefault((wot) => wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.IslandCustomInfoFactory);
             var field = new RuleFieldWorldObjectIsland(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
             if (propertyChanged != null)
             {
-                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+                field.AddWeakPropertyChangedHandler(propertyChanged);
             }
             RuleFields.Add(field);
         }
 
-        private void AddRuleFieldWorldObjectNebula(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        private void AddRuleFieldWorldObjectNebula(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             worldObject ??= map.WorldObjects.FirstOrDefault((wot) => wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.NebulaCustomInfoFactory);
             var field = new RuleFieldWorldObjectNebula(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
             if (propertyChanged != null)
             {
-                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+                field.AddWeakPropertyChangedHandler(propertyChanged);
             }
             RuleFields.Add(field);
         }
 
-        private void AddRuleFieldWorldObjectShip(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, Action<object, PropertyChangedEventArgs>? propertyChanged = null)
+        private void AddRuleFieldWorldObjectShip(string? realLabel, string? label, WorldObject? worldObject = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             worldObject ??= map.WorldObjects.FirstOrDefault((wot) => wot.Type.CustomInfoDefinition == Enums.WorldObjectDefinition.CustomInfoDefinition.ShipCustomInfoFactory);
             var field = new RuleFieldWorldObjectShip(map, realLabel, label, worldObject, isOptional, optionalLabel, isShown);
             if (propertyChanged != null)
             {
-                field.PropertyChanged += new PropertyChangedEventHandler(propertyChanged);
+                field.AddWeakPropertyChangedHandler(propertyChanged);
             }
             RuleFields.Add(field);
         }
@@ -287,16 +300,28 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldWorldObjectType(map, realLabel, label, worldObjectType, isOptional, optionalLabel, isShown));
         }
 
-        private void AddRuleFieldWorldPointSet(string? realLabel, string? label, WorldPointSet? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldWorldPointSet(string? realLabel, string? label, WorldPointSet? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             value ??= map.SelectableWorldPointSets.FirstOrDefault();
-            RuleFields.Add(new RuleFieldWorldPointSet(map, realLabel, label, value, isOptional, optionalLabel, isShown));
+            var field = new RuleFieldWorldPointSet(map, realLabel, label, value, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.AddWeakPropertyChangedHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
         }
 
         partial void OnTypeChanged(Enums.RuleAction oldValue, Enums.RuleAction newValue)
         {
             switch (oldValue)
             {
+                case Enums.RuleAction.StateInitSetupNebula:
+                    if(Nebula != null)
+                    {
+                        map.Nebulas.Remove(Nebula);
+                        Nebula = null;
+                    }
+                    break;
                 case Enums.RuleAction.StateInitSetupShip:
                     if (ShipUnit != null)
                     {
@@ -324,9 +349,11 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.StateInitSetupNebula:
                     RuleFields.Clear();
+                    Nebula = new(map, NamedObject.GenerateName("Nebula", map.Nebulas));
+                    map.Nebulas.Add(Nebula);
                     AddRuleFieldWorldObjectNebula("World Object ID Int", "World object");
-                    AddRuleFieldString("New Nebula Name String", "Nebula name");
-                    AddRuleFieldPolygon("Polygon Name String", "Polygon");
+                    AddRuleFieldNebulaName("New Nebula Name String", "Nebula name", Nebula);
+                    AddRuleFieldPolygon("Polygon Name String", "Polygon", Nebula.Polygon, propertyChanged: OnNebulaPolygonChanged);
                     AddRuleFieldObservableCollection("Lightning On/Off String", "Has lightning", new()
                     {
                         new RuleFieldDouble(map, "Lightning Blast Recharge Time Float", "Lightning blast recharge time", min: 0)
@@ -338,9 +365,9 @@ namespace TPMapEditor.Data.Rule
                     AddRuleFieldEffect("Nebula Cloud Effect Name String", "Nebula cloud effect", AppSettings.Effects.FirstOrDefault());
                     AddRuleFieldEffect("Solar Storm Effect Name String", "Solar storm effect", AppSettings.Effects.FirstOrDefault());
                     AddRuleFieldEffect("Meteor Shower Effect Name  String", "Meteor shower effect", AppSettings.Effects.FirstOrDefault());
-                    AddRuleFieldWorldPointSet("Nebula Cloud Point Set Name String", "Nebula cloud point set", map.WorldPointSets.FirstOrDefault(), true, "Has nebula cloud point set");
-                    AddRuleFieldWorldPointSet("Solar Storm Point Set Name String", "Solar storm point set", map.WorldPointSets.FirstOrDefault(), true, "Has solar storm point set");
-                    AddRuleFieldWorldPointSet("Meteor Shower Point Set Name String", "Meteor shower point set", map.WorldPointSets.FirstOrDefault(), true, "Has meteor shower point set");
+                    AddRuleFieldWorldPointSet("Nebula Cloud Point Set Name String", "Nebula cloud point set", isOptional: true, optionalLabel: "Has nebula cloud point set", propertyChanged: OnNebulaPointSetChanged);
+                    AddRuleFieldWorldPointSet("Solar Storm Point Set Name String", "Solar storm point set", isOptional: true, optionalLabel: "Has solar storm point set");
+                    AddRuleFieldWorldPointSet("Meteor Shower Point Set Name String", "Meteor shower point set", isOptional: true, optionalLabel: "Has meteor shower point set");
                     AddRuleFieldObservableCollection("Rotational Winds On/Off String", "Has rotational winds", new()
                     {
                         new RuleFieldDouble(map, "Wind Magnitude Float", "Wind magnitude"), //might need to be >= 0
@@ -352,15 +379,9 @@ namespace TPMapEditor.Data.Rule
                     break;
                 case Enums.RuleAction.StateInitSetupShip:
                     RuleFields.Clear();
-                    ShipUnit = new(map, NamedMapObject.GenerateName("Ship", map.ShipUnits));
+                    ShipUnit = new(map, NamedObject.GenerateName("Ship", map.ShipUnits));
                     map.ShipUnits.Add(ShipUnit);
-                    AddRuleFieldWorldObjectShip("World Object ID Int", "World object", ShipUnit.WorldObject, propertyChanged: (s, e) =>
-                    {
-                        if (s is RuleFieldWorldObject rfwo && e.PropertyName == "Value")
-                        {
-                            ShipUnit.WorldObject = rfwo.Value;
-                        }
-                    });
+                    AddRuleFieldWorldObjectShip("World Object ID Int", "World object", ShipUnit.WorldObject, propertyChanged: OnShipUnitWorldObjectChanged);
                     AddRuleFieldShipUnitName("Ship Name String", "Ship name", ShipUnit);
                     AddRuleFieldPath("Ship Path String", "Ship path", isOptional: true, isShown: false, optionalLabel: "Has path");
                     AddRuleFieldFollowMode("Follow Mode String", "Follow mode");
@@ -848,6 +869,30 @@ namespace TPMapEditor.Data.Rule
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void OnNebulaPolygonChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value" && s is RuleFieldWorldPolygon rfwp && rfwp.Value != null)
+            {
+                Nebula!.Polygon = rfwp.Value;
+            }
+        }
+
+        private void OnNebulaPointSetChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value" && s is RuleFieldWorldPointSet rfwps && rfwps.Value != null)
+            {
+                Nebula!.NebulaPointSet = rfwps.Value;
+            }
+        }
+
+        private void OnShipUnitWorldObjectChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (s is RuleFieldWorldObject rfwo && e.PropertyName == "Value")
+            {
+                ShipUnit!.WorldObject = rfwo.Value;
             }
         }
     }

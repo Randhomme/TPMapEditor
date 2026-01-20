@@ -44,6 +44,7 @@ namespace TPMapEditor.Data
         public ObservableCollection<Timer> Timers { get; }
         public ObservableCollection<SpeechEvent> SpeechEvents { get; }
         public ObservableCollection<WorldRule> WorldRules { get; }
+        public ObservableCollection<Nebula> Nebulas { get; }
         public ObservableCollection<ShipUnit> ShipUnits { get; }
         public ObservableCollection<ObjectivePoint> ObjectivePoints { get; }
         public ObservableCollection<ObjectiveTask> ObjectiveTasks { get; }
@@ -90,6 +91,7 @@ namespace TPMapEditor.Data
             Timers = new ObservableCollection<Timer>();
             SpeechEvents = new ObservableCollection<SpeechEvent>();
             WorldRules = new ObservableCollection<WorldRule>();
+            Nebulas = new ObservableCollection<Nebula>();
             ShipUnits = new ObservableCollection<ShipUnit>();
             ObjectivePoints = new ObservableCollection<ObjectivePoint>();
             ObjectiveTasks = new ObservableCollection<ObjectiveTask>();
@@ -222,6 +224,7 @@ namespace TPMapEditor.Data
             BindingOperations.EnableCollectionSynchronization(Groups, _lock);
             BindingOperations.EnableCollectionSynchronization(JournalEntries, _lock);
             BindingOperations.EnableCollectionSynchronization(MapTextPoints, _lock);
+            BindingOperations.EnableCollectionSynchronization(Nebulas, _lock);
             BindingOperations.EnableCollectionSynchronization(ObjectivePoints, _lock);
             BindingOperations.EnableCollectionSynchronization(ObjectiveTasks, _lock);
             BindingOperations.EnableCollectionSynchronization(PlayerAlliances, _lock);
@@ -246,6 +249,7 @@ namespace TPMapEditor.Data
             BindingOperations.DisableCollectionSynchronization(Groups);
             BindingOperations.DisableCollectionSynchronization(JournalEntries);
             BindingOperations.DisableCollectionSynchronization(MapTextPoints);
+            BindingOperations.DisableCollectionSynchronization(Nebulas);
             BindingOperations.DisableCollectionSynchronization(ObjectivePoints);
             BindingOperations.DisableCollectionSynchronization(ObjectiveTasks);
             BindingOperations.DisableCollectionSynchronization(PlayerAlliances);
@@ -308,6 +312,7 @@ namespace TPMapEditor.Data
             InGameTeams.Clear();
             JournalEntries.Clear();
             MapTextPoints.Clear();
+            Nebulas.Clear();
             ObjectivePoints.Clear();
             ObjectiveTasks.Clear();
             PlayerAlliances.Clear();

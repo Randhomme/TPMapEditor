@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using TPMapEditor.Utils;
 
@@ -28,6 +30,11 @@ namespace TPMapEditor.Data.Rule
             this.isOptional = isOptional;
             this.optionalLabel = optionalLabel;
             this.isShown = isShown;
+        }
+
+        public void AddWeakPropertyChangedHandler(EventHandler<PropertyChangedEventArgs> handler)
+        {
+            PropertyChangedEventManager.AddHandler(this, handler, string.Empty);
         }
     }
 
