@@ -202,6 +202,13 @@
         </ContentControl>
     </DataTemplate>
 
+    <!--NebulaName-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldNebulaName}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <TextBox Text="{Binding Value.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+        </ContentControl>
+    </DataTemplate>
+
     <!--ObjectivePoint-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldObjectivePoint}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
@@ -221,11 +228,6 @@
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
             <ComboBox x:Name="cb" ItemsSource="{Binding Map.SelectablePlayers}" SelectedValue="{Binding Value}" DisplayMemberPath="Name"/>
         </ContentControl>
-        <!--<DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsOptional}" Value="False">
-                <Setter TargetName="cb" Property="ItemsSource" Value="{Binding Map.Players}"/>
-            </DataTrigger>
-        </DataTemplate.Triggers>-->
     </DataTemplate>
 
     <!--ShipName-->
