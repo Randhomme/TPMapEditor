@@ -9,6 +9,7 @@
         Title="StarmapExportDialog" SizeToContent="WidthAndHeight">
     <Window.Resources>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
+        <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -199,6 +200,36 @@
                                                     </Rectangle.Effect>
                                                 </Rectangle>
                                             </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding Nebulas}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Path x:Name="Path" Data="{Binding Polygon.Points, Converter={StaticResource PathGeometryConverter}}">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform ScaleY="-1" CenterY="0" />
+                                                </Path.RenderTransform>
+                                                <Path.Fill>
+                                                    <ImageBrush ImageSource="/Images/Nebula.png" TileMode="Tile" Stretch="UniformToFill" ViewportUnits="Absolute" Viewport="0,0,300,300" Opacity="1"/>
+                                                </Path.Fill>
+                                                <Path.OpacityMask>
+                                                    <VisualBrush>
+                                                        <VisualBrush.Visual>
+                                                            <Path Data="{Binding Polygon.Points, Converter={StaticResource PathGeometryConverter}}" Fill="White">
+                                                                <Path.Effect>
+                                                                    <BlurEffect Radius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.NebulaBlurRadiue}" KernelType="Box"/>
+                                                                </Path.Effect>
+                                                            </Path>
+                                                        </VisualBrush.Visual>
+                                                    </VisualBrush>
+                                                </Path.OpacityMask>
+                                            </Path>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
