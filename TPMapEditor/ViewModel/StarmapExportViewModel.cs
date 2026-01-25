@@ -16,18 +16,21 @@ namespace TPMapEditor.ViewModel
         public WorldMap Map { get; }
         public double NegativeWorldBuffer { get => -Map.WorldBuffer; }
         public double BorderThickness { get; private set; }
-        public double NebulaBlurRadiue { get; private set; }
+        public double EtheriumCurrentThickness { get; private set; }
+        public double NebulaBlurRadius { get; private set; }
 
         public ICollectionView Asteroids { get; }
         public ICollectionView BlackHoles { get; }
         public ICollectionView Islands { get; }
         public ICollectionView Nebulas { get; }
+        public ICollectionView EtheriumCurrents { get; }
 
         public StarmapExportViewModel(WorldMap map)
         {
             this.Map = map;
             BorderThickness = 5 * Map.Size / 512;
-            NebulaBlurRadiue = 15 * Map.Size / 512;
+            NebulaBlurRadius = 15 * Map.Size / 512;
+            EtheriumCurrentThickness = 10 * Map.Size / 512;
             Islands = new CollectionViewSource() { Source = map.WorldObjects }.View;
             Islands.Filter = IsWorldObjectIsland;
             BlackHoles = new CollectionViewSource() { Source = map.WorldObjects }.View;
@@ -36,6 +39,7 @@ namespace TPMapEditor.ViewModel
             Asteroids.Filter = IsWorldObjectAsteroid;
             Nebulas = new CollectionViewSource() { Source = map.Nebulas }.View;
             Nebulas.Filter = IsNebulaNebula;
+            EtheriumCurrents = new CollectionViewSource() { Source = map.EtheriumCurrents }.View;
         }
 
         private bool IsWorldObjectIsland(object o)

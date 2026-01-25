@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:base="clr-namespace:TPMapEditor"
         xmlns:converter="clr-namespace:TPMapEditor.Converter"
         mc:Ignorable="d"
         Title="StarmapExportDialog" SizeToContent="WidthAndHeight">
     <Window.Resources>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
         <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
+        <converter:Point2EnumerableToPathRoundedGeometry x:Key="Point2EnumerableToPathRoundedGeometry"/>
     </Window.Resources>
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -22,9 +24,49 @@
                     <Grid.Background>
                         <ImageBrush ImageSource="/Images/bg.png"/>
                     </Grid.Background>
-                    <Viewbox x:Name="MapViewbox" Stretch="Uniform" StretchDirection="Both" Width="512" Height="512">
-                        <Grid ClipToBounds="True">
-                            <Grid UseLayoutRounding="False" Margin="{Binding NegativeWorldBuffer}" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                    <Grid x:Name="MapGrid" >
+                        <Grid.OpacityMask>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Rectangle Fill="White" Width="512" Height="512">
+                                        <Rectangle.Effect>
+                                            <BlurEffect Radius="20" KernelType="Box" />
+                                        </Rectangle.Effect>
+                                    </Rectangle>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Grid.OpacityMask>
+                        <Viewbox x:Name="MapViewbox" ClipToBounds="True" Stretch="Uniform" StretchDirection="Both" Width="512" Height="512">
+                            <Grid Background="Transparent" UseLayoutRounding="True" Margin="{Binding NegativeWorldBuffer}" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
+                                <ItemsControl ItemsSource="{Binding EtheriumCurrents}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Canvas>
+                                                <Path Data="{Binding Path.Points, Converter={StaticResource Point2EnumerableToPathRoundedGeometry}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.NebulaBlurRadius}">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleY="-1" CenterY="0" />
+                                                    </Path.RenderTransform>
+                                                    <Path.Effect>
+                                                        <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}"/>
+                                                    </Path.Effect>
+                                                </Path>
+                                                <Path Data="{Binding Path.Points, Converter={StaticResource Point2EnumerableToPathRoundedGeometry}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="Lime" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}">
+                                                    <Path.RenderTransform>
+                                                        <ScaleTransform ScaleY="-1" CenterY="0" />
+                                                    </Path.RenderTransform>
+                                                    <Path.Effect>
+                                                        <DropShadowEffect ShadowDepth="0" Color="Black" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}"/>
+                                                    </Path.Effect>
+                                                </Path>
+                                            </Canvas>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                                 <ItemsControl ItemsSource="{Binding BlackHoles}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -188,7 +230,7 @@
                                                         <RadialGradientBrush RadiusX="1" RadiusY="1" Center="{Binding Type.Pivot}">
                                                             <RadialGradientBrush.GradientStops>
                                                                 <GradientStop Offset="0" Color="Lime"/>
-                                                                <!--<GradientStop Offset="1" Color="White"/>-->
+                                                                <GradientStop Offset="1" Color="White"/>
                                                             </RadialGradientBrush.GradientStops>
                                                         </RadialGradientBrush>
                                                     </Rectangle.Fill>
@@ -211,7 +253,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Path x:Name="Path" Data="{Binding Polygon.Points, Converter={StaticResource PathGeometryConverter}}">
+                                            <Path x:Name="Path" Data="{Binding Polygon.Points, Converter={StaticResource Point2EnumerableToPathRoundedGeometry}}">
                                                 <Path.RenderTransform>
                                                     <ScaleTransform ScaleY="-1" CenterY="0" />
                                                 </Path.RenderTransform>
@@ -223,7 +265,7 @@
                                                         <VisualBrush.Visual>
                                                             <Path Data="{Binding Polygon.Points, Converter={StaticResource PathGeometryConverter}}" Fill="White">
                                                                 <Path.Effect>
-                                                                    <BlurEffect Radius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.NebulaBlurRadiue}" KernelType="Box"/>
+                                                                    <BlurEffect Radius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.NebulaBlurRadius}" KernelType="Box"/>
                                                                 </Path.Effect>
                                                             </Path>
                                                         </VisualBrush.Visual>
@@ -234,8 +276,8 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </Grid>
-                        </Grid>
-                    </Viewbox>
+                        </Viewbox>
+                    </Grid>
                 </Grid>
             </Grid>
         </ScrollViewer>
