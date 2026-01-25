@@ -26,7 +26,9 @@ namespace TPMapEditor.Data
                 {
                     foreach(RuleAction action in e.OldItems)
                     {
-                        if (action.Type == Enums.RuleAction.StateInitSetupNebula && action.Nebula != null)
+                        if (action.Type == Enums.RuleAction.StateInitSetupEtheriumCurrent && action.EtheriumCurrent != null)
+                            map.EtheriumCurrents.Remove(action.EtheriumCurrent);
+                        else if (action.Type == Enums.RuleAction.StateInitSetupNebula && action.Nebula != null)
                             map.Nebulas.Remove(action.Nebula);
                         else if (action.Type == Enums.RuleAction.StateInitSetupShip && action.ShipUnit != null)
                             map.ShipUnits.Remove(action.ShipUnit);

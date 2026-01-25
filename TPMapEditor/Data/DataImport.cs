@@ -1267,6 +1267,17 @@ namespace TPMapEditor.Data
                     }
                     break;
 
+                case RuleFieldEtheriumCurrentName ruleField:
+                    var etheriumCurrentName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
+                    if (string.IsNullOrEmpty(etheriumCurrentName))
+                    {
+                        etheriumCurrentName = NamedObject.GenerateName("EtheriumCurrent", map.EtheriumCurrents);
+                        progress.Report($"Warning: Empty etherium current name replaced by {etheriumCurrentName}.");
+                    }
+                    if (ruleField.Value != null)
+                        ruleField.Value.Name = etheriumCurrentName;
+                    break;
+
                 case RuleFieldFlag ruleField:
                     {
                         var flagName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);

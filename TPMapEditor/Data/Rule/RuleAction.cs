@@ -16,6 +16,8 @@ namespace TPMapEditor.Data.Rule
         private Enums.RuleAction type;
 
         [ObservableProperty]
+        private EtheriumCurrent? etheriumCurrent; //for etherium current creation/edition
+        [ObservableProperty]
         private Nebula? nebula; //for nebula creation/edition
         [ObservableProperty]
         private ShipUnit? shipUnit; //for ship unit creation/edition
@@ -68,6 +70,12 @@ namespace TPMapEditor.Data.Rule
         private void AddRuleFieldEquivalence(string? realLabel, string? label, Equivalence value = Equivalence.GreaterThan, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             RuleFields.Add(new RuleFieldEquivalence(map, realLabel, label, value, isOptional, optionalLabel, isShown));
+        }
+
+        private void AddRuleFieldEtheriumCurrentName(string? realLabel, string? label, EtheriumCurrent etheriumCurrent, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        {
+            var field = new RuleFieldEtheriumCurrentName(map, realLabel, label, etheriumCurrent, isOptional, optionalLabel, isShown);
+            RuleFields.Add(field);
         }
 
         private void AddRuleFieldFlag(string? realLabel, string? label, Flag? flag = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -157,10 +165,15 @@ namespace TPMapEditor.Data.Rule
             RuleFields.Add(new RuleFieldObservableCollection(map, realLabel, value, isOptional, label, false));
         }
 
-        private void AddRuleFieldPath(string? realLabel, string? label, WaypointPath? path = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
+        private void AddRuleFieldPath(string? realLabel, string? label, WaypointPath? path = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true, EventHandler<PropertyChangedEventArgs>? propertyChanged = null)
         {
             path ??= map.SelectableWaypointPaths.FirstOrDefault();
-            RuleFields.Add(new RuleFieldWaypointPath(map, realLabel, label, path, isOptional, optionalLabel, isShown));
+            var field = new RuleFieldWaypointPath(map, realLabel, label, path, isOptional, optionalLabel, isShown);
+            if (propertyChanged != null)
+            {
+                field.AddWeakPropertyChangedHandler(propertyChanged);
+            }
+            RuleFields.Add(field);
         }
 
         private void AddRuleFieldPlayer(string? realLabel, string? label, Player? player = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
@@ -315,6 +328,13 @@ namespace TPMapEditor.Data.Rule
         {
             switch (oldValue)
             {
+                case Enums.RuleAction.StateInitSetupEtheriumCurrent:
+                    if(EtheriumCurrent != null)
+                    {
+                        map.EtheriumCurrents.Remove(EtheriumCurrent);
+                        EtheriumCurrent = null;
+                    }
+                    break;
                 case Enums.RuleAction.StateInitSetupNebula:
                     if(Nebula != null)
                     {
@@ -335,9 +355,11 @@ namespace TPMapEditor.Data.Rule
             {
                 case Enums.RuleAction.StateInitSetupEtheriumCurrent:
                     RuleFields.Clear();
+                    EtheriumCurrent = new(map, NamedObject.GenerateName("EtheriumCurrent", map.EtheriumCurrents));
+                    map.EtheriumCurrents.Add(EtheriumCurrent);
                     AddRuleFieldWorldObjectEtheriumCurrent("World Object ID Int", "World object");
-                    AddRuleFieldString("Etherium Name String", "Etherium current name");
-                    AddRuleFieldPath("Etherium Path String", "Etherium current path");
+                    AddRuleFieldEtheriumCurrentName("Etherium Name String", "Etherium current name", EtheriumCurrent);
+                    AddRuleFieldPath("Etherium Path String", "Etherium current path", propertyChanged: OnEtheriumCurrentPathChanged);
                     break;
                 case Enums.RuleAction.StateInitSetupIsland:
                     RuleFields.Clear();
@@ -869,6 +891,14 @@ namespace TPMapEditor.Data.Rule
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void OnEtheriumCurrentPathChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value" && s is RuleFieldWaypointPath rfwp && rfwp.Value != null)
+            {
+                EtheriumCurrent!.Path = rfwp.Value;
             }
         }
 

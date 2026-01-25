@@ -45,6 +45,7 @@ namespace TPMapEditor.Data
         public ObservableCollection<SpeechEvent> SpeechEvents { get; }
         public ObservableCollection<WorldRule> WorldRules { get; }
         public ObservableCollection<Nebula> Nebulas { get; }
+        public ObservableCollection<EtheriumCurrent> EtheriumCurrents { get; }
         public ObservableCollection<ShipUnit> ShipUnits { get; }
         public ObservableCollection<ObjectivePoint> ObjectivePoints { get; }
         public ObservableCollection<ObjectiveTask> ObjectiveTasks { get; }
@@ -92,6 +93,7 @@ namespace TPMapEditor.Data
             SpeechEvents = new ObservableCollection<SpeechEvent>();
             WorldRules = new ObservableCollection<WorldRule>();
             Nebulas = new ObservableCollection<Nebula>();
+            EtheriumCurrents = new ObservableCollection<EtheriumCurrent>();
             ShipUnits = new ObservableCollection<ShipUnit>();
             ObjectivePoints = new ObservableCollection<ObjectivePoint>();
             ObjectiveTasks = new ObservableCollection<ObjectiveTask>();
@@ -219,10 +221,11 @@ namespace TPMapEditor.Data
 
         public void EnableCollectionSynchronization(object _lock)
         {
-            BindingOperations.EnableCollectionSynchronization(InGameTeams, _lock);
+            BindingOperations.EnableCollectionSynchronization(EtheriumCurrents, _lock);
             BindingOperations.EnableCollectionSynchronization(Flags, _lock);
             BindingOperations.EnableCollectionSynchronization(Groups, _lock);
             BindingOperations.EnableCollectionSynchronization(JournalEntries, _lock);
+            BindingOperations.EnableCollectionSynchronization(InGameTeams, _lock);
             BindingOperations.EnableCollectionSynchronization(MapTextPoints, _lock);
             BindingOperations.EnableCollectionSynchronization(Nebulas, _lock);
             BindingOperations.EnableCollectionSynchronization(ObjectivePoints, _lock);
@@ -244,9 +247,10 @@ namespace TPMapEditor.Data
 
         public void DisableCollectionSynchronization()
         {
-            BindingOperations.DisableCollectionSynchronization(InGameTeams);
+            BindingOperations.DisableCollectionSynchronization(EtheriumCurrents);
             BindingOperations.DisableCollectionSynchronization(Flags);
             BindingOperations.DisableCollectionSynchronization(Groups);
+            BindingOperations.DisableCollectionSynchronization(InGameTeams);
             BindingOperations.DisableCollectionSynchronization(JournalEntries);
             BindingOperations.DisableCollectionSynchronization(MapTextPoints);
             BindingOperations.DisableCollectionSynchronization(Nebulas);
@@ -307,6 +311,7 @@ namespace TPMapEditor.Data
         private void Clear()
         {
             WorldRules.Clear();
+            EtheriumCurrents.Clear();
             Flags.Clear();
             Groups.Clear();
             InGameTeams.Clear();
