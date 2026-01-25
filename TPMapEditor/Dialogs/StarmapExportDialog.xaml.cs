@@ -28,7 +28,7 @@ namespace TPMapEditor.Dialogs
             if (sfd.ShowDialog(this) == true)
             {
                 var rtb = new RenderTargetBitmap(512, 512, 96, 96, PixelFormats.Pbgra32);
-                rtb.Render(MapViewbox);
+                rtb.Render(MapGrid);
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(rtb));
                 using (var fs = File.Create(sfd.FileName))
