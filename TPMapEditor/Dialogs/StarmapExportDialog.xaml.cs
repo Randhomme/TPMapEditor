@@ -1,9 +1,9 @@
 ﻿using Microsoft.Win32;
-using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TPMapEditor.ViewModel;
 
 namespace TPMapEditor.Dialogs
 {
@@ -15,6 +15,12 @@ namespace TPMapEditor.Dialogs
         public StarmapExportDialog(Window owner, string title) : base(owner, title)
         {
             InitializeComponent();
+            Loaded += async (s, e) =>
+            {
+                var vm = (StarmapExportViewModel)DataContext;
+                await vm.ProcessIslandsAndAsteroidsImages();
+                vm.IsReady = true;
+            };
         }
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
