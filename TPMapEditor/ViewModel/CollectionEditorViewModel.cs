@@ -18,7 +18,6 @@ namespace TPMapEditor.ViewModel
             this.ItemsSource = itemSource;
             this.Factory = factory;
             this.GridOnlyMode = gridOnlyMode;
-            OnPropertyChanged(nameof(Factory));
         }
     }
 }
