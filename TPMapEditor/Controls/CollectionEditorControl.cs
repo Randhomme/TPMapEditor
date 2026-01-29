@@ -110,7 +110,7 @@ namespace TPMapEditor.Controls
         }
 
         public static readonly DependencyProperty FactoryProperty =
-            DependencyProperty.Register(nameof(Factory), typeof(Func<object>), typeof(CollectionEditorControl));
+            DependencyProperty.Register(nameof(Factory), typeof(Func<object>), typeof(CollectionEditorControl), new PropertyMetadata(null, OnFactoryChanged));
 
         public ObservableCollection<DataGridColumn> Columns
         {
@@ -156,6 +156,12 @@ namespace TPMapEditor.Controls
                 var control = (CollectionEditorControl)d;
                 control.SelectedItem = wrapper.Item;
             }
+        }
+
+        private static void OnFactoryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (CollectionEditorControl)d;
+            control.addCommand.NotifyCanExecuteChanged();
         }
 
         private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -481,8 +487,11 @@ namespace TPMapEditor.Controls
         private bool CanAddNewItem()
         {
             var result =  Factory != null || itemsType?.GetConstructor(Type.EmptyTypes) != null;
-            if (!result && addButton != null)
-                addButton.Visibility = Visibility.Collapsed;
+            if (addButton != null)
+                if (result)
+                    addButton.Visibility = Visibility.Visible;
+                else
+                    addButton.Visibility = Visibility.Collapsed;
             return result;
         }
 

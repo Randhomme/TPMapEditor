@@ -7,14 +7,13 @@
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:CollectionEditorControl ItemsSource="{Binding ItemsSource}" Factory="{Binding Factory}" GridOnlyMode="{Binding GridOnlyMode}"/>
+        <controls:CollectionEditorControl ItemsSource="{Binding ItemsSource}" Factory="{Binding Factory, UpdateSourceTrigger=PropertyChanged}" GridOnlyMode="{Binding GridOnlyMode}"/>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>

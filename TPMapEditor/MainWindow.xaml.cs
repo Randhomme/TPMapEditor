@@ -226,7 +226,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnGroupsEdit()
         {
-            new CollectionEditorDialog(this, "Groups", Map.Groups, () => new Group(Map)).ShowDialog();
+            new CollectionEditorDialog(this, "Groups") { DataContext = new CollectionEditorViewModel(Map.Groups, () => new Group(Map)) }.ShowDialog();
         }
 
         [RelayCommand]
@@ -238,7 +238,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnMapTextPointsEdit()
         {
-            new CollectionEditorDialog(this, "Map text points", Map.MapTextPoints, () => new MapTextPoint(Map, NamedMapObject.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault())).ShowDialog();
+            new CollectionEditorDialog(this, "Map text points") { DataContext = new CollectionEditorViewModel(Map.MapTextPoints, () => new MapTextPoint(Map, NamedObject.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault())) }.ShowDialog();
             if (MapTextPointSelectionService.SelectedMapObject != null)
             {
                 if (!Map.MapTextPoints.Contains(MapTextPointSelectionService.SelectedMapObject))
@@ -251,13 +251,13 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnObjectiveTasksEdit()
         {
-            new CollectionEditorDialog(this, "Objective tasks", Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedMapObject.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault())).ShowDialog();
+            new CollectionEditorDialog(this, "Objective tasks") { DataContext = new CollectionEditorViewModel(Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedObject.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault())) }.ShowDialog();
         }
 
         [RelayCommand]
         private void OnObjectivePointsEdit()
         {
-            new CollectionEditorDialog(this, "Objective points", Map.ObjectivePoints, () => new ObjectivePoint(Map)).ShowDialog();
+            new CollectionEditorDialog(this, "Objective points") { DataContext = new CollectionEditorViewModel(Map.ObjectivePoints, () => new ObjectivePoint(Map)) }.ShowDialog();
             if (ObjectivePointSelectionService.SelectedMapObject != null)
             {
                 if (!Map.ObjectivePoints.Contains(ObjectivePointSelectionService.SelectedMapObject))
@@ -270,7 +270,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnPlayersEdit()
         {
-            new CollectionEditorDialog(this, "Players", Map.Players, () => new Player(Map)).ShowDialog();
+            new CollectionEditorDialog(this, "Players") { DataContext = new CollectionEditorViewModel(Map.Players, () => new Player(Map)) }.ShowDialog();
             if (PlayerSelectionService.SelectedMapObject != null)
             {
                 if (!Map.Players.Contains(PlayerSelectionService.SelectedMapObject))
@@ -289,7 +289,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnSpeechEventsEdit()
         {
-            new CollectionEditorDialog(this, "Speech events", Map.SpeechEvents, () => new SpeechEvent(Map, NamedMapObject.GenerateName("SpeechEvent", Map.SpeechEvents))).ShowDialog();
+            new CollectionEditorDialog(this, "Speech events") { DataContext = new CollectionEditorViewModel(Map.SpeechEvents, () => new SpeechEvent(Map, NamedObject.GenerateName("SpeechEvent", Map.SpeechEvents))) }.ShowDialog();
         }
 
         [RelayCommand]
@@ -307,12 +307,15 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWaypointPathsEdit()
         {
-            new CollectionEditorDialog(this, "Waypoint paths", Map.WaypointPaths, () =>
+            new CollectionEditorDialog(this, "Waypoint paths")
             {
-                var wp = new WaypointPath(Map, NamedMapObject.GenerateName("WaypointPath", Map.WaypointPaths));
-                wp.Points.Add(new(wp, 0, 0, 0));
-                return wp;
-            }).ShowDialog();
+                DataContext = new CollectionEditorViewModel(Map.WaypointPaths, () =>
+                {
+                    var wp = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths));
+                    wp.Points.Add(new(wp, 0, 0, 0));
+                    return wp;
+                })
+            }.ShowDialog();
             if (WaypointPathSelectionService.SelectedMapObject != null)
             {
                 if (!Map.WaypointPaths.Contains(WaypointPathSelectionService.SelectedMapObject))
@@ -337,7 +340,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldObjectsEdit()
         {
-            new CollectionEditorDialog(this, "World objects", Map.WorldObjects, () => new WorldObject(Map)).ShowDialog();
+            new CollectionEditorDialog(this, "World objects") { DataContext = new CollectionEditorViewModel(Map.WorldObjects, () => new WorldObject(Map)) }.ShowDialog();
             if (WorldObjectSelectionService.SelectedMapObject != null)
             {
                 if (!Map.WorldObjects.Contains(WorldObjectSelectionService.SelectedMapObject))
@@ -353,12 +356,14 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldPointSetsEdit()
         {
-            new CollectionEditorDialog(this, "World point sets", Map.WorldPointSets, () =>
-            {
-                var wps = new WorldPointSet(Map, NamedMapObject.GenerateName("WorldPointSet", Map.WorldPointSets));
-                wps.Points.Add(new(wps, 0, 0, 0, 0));
-                return wps;
-            }).ShowDialog();
+            new CollectionEditorDialog(this, "World point sets") {
+                DataContext = new CollectionEditorViewModel(Map.WorldPointSets, () =>
+                {
+                    var wps = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets));
+                    wps.Points.Add(new(wps, 0, 0, 0, 0));
+                    return wps;
+                })
+            }.ShowDialog();
             if (WorldPointSetSelectionService.SelectedMapObject != null)
             {
                 if (!Map.WorldPointSets.Contains(WorldPointSetSelectionService.SelectedMapObject))
@@ -377,12 +382,15 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldPolygonsEdit()
         {
-            new CollectionEditorDialog(this, "World polygons", Map.WorldPolygons, () =>
+            new CollectionEditorDialog(this, "World polygons")
             {
-                var wp = new WorldPolygon(Map, NamedMapObject.GenerateName("WorldPolygon", Map.WorldPolygons));
-                wp.Points.Add(new(wp, 0, 0));
-                return wp;
-            }).ShowDialog();
+                DataContext = new CollectionEditorViewModel(Map.WorldPolygons, () =>
+                {
+                    var wp = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons));
+                    wp.Points.Add(new(wp, 0, 0));
+                    return wp;
+                })
+            }.ShowDialog();
             if (WorldPolygonSelectionService.SelectedMapObject != null)
             {
                 if (!Map.WorldPolygons.Contains(WorldPolygonSelectionService.SelectedMapObject))
@@ -401,7 +409,7 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldRulesEdit()
         {
-            new CollectionEditorDialog(this, "World rules", Map.WorldRules, () => new WorldRule(Map, NamedMapObject.GenerateName("WorldRule", Map.WorldRules))).ShowDialog();
+            new CollectionEditorDialog(this, "World rules") { DataContext = new CollectionEditorViewModel(Map.WorldRules, () => new WorldRule(Map, NamedObject.GenerateName("WorldRule", Map.WorldRules))) }.ShowDialog();
         }
 
         [RelayCommand]
@@ -1716,7 +1724,7 @@ namespace TPMapEditor
 
         private void PlayerPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var player = new Player(Map, NamedMapObject.GenerateName("Player", Map.Players), Canvas.GetLeft(PlayerPreviewControl) + PlayerPreviewControl.ActualWidth / 2, -Canvas.GetTop(PlayerPreviewControl) - PlayerPreviewControl.ActualHeight / 2, 0, PlayerSliderRotate.Value, Colors.Red);
+            var player = new Player(Map, NamedObject.GenerateName("Player", Map.Players), Canvas.GetLeft(PlayerPreviewControl) + PlayerPreviewControl.ActualWidth / 2, -Canvas.GetTop(PlayerPreviewControl) - PlayerPreviewControl.ActualHeight / 2, 0, PlayerSliderRotate.Value, Colors.Red);
             Map.Players.Add(player);
             PlayerSelectionService.SelectAndMakeLastSelected(player);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
@@ -2057,7 +2065,7 @@ namespace TPMapEditor
 
         private void WaypointPathPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var waypointPath = new WaypointPath(Map, NamedMapObject.GenerateName("WaypointPath", Map.WaypointPaths));
+            var waypointPath = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths));
             var point = new WaypointPathPoint(waypointPath, Canvas.GetLeft(WaypointPathPreviewControl) + WaypointPathPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPreviewControl) - WaypointPathPreviewControl.ActualHeight / 2, 0);
             waypointPath.Points.Add(point);
             Map.WaypointPaths.Add(waypointPath);
@@ -2376,7 +2384,7 @@ namespace TPMapEditor
 
         private void WorldPolygonPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPolygon = new WorldPolygon(Map, NamedMapObject.GenerateName("WorldPolygon", Map.WorldPolygons));
+            var worldPolygon = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons));
             var point = new WorldPolygonPoint(worldPolygon, Canvas.GetLeft(WorldPolygonPreviewControl) + WorldPolygonPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPreviewControl) - WorldPolygonPreviewControl.ActualHeight / 2);
             worldPolygon.Points.Add(point);
             Map.WorldPolygons.Add(worldPolygon);
@@ -2657,7 +2665,7 @@ namespace TPMapEditor
 
         private void WorldPointSetPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPointSet = new WorldPointSet(Map, NamedMapObject.GenerateName("WorldPointSet", Map.WorldPointSets));
+            var worldPointSet = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets));
             var point = new WorldPoint(worldPointSet, Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
             worldPointSet.Points.Add(point);
             Map.WorldPointSets.Add(worldPointSet);
@@ -2938,7 +2946,7 @@ namespace TPMapEditor
 
         private void ObjectivePointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var wot = new ObjectivePoint(Map, NamedMapObject.GenerateName("ObjectivePoint", Map.ObjectivePoints), Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2, -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2);
+            var wot = new ObjectivePoint(Map, NamedObject.GenerateName("ObjectivePoint", Map.ObjectivePoints), Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2, -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2);
             Map.ObjectivePoints.Add(wot);
             ObjectivePointSelectionService.SelectAndMakeLastSelected(wot);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
@@ -3150,7 +3158,7 @@ namespace TPMapEditor
         private void MapTextPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var text = StringDictionnary.MapTextItems.Keys.ElementAt(MapTextPointPreviewTextComboBox.SelectedIndex);
-            var point = new MapTextPoint(Map, NamedMapObject.GenerateName("MapTextPoint", Map.MapTextPoints), text, Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2);
+            var point = new MapTextPoint(Map, NamedObject.GenerateName("MapTextPoint", Map.MapTextPoints), text, Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2);
             MapTextPointSelectionService.SelectAndMakeLastSelected(point);
             Map.MapTextPoints.Add(point);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
