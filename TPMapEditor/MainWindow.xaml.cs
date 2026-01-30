@@ -1236,7 +1236,7 @@ namespace TPMapEditor
             return null;
         }
 
-        private static bool IsTextInputActive()
+        private bool IsTextInputActive()
         {
             DependencyObject? current = Keyboard.FocusedElement as DependencyObject;
 
