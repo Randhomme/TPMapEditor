@@ -51,7 +51,7 @@ namespace TPMapEditor.ViewModel
             asteroidBrush = new SolidColorBrush(Colors.Lime);
             outlineColor = Colors.White;
             this.Map = map;
-            BorderThickness = 1.25 * (Map.Size - Map.WorldBuffer) / 512.0;
+            BorderThickness = 2 * (Map.Size - Map.WorldBuffer) / 512.0;
             NegativeBorderThickness = -BorderThickness;
             NebulaBlurRadius = 15 * (Map.Size - Map.WorldBuffer) / 512;
             EtheriumCurrentThickness = 11 * (Map.Size - Map.WorldBuffer) / 512;
@@ -124,7 +124,7 @@ namespace TPMapEditor.ViewModel
                     gradientImage.Freeze();
 
                 var mapSize = Map.Size > Map.WorldBuffer ? Map.Size - Map.WorldBuffer : Map.Size;
-                var outlineThickness = BorderThickness + 10 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
+                var outlineThickness = BorderThickness + 5 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
                 var result = await Task.Run(() =>
                 {
                     var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness);
@@ -152,7 +152,7 @@ namespace TPMapEditor.ViewModel
                     gradientImage.Freeze();
 
                 var mapSize = Map.Size > Map.WorldBuffer ? Map.Size - Map.WorldBuffer : Map.Size;
-                var outlineThickness = BorderThickness + 10 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
+                var outlineThickness = BorderThickness + 5 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
                 var result = await Task.Run(() =>
                 {
                     var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness);

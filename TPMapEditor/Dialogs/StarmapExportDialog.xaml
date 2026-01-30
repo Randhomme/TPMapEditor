@@ -57,16 +57,13 @@
                                                             <ScaleTransform ScaleY="-1" CenterY="0" />
                                                         </Path.RenderTransform>
                                                         <Path.Effect>
-                                                            <DropShadowEffect ShadowDepth="0" Color="White" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}"/>
+                                                            <DropShadowEffect ShadowDepth="0" Color="LimeGreen" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}"/>
                                                         </Path.Effect>
                                                     </Path>
                                                     <Path Data="{Binding Path.Points, Converter={StaticResource Point2EnumerableToPathRoundedGeometry}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="Lime" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}">
                                                         <Path.RenderTransform>
                                                             <ScaleTransform ScaleY="-1" CenterY="0" />
                                                         </Path.RenderTransform>
-                                                        <Path.Effect>
-                                                            <DropShadowEffect ShadowDepth="0" Color="Black" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}"/>
-                                                        </Path.Effect>
                                                     </Path>
                                                 </Canvas>
                                             </DataTemplate>
@@ -101,12 +98,14 @@
                                         </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid RenderTransformOrigin="{Binding Pivot}">
-                                                    <Grid.RenderTransform>
+                                                <Image Source="{Binding OriginalImage}" RenderTransformOrigin="{Binding Pivot}">
+                                                    <Image.RenderTransform>
                                                         <RotateTransform Angle="{Binding ZRotation}"/>
-                                                    </Grid.RenderTransform>
-                                                    <Image Source="{Binding OriginalImage}"/>
-                                                </Grid>
+                                                    </Image.RenderTransform>
+                                                    <Image.Effect>
+                                                        <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="DarkSeaGreen" ShadowDepth="0"/>
+                                                    </Image.Effect>
+                                                </Image>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -139,12 +138,14 @@
                                         </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid RenderTransformOrigin="{Binding Pivot}">
-                                                    <Grid.RenderTransform>
+                                                <Image Source="{Binding StarmapImage}" RenderTransformOrigin="{Binding Pivot}">
+                                                    <Image.RenderTransform>
                                                         <RotateTransform Angle="{Binding ZRotation}"/>
-                                                    </Grid.RenderTransform>
-                                                    <Image Source="{Binding StarmapImage}"/>
-                                                </Grid>
+                                                    </Image.RenderTransform>
+                                                    <Image.Effect>
+                                                        <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="LimeGreen" ShadowDepth="0"/>
+                                                    </Image.Effect>
+                                                </Image>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -177,12 +178,14 @@
                                         </ItemsControl.ItemContainerStyle>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid RenderTransformOrigin="{Binding Pivot}">
-                                                    <Grid.RenderTransform>
+                                                <Image Source="{Binding StarmapImage}" RenderTransformOrigin="{Binding Pivot}">
+                                                    <Image.RenderTransform>
                                                         <RotateTransform Angle="{Binding ZRotation}"/>
-                                                    </Grid.RenderTransform>
-                                                    <Image Source="{Binding StarmapImage}"/>
-                                                </Grid>
+                                                    </Image.RenderTransform>
+                                                    <Image.Effect>
+                                                        <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="LimeGreen" ShadowDepth="0"/>
+                                                    </Image.Effect>
+                                                </Image>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
