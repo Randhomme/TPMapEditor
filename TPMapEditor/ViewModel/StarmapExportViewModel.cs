@@ -54,7 +54,7 @@ namespace TPMapEditor.ViewModel
             BorderThickness = 2 * (Map.Size - Map.WorldBuffer) / 512.0;
             NegativeBorderThickness = -BorderThickness;
             NebulaBlurRadius = 15 * (Map.Size - Map.WorldBuffer) / 512;
-            EtheriumCurrentThickness = 12 * (Map.Size - Map.WorldBuffer) / 512;
+            EtheriumCurrentThickness = 11 * (Map.Size - Map.WorldBuffer) / 512;
             IList<StarmapWorldObjectViewModel> worldObjectViewModels = new List<StarmapWorldObjectViewModel>(map.WorldObjects.Select((w) => new StarmapWorldObjectViewModel(w)));
             Islands = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             Islands.Filter = IsWorldObjectIsland;
