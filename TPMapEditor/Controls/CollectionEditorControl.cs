@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace TPMapEditor.Controls
@@ -139,7 +140,23 @@ namespace TPMapEditor.Controls
         public static readonly DependencyProperty SelectedItemsProperty =
             DependencyProperty.Register(nameof(SelectedItems), typeof(IList), typeof(CollectionEditorControl), new PropertyMetadata(null, OnSelectedItemsChanged));
 
+        public ICommand? CopyCommand
+        {
+            get { return (ICommand)GetValue(CopyCommandProperty); }
+            set { SetValue(CopyCommandProperty, value); }
+        }
 
+        public static readonly DependencyProperty CopyCommandProperty =
+            DependencyProperty.Register(nameof(CopyCommand), typeof(ICommand), typeof(CollectionEditorControl));
+
+        public ICommand? PasteCommand
+        {
+            get { return (ICommand)GetValue(PasteCommandProperty); }
+            set { SetValue(PasteCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty PasteCommandProperty =
+            DependencyProperty.Register(nameof(PasteCommand), typeof(ICommand), typeof(CollectionEditorControl));
 
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -340,6 +357,7 @@ namespace TPMapEditor.Controls
                 dataGrid.LoadingRow -= DataGrid_LoadingRow;
                 dataGrid.Columns.Clear();
                 dataGrid.SelectedItems.Clear();
+                dataGrid.CommandBindings.Clear();
             }
 
             base.OnApplyTemplate();
@@ -366,6 +384,8 @@ namespace TPMapEditor.Controls
                     }
                 }
                 dataGrid.Columns.Add(deleteButtonColumn);
+                dataGrid.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, OnCopyExecuted, OnCopyCanExecute));
+                dataGrid.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, OnPasteExecuted, OnPasteCanExecute));
             }
             if (addButton != null)
                 addButton.Command = addCommand;
@@ -375,6 +395,28 @@ namespace TPMapEditor.Controls
                 moveUpButton.Command = moveUpCommand;
             if (moveDownButton != null)
                 moveDownButton.Command = moveDownCommand;
+        }
+
+        private void OnCopyExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (CopyCommand?.CanExecute(null) == true)
+                CopyCommand.Execute(null);
+        }
+
+        private void OnCopyCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = CopyCommand?.CanExecute(null) == true;
+        }
+
+        private void OnPasteExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (PasteCommand?.CanExecute(null) == true)
+                PasteCommand.Execute(null);
+        }
+
+        private void OnPasteCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = PasteCommand?.CanExecute(null) == true;
         }
 
         private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)

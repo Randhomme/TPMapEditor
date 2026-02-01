@@ -36,6 +36,12 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="{TemplateBinding CopyCommand}"/>
+                        <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="{TemplateBinding PasteCommand}"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
             </DataGrid>
         </Grid>
     </ControlTemplate>
@@ -69,7 +75,7 @@
                         <Image Source="/Images/ArrowDown.png"/>
                     </Button>
                 </StackPanel>
-                <DataGrid x:Name="PART_DataGrid" Grid.Column="1"  AutoGenerateColumns="False" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" MinRowHeight="25" MinColumnWidth="25" CanUserDeleteRows="False" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
+                <DataGrid x:Name="PART_DataGrid" Grid.Column="1" AutoGenerateColumns="False" HeadersVisibility="All" CanUserResizeRows="False" RowHeaderWidth="25" MinRowHeight="25" MinColumnWidth="25" CanUserDeleteRows="False" ItemsSource="{TemplateBinding Wrappers}" SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}" SelectionMode="Extended" SelectionUnit="FullRow">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn Header="Objects" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -79,6 +85,12 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="{TemplateBinding CopyCommand}"/>
+                            <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="{TemplateBinding PasteCommand}"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
                 </DataGrid>
             </Grid>
             <GridSplitter Grid.Column="1" Margin="5,0,5,0" Width="5" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
