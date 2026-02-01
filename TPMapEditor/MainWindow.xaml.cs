@@ -1298,6 +1298,7 @@ namespace TPMapEditor
                 EnableRotateWorldObject();
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
             currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WorldObjectItemsControl);
@@ -1563,6 +1564,7 @@ namespace TPMapEditor
                 EnableRotatePlayer();
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerButton_Click;
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = playerSelectionKBShortcutService;
             currentMovableSelection = PlayerSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(PlayerItemsControl);
@@ -1825,6 +1827,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWaypointPathPoint();
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = waypointPathSelectionKBShortcutService;
             currentMovableSelection = WaypointPathPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WaypointPathItemsControl);
@@ -2143,6 +2146,7 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPolygonPoint();
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPolygonSelectionKBShortcutService;
             currentMovableSelection = WorldPolygonPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WorldPolygonItemsControl);
@@ -2467,6 +2471,7 @@ namespace TPMapEditor
             if (RotateCheckBox.IsChecked == true)
                 EnableRotateWorldPoint();
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPointSetSelectionKBShortcutService;
             currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WorldPointSetItemsControl);
@@ -2790,6 +2795,7 @@ namespace TPMapEditor
                 EnableMoveObjectivePoint();
             MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click += DeleteObjectivePointButton_Click;
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = objectivePointSelectionKBShortcutService;
             currentMovableSelection = ObjectivePointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(ObjectivePointItemsControl);
@@ -3001,6 +3007,7 @@ namespace TPMapEditor
                 EnableMoveMapTextPoint();
             MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click += DeleteMapTextPointButton_Click;
+            copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = mapTextPointSelectionKBShortcutService;
             currentMovableSelection = MapTextPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(MapTextPointItemsControl);
