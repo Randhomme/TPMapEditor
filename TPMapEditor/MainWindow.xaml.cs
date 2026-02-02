@@ -145,7 +145,7 @@ namespace TPMapEditor
                     Map.EnableCollectionSynchronization(_lock);
                     new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService);
                         di.ReadMapFileAndAddData();
                     });
                     Map.DisableCollectionSynchronization();
@@ -220,25 +220,32 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnFlagsEdit()
         {
-            new FlagDialog(this, "Flags", Map).ShowDialog();
+            copyPasteService.ClearClipboard();
+            new FlagDialog(this, "Flags") { DataContext = new CollectionEditorViewModel<Flag>(Map.Flags, () => new Flag(Map), copyPasteService, true) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnGroupsEdit()
         {
-            new CollectionEditorDialog(this, "Groups") { DataContext = new CollectionEditorViewModel(Map.Groups, () => new Group(Map)) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "Groups") { DataContext = new CollectionEditorViewModel<Group>(Map.Groups, () => new Group(Map), copyPasteService) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnJournalEntriesEdit()
         {
-            new JournalEntryDialog(this, "Journal entries", Map).ShowDialog();
+            copyPasteService.ClearClipboard();
+            new JournalEntryDialog(this, "Journal entries") { DataContext = new CollectionEditorViewModel<JournalEntry>(Map.JournalEntries, () => new JournalEntry(Map, StringDictionnary.SpeechEventsJournals.Keys.FirstOrDefault(), AppSettings.DialogueFilesList.FirstOrDefault(), AppSettings.HudTexturesList.FirstOrDefault()), copyPasteService, true) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnMapTextPointsEdit()
         {
-            new CollectionEditorDialog(this, "Map text points") { DataContext = new CollectionEditorViewModel(Map.MapTextPoints, () => new MapTextPoint(Map, NamedObject.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault())) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "Map text points") { DataContext = new CollectionEditorViewModel<MapTextPoint>(Map.MapTextPoints, () => new MapTextPoint(Map, NamedObject.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault()), copyPasteService) }.ShowDialog();
             if (MapTextPointSelectionService.SelectedMapObject != null)
             {
                 if (!Map.MapTextPoints.Contains(MapTextPointSelectionService.SelectedMapObject))
@@ -246,18 +253,22 @@ namespace TPMapEditor
                     MapTextPointSelectionService.RemoveFromSelection(MapTextPointSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnObjectiveTasksEdit()
         {
-            new CollectionEditorDialog(this, "Objective tasks") { DataContext = new CollectionEditorViewModel(Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedObject.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault())) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "Objective tasks") { DataContext = new CollectionEditorViewModel<ObjectiveTask>(Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedObject.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault()), copyPasteService) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnObjectivePointsEdit()
         {
-            new CollectionEditorDialog(this, "Objective points") { DataContext = new CollectionEditorViewModel(Map.ObjectivePoints, () => new ObjectivePoint(Map)) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "Objective points") { DataContext = new CollectionEditorViewModel<ObjectivePoint>(Map.ObjectivePoints, () => new ObjectivePoint(Map), copyPasteService) }.ShowDialog();
             if (ObjectivePointSelectionService.SelectedMapObject != null)
             {
                 if (!Map.ObjectivePoints.Contains(ObjectivePointSelectionService.SelectedMapObject))
@@ -265,12 +276,14 @@ namespace TPMapEditor
                     ObjectivePointSelectionService.RemoveFromSelection(ObjectivePointSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnPlayersEdit()
         {
-            new CollectionEditorDialog(this, "Players") { DataContext = new CollectionEditorViewModel(Map.Players, () => new Player(Map)) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "Players") { DataContext = new CollectionEditorViewModel<Player>(Map.Players, () => new Player(Map), copyPasteService) }.ShowDialog();
             if (PlayerSelectionService.SelectedMapObject != null)
             {
                 if (!Map.Players.Contains(PlayerSelectionService.SelectedMapObject))
@@ -278,43 +291,53 @@ namespace TPMapEditor
                     PlayerSelectionService.RemoveFromSelection(PlayerSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnPlayerAlliancesEdit()
         {
-            new PlayerAllianceDialog(this, "Player alliances", Map).ShowDialog();
+            copyPasteService.ClearClipboard();
+            new PlayerAllianceDialog(this, "Player alliances") { DataContext = new CollectionEditorViewModel<PlayerAlliance>(Map.PlayerAlliances, () => new PlayerAlliance(Map, Map.SelectablePlayers, Player.DefaultPlayer, Player.DefaultPlayer), copyPasteService, true) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnSpeechEventsEdit()
         {
-            new CollectionEditorDialog(this, "Speech events") { DataContext = new CollectionEditorViewModel(Map.SpeechEvents, () => new SpeechEvent(Map, NamedObject.GenerateName("SpeechEvent", Map.SpeechEvents))) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "Speech events") { DataContext = new CollectionEditorViewModel<SpeechEvent>(Map.SpeechEvents, () => new SpeechEvent(Map, NamedObject.GenerateName("SpeechEvent", Map.SpeechEvents)), copyPasteService) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnTeamsEdit()
         {
-            new TeamsDialog(this, "Teams", Map).ShowDialog();
+            copyPasteService.ClearClipboard();
+            new TeamsDialog(this, "Teams") { DataContext = new TeamEditorViewModel(Map.SelectableTeams, Map.InGameTeams, () => new Team(Map, StringDictionnary.TeamNames.Keys.FirstOrDefault()), copyPasteService) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnTimersEdit()
         {
-            new TimerDialog(this, "Timers", Map).ShowDialog();
+            copyPasteService.ClearClipboard();
+            new TimerDialog(this, "Timers") { DataContext = new CollectionEditorViewModel<Timer>(Map.Timers, () => new Timer(Map), copyPasteService, true) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnWaypointPathsEdit()
         {
+            copyPasteService.ClearClipboard();
             new CollectionEditorDialog(this, "Waypoint paths")
             {
-                DataContext = new CollectionEditorViewModel(Map.WaypointPaths, () =>
+                DataContext = new CollectionEditorViewModel<WaypointPath>(Map.WaypointPaths, () =>
                 {
-                    var wp = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths));
+                    var wp = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths), copyPasteService);
                     wp.Points.Add(new(wp, 0, 0, 0));
                     return wp;
-                })
+                }, copyPasteService)
             }.ShowDialog();
             if (WaypointPathSelectionService.SelectedMapObject != null)
             {
@@ -329,6 +352,7 @@ namespace TPMapEditor
                     WaypointPathPointSelectionService.RemoveFromSelection(WaypointPathPointSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
@@ -340,29 +364,29 @@ namespace TPMapEditor
         [RelayCommand]
         private void OnWorldObjectsEdit()
         {
-            new CollectionEditorDialog(this, "World objects") { DataContext = new CollectionEditorViewModel(Map.WorldObjects, () => new WorldObject(Map)) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "World objects") { DataContext = new CollectionEditorViewModel<WorldObject>(Map.WorldObjects, () => new WorldObject(Map), copyPasteService) }.ShowDialog();
             if (WorldObjectSelectionService.SelectedMapObject != null)
             {
                 if (!Map.WorldObjects.Contains(WorldObjectSelectionService.SelectedMapObject))
                 {
-                    //WorldObjectSelectionService.SelectedMapObject = null;
-                    //if (WorldObjectRadioButton.IsChecked == true)
-                    //    SelectedElement = null;
                     WorldObjectSelectionService.RemoveFromSelection(WorldObjectSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnWorldPointSetsEdit()
         {
+            copyPasteService.ClearClipboard();
             new CollectionEditorDialog(this, "World point sets") {
-                DataContext = new CollectionEditorViewModel(Map.WorldPointSets, () =>
+                DataContext = new CollectionEditorViewModel<WorldPointSet>(Map.WorldPointSets, () =>
                 {
-                    var wps = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets));
+                    var wps = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets), copyPasteService);
                     wps.Points.Add(new(wps, 0, 0, 0, 0));
                     return wps;
-                })
+                }, copyPasteService)
             }.ShowDialog();
             if (WorldPointSetSelectionService.SelectedMapObject != null)
             {
@@ -377,19 +401,21 @@ namespace TPMapEditor
                     WorldPointSelectionService.RemoveFromSelection(WorldPointSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnWorldPolygonsEdit()
         {
+            copyPasteService.ClearClipboard();
             new CollectionEditorDialog(this, "World polygons")
             {
-                DataContext = new CollectionEditorViewModel(Map.WorldPolygons, () =>
+                DataContext = new CollectionEditorViewModel<WorldPolygon>(Map.WorldPolygons, () =>
                 {
-                    var wp = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons));
+                    var wp = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons), copyPasteService);
                     wp.Points.Add(new(wp, 0, 0));
                     return wp;
-                })
+                }, copyPasteService)
             }.ShowDialog();
             if (WorldPolygonSelectionService.SelectedMapObject != null)
             {
@@ -404,12 +430,15 @@ namespace TPMapEditor
                     WorldPolygonPointSelectionService.RemoveFromSelection(WorldPolygonPointSelectionService.SelectedMapObject);
                 }
             }
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
         private void OnWorldRulesEdit()
         {
-            new CollectionEditorDialog(this, "World rules") { DataContext = new CollectionEditorViewModel(Map.WorldRules, () => new WorldRule(Map, NamedObject.GenerateName("WorldRule", Map.WorldRules))) }.ShowDialog();
+            copyPasteService.ClearClipboard();
+            new CollectionEditorDialog(this, "World rules") { DataContext = new CollectionEditorViewModel<WorldRule>(Map.WorldRules, () => new WorldRule(Map, NamedObject.GenerateName("WorldRule", Map.WorldRules), copyPasteService), copyPasteService) }.ShowDialog();
+            copyPasteService.ClearClipboard();
         }
 
         [RelayCommand]
@@ -2068,7 +2097,7 @@ namespace TPMapEditor
 
         private void WaypointPathPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var waypointPath = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths));
+            var waypointPath = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths), copyPasteService);
             var point = new WaypointPathPoint(waypointPath, Canvas.GetLeft(WaypointPathPreviewControl) + WaypointPathPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPreviewControl) - WaypointPathPreviewControl.ActualHeight / 2, 0);
             waypointPath.Points.Add(point);
             Map.WaypointPaths.Add(waypointPath);
@@ -2388,7 +2417,7 @@ namespace TPMapEditor
 
         private void WorldPolygonPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPolygon = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons));
+            var worldPolygon = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons), copyPasteService);
             var point = new WorldPolygonPoint(worldPolygon, Canvas.GetLeft(WorldPolygonPreviewControl) + WorldPolygonPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPreviewControl) - WorldPolygonPreviewControl.ActualHeight / 2);
             worldPolygon.Points.Add(point);
             Map.WorldPolygons.Add(worldPolygon);
@@ -2670,7 +2699,7 @@ namespace TPMapEditor
 
         private void WorldPointSetPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPointSet = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets));
+            var worldPointSet = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets), copyPasteService);
             var point = new WorldPoint(worldPointSet, Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
             worldPointSet.Points.Add(point);
             Map.WorldPointSets.Add(worldPointSet);
