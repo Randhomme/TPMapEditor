@@ -14,9 +14,9 @@ namespace TPMapEditor.Interfaces.Implementations
         {
         }
 
-        public virtual ISelectableMapObject Copy()
+        public virtual ICopiableMapObject Copy()
         {
-            return (ISelectableMapObject)this.MemberwiseClone();
+            return (ICopiableMapObject)this.MemberwiseClone();
         }
     }
 }
