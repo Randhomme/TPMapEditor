@@ -9,14 +9,13 @@
         xmlns:settings="clr-namespace:TPMapEditor.Settings"
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <controls:CollectionEditorControl ItemsSource="{Binding Map.JournalEntries}" Factory="{Binding Factory}" GridOnlyMode="True">
+        <controls:CollectionEditorControl ItemsSource="{Binding ItemsSource}" SelectedItems="{Binding SelectedItems}" Factory="{Binding Factory}" GridOnlyMode="True" CopyCommand="{Binding CopyCommand}" PasteCommand="{Binding PasteCommand}">
             <controls:CollectionEditorControl.Columns>
                 <DataGridTemplateColumn Header="Text" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

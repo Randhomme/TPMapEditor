@@ -6,14 +6,13 @@
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:CollectionEditorControl GridOnlyMode="True" ItemsSource="{Binding Map.Flags}" Factory="{Binding Factory}">
+        <controls:CollectionEditorControl ItemsSource="{Binding ItemsSource}" SelectedItems="{Binding SelectedItems}" Factory="{Binding Factory}" GridOnlyMode="True" CopyCommand="{Binding CopyCommand}" PasteCommand="{Binding PasteCommand}">
             <controls:CollectionEditorControl.Columns>
                 <DataGridTemplateColumn Header="Name" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

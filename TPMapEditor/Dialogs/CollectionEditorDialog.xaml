@@ -13,7 +13,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:CollectionEditorControl ItemsSource="{Binding ItemsSource}" Factory="{Binding Factory}" GridOnlyMode="{Binding GridOnlyMode}"/>
+        <controls:CollectionEditorControl ItemsSource="{Binding ItemsSource}" SelectedItems="{Binding SelectedItems}" Factory="{Binding Factory}" GridOnlyMode="{Binding GridOnlyMode}" CopyCommand="{Binding CopyCommand}" PasteCommand="{Binding PasteCommand}"/>
         <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
         </StackPanel>

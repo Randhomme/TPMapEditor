@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using TPMapEditor.Data;
+﻿using System.Windows;
 
 namespace TPMapEditor.Dialogs
 {
@@ -10,13 +7,8 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class FlagDialog : DialogWindow
     {
-        public WorldMap Map { get; }
-        public Func<Flag> Factory { get; }
-
-        public FlagDialog(Window owner, string title, WorldMap map) : base(owner, title)
+        public FlagDialog(Window owner, string title) : base(owner, title)
         {
-            Map = map;
-            Factory = () => new(map);
             InitializeComponent();
         }
     }

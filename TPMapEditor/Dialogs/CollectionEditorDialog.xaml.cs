@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 
 namespace TPMapEditor.Dialogs
 {
@@ -9,8 +7,6 @@ namespace TPMapEditor.Dialogs
     /// </summary>
     public partial class CollectionEditorDialog : DialogWindow
     {
-
-        
         public CollectionEditorDialog(Window owner, string title) : base(owner, title)
         {
             InitializeComponent();

@@ -8,7 +8,6 @@
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:data="clr-namespace:TPMapEditor.Data"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Height="450" Width="800">
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -18,7 +17,7 @@
         <TabControl>
             <TabItem Header="Selectable teams">
                 <Grid Margin="3">
-                    <controls:CollectionEditorControl ItemsSource="{Binding Map.SelectableTeams}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl ItemsSource="{Binding SelectableTeams}" SelectedItems="{Binding SelectedSelectableTeams}" Factory="{Binding Factory}" GridOnlyMode="True" CopyCommand="{Binding CopySelectableTeamsCommand}" PasteCommand="{Binding PasteSelectableTeamsCommand}">
                         <controls:CollectionEditorControl.Columns>
                             <DataGridTemplateColumn Header="Team name" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -47,7 +46,7 @@
             </TabItem>
             <TabItem Header="In game teams">
                 <Grid Margin="3">
-                    <controls:CollectionEditorControl ItemsSource="{Binding Map.InGameTeams}" Factory="{Binding Factory}" GridOnlyMode="True">
+                    <controls:CollectionEditorControl ItemsSource="{Binding InGameTeams}" SelectedItems="{Binding SelectedInGameTeams}" Factory="{Binding Factory}" GridOnlyMode="True" CopyCommand="{Binding CopyInGameTeamsCommand}" PasteCommand="{Binding PasteInGameTeamsCommand}">
                         <controls:CollectionEditorControl.Columns>
                             <DataGridTemplateColumn Header="Team name" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
