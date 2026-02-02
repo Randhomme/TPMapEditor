@@ -32,7 +32,7 @@
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Points">
-                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding Points}" Factory="{Binding WorldPointFactory}">
+                <controls:CollectionEditorControl Margin="3" ItemsSource="{Binding Points}" Factory="{Binding WorldPointFactory}" SelectedItems="{Binding SelectedItems}" CopyCommand="{Binding CopyCommand}" PasteCommand="{Binding PasteCommand}">
                     <controls:CollectionEditorControl.Columns>
                         <DataGridTextColumn Header="X" Width="*" Binding="{Binding Item.X}"/>
                         <DataGridTextColumn Header="Y" Width="*" Binding="{Binding Item.Y}"/>
