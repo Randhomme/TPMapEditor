@@ -24,7 +24,7 @@ namespace TPMapEditor.Data
             this.parent = parent;
         }
 
-        public ISelectableMapObject Copy()
+        public ICopiableMapObject Copy()
         {
             return (ISelectableMapObject)this.MemberwiseClone();
         }

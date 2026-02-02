@@ -7,6 +7,7 @@ using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
 using TPMapEditor.Exceptions;
 using TPMapEditor.Interfaces.Implementations;
+using TPMapEditor.Services;
 using TPMapEditor.Settings;
 using TPMapEditor.Utils;
 
@@ -19,14 +20,16 @@ namespace TPMapEditor.Data
         private IProgress<string> progress;
         private IProgress<string> progressOperation;
         private object _lock;
+        private readonly ICopyPasteService copyPasteService;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock)
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock, ICopyPasteService copyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = map;
             this.progress = progress;
             this.progressOperation = progressOperation;
             this._lock = _lock;
+            this.copyPasteService = copyPasteService;
         }
 
         public void ReadMapFileAndAddData()
@@ -119,7 +122,7 @@ namespace TPMapEditor.Data
 
                     reader.ReadLine(); //skip line
 
-                    map.SelectableTeams.Add(new(teamName) { Race = race, RaceLocked = raceLocked });
+                    map.SelectableTeams.Add(new(map, teamName) { Race = race, RaceLocked = raceLocked });
                 }
 
                 //Number of Players (playable)
@@ -745,7 +748,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Waypoint Path Info Vector - Element", () =>
             {
-                var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "));
+                var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "), copyPasteService);
 
                 //Waypoint Path Points - Size
                 var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
@@ -764,7 +767,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Polygons Vectors - Element", () =>
             {
-                var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "));
+                var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "), copyPasteService);
 
                 //Points
                 var worldPolygonPointsCount = reader.ReadAndParseInt("Points Int ");
@@ -783,7 +786,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Point Sets Vector - Element", () =>
             {
-                var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "));
+                var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "), copyPasteService);
 
                 //Points
                 var worldPointsCount = reader.ReadAndParseInt("World Points - Size Int ");
@@ -910,7 +913,7 @@ namespace TPMapEditor.Data
             {
                 var player0 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player0 Int ")) ?? Player.DefaultPlayer;
                 var player1 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player1 Int ")) ?? Player.DefaultPlayer;
-                var playerAlliance = new PlayerAlliance(player0, player1);
+                var playerAlliance = new PlayerAlliance(map, map.SelectablePlayers, player0, player1);
                 map.PlayerAlliances.Add(playerAlliance);
             });
         }
@@ -923,7 +926,7 @@ namespace TPMapEditor.Data
                 var race = (Race)reader.ReadAndParseInt("Race Int ");
                 var raceLocked = reader.ReadAndParseBool("Race Lock Bool ");
 
-                map.InGameTeams.Add(new(name) { Race = race, RaceLocked = raceLocked });
+                map.InGameTeams.Add(new(map, name) { Race = race, RaceLocked = raceLocked });
             });
         }
 
@@ -1027,7 +1030,7 @@ namespace TPMapEditor.Data
                     progressOperation.Report($"Reading World Rule section {i + 1} / {ruleListCount} ...");
                     try
                     {
-                        var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "))
+                        var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "), copyPasteService)
                         {
                             RunOnce = reader.ReadAndParseBool("Run Once Bool ")
                         };
@@ -1995,7 +1998,7 @@ namespace TPMapEditor.Data
                 var speechEventFileName = reader.ReadAndParseString("SpeechEventFileName String ");
                 var pictureTexture = reader.ReadAndParseString("PictureTexture String ");
 
-                map.JournalEntries.Add(new(textStringID, speechEventFileName, pictureTexture));
+                map.JournalEntries.Add(new(map, textStringID, speechEventFileName, pictureTexture));
             });
         }
 

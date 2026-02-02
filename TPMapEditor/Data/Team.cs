@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using TPMapEditor.Enums;
-using TPMapEditor.Utils;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class Team : CustomObservableValidator
+    public partial class Team : SelectableMapObject
     {
         [ObservableProperty]
         [property: Required]
@@ -26,7 +26,7 @@ namespace TPMapEditor.Data
             }
         }
 
-        public Team(string realName)
+        public Team(WorldMap map, string realName) : base(map)
         {
             this.realName = realName;
         }

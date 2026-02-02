@@ -1,15 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class ObjectiveTask : NamedMapObject
+    public partial class ObjectiveTask : SelectableNamedMapObject
     {
         [ObservableProperty]
         [property: Required]
@@ -30,6 +26,13 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override ICopiableMapObject Copy()
+        {
+            var copy = (ObjectiveTask)base.Copy();
+            copy.Name = GenerateName($"{Name}_", Map.ObjectiveTasks);
+            return copy;
         }
     }
 }

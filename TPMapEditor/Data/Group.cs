@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Media;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class Group : NamedMapObject
+    public partial class Group : SelectableNamedMapObject
     {
         public static string DefaultName => "Player0 Group";
 
@@ -54,6 +53,19 @@ namespace TPMapEditor.Data
         public override bool IsDefaultName(string name)
         {
             return name.Equals(DefaultName);
+        }
+
+        public override ICopiableMapObject Copy()
+        {
+            var copy = new Group(Map, GenerateName($"{Name}_", Map.Groups))
+            {
+                Color = this.Color
+            };
+            foreach (var item in WorldObjects)
+            {
+                copy.WorldObjects.Add(item);
+            }
+            return copy;
         }
     }
 }

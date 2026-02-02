@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class Timer : NamedMapObject
+    public partial class Timer : SelectableNamedMapObject
     {
         [ObservableProperty]
         private bool status = false;
@@ -30,5 +31,11 @@ namespace TPMapEditor.Data
             return false;
         }
 
+        public override ICopiableMapObject Copy()
+        {
+            var copy = (Timer)base.Copy();
+            copy.Name = GenerateName($"{Name}_", Map.Timers);
+            return copy;
+        }
     }
 }

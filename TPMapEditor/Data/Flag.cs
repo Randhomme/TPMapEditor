@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class Flag : NamedMapObject
+    public partial class Flag : SelectableNamedMapObject
     {
         [ObservableProperty]
         private bool value;
@@ -23,6 +24,13 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override ICopiableMapObject Copy()
+        {
+            var copy = (Flag)base.Copy();
+            copy.Name = GenerateName($"{Name}_", Map.Flags);
+            return copy;
         }
     }
 }

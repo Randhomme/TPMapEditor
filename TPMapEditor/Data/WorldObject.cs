@@ -124,7 +124,7 @@ namespace TPMapEditor.Data
 
         public override string ToString() => $"#{Id} {Type}";
 
-        public override ISelectableMapObject Copy()
+        public override ICopiableMapObject Copy()
         {
             var copy = (WorldObject)base.Copy();
             copy.Group?.WorldObjects.Add(copy);

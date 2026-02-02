@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using TPMapEditor.Enums;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Settings;
 
 namespace TPMapEditor.Data
 {
-    public partial class SpeechEvent : NamedMapObject
+    public partial class SpeechEvent : SelectableNamedMapObject
     {
         [ObservableProperty]
         [property: Required]
@@ -39,6 +40,13 @@ namespace TPMapEditor.Data
                     return true;
             }
             return false;
+        }
+
+        public override ICopiableMapObject Copy()
+        {
+            var copy = (SpeechEvent)base.Copy();
+            copy.Name = GenerateName($"{Name}_", Map.SpeechEvents);
+            return copy;
         }
     }
 }

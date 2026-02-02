@@ -2,11 +2,12 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Utils;
 
 namespace TPMapEditor.Data.Rule
 {
-    public abstract partial class RuleField : CustomObservableValidator
+    public abstract partial class RuleField : CustomObservableValidator, ICopiableMapObject
     {
         [ObservableProperty]
         private string? realLabel, label; //realLabel is from map file, label is displayed text
@@ -36,6 +37,8 @@ namespace TPMapEditor.Data.Rule
         {
             PropertyChangedEventManager.AddHandler(this, handler, string.Empty);
         }
+
+        public abstract ICopiableMapObject Copy();
     }
 
     public abstract partial class RuleField<T> : RuleField
@@ -53,6 +56,11 @@ namespace TPMapEditor.Data.Rule
         public override string ToString()
         {
             return $"{RealLabel} '{Value}'";
+        }
+
+        public override ICopiableMapObject Copy()
+        {
+            return (ICopiableMapObject)this.MemberwiseClone();
         }
     }
 }

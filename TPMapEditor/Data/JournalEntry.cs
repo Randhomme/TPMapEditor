@@ -1,22 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TPMapEditor.Settings;
-using TPMapEditor.Utils;
+using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class JournalEntry : CustomObservableValidator
+    public partial class JournalEntry : SelectableMapObject
     {
         [ObservableProperty]
         [property: Required]
         private string textStringId, speechEventFileName, pictureTexture;
 
-        public JournalEntry(string textStringId, string speechEventFileName, string pictureTexture)
+        public JournalEntry(WorldMap map, string textStringId, string speechEventFileName, string pictureTexture) : base(map)
         {
             this.textStringId = textStringId;
             this.speechEventFileName = speechEventFileName;
