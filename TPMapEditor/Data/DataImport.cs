@@ -21,8 +21,10 @@ namespace TPMapEditor.Data
         private IProgress<string> progressOperation;
         private object _lock;
         private readonly ICopyPasteService copyPasteService;
+        private readonly ICopyPasteService ruleConditionCopyPasteService;
+        private readonly ICopyPasteService ruleActionCopyPasteService;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock, ICopyPasteService copyPasteService)
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = map;
@@ -30,6 +32,8 @@ namespace TPMapEditor.Data
             this.progressOperation = progressOperation;
             this._lock = _lock;
             this.copyPasteService = copyPasteService;
+            this.ruleConditionCopyPasteService = ruleConditionCopyPasteService;
+            this.ruleActionCopyPasteService = ruleActionCopyPasteService;
         }
 
         public void ReadMapFileAndAddData()
@@ -1030,7 +1034,7 @@ namespace TPMapEditor.Data
                     progressOperation.Report($"Reading World Rule section {i + 1} / {ruleListCount} ...");
                     try
                     {
-                        var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "), copyPasteService)
+                        var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "), ruleConditionCopyPasteService, ruleActionCopyPasteService)
                         {
                             RunOnce = reader.ReadAndParseBool("Run Once Bool ")
                         };

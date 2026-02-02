@@ -66,6 +66,8 @@ namespace TPMapEditor
         private readonly ISelectionKBShortcutService objectivePointSelectionKBShortcutService;
         private readonly ISelectionKBShortcutService mapTextPointSelectionKBShortcutService;
         private readonly ICopyPasteService copyPasteService;
+        private readonly ICopyPasteService ruleConditionCopyPasteService;
+        private readonly ICopyPasteService ruleActionCopyPasteService;
         private readonly IUndoManagerService undoManagerService = new UndoManagerService(10);
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
@@ -92,6 +94,8 @@ namespace TPMapEditor
             settings = new AppSettings();
             Map = new WorldMap();
             copyPasteService = new CopyPasteService();
+            ruleConditionCopyPasteService = new CopyPasteService();
+            ruleActionCopyPasteService = new CopyPasteService();
             WaypointPathSelectionService = new MultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint>(WaypointPathPointSelectionService);
             WorldPolygonSelectionService = new MultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint>(WorldPolygonPointSelectionService);
             WorldPointSetSelectionService = new MultiPointMapObjectSelectionService<WorldPointSet, WorldPoint>(WorldPointSelectionService);
@@ -145,7 +149,7 @@ namespace TPMapEditor
                     Map.EnableCollectionSynchronization(_lock);
                     new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService);
                         di.ReadMapFileAndAddData();
                     });
                     Map.DisableCollectionSynchronization();
@@ -437,7 +441,7 @@ namespace TPMapEditor
         private void OnWorldRulesEdit()
         {
             copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "World rules") { DataContext = new CollectionEditorViewModel<WorldRule>(Map.WorldRules, () => new WorldRule(Map, NamedObject.GenerateName("WorldRule", Map.WorldRules), copyPasteService), copyPasteService) }.ShowDialog();
+            new CollectionEditorDialog(this, "World rules") { DataContext = new CollectionEditorViewModel<WorldRule>(Map.WorldRules, () => new WorldRule(Map, NamedObject.GenerateName("WorldRule", Map.WorldRules), ruleConditionCopyPasteService, ruleActionCopyPasteService), copyPasteService) }.ShowDialog();
             copyPasteService.ClearClipboard();
         }
 

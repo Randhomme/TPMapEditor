@@ -14,9 +14,8 @@ namespace TPMapEditor.Data
 {
     public partial class WorldRule : SelectableNamedMapObject
     {
-        private readonly ICopyPasteService copyPasteService;
-        private bool canPasteConditions = false;
-        private bool canPasteActions = false;
+        private readonly ICopyPasteService ruleConditionCopyPasteService;
+        private readonly ICopyPasteService ruleActionCopyPasteService;
         private readonly ObservableCollection<RuleCondition> selectedConditions = new();
         private readonly ObservableCollection<RuleAction> selectedActions = new();
         [ObservableProperty]
@@ -28,9 +27,10 @@ namespace TPMapEditor.Data
         public ICollection<RuleCondition> SelectedConditions { get => selectedConditions; }
         public ICollection<RuleAction> SelectedActions { get => selectedActions; }
 
-        public WorldRule(WorldMap map, string name, ICopyPasteService copyPasteService) : base(map, name)
+        public WorldRule(WorldMap map, string name, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService) : base(map, name)
         {
-            this.copyPasteService = copyPasteService;
+            this.ruleConditionCopyPasteService = ruleConditionCopyPasteService;
+            this.ruleActionCopyPasteService = ruleActionCopyPasteService;
             RuleConditionFactory = () => new(Map);
             RuleActionFactory = () => new(Map);
             Actions.CollectionChanged += (s, e) =>
@@ -56,7 +56,8 @@ namespace TPMapEditor.Data
             {
                 CopyActionsCommand.NotifyCanExecuteChanged();
             };
-            copyPasteService.ClearClipboard();
+            PropertyChangedEventManager.AddHandler(ruleConditionCopyPasteService, (s, e) => { PasteConditionsCommand.NotifyCanExecuteChanged(); }, string.Empty);
+            PropertyChangedEventManager.AddHandler(ruleActionCopyPasteService, (s, e) => { PasteActionsCommand.NotifyCanExecuteChanged(); }, string.Empty);
         }
 
         protected override bool IsNameTaken(string name)
@@ -71,7 +72,7 @@ namespace TPMapEditor.Data
 
         public override ICopiableMapObject Copy()
         {
-            var copy = new WorldRule(Map, GenerateName($"{Name}_", Map.WorldRules), copyPasteService);
+            var copy = new WorldRule(Map, GenerateName($"{Name}_", Map.WorldRules), ruleConditionCopyPasteService, ruleActionCopyPasteService);
             foreach (var item in Conditions)
             {
                 var condition = new RuleCondition(Map) { Type = item.Type };
@@ -100,15 +101,14 @@ namespace TPMapEditor.Data
         [RelayCommand(CanExecute = nameof(CanCopyConditions))]
         private void OnCopyConditions()
         {
-            copyPasteService.Copy(SelectedConditions);
-            canPasteConditions = true;
+            ruleConditionCopyPasteService.Copy(SelectedConditions);
             PasteConditionsCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand(CanExecute = nameof(CanPasteConditions))]
         private void OnPasteConditions()
         {
-            var pastedItems = copyPasteService.Paste<RuleCondition>();
+            var pastedItems = ruleConditionCopyPasteService.Paste<RuleCondition>();
             foreach (var item in pastedItems)
             {
                 Conditions.Add(item);
@@ -118,15 +118,14 @@ namespace TPMapEditor.Data
         [RelayCommand(CanExecute = nameof(CanCopyActions))]
         private void OnCopyActions()
         {
-            copyPasteService.Copy(SelectedActions);
-            canPasteActions = true;
+            ruleActionCopyPasteService.Copy(SelectedActions);
             PasteActionsCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand(CanExecute = nameof(CanPasteActions))]
         private void OnPasteActions()
         {
-            var pastedItems = copyPasteService.Paste<RuleAction>();
+            var pastedItems = ruleActionCopyPasteService.Paste<RuleAction>();
             foreach (var item in pastedItems)
             {
                 Actions.Add(item);
@@ -135,10 +134,10 @@ namespace TPMapEditor.Data
 
         private bool CanCopyConditions() => SelectedConditions.Count > 0;
 
-        private bool CanPasteConditions() => canPasteConditions;
+        private bool CanPasteConditions() => ruleConditionCopyPasteService.ClipboardCount > 0;
 
         private bool CanCopyActions() => SelectedActions.Count > 0;
 
-        private bool CanPasteActions() => canPasteActions;
+        private bool CanPasteActions() => ruleActionCopyPasteService.ClipboardCount > 0;
     }
 }
