@@ -353,6 +353,7 @@ namespace TPMapEditor.Controls
         {
             if (dataGrid != null)
             {
+                dataGrid.PreviewMouseDown -= OnDataGridPreviewMouseDown;
                 dataGrid.SelectionChanged -= DataGrid_SelectionChanged;
                 dataGrid.LoadingRow -= DataGrid_LoadingRow;
                 dataGrid.Columns.Clear();
@@ -369,6 +370,7 @@ namespace TPMapEditor.Controls
             moveDownButton = GetTemplateChild("PART_MoveDownButton") as Button;
             if (dataGrid != null)
             {
+                dataGrid.PreviewMouseDown += OnDataGridPreviewMouseDown;
                 dataGrid.SelectionChanged += DataGrid_SelectionChanged;
                 dataGrid.LoadingRow += DataGrid_LoadingRow;
                 if (pendingSelectionApply)
@@ -395,6 +397,15 @@ namespace TPMapEditor.Controls
                 moveUpButton.Command = moveUpCommand;
             if (moveDownButton != null)
                 moveDownButton.Command = moveDownCommand;
+        }
+
+        private void OnDataGridPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGrid grid && !grid.IsKeyboardFocusWithin)
+            {
+                grid.Focus();
+                Keyboard.Focus(grid);
+            }
         }
 
         private void OnCopyExecuted(object sender, ExecutedRoutedEventArgs e)
