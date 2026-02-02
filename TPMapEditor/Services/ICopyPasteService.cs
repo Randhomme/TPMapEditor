@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Services
 {
-    public interface ICopyPasteService
+    public interface ICopyPasteService : INotifyPropertyChanged
     {
-        public void Copy<T>(IEnumerable<T> values) where T : ISelectableMapObject;
-        public IEnumerable<T> Paste<T>() where T : ISelectableMapObject;
+        public int ClipboardCount { get; }
+        public void Copy<T>(IEnumerable<T> values) where T : ICopiableMapObject;
+        public IEnumerable<T> Paste<T>() where T : ICopiableMapObject;
         public void ClearClipboard();
     }
 }
