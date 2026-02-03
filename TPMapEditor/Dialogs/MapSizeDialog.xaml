@@ -16,10 +16,10 @@
         <StackPanel>
             <Label Margin="-5,0,0,0" Content="Size"/>
             <TextBox IsEnabled="False" Text="{Binding SizeText, Mode=OneWay}" HorizontalAlignment="Left"/>
-            <Slider Margin="0,5,0,0" Value="{Binding Size}" Maximum="6000" SmallChange="1" TickFrequency="2" IsSnapToTickEnabled="True"/>
+            <Slider Margin="0,5,0,0" Value="{Binding Size}" Maximum="10000" SmallChange="1" TickFrequency="2" IsSnapToTickEnabled="True"/>
             <Label Margin="-5,5,0,0" Content="Z Size"/>
             <TextBox IsEnabled="False" Text="{Binding ZSizeText, Mode=OneWay}" HorizontalAlignment="Left"/>
-            <Slider Margin="0,5,0,0" Value="{Binding ZSize}" Maximum="6000" SmallChange="1" TickFrequency="2" IsSnapToTickEnabled="True"/>
+            <Slider Margin="0,5,0,0" Value="{Binding ZSize}" Maximum="10000" SmallChange="1" TickFrequency="2" IsSnapToTickEnabled="True"/>
             <Label Margin="-5,5,0,0" Content="World buffer"/>
             <TextBox IsEnabled="False" Text="{Binding WorldBuffer, Mode=OneWay, StringFormat=0}" HorizontalAlignment="Left"/>
             <Slider Margin="0,5,0,0" Value="{Binding WorldBuffer}" Maximum="{Binding MaxWorldBuffer}" SmallChange="1" TickFrequency="1" IsSnapToTickEnabled="True"/>
