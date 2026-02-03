@@ -46,6 +46,7 @@ namespace TPMapEditor.ViewModel
             var pastedItems = copyPasteService.Paste<T>();
             foreach (var item in pastedItems)
             {
+                item.IsSelected = item.IsLastSelected = false;
                 ItemsSource.Add(item);
             }
         }

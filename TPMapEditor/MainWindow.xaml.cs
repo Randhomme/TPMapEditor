@@ -26,7 +26,6 @@ using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.ViewModel.SelectionTransform;
 using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
 using TPMapEditor.ViewModel;
 
 namespace TPMapEditor
@@ -68,6 +67,9 @@ namespace TPMapEditor
         private readonly ICopyPasteService copyPasteService;
         private readonly ICopyPasteService ruleConditionCopyPasteService;
         private readonly ICopyPasteService ruleActionCopyPasteService;
+        private readonly ICopyPasteService waypointPathPointCopyPasteService;
+        private readonly ICopyPasteService worldPolygonPointCopyPasteService;
+        private readonly ICopyPasteService worldPointCopyPasteService;
         private readonly IUndoManagerService undoManagerService = new UndoManagerService(10);
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
@@ -96,6 +98,9 @@ namespace TPMapEditor
             copyPasteService = new CopyPasteService();
             ruleConditionCopyPasteService = new CopyPasteService();
             ruleActionCopyPasteService = new CopyPasteService();
+            waypointPathPointCopyPasteService = new CopyPasteService();
+            worldPolygonPointCopyPasteService = new CopyPasteService();
+            worldPointCopyPasteService = new CopyPasteService();
             WaypointPathSelectionService = new MultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint>(WaypointPathPointSelectionService);
             WorldPolygonSelectionService = new MultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint>(WorldPolygonPointSelectionService);
             WorldPointSetSelectionService = new MultiPointMapObjectSelectionService<WorldPointSet, WorldPoint>(WorldPointSelectionService);
@@ -149,7 +154,7 @@ namespace TPMapEditor
                     Map.EnableCollectionSynchronization(_lock);
                     new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                         di.ReadMapFileAndAddData();
                     });
                     Map.DisableCollectionSynchronization();
@@ -338,7 +343,7 @@ namespace TPMapEditor
             {
                 DataContext = new CollectionEditorViewModel<WaypointPath>(Map.WaypointPaths, () =>
                 {
-                    var wp = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths), copyPasteService);
+                    var wp = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths), waypointPathPointCopyPasteService);
                     wp.Points.Add(new(wp, 0, 0, 0));
                     return wp;
                 }, copyPasteService)
@@ -387,7 +392,7 @@ namespace TPMapEditor
             new CollectionEditorDialog(this, "World point sets") {
                 DataContext = new CollectionEditorViewModel<WorldPointSet>(Map.WorldPointSets, () =>
                 {
-                    var wps = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets), copyPasteService);
+                    var wps = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets), worldPointCopyPasteService);
                     wps.Points.Add(new(wps, 0, 0, 0, 0));
                     return wps;
                 }, copyPasteService)
@@ -416,7 +421,7 @@ namespace TPMapEditor
             {
                 DataContext = new CollectionEditorViewModel<WorldPolygon>(Map.WorldPolygons, () =>
                 {
-                    var wp = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons), copyPasteService);
+                    var wp = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons), worldPolygonPointCopyPasteService);
                     wp.Points.Add(new(wp, 0, 0));
                     return wp;
                 }, copyPasteService)

@@ -102,7 +102,6 @@ namespace TPMapEditor.Data
         private void OnCopyConditions()
         {
             ruleConditionCopyPasteService.Copy(SelectedConditions);
-            PasteConditionsCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand(CanExecute = nameof(CanPasteConditions))]
@@ -119,7 +118,6 @@ namespace TPMapEditor.Data
         private void OnCopyActions()
         {
             ruleActionCopyPasteService.Copy(SelectedActions);
-            PasteActionsCommand.NotifyCanExecuteChanged();
         }
 
         [RelayCommand(CanExecute = nameof(CanPasteActions))]

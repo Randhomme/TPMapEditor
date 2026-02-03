@@ -23,8 +23,11 @@ namespace TPMapEditor.Data
         private readonly ICopyPasteService copyPasteService;
         private readonly ICopyPasteService ruleConditionCopyPasteService;
         private readonly ICopyPasteService ruleActionCopyPasteService;
+        private readonly ICopyPasteService waypointPathPointCopyPasteService;
+        private readonly ICopyPasteService worldPolygonPointCopyPasteService;
+        private readonly ICopyPasteService worldPointCopyPasteService;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService)
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = map;
@@ -34,6 +37,9 @@ namespace TPMapEditor.Data
             this.copyPasteService = copyPasteService;
             this.ruleConditionCopyPasteService = ruleConditionCopyPasteService;
             this.ruleActionCopyPasteService = ruleActionCopyPasteService;
+            this.waypointPathPointCopyPasteService = waypointPathPointCopyPasteService;
+            this.worldPolygonPointCopyPasteService = worldPolygonPointCopyPasteService;
+            this.worldPointCopyPasteService = worldPointCopyPasteService;
         }
 
         public void ReadMapFileAndAddData()
@@ -752,7 +758,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Waypoint Path Info Vector - Element", () =>
             {
-                var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "), copyPasteService);
+                var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "), waypointPathPointCopyPasteService);
 
                 //Waypoint Path Points - Size
                 var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
@@ -771,7 +777,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Polygons Vectors - Element", () =>
             {
-                var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "), copyPasteService);
+                var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "), worldPolygonPointCopyPasteService);
 
                 //Points
                 var worldPolygonPointsCount = reader.ReadAndParseInt("Points Int ");
@@ -790,7 +796,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Point Sets Vector - Element", () =>
             {
-                var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "), copyPasteService);
+                var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "), worldPointCopyPasteService);
 
                 //Points
                 var worldPointsCount = reader.ReadAndParseInt("World Points - Size Int ");
