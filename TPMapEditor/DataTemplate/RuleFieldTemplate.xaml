@@ -78,6 +78,13 @@
         </ContentControl>
     </DataTemplate>
 
+    <!--RuleFieldEtheriumCurrentName-->
+    <DataTemplate DataType="{x:Type datarule:RuleFieldEtheriumCurrentName}">
+        <ContentControl Template="{StaticResource RuleFieldTemplate}">
+            <TextBox Text="{Binding Value.Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+        </ContentControl>
+    </DataTemplate>
+
     <!--Flag-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldFlag}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
