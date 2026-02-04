@@ -25,11 +25,13 @@ namespace TPMapEditor.ViewModel
         public WorldMap Map { get; }
         public double NegativeWorldBuffer { get => -Map.WorldBuffer; }
         public double BorderThickness { get; } = 2;
+        public double TranslateTransformIsland { get; } = -0.5;
+        public double ScaleDownTransformIsland { get; } = 0.001;
         public double NegativeBorderThickness { get; }
         public double EtheriumCurrentThickness { get; } = 9;
         public double EtheriumCurrentShadowThickness { get; } = 6;
         public double NebulaBlurRadius { get; } = 15;
-        public double IslandShadowBlurRadius { get; } = 60;
+        public double IslandShadowBlurRadius { get; } = 40;
         public ICollectionView Asteroids { get; }
         public ICollectionView BlackHoles { get; }
         public ICollectionView Islands { get; }
@@ -40,7 +42,7 @@ namespace TPMapEditor.ViewModel
 
         public StarmapExportViewModel(WorldMap map)
         {
-            islandBrush = new SolidColorBrush(Colors.DarkCyan);
+            islandBrush = new SolidColorBrush(Colors.Black);
             asteroidBrush = new SolidColorBrush(Colors.Black);
             outlineColor = Colors.White;
             this.Map = map;
@@ -50,6 +52,8 @@ namespace TPMapEditor.ViewModel
             EtheriumCurrentThickness *= (Map.Size - Map.WorldBuffer) / 512;
             EtheriumCurrentShadowThickness *= (Map.Size - Map.WorldBuffer) / 512;
             IslandShadowBlurRadius *= (Map.Size - Map.WorldBuffer) / 512;
+            TranslateTransformIsland *= (Map.Size - Map.WorldBuffer) / 512;
+            ScaleDownTransformIsland = 1 - ScaleDownTransformIsland * (Map.Size - Map.WorldBuffer) / 512;
             IList<StarmapWorldObjectViewModel> worldObjectViewModels = new List<StarmapWorldObjectViewModel>(map.WorldObjects.Select((w) => new StarmapWorldObjectViewModel(w)));
             Islands = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             Islands.Filter = IsWorldObjectIsland;

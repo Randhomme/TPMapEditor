@@ -40,8 +40,8 @@ namespace TPMapEditor.Dialogs
                 using (var fs = File.Create(sfd.FileName))
                 {
                     encoder.Save(fs);
-                    MessageBox.Show("Starmap image exported !", "Starmap image exported", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                MessageBox.Show("Starmap image exported !", "Starmap image exported", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }
