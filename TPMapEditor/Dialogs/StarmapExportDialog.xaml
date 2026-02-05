@@ -42,9 +42,9 @@
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Grid.OpacityMask>
-                                <Viewbox x:Name="MapViewbox" ClipToBounds="True" Stretch="Uniform" StretchDirection="Both" Width="512" Height="512">
+                                <Viewbox x:Name="MapViewbox" ClipToBounds="True" Stretch="Uniform" StretchDirection="Both" Width="512" Height="512" RenderOptions.BitmapScalingMode="NearestNeighbor">
                                     <Grid Background="Transparent" UseLayoutRounding="True" Margin="{Binding NegativeWorldBuffer}" Width="{Binding Map.Size}" Height="{Binding Map.Size}">
-                                        <ItemsControl ItemsSource="{Binding EtheriumCurrents}">
+                                        <ItemsControl ItemsSource="{Binding EtheriumCurrents}" >
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -52,7 +52,7 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Canvas>
+                                                    <Canvas >
                                                         <Path Data="{Binding Path.Points, Converter={StaticResource Point2EnumerableToPathRoundedGeometry}}" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="White" StrokeThickness="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.NebulaBlurRadius}">
                                                             <Path.RenderTransform>
                                                                 <ScaleTransform ScaleY="-1" CenterY="0" />
@@ -142,7 +142,7 @@
                                             </ItemsControl.ItemContainerStyle>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Grid>
+                                                    <Grid RenderOptions.BitmapScalingMode="NearestNeighbor">
                                                         <Image Source="{Binding StarmapImage}" RenderTransformOrigin="{Binding Pivot}" Margin="0">
                                                             <Image.RenderTransform>
                                                                 <RotateTransform Angle="{Binding ZRotation}"/>
@@ -151,12 +151,40 @@
                                                                 <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.IslandShadowBlurRadius}" Color="LawnGreen" ShadowDepth="0" Opacity="0.75"/>
                                                             </Image.Effect>
                                                         </Image>
+                                                        <Rectangle Fill="Black" RenderTransformOrigin="{Binding Pivot}" Margin="0">
+                                                            <Rectangle.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                </TransformGroup>
+                                                            </Rectangle.RenderTransform>
+                                                            <Rectangle.OpacityMask>
+                                                                <ImageBrush ImageSource="{Binding OriginalImage}" Stretch="None"/>
+                                                            </Rectangle.OpacityMask>
+                                                            <Rectangle.Effect>
+                                                                <DropShadowEffect ShadowDepth="0" Color="Black" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}"/>
+                                                            </Rectangle.Effect>
+                                                        </Rectangle>
+                                                        <Rectangle Fill="Black" RenderTransformOrigin="{Binding Pivot}" Margin="0">
+                                                            <Rectangle.RenderTransform>
+                                                                <TransformGroup>
+                                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                    <!--<ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}" ScaleY="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}"/>-->
+                                                                    <!--<TranslateTransform X="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}" Y="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}"/>-->
+                                                                </TransformGroup>
+                                                            </Rectangle.RenderTransform>
+                                                            <Rectangle.OpacityMask>
+                                                                <ImageBrush ImageSource="{Binding OriginalImage}" Stretch="None"/>
+                                                            </Rectangle.OpacityMask>
+                                                            <Rectangle.Effect>
+                                                                <DropShadowEffect ShadowDepth="0" Color="Black" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}"/>
+                                                            </Rectangle.Effect>
+                                                        </Rectangle>
                                                         <Rectangle RenderTransformOrigin="{Binding Pivot}" Margin="0">
                                                             <Rectangle.RenderTransform>
                                                                 <TransformGroup>
                                                                     <RotateTransform Angle="{Binding ZRotation}"/>
-                                                                    <ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}" ScaleY="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}"/>
-                                                                    <TranslateTransform X="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}" Y="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}"/>
+                                                                    <!--<ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}" ScaleY="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}"/>-->
+                                                                    <!--<TranslateTransform X="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}" Y="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}"/>-->
                                                                 </TransformGroup>
                                                             </Rectangle.RenderTransform>
                                                             <Rectangle.OpacityMask>
@@ -167,8 +195,8 @@
                                                             </Rectangle.Effect>
                                                             <Rectangle.Fill>
                                                                 <RadialGradientBrush RadiusX="1" RadiusY="1">
-                                                                    <GradientStop Color="Cyan" Offset="0.25"/>
-                                                                    <GradientStop Color="DarkCyan" Offset="0.75"/>
+                                                                    <GradientStop Color="Cyan" Offset="0.333"/>
+                                                                    <GradientStop Color="DarkCyan" Offset="0.666"/>
                                                                 </RadialGradientBrush>
                                                             </Rectangle.Fill>
                                                         </Rectangle>
