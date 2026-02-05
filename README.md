@@ -8,7 +8,7 @@ Don't forget to read the wiki : https://github.com/Randhomme/TPMapEditor/wiki
 Found a bug or have a suggestion ? Contact Randhomme on Discord.
 
 ## How to update the editor
-If a new version is available, download it, extract it, and you're good to go. You should keep your previous `TPMapEditor.xml` file. It contains all the app settings you have defined previously.
+If a new version is available, download it, extract it, and replace everything in your previous `TPMapEditor` folder (you should fuse the folders, this will keep your `TPMapEditor.xml` settings file, as well as your custom world objects images).
 
 ## Tips
 - You can zoom in and out using `CTRL` + `Mouse wheel`
