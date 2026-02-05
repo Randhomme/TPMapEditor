@@ -6,7 +6,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <Label Margin="-5,0,0,0" Content="Type"/>
-                <ComboBox SelectedItem="{Binding Type}" ItemsSource="{x:Static data:WorldObjectType.WotTypes}"/>
+                <ComboBox SelectedItem="{Binding Type}" ItemsSource="{Binding Source={x:Static data:WorldObjectType.WotTypes}, Converter={StaticResource SelectableWorldObjectTypeConverter}}"/>
                 <Label Margin="-5,5,0,0" Content="Position X"/>
                 <Slider Value="{Binding X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                 <Label Margin="-5,5,0,0" Content="Position Y"/>

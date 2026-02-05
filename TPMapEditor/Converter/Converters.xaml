@@ -5,4 +5,5 @@
     <converter:EnumToNameConverter x:Key="EnumToNameConverter"/>
     <converter:TeamNameConverter x:Key="TeamNameConverter"/>
     <converter:WotTypesToParameterType x:Key="WotTypesToParameterType"/>
+    <converter:SelectableWorldObjectTypeConverter x:Key="SelectableWorldObjectTypeConverter"/>
 </ResourceDictionary>
