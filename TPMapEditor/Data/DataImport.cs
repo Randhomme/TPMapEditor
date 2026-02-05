@@ -323,7 +323,7 @@ namespace TPMapEditor.Data
                 //SHIP INFO SIZE
                 var shipInfoSize = reader.ReadAndParseInt("SHIPINFO - Size Int ");
                 for (int i = 0; i < shipInfoSize; i++)
-                    for (int j = 0; j < 5; j++)
+                    for (int j = 0; j < 6; j++)
                         reader.ReadLine();
 
                 //HOLDFIREACTIVE
