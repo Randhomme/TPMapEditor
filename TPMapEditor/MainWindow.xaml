@@ -9,15 +9,18 @@
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:vm="clr-namespace:TPMapEditor.ViewModel"
         xmlns:Styles="clr-namespace:TPMapEditor.Styles" x:Class="TPMapEditor.MainWindow"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Title="TPMapEditor" Height="500" Width="1000" Closing="Window_Closing" Closed="Window_Closed" WindowState="Maximized" UseLayoutRounding="True" PreviewKeyDown="Window_PreviewKeyDown" ContentRendered="Window_ContentRendered" Loaded="Window_Loaded">
     <Window.Resources>
         <converter:CenteringMultiConverter x:Key="CenteringMultiConverter"/>
         <converter:Point2EnumerableToPathGeometry x:Key="PathGeometryConverter"/>
         <converter:FillColorConverter x:Key="FillColorConverter"/>
     </Window.Resources>
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -912,7 +915,7 @@
                                             </DataGrid>
                                         </GroupBox>
                                     </Grid>
-                                    <StackPanel Grid.Row="1" Visibility="{c:Binding ElementName=PlayerRadioButton,Path=IsChecked}">
+                                    <StackPanel Grid.Row="1" Visibility="{c:Binding ElementName=PlayerRadioButton, Path=IsChecked}">
                                         <GroupBox Header="Rotation">
                                             <Slider x:Name="PlayerSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" IsSnapToTickEnabled="True" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                         </GroupBox>
@@ -922,19 +925,19 @@
                                             </StackPanel>
                                         </GroupBox>
                                     </StackPanel>
-                                    <GroupBox Header="Waypoint path" Grid.Row="2" Visibility="{c:Binding ElementName=WaypointPathRadioButton,Path=IsChecked}">
+                                    <GroupBox Header="Waypoint path" Grid.Row="2" Visibility="{c:Binding ElementName=WaypointPathRadioButton, Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="NewWaypointPathRadioButton" Margin="5" Content="New path" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
                                             <RadioButton x:Name="AddWaypointPathPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'WaypointPathSelectionService.SelectedMapObject!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="World polygon" Grid.Row="3" Visibility="{c:Binding ElementName=WorldPolygonRadioButton,Path=IsChecked}">
+                                    <GroupBox Header="World polygon" Grid.Row="3" Visibility="{c:Binding ElementName=WorldPolygonRadioButton, Path=IsChecked}">
                                         <StackPanel>
                                             <RadioButton x:Name="NewWorldPolygonRadioButton" Margin="5" Content="New polygon" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown"/>
                                             <RadioButton x:Name="AddWorldPolygonPointRadioButton" Margin="5" Content="Add point" Style="{StaticResource {x:Type ToggleButton}}" PreviewMouseDown="RadioButton_PreviewMouseDown" IsEnabled="{c:Binding 'WorldPolygonSelectionService.SelectedMapObject!=null'}" IsEnabledChanged="RadioButton_IsEnabledChanged"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <StackPanel Grid.Row="4" Visibility="{c:Binding ElementName=WorldPointSetRadioButton,Path=IsChecked}">
+                                    <StackPanel Grid.Row="4" Visibility="{c:Binding ElementName=WorldPointSetRadioButton, Path=IsChecked}">
                                         <GroupBox Header="Rotation">
                                             <Slider x:Name="WorldPointSliderRotate" Margin="5" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                                         </GroupBox>
@@ -945,14 +948,14 @@
                                             </StackPanel>
                                         </GroupBox>
                                     </StackPanel>
-                                    <GroupBox Header="Objective point" Grid.Row="5" Visibility="{c:Binding ElementName=ObjectivePointRadioButton,Path=IsChecked}">
+                                    <GroupBox Header="Objective point" Grid.Row="5" Visibility="{c:Binding ElementName=ObjectivePointRadioButton, Path=IsChecked}">
                                         <StackPanel>
                                             <CheckBox x:Name="AddObjectivePointCheckBox" Margin="5" Content="New objetive point" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Map text point" Grid.Row="6" Visibility="{c:Binding ElementName=MapTextPointRadioButton,Path=IsChecked}">
+                                    <GroupBox Header="Map text point" Grid.Row="6" Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}">
                                         <StackPanel>
-                                            <ComboBox x:Name="MapTextPointPreviewTextComboBox" Margin="5" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedValuePath="Value" DisplayMemberPath="Value"/>
+                                            <ComboBox x:Name="MapTextPointPreviewTextComboBox" Margin="5" ItemsSource="{x:Static data:StringDictionnary.MapTextItems}" SelectedIndex="{Binding SelectedMapTextPointPreviewTextIndex}" SelectedValuePath="Value" DisplayMemberPath="Value"/>
                                             <CheckBox x:Name="AddMapTextPointCheckBox" Margin="5" Content="New map text point" Style="{StaticResource {x:Type ToggleButton}}"/>
                                         </StackPanel>
                                     </GroupBox>

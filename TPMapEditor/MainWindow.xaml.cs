@@ -1,9 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -11,20 +7,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using TPMapEditor.Data;
-using TPMapEditor.Enums;
-using TPMapEditor.Data.Rule;
-using TPMapEditor.Dialogs;
-using TPMapEditor.Settings;
-using TPMapEditor.Services;
-using TPMapEditor.Services.Implementations;
-using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
-using TPMapEditor.ViewModel.SelectionTransform;
-using System.Collections.Generic;
 using System.Windows.Controls.Primitives;
 using TPMapEditor.ViewModel;
 
@@ -36,747 +22,19 @@ namespace TPMapEditor
     [ObservableObject]
     public partial class MainWindow : Window
     {
-        [ObservableProperty]
-        private WorldObjectType? selectedWorldObjectType;
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(InverseZoom))]
-        [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessSmall))]
-        [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessMed))]
-        [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessLarge))]
-        private double zoom = 1;
+        private readonly MainViewModel vm;
         private Point selectActionPoint;
         private Point moveActionPoint;
         private DateTime lastWheelTime = DateTime.MinValue;
-        private AppSettings settings;
         private Canvas? currentCanvas;
-
-        public double InverseZoom { get => 1 / Zoom; }
-        public double ZoomedBorderThicknessSmall { get => 2.5 / Zoom; }
-        public double ZoomedBorderThicknessMed { get => 5 / Zoom; }
-        public double ZoomedBorderThicknessLarge { get => 10 / Zoom; }
-
-        private readonly IReadOnlyList<(Key key, ModifierKeys modifiers, ICommand command)> keyboardShortcut;
-
-        private readonly ISelectionKBShortcutService worldObjectSelectionKBShortcutService;
-        private readonly ISelectionKBShortcutService playerSelectionKBShortcutService;
-        private readonly ISelectionKBShortcutService waypointPathSelectionKBShortcutService;
-        private readonly ISelectionKBShortcutService worldPolygonSelectionKBShortcutService;
-        private readonly ISelectionKBShortcutService worldPointSetSelectionKBShortcutService;
-        private readonly ISelectionKBShortcutService objectivePointSelectionKBShortcutService;
-        private readonly ISelectionKBShortcutService mapTextPointSelectionKBShortcutService;
-        private readonly ICopyPasteService copyPasteService;
-        private readonly ICopyPasteService ruleConditionCopyPasteService;
-        private readonly ICopyPasteService ruleActionCopyPasteService;
-        private readonly ICopyPasteService waypointPathPointCopyPasteService;
-        private readonly ICopyPasteService worldPolygonPointCopyPasteService;
-        private readonly ICopyPasteService worldPointCopyPasteService;
-        private readonly IUndoManagerService undoManagerService = new UndoManagerService(10);
-        public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
-        public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
-        public IMultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint> WaypointPathSelectionService { get; }
-        public ISelectionService<WaypointPathPoint> WaypointPathPointSelectionService { get; } = new SelectionService<WaypointPathPoint>();
-        public IMultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint> WorldPolygonSelectionService { get; }
-        public ISelectionService<WorldPolygonPoint> WorldPolygonPointSelectionService { get; } = new SelectionService<WorldPolygonPoint>();
-        public IMultiPointMapObjectSelectionService<WorldPointSet, WorldPoint> WorldPointSetSelectionService { get; }
-        public ISelectionService<WorldPoint> WorldPointSelectionService { get; } = new SelectionService<WorldPoint>();
-        public ISelectionService<ObjectivePoint> ObjectivePointSelectionService { get; } = new SelectionService<ObjectivePoint>();
-        public ISelectionService<MapTextPoint> MapTextPointSelectionService { get; } = new SelectionService<MapTextPoint>();
-
-        public ICollectionView SelectableWorldObjectTypes { get; }
-
-        private ISelectionKBShortcutService currenSelectionKBShortcutService;
-        private IEnumerable<IMovableMapObject> currentMovableSelection;
-
-        public WorldMap Map { get; private set; }
 
         public MainWindow()
         {
-            SelectableWorldObjectTypes = new CollectionViewSource() { Source = WorldObjectType.WotTypes }.View;
-            SelectableWorldObjectTypes.Filter = WorldObjectType.IsSelectableWorldObjectType;
-            settings = new AppSettings();
-            Map = new WorldMap();
-            copyPasteService = new CopyPasteService();
-            ruleConditionCopyPasteService = new CopyPasteService();
-            ruleActionCopyPasteService = new CopyPasteService();
-            waypointPathPointCopyPasteService = new CopyPasteService();
-            worldPolygonPointCopyPasteService = new CopyPasteService();
-            worldPointCopyPasteService = new CopyPasteService();
-            WaypointPathSelectionService = new MultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint>(WaypointPathPointSelectionService);
-            WorldPolygonSelectionService = new MultiPointMapObjectSelectionService<WorldPolygon, WorldPolygonPoint>(WorldPolygonPointSelectionService);
-            WorldPointSetSelectionService = new MultiPointMapObjectSelectionService<WorldPointSet, WorldPoint>(WorldPointSelectionService);
-            worldObjectSelectionKBShortcutService = new SelectionKBShortcutService<WorldObject>(Map.WorldObjects, WorldObjectSelectionService, copyPasteService);
-            playerSelectionKBShortcutService = new SelectionKBShortcutService<Player>(Map.Players, PlayerSelectionService, copyPasteService);
-            waypointPathSelectionKBShortcutService = new SelectionKBShortcutService<WaypointPath>(Map.WaypointPaths, WaypointPathSelectionService, copyPasteService);
-            worldPolygonSelectionKBShortcutService = new SelectionKBShortcutService<WorldPolygon>(Map.WorldPolygons, WorldPolygonSelectionService, copyPasteService);
-            worldPointSetSelectionKBShortcutService = new SelectionKBShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService, copyPasteService);
-            objectivePointSelectionKBShortcutService = new SelectionKBShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService, copyPasteService);
-            mapTextPointSelectionKBShortcutService = new SelectionKBShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService, copyPasteService);
-            undoManagerService.PropertyChanged += UndoManagerService_PropertyChanged;
             InitializeComponent();
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = $"{Title} v{version.Major}.{version.Minor}.{version.Build}";
-            currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
-            currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
-            keyboardShortcut = new List<(Key key, ModifierKeys modifiers, ICommand command)>()
-            {
-                (Key.H, ModifierKeys.None, HKeyCommand),
-                (Key.H, ModifierKeys.Shift, ShiftHKeyCommand),
-                (Key.H, ModifierKeys.Control, CtrlHKeyCommand),
-                (Key.A, ModifierKeys.None, AKeyCommand),
-                (Key.A, ModifierKeys.Shift, ShiftAKeyCommand),
-                (Key.A, ModifierKeys.Control, CtrlAKeyCommand),
-                (Key.C, ModifierKeys.Control, CtrlCKeyCommand),
-                (Key.V, ModifierKeys.Control, CtrlVKeyCommand),
-                (Key.Z, ModifierKeys.Control, UndoCommand),
-                (Key.Z, ModifierKeys.Control | ModifierKeys.Shift, RedoCommand),
-            };
+            vm = (MainViewModel)DataContext;
         }
-
-        #region MenuCommands
-
-        [RelayCommand]
-        private void OnMapImport()
-        {
-            var ofd = new OpenFileDialog()
-            {
-                Multiselect = false,
-                DefaultExt = ".twt",
-                Filter = "Map file (.twt)|*.twt",
-                Title = "Select a map file",
-            };
-            if (ofd.ShowDialog(this) == true)
-            {
-                if (MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    Map.Reset();
-                    ClearSelections();
-                    var _lock = new object();
-                    Map.EnableCollectionSynchronization(_lock);
-                    new ProgressDialog(this, "Import map").RunActionSameThread((progress, progressLogs) =>
-                    {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
-                        di.ReadMapFileAndAddData();
-                    });
-                    Map.DisableCollectionSynchronization();
-                }
-            }
-        }
-
-        [RelayCommand]
-        private void OnMapExport()
-        {
-            var sfd = new SaveFileDialog()
-            {
-                DefaultExt = ".twt",
-                Filter = "Map file (.twt)|*.twt",
-                Title = "Save your map file",
-            };
-            if (sfd.ShowDialog(this) == true)
-            {
-                new ProgressDialog(this, "Export map").RunAction((progress, progressLogs) =>
-                {
-                    try
-                    {
-                        ValidateMap(progressLogs);
-                        using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
-                        {
-                            de.CreateMapFileAndWriteData();
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        progress.Report("Map export failed.");
-                        progressLogs.Report($"An error has occured.\n{ex.Message}");
-                    }
-                });
-            }
-        }
-
-        [RelayCommand]
-        private void OnStarmapExport()
-        {
-            new StarmapExportDialog(this, "Starmap preview") { DataContext = new StarmapExportViewModel(Map) }.ShowDialog();
-        }
-
-        [RelayCommand]
-        private void OnResetMap()
-        {
-            if (MessageBox.Show("The current map will be cleared. Continue ?", "Map reset", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            {
-                ClearSelections();
-                Map.Reset();
-            }
-        }
-
-        [RelayCommand]
-        private void OnMapSizeEdit()
-        {
-            var msd = new MapSizeDialog(this, "Map size", Map.Size, Map.ZSize, Map.WorldBuffer);
-            if (msd.ShowDialog() == true)
-            {
-                Map.Size = msd.Size;
-                Map.ZSize = msd.ZSize;
-                Map.WorldBuffer = msd.WorldBuffer;
-            }
-        }
-
-        [RelayCommand]
-        private void OnWorldInfoEdit()
-        {
-            new WorldInfoDialog(this, "World info", Map).ShowDialog();
-        }
-
-        [RelayCommand]
-        private void OnFlagsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new FlagDialog(this, "Flags") { DataContext = new CollectionEditorViewModel<Flag>(Map.Flags, () => new Flag(Map), copyPasteService, true) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnGroupsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Groups") { DataContext = new CollectionEditorViewModel<Group>(Map.Groups, () => new Group(Map), copyPasteService) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnJournalEntriesEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new JournalEntryDialog(this, "Journal entries") { DataContext = new CollectionEditorViewModel<JournalEntry>(Map.JournalEntries, () => new JournalEntry(Map, StringDictionnary.SpeechEventsJournals.Keys.FirstOrDefault(), AppSettings.DialogueFilesList.FirstOrDefault(), AppSettings.HudTexturesList.FirstOrDefault()), copyPasteService, true) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnMapTextPointsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Map text points") { DataContext = new CollectionEditorViewModel<MapTextPoint>(Map.MapTextPoints, () => new MapTextPoint(Map, NamedObject.GenerateName("MapTextPoint", Map.MapTextPoints), StringDictionnary.MapTextItems.Keys.FirstOrDefault()), copyPasteService) }.ShowDialog();
-            if (MapTextPointSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.MapTextPoints.Contains(MapTextPointSelectionService.SelectedMapObject))
-                {
-                    MapTextPointSelectionService.RemoveFromSelection(MapTextPointSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnObjectiveTasksEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Objective tasks") { DataContext = new CollectionEditorViewModel<ObjectiveTask>(Map.ObjectiveTasks, () => new ObjectiveTask(Map, NamedObject.GenerateName("ObjectiveTask", Map.ObjectiveTasks), StringDictionnary.ObjectiveTasks.Keys.FirstOrDefault()), copyPasteService) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnObjectivePointsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Objective points") { DataContext = new CollectionEditorViewModel<ObjectivePoint>(Map.ObjectivePoints, () => new ObjectivePoint(Map), copyPasteService) }.ShowDialog();
-            if (ObjectivePointSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.ObjectivePoints.Contains(ObjectivePointSelectionService.SelectedMapObject))
-                {
-                    ObjectivePointSelectionService.RemoveFromSelection(ObjectivePointSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnPlayersEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Players") { DataContext = new CollectionEditorViewModel<Player>(Map.Players, () => new Player(Map), copyPasteService) }.ShowDialog();
-            if (PlayerSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.Players.Contains(PlayerSelectionService.SelectedMapObject))
-                {
-                    PlayerSelectionService.RemoveFromSelection(PlayerSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnPlayerAlliancesEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new PlayerAllianceDialog(this, "Player alliances") { DataContext = new CollectionEditorViewModel<PlayerAlliance>(Map.PlayerAlliances, () => new PlayerAlliance(Map, Map.SelectablePlayers, Player.DefaultPlayer, Player.DefaultPlayer), copyPasteService, true) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnSpeechEventsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Speech events") { DataContext = new CollectionEditorViewModel<SpeechEvent>(Map.SpeechEvents, () => new SpeechEvent(Map, NamedObject.GenerateName("SpeechEvent", Map.SpeechEvents)), copyPasteService) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnTeamsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new TeamsDialog(this, "Teams") { DataContext = new TeamEditorViewModel(Map.SelectableTeams, Map.InGameTeams, () => new Team(Map, StringDictionnary.TeamNames.Keys.FirstOrDefault()), copyPasteService) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnTimersEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new TimerDialog(this, "Timers") { DataContext = new CollectionEditorViewModel<Timer>(Map.Timers, () => new Timer(Map), copyPasteService, true) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnWaypointPathsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "Waypoint paths")
-            {
-                DataContext = new CollectionEditorViewModel<WaypointPath>(Map.WaypointPaths, () =>
-                {
-                    var wp = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths), waypointPathPointCopyPasteService);
-                    wp.Points.Add(new(wp, 0, 0, 0));
-                    return wp;
-                }, copyPasteService)
-            }.ShowDialog();
-            if (WaypointPathSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.WaypointPaths.Contains(WaypointPathSelectionService.SelectedMapObject))
-                {
-                    WaypointPathSelectionService.RemoveFromSelection(WaypointPathSelectionService.SelectedMapObject);
-                    if (WaypointPathPointSelectionService.SelectedMapObject != null)
-                        WaypointPathPointSelectionService.RemoveFromSelection(WaypointPathPointSelectionService.SelectedMapObject);
-                }
-                else if (WaypointPathPointSelectionService.SelectedMapObject != null && !WaypointPathSelectionService.SelectedMapObject.Points.Contains(WaypointPathPointSelectionService.SelectedMapObject))
-                {
-                    WaypointPathPointSelectionService.RemoveFromSelection(WaypointPathPointSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnWorldCrewsAndArmsEdit()
-        {
-            new WorldCrewAndArmsDialog(this, "World crews and arms", Map).ShowDialog();
-        }
-
-        [RelayCommand]
-        private void OnWorldObjectsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "World objects") { DataContext = new CollectionEditorViewModel<WorldObject>(Map.WorldObjects, () => new WorldObject(Map), copyPasteService) }.ShowDialog();
-            if (WorldObjectSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.WorldObjects.Contains(WorldObjectSelectionService.SelectedMapObject))
-                {
-                    WorldObjectSelectionService.RemoveFromSelection(WorldObjectSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnWorldPointSetsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "World point sets") {
-                DataContext = new CollectionEditorViewModel<WorldPointSet>(Map.WorldPointSets, () =>
-                {
-                    var wps = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets), worldPointCopyPasteService);
-                    wps.Points.Add(new(wps, 0, 0, 0, 0));
-                    return wps;
-                }, copyPasteService)
-            }.ShowDialog();
-            if (WorldPointSetSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.WorldPointSets.Contains(WorldPointSetSelectionService.SelectedMapObject))
-                {
-                    WorldPointSetSelectionService.RemoveFromSelection(WorldPointSetSelectionService.SelectedMapObject);
-                    if (WorldPointSelectionService.SelectedMapObject != null)
-                        WorldPointSelectionService.RemoveFromSelection(WorldPointSelectionService.SelectedMapObject);
-                }
-                else if(WorldPointSelectionService.SelectedMapObject != null && !WorldPointSetSelectionService.SelectedMapObject.Points.Contains(WorldPointSelectionService.SelectedMapObject))
-                {
-                    WorldPointSelectionService.RemoveFromSelection(WorldPointSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnWorldPolygonsEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "World polygons")
-            {
-                DataContext = new CollectionEditorViewModel<WorldPolygon>(Map.WorldPolygons, () =>
-                {
-                    var wp = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons), worldPolygonPointCopyPasteService);
-                    wp.Points.Add(new(wp, 0, 0));
-                    return wp;
-                }, copyPasteService)
-            }.ShowDialog();
-            if (WorldPolygonSelectionService.SelectedMapObject != null)
-            {
-                if (!Map.WorldPolygons.Contains(WorldPolygonSelectionService.SelectedMapObject))
-                {
-                    WorldPolygonSelectionService.RemoveFromSelection(WorldPolygonSelectionService.SelectedMapObject);
-                    if (WorldPolygonPointSelectionService.SelectedMapObject != null)
-                        WorldPolygonPointSelectionService.RemoveFromSelection(WorldPolygonPointSelectionService.SelectedMapObject);
-                }
-                else if (WorldPolygonPointSelectionService.SelectedMapObject != null && !WorldPolygonSelectionService.SelectedMapObject.Points.Contains(WorldPolygonPointSelectionService.SelectedMapObject))
-                {
-                    WorldPolygonPointSelectionService.RemoveFromSelection(WorldPolygonPointSelectionService.SelectedMapObject);
-                }
-            }
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnWorldRulesEdit()
-        {
-            copyPasteService.ClearClipboard();
-            new CollectionEditorDialog(this, "World rules") { DataContext = new CollectionEditorViewModel<WorldRule>(Map.WorldRules, () => new WorldRule(Map, NamedObject.GenerateName("WorldRule", Map.WorldRules), ruleConditionCopyPasteService, ruleActionCopyPasteService), copyPasteService) }.ShowDialog();
-            copyPasteService.ClearClipboard();
-        }
-
-        [RelayCommand]
-        private void OnAlignTransform()
-        {
-            new SelectionTransformWindow(this, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D() }).Show();
-        }
-
-        [RelayCommand]
-        private void OnDistributeTransform()
-        {
-            new SelectionTransformWindow(this, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D() }).Show();
-        }
-
-        [RelayCommand]
-        private void OnTranslateTransform()
-        {
-            new SelectionTransformWindow(this, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D()}).Show();
-        }
-
-        [RelayCommand(CanExecute = nameof(CanUndo))]
-        private void OnUndo()
-        {
-            undoManagerService.Undo();
-            UndoCommand.NotifyCanExecuteChanged();
-            RedoCommand.NotifyCanExecuteChanged();
-        }
-
-        [RelayCommand(CanExecute = nameof(CanRedo))]
-        private void OnRedo()
-        {
-            undoManagerService.Redo();
-            UndoCommand.NotifyCanExecuteChanged();
-            RedoCommand.NotifyCanExecuteChanged();
-        }
-
-        [RelayCommand]
-        private void OnAppSettingsEdit()
-        {
-            var tpGamePath = settings.TpGamePath;
-            var asd = new AppSettingsDialog(this, "Settings", settings);
-            asd.ShowDialog();
-            settings.Save();
-            if (settings.TpGamePath != tpGamePath)
-            {
-                new ProgressDialog(this, "Reload TPGame folder").RunActionSameThread((progress, progressLogs) =>
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadAll(progress, progressLogs);
-                    progress.Report("Reloading complete");
-                }, true);
-            }
-        }
-
-        [RelayCommand]
-        private void OnReloadAll()
-        {
-            ReloadAllSettings("Reload TPGame folder");
-        }
-
-        [RelayCommand]
-        private void OnReloadDialogueFilesList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadDialogueFilesList();
-                    progress.Report("Reloading complete");
-                }
-                catch(Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadEffectList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadEffectList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadFlagTexturesList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadFlagTexturesList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadGuiTexturesList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadGuiTexturesList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadHudTexturesList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadHudTexturesList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadMeshesList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadMeshesList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadMusicsList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadMusicsList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadSinglePlayerMissionsList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadSinglePlayerMissionsList();
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadStrings()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadStringsDictionnaries(progress, logs);
-                    progress.Report("Reloading complete");
-                    MapTextPointPreviewTextComboBox.SelectedIndex = 0;
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnReloadWorldObjectTypeList()
-        {
-            new ProgressDialog(this, "Reload").RunActionSameThread((progress, logs) =>
-            {
-                try
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadWorldObjectTypeList(logs);
-                    progress.Report("Reloading complete");
-                }
-                catch (Exception ex)
-                {
-                    logs.Report($"Error: {ex.Message}");
-                }
-            }, true);
-        }
-
-        [RelayCommand]
-        private void OnWiki()
-        {
-            Process.Start("https://github.com/Randhomme/TPMapEditor/wiki");
-        }
-
-        [RelayCommand]
-        private void OnChangelogs()
-        {
-            Process.Start("https://github.com/Randhomme/TPMapEditor/releases");
-        }
-
-        [RelayCommand]
-        private void OnAboutAppShow()
-        {
-            var v = Assembly.GetExecutingAssembly().GetName().Version;
-            MessageBox.Show($"TPMapEditor version {v.Major}.{v.Minor}.{v.Build}\nAuthor : Randhomme", "About", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        #endregion
-
-        #region MainUICommands
-
-        [RelayCommand]
-        private void IncreaseZIndex(ISelectableMapObject mapObject)
-        {
-            mapObject.ZIndex++;
-        }
-
-        [RelayCommand]
-        private void DecreaseZIndex(ISelectableMapObject mapObject)
-        {
-            mapObject.ZIndex--;
-        }
-
-        #endregion
-
-        #region KeyboardShortcutCommands
-
-        [RelayCommand]
-        private void OnHKey()
-        {
-            currenSelectionKBShortcutService?.OnHKey();
-        }
-
-        [RelayCommand]
-        private void OnShiftHKey()
-        {
-            currenSelectionKBShortcutService?.OnShiftHKey();
-        }
-
-        [RelayCommand]
-        private void OnCtrlHKey()
-        {
-            currenSelectionKBShortcutService?.OnCtrlHKey();
-        }
-
-        [RelayCommand]
-        private void OnAKey()
-        {
-            currenSelectionKBShortcutService?.OnAKey();
-        }
-
-        [RelayCommand]
-        private void OnShiftAKey()
-        {
-            currenSelectionKBShortcutService?.OnShiftAKey();
-        }
-
-        [RelayCommand]
-        private void OnCtrlAKey()
-        {
-            currenSelectionKBShortcutService?.OnCtrlAKey();
-        }
-
-        [RelayCommand]
-        private void OnCtrlCKey()
-        {
-            currenSelectionKBShortcutService.OnCtrlC();
-        }
-
-        [RelayCommand]
-        private void OnCtrlVKey()
-        {
-            currenSelectionKBShortcutService.OnCtrlV();
-        }
-
-        #endregion
 
         #region MainWindow events
 
@@ -810,23 +68,12 @@ namespace TPMapEditor
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            settings.Save();
+            vm.SaveSettings();
         }
 
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
-            settings = settings.Load();
-            if (string.IsNullOrEmpty(settings.TpGamePath))
-            {
-                MessageBox.Show("You should set the TPGame path in the application settings before using the map editor.", "TPGame Path Not Set", MessageBoxButton.OK, MessageBoxImage.Warning);
-                OnAppSettingsEdit();
-            }
-            else
-            {
-                ReloadAllSettings("Load TPGame folder", false);
-            }
-            Map.Reset();
-
+            vm.LoadSettings();
             #if !DEBUG //Don't check for updates in debug mode
             var local = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
             var latest = await GetLatestGitHubVersionAsync();
@@ -872,7 +119,7 @@ namespace TPMapEditor
             double newAbsoluteY = absoluteY * scale;
             double targetX = newAbsoluteX - mousePos.X;
             double targetY = newAbsoluteY - mousePos.Y;
-            Zoom = newScale;
+            vm.Zoom = newScale;
             MapScrollViewer.ScrollToHorizontalOffset(targetX);
             MapScrollViewer.ScrollToVerticalOffset(targetY);
 
@@ -891,12 +138,8 @@ namespace TPMapEditor
                 e.Handled = true;
 
             //Keyboard shortcuts
-            var command = GetKBShortcutCommand(e.Key, Keyboard.Modifiers);
-            if(command!=null && command.CanExecute(null) && !IsTextInputActive())
-            {
-                command.Execute(null);
+            if (!IsTextInputActive() && vm.TryExecuteKBShortcutCommand(e.Key, Keyboard.Modifiers))
                 e.Handled = true;
-            }
         }
 
         //Scroll horizontally by pressing Shift and using MouseWheel
@@ -912,21 +155,6 @@ namespace TPMapEditor
         private void MapScrollViewer_MouseEnter(object sender, MouseEventArgs e)
         {
             MapScrollViewer.Focus();
-        }
-
-        private void UndoManagerService_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(IUndoManagerService.CanUndo))
-            {
-                UndoCommand.NotifyCanExecuteChanged();
-                RedoCommand.NotifyCanExecuteChanged();
-            }
-
-            if (e.PropertyName == nameof(IUndoManagerService.CanRedo))
-            {
-                UndoCommand.NotifyCanExecuteChanged();
-                RedoCommand.NotifyCanExecuteChanged();
-            }
         }
 
         private void MapGridOutsideSelect_MouseMove(object sender, MouseEventArgs e)
@@ -1005,23 +233,6 @@ namespace TPMapEditor
         }
 
         /// <summary>
-        /// Clear all the selections
-        /// </summary>
-        private void ClearSelections()
-        {
-            WorldObjectSelectionService.ClearSelection();
-            PlayerSelectionService.ClearSelection();
-            WaypointPathSelectionService.ClearSelection();
-            WaypointPathPointSelectionService.ClearSelection();
-            WorldPolygonSelectionService.ClearSelection();
-            WorldPolygonPointSelectionService.ClearSelection();
-            WorldPointSetSelectionService.ClearSelection();
-            WorldPointSelectionService.ClearSelection();
-            ObjectivePointSelectionService.ClearSelection();
-            MapTextPointSelectionService.ClearSelection();
-        }
-
-        /// <summary>
         /// Returns a rotation between -180 and 180
         /// </summary>
         /// <param name="rotation"></param>
@@ -1048,230 +259,6 @@ namespace TPMapEditor
             if (ms < 100) return 2;
 
             return 1;
-        }
-
-        /// <summary>
-        /// Reload all the app settings
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="notifyOnFinish"></param>
-        private void ReloadAllSettings(string title, bool notifyOnFinish = true)
-        {
-            new ProgressDialog(this, title).RunActionSameThread((progress, progressLogs) =>
-            {
-                progress.Report("Reloading ...");
-                settings.ReloadAll(progress, progressLogs);
-                progress.Report("Reloading complete");
-                MapTextPointPreviewTextComboBox.SelectedIndex = 0;
-            }, true, notifyOnFinish);
-        }
-
-        /// <summary>
-        /// Validate everything in the map
-        /// </summary>
-        /// <param name="progressLogs"></param>
-        public void ValidateMap(IProgress<string> progressLogs)
-        {
-            Map.ValidateAllProperties();
-            for (int i = 0; i < Map.WorldObjects.Count; i++)
-            {
-                var item = Map.WorldObjects[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WorldObject '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.SelectableTeams.Count; i++)
-            {
-                var item = Map.SelectableTeams[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"SelectableTeam '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.InGameTeams.Count; i++)
-            {
-                var item = Map.InGameTeams[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"InGameTeam '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.Players.Count; i++)
-            {
-                var item = Map.Players[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"Player '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.Groups.Count; i++)
-            {
-                var item = Map.Groups[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"Group '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.WaypointPaths.Count; i++)
-            {
-                var item = Map.WaypointPaths[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WaypointPath '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.WorldPolygons.Count; i++)
-            {
-                var item = Map.WorldPolygons[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WorldPolygon '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.WorldPointSets.Count; i++)
-            {
-                var item = Map.WorldPointSets[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WorldPointSet '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.Flags.Count; i++)
-            {
-                var item = Map.Flags[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"Flag '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.PlayerAlliances.Count; i++)
-            {
-                var item = Map.PlayerAlliances[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"PlayerAlliance {i + 1} is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.Timers.Count; i++)
-            {
-                var item = Map.Timers[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"Timer '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.SpeechEvents.Count; i++)
-            {
-                var item = Map.SpeechEvents[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"SpeechEvent {i + 1} is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.WorldRules.Count; i++)
-            {
-                var item = Map.WorldRules[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WorldRule '{item}' is invalid : {ex.Message}"); }
-                foreach (var item1 in item.Conditions)
-                {
-                    foreach (var item2 in item1.RuleFields)
-                    {
-                        if (item2 is RuleFieldObservableCollection rfoc && rfoc.Value != null)
-                        {
-                            foreach (var item3 in rfoc.Value)
-                            {
-                                try { item3.ValidateAllProperties(); }
-                                catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'"); }
-                            }
-                        }
-                        else
-                        {
-                            try { item2.ValidateAllProperties(); }
-                            catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item2.RealLabel}'"); }
-                        }
-                    }
-                }
-                foreach (var item1 in item.Actions)
-                {
-                    foreach (var item2 in item1.RuleFields)
-                    {
-                        if (item2 is RuleFieldObservableCollection rfoc && rfoc.Value != null)
-                        {
-                            foreach (var item3 in rfoc.Value)
-                            {
-                                try { item3.ValidateAllProperties(); }
-                                catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item3.RealLabel}'"); }
-                            }
-                        }
-                        else
-                        {
-                            try { item2.ValidateAllProperties(); }
-                            catch { progressLogs.Report($"Invalid Value for Rule '{item.Name}', Condition '{item1.Type.GetName()}', Field '{item2.RealLabel}'"); }
-                        }
-                    }
-                }
-            }
-            for (int i = 0; i < Map.ShipUnits.Count; i++)
-            {
-                var item = Map.ShipUnits[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"ShipUnit '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.ObjectivePoints.Count; i++)
-            {
-                var item = Map.ObjectivePoints[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"ObjectivePoint '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.ObjectiveTasks.Count; i++)
-            {
-                var item = Map.ObjectiveTasks[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"ObjectiveTask '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.MapTextPoints.Count; i++)
-            {
-                var item = Map.MapTextPoints[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"MapTextPoint '{item}' is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.JournalEntries.Count; i++)
-            {
-                var item = Map.JournalEntries[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"JournalEntry {i + 1} is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.WorldCrews.Count; i++)
-            {
-                var item = Map.WorldCrews[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WorldCrew {i + 1} is invalid : {ex.Message}"); }
-            }
-            for (int i = 0; i < Map.WorldArms.Count; i++)
-            {
-                var item = Map.WorldArms[i];
-                try { item.ValidateAllProperties(); }
-                catch (Exception ex) { progressLogs.Report($"WorldArm {i + 1} is invalid : {ex.Message}"); }
-            }
-        }
-
-        /// <summary>
-        /// CanExecute for UndoCommand
-        /// </summary>
-        /// <returns></returns>
-        private bool CanUndo() => undoManagerService.CanUndo;
-
-        /// <summary>
-        /// CanExecute for RedoCommand
-        /// </summary>
-        /// <returns></returns>
-        private bool CanRedo() => undoManagerService.CanRedo;
-
-        /// <summary>
-        /// Checks if the movable selection is 3D or not (only WorldPolygons are in 2D)
-        /// </summary>
-        /// <returns></returns>
-        private bool IsMovableSelection3D()
-        {
-            if (WorldPolygonRadioButton.IsChecked == true)
-                return false;
-            return true;
-        }
-
-        /// <summary>
-        /// Execute the keyboard shortcut if it exists
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="modifiers"></param>
-        /// <returns>True if executed, false otherwise</returns>
-        private ICommand? GetKBShortcutCommand(Key key, ModifierKeys modifiers)
-        {
-            foreach (var kbShortcut in keyboardShortcut)
-            {
-                if(kbShortcut.key == key && kbShortcut.modifiers == modifiers)
-                {
-                    return kbShortcut.command;
-                }
-            }
-            return null;
         }
 
         private bool IsTextInputActive()
@@ -1336,10 +323,8 @@ namespace TPMapEditor
                 EnableRotateWorldObject();
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
-            currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WorldObjectItemsControl);
+            vm.ActivateWorldObjects();
         }
 
         private void HideWorldObjectElements()
@@ -1367,7 +352,7 @@ namespace TPMapEditor
         private void MapGridOutsideWorldObject_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-                WorldObjectSelectionService.ClearSelection();
+                vm.ClearWorldObjectSelection();
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
             Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
@@ -1382,14 +367,9 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.Zoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.Zoom)
             {
-                for (int i = 0; i < Map.WorldObjects.Count; i++)
-                {
-                    var obj = Map.WorldObjects[i];
-                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
-                        WorldObjectSelectionService.SelectAndMakeLastSelected(obj);
-                }
+                vm.SelectWorldObjectsInRect(rect);
                 e.Handled = true;
             }
             else if (WorldObjectPreviewControl.Visibility != Visibility.Visible)
@@ -1402,19 +382,11 @@ namespace TPMapEditor
 
         private void OnWorldObjectClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldObject clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
-                if (ctrlPressed)
-                {
-                    WorldObjectSelectionService.CtrlSelect(clickedObject);
-                }
-                else
-                {
-                    WorldObjectSelectionService.ClearSelection();
-                    WorldObjectSelectionService.SelectAndMakeLastSelected(clickedObject);
-                }
+                vm.SelectWorldObject(element.DataContext, ctrlPressed);
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
@@ -1468,24 +440,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < WorldObjectSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WorldObjectSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedWorldObjects(x, y);
             moveActionPoint = pos;
         }
 
         private void DeleteWorldObjectButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = WorldObjectSelectionService.SelectedMapObjects.ToArray();
-            foreach(var item in selectedItems)
-            {
-                Map.WorldObjects.Remove(item);
-            }
-            WorldObjectSelectionService.ClearSelection();
+            vm.RemoveSelectedWorldObjectsFromMap();
         }
 
         private void MapGridOutsideWorldObjectPreview_MouseMove(object sender, MouseEventArgs e)
@@ -1497,9 +458,10 @@ namespace TPMapEditor
 
         private void WorldObjectPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var wot = new WorldObject(Map, SelectedWorldObjectType!, Canvas.GetLeft(WorldObjectPreviewControl) + WorldObjectPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldObjectPreviewControl) - WorldObjectPreviewControl.ActualHeight / 2, WotSliderRotate.Value);
-            Map.WorldObjects.Add(wot);
-            WorldObjectSelectionService.SelectAndMakeLastSelected(wot);
+            var x = Canvas.GetLeft(WorldObjectPreviewControl) + WorldObjectPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WorldObjectPreviewControl) - WorldObjectPreviewControl.ActualHeight / 2;
+            var zRotation = WotSliderRotate.Value;
+            vm.CreateWorldObject(x, y, 0, zRotation);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -1544,30 +506,20 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                for (int i = 0; i < WorldObjectSelectionService.SelectedMapObjects.Count; i++)
-                {
-                    var worldObject = WorldObjectSelectionService.SelectedMapObjects[i];
-                    var newRotation = worldObject.ZRotation + (e.Delta > 0 ? step : -step);
-                    worldObject.ZRotation = GetRotation(newRotation);
-                    e.Handled = true;
-                }
+                step = e.Delta > 0 ? step : -step;
+                vm.RotateTransformSelectedWorldObjects(step);
+                e.Handled = true;
             }
         }
 
         private void WorldObjectVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WorldObjects)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllWorldObjectsVisibility(true);
         }
 
         private void WorldObjectVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WorldObjects)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllWorldObjectsVisibility(false);
         }
 
         #endregion
@@ -1602,10 +554,8 @@ namespace TPMapEditor
                 EnableRotatePlayer();
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerButton_Click;
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = playerSelectionKBShortcutService;
-            currentMovableSelection = PlayerSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(PlayerItemsControl);
+            vm.ActivatePlayers();
         }
 
         private void HidePlayerElements()
@@ -1634,7 +584,7 @@ namespace TPMapEditor
         private void MapGridOutsidePlayer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-                PlayerSelectionService.ClearSelection();
+                vm.ClearPlayerSelection();
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
             Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
@@ -1649,14 +599,9 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.InverseZoom)
             {
-                for (int i = 0; i < Map.Players.Count; i++)
-                {
-                    var obj = Map.Players[i];
-                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
-                        PlayerSelectionService.SelectAndMakeLastSelected(obj);
-                }
+                vm.SelectPlayersInRect(rect);
                 e.Handled = true;
             }
             else if (AddPlayerCheckBox.IsChecked != true)
@@ -1669,19 +614,11 @@ namespace TPMapEditor
 
         private void OnPlayerClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is Player clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
-                if (ctrlPressed)
-                {
-                    PlayerSelectionService.CtrlSelect(clickedObject);
-                }
-                else
-                {
-                    PlayerSelectionService.ClearSelection();
-                    PlayerSelectionService.SelectAndMakeLastSelected(clickedObject);
-                }
+                vm.SelectPlayer(element.DataContext, ctrlPressed);
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
@@ -1735,24 +672,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < PlayerSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = PlayerSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedPlayers(x, y);
             moveActionPoint = pos;
         }
 
         private void DeletePlayerButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = PlayerSelectionService.SelectedMapObjects.ToArray();
-            foreach (var item in selectedItems)
-            {
-                Map.Players.Remove(item);
-            }
-            PlayerSelectionService.ClearSelection();
+            vm.RemoveSelectedPlayersFromMap();
         }
 
         private void MapGridOutsidePlayerPreview_MouseMove(object sender, MouseEventArgs e)
@@ -1764,9 +690,11 @@ namespace TPMapEditor
 
         private void PlayerPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var player = new Player(Map, NamedObject.GenerateName("Player", Map.Players), Canvas.GetLeft(PlayerPreviewControl) + PlayerPreviewControl.ActualWidth / 2, -Canvas.GetTop(PlayerPreviewControl) - PlayerPreviewControl.ActualHeight / 2, 0, PlayerSliderRotate.Value, Colors.Red);
-            Map.Players.Add(player);
-            PlayerSelectionService.SelectAndMakeLastSelected(player);
+            var x = Canvas.GetLeft(PlayerPreviewControl) + PlayerPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(PlayerPreviewControl) - PlayerPreviewControl.ActualHeight / 2;
+            var z = 0;
+            var rotation = PlayerSliderRotate.Value;
+            vm.CreatePlayer(x, y, z, rotation);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -1780,8 +708,8 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                var newValue = WotSliderRotate.Value + (e.Delta > 0 ? step : -step);
-                WotSliderRotate.Value = GetRotation(newValue);
+                var newValue = PlayerSliderRotate.Value + (e.Delta > 0 ? step : -step);
+                PlayerSliderRotate.Value = GetRotation(newValue);
                 e.Handled = true;
             }
         }
@@ -1811,30 +739,19 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                for (int i = 0; i < PlayerSelectionService.SelectedMapObjects.Count; i++)
-                {
-                    var player = PlayerSelectionService.SelectedMapObjects[i];
-                    var newRotation = player.Rotation + (e.Delta > 0 ? step : -step);
-                    player.Rotation = GetRotation(newRotation);
-                    e.Handled = true;
-                }
+                step = e.Delta > 0 ? step : -step;
+                vm.RotateTransformSelectedPlayers(step);
             }
         }
 
         private void PlayerVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.Players)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllPlayersVisibility(true);
         }
 
         private void PlayerVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.Players)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllPlayersVisibility(false);
         }
 
         #endregion
@@ -1865,10 +782,8 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWaypointPathPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWaypointPathPoint();
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = waypointPathSelectionKBShortcutService;
-            currentMovableSelection = WaypointPathPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WaypointPathItemsControl);
+            vm.ActivateWaypointPaths();
         }
 
         private void HideWaypointPathElements()
@@ -1893,8 +808,7 @@ namespace TPMapEditor
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && NewWaypointPathRadioButton.IsChecked == false && AddWaypointPathPointRadioButton.IsChecked == false)
             {
-                WaypointPathSelectionService.ClearSelection();
-                WaypointPathPointSelectionService.ClearSelection();
+                vm.ClearWaypointPathSelection();
             }
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
@@ -1910,44 +824,32 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.Zoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.Zoom)
             {
-                for (int i = 0; i < Map.WaypointPaths.Count; i++)
-                {
-                    var path = Map.WaypointPaths[i];
-                    if (path.IsShownOnUi)
-                    {
-                        for(int j = 0; j < path.Points.Count; j++)
-                        {
-                            var p = path.Points[j];
-                            if (rect.Contains(new Point(p.X, -p.Y)))
-                            {
-                                WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(p.Parent);
-                                WaypointPathPointSelectionService.SelectAndMakeLastSelected(p);
-                            }
-
-                        }
-                    }
-                }
+                vm.SelectWaypointPathPointsInRect(rect);
                 e.Handled = true;
             }
-            else if (AddWaypointPathPointRadioButton.IsChecked != true && NewWaypointPathRadioButton.IsChecked != true)
+            else if (AddWaypointPathPointRadioButton.IsChecked == false && NewWaypointPathRadioButton.IsChecked == false)
             {
                 var s = currentCanvas?.InputHitTest(pos);
                 if (s != null && SelectCheckBox.IsChecked == true)
+                {
                     if (s is FrameworkElement element)
-                        if (element.DataContext is WaypointPath path)
-                            WaypointPathClicked(path);
-                        else if (element.DataContext is WaypointPathPoint point)
-                            WaypointPathPointClicked(point);
+                    {
+                        bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+                        vm.SelectWaypointPathOrWaypointPathPoint(element.DataContext, ctrlPressed);
+                    }
+                }
             }
         }
 
         private void OnWaypointPathClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WaypointPath clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
-                WaypointPathClicked(clickedObject);
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                vm.SelectWaypointPath(element.DataContext, ctrlPressed);
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
@@ -1956,67 +858,14 @@ namespace TPMapEditor
 
         private void OnWaypointPathPointClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WaypointPathPoint clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
-                WaypointPathPointClicked(clickedObject);
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+
+                vm.SelectWaypointPathPoint(element.DataContext, ctrlPressed);
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
-            }
-        }
-
-        private void WaypointPathClicked(WaypointPath path)
-        {
-            bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-            if (ctrlPressed)
-            {
-                if (path.IsLastSelected)
-                {
-                    WaypointPathSelectionService.RemoveFromSelection(path);
-                }
-                else
-                {
-                    WaypointPathSelectionService.SelectAndMakeLastSelected(path);
-                }
-            }
-            else
-            {
-                WaypointPathSelectionService.ClearSelection();
-                WaypointPathPointSelectionService.ClearSelection();
-                WaypointPathSelectionService.SelectAndMakeLastSelected(path);
-                foreach (var item in path.Points)
-                {
-                    WaypointPathPointSelectionService.SelectAndMakeLastSelected(item);
-                }
-            }
-        }
-
-        private void WaypointPathPointClicked(WaypointPathPoint point)
-        {
-            bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-            if (ctrlPressed)
-            {
-                if (point.IsLastSelected)
-                {
-                    WaypointPathPointSelectionService.RemoveFromSelection(point);
-                    WaypointPathSelectionService.RemoveFromSelectionWithoutPoints(point.Parent);
-                    if (WaypointPathPointSelectionService.SelectedMapObject != null)
-                        WaypointPathSelectionService.MakeLastSelected(WaypointPathPointSelectionService.SelectedMapObject.Parent);
-                }
-                else
-                {
-                    WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(point.Parent);
-                    WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
-                }
-            }
-            else
-            {
-                WaypointPathSelectionService.ClearSelection();
-                WaypointPathPointSelectionService.ClearSelection();
-                WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(point.Parent);
-                WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
             }
         }
 
@@ -2067,32 +916,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            for (var i = 0; i < WaypointPathPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WaypointPathPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedWaypointPathPoints(x, y);
             moveActionPoint = pos;
         }
 
         private void DeleteWaypointPathPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in WaypointPathPointSelectionService.SelectedMapObjects)
-            {
-                p.Parent.Points.Remove(p);
-                //remove path if no more points
-                if(p.Parent.Points.Count == 0)
-                {
-                    Map.WaypointPaths.Remove(p.Parent);
-                    if (p.Parent.IsLastSelected)
-                    {
-                        WaypointPathSelectionService.RemoveFromSelection(p.Parent);
-                    }
-                }
-            }
-            WaypointPathSelectionService.ClearSelection();
-            WaypointPathPointSelectionService.ClearSelection();
+            vm.RemoveSelectedWaypointPathPointsFromMap();
         }
 
         private void MapGridOutsideWaypointPathPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2106,32 +936,24 @@ namespace TPMapEditor
 
         private void WaypointPathPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var waypointPath = new WaypointPath(Map, NamedObject.GenerateName("WaypointPath", Map.WaypointPaths), copyPasteService);
-            var point = new WaypointPathPoint(waypointPath, Canvas.GetLeft(WaypointPathPreviewControl) + WaypointPathPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPreviewControl) - WaypointPathPreviewControl.ActualHeight / 2, 0);
-            waypointPath.Points.Add(point);
-            Map.WaypointPaths.Add(waypointPath);
-            WaypointPathSelectionService.ClearSelection();
-            WaypointPathPointSelectionService.ClearSelection();
-            WaypointPathSelectionService.SelectAndMakeLastSelected(waypointPath);
-            WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
+
+            var x = Canvas.GetLeft(WaypointPathPreviewControl) + WaypointPathPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WaypointPathPreviewControl) - WaypointPathPreviewControl.ActualHeight / 2;
+            vm.CreateWaypointPath(x, y);
             AddWaypointPathPointRadioButton.IsChecked = true;
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
         private void WaypointPathPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-
             NewWaypointPathRadioButton.IsChecked = false;
         }
 
         private void WaypointPathPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (WaypointPathSelectionService.SelectedMapObject != null)
-            {
-                var point = new WaypointPathPoint(WaypointPathSelectionService.SelectedMapObject, Canvas.GetLeft(WaypointPathPointPreviewControl) + WaypointPathPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WaypointPathPointPreviewControl) - WaypointPathPointPreviewControl.ActualHeight / 2, 0);
-                WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
-                WaypointPathSelectionService.SelectedMapObject.Points.Add(point);
-            }
+            var x = Canvas.GetLeft(WaypointPathPointPreviewControl) + WaypointPathPointPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WaypointPathPointPreviewControl) - WaypointPathPointPreviewControl.ActualHeight / 2;
+            vm.AddWaypointPathPointToSelectedWaypointPath(x, y);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -2142,18 +964,12 @@ namespace TPMapEditor
 
         private void WaypointPathVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WaypointPaths)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllWaypointPathsVisibility(true);
         }
 
         private void WaypointPathVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WaypointPaths)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllWaypointPathsVisibility(true);
         }
 
         #endregion
@@ -2184,10 +1000,8 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPolygonPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPolygonPoint();
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = worldPolygonSelectionKBShortcutService;
-            currentMovableSelection = WorldPolygonPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WorldPolygonItemsControl);
+            vm.ActivateWorldPolygons();
         }
 
         private void HideWorldPolygonElements()
@@ -2212,8 +1026,7 @@ namespace TPMapEditor
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && NewWorldPolygonRadioButton.IsChecked == false && AddWorldPolygonPointRadioButton.IsChecked == false)
             {
-                WorldPolygonSelectionService.ClearSelection();
-                WorldPolygonPointSelectionService.ClearSelection();
+                vm.ClearWorldPolygonSelection();
             }
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
@@ -2229,113 +1042,45 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.Zoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.Zoom)
             {
-                for (int i = 0; i < Map.WorldPolygons.Count; i++)
-                {
-                    var path = Map.WorldPolygons[i];
-                    if (path.IsShownOnUi)
-                    {
-                        for (int j = 0; j < path.Points.Count; j++)
-                        {
-                            var p = path.Points[j];
-                            if (rect.Contains(new Point(p.X, -p.Y)))
-                            {
-                                WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(p.Parent);
-                                WorldPolygonPointSelectionService.SelectAndMakeLastSelected(p);
-                            }
-
-                        }
-                    }
-                }
+                vm.SelectWorldPolygonPointsInRect(rect);
                 e.Handled = true;
             }
             else if (AddWorldPolygonPointRadioButton.IsChecked != true && NewWorldPolygonRadioButton.IsChecked != true)
             {
                 var s = currentCanvas?.InputHitTest(pos);
                 if (s != null && SelectCheckBox.IsChecked == true)
+                {
                     if (s is FrameworkElement element)
-                        if (element.DataContext is WorldPolygon polygon)
-                            WorldPolygonClicked(polygon);
-                        else if (element.DataContext is WorldPolygonPoint point)
-                            WorldPolygonPointClicked(point);
+                    {
+                        bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+                        vm.SelectWorldPolygonOrWorldPolygonPoint(element.DataContext, ctrlPressed);
+                    }
+                }
+                    
             }
         }
 
         private void OnWorldPolygonClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldPolygon clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
-                WorldPolygonClicked(clickedObject);
-
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+                vm.SelectWorldPolygon(element.DataContext, ctrlPressed);
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
-            }
-        }
-
-        private void WorldPolygonClicked(WorldPolygon polygon)
-        {
-            bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-            if (ctrlPressed)
-            {
-                if (polygon.IsLastSelected)
-                {
-                    WorldPolygonSelectionService.RemoveFromSelection(polygon);
-                }
-                else
-                {
-                    WorldPolygonSelectionService.SelectAndMakeLastSelected(polygon);
-                }
-            }
-            else
-            {
-                WorldPolygonSelectionService.ClearSelection();
-                WorldPolygonPointSelectionService.ClearSelection();
-                WorldPolygonSelectionService.SelectAndMakeLastSelected(polygon);
-                foreach (var item in polygon.Points)
-                {
-                    WorldPolygonPointSelectionService.SelectAndMakeLastSelected(item);
-                }
             }
         }
 
         private void OnWorldPolygonPointClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldPolygonPoint clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
-                WorldPolygonPointClicked(clickedObject);
-
+                bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+                vm.SelectWorldPolygonPoint(element.DataContext, ctrlPressed);
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
-            }
-        }
-
-        private void WorldPolygonPointClicked(WorldPolygonPoint point)
-        {
-            bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-            if (ctrlPressed)
-            {
-                if (point.IsLastSelected)
-                {
-                    WorldPolygonPointSelectionService.RemoveFromSelection(point);
-                    WorldPolygonSelectionService.RemoveFromSelectionWithoutPoints(point.Parent);
-                    if (WorldPolygonPointSelectionService.SelectedMapObject != null)
-                        WorldPolygonSelectionService.MakeLastSelected(WorldPolygonPointSelectionService.SelectedMapObject.Parent);
-                }
-                else
-                {
-                    WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(point.Parent);
-                    WorldPolygonPointSelectionService.SelectAndMakeLastSelected(point);
-                }
-            }
-            else
-            {
-                WorldPolygonSelectionService.ClearSelection();
-                WorldPolygonPointSelectionService.ClearSelection();
-                WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(point.Parent);
-                WorldPolygonPointSelectionService.SelectAndMakeLastSelected(point);
             }
         }
 
@@ -2386,33 +1131,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < WorldPolygonPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WorldPolygonPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedWorldPolygonPoints(x, y);
             moveActionPoint = pos;
         }
 
         private void DeleteWorldPolygonPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in WorldPolygonPointSelectionService.SelectedMapObjects)
-            {
-                p.Parent.Points.Remove(p);
-                //remove path if no more points
-                if (p.Parent.Points.Count == 0)
-                {
-                    Map.WorldPolygons.Remove(p.Parent);
-                    if (p.Parent.IsLastSelected)
-                    {
-                        WorldPolygonSelectionService.RemoveFromSelection(p.Parent);
-                    }
-                }
-            }
-            WorldPolygonSelectionService.ClearSelection();
-            WorldPolygonPointSelectionService.ClearSelection();
+            vm.RemoveSelectedWorldPolygonPointsFromMap();
         }
 
         private void MapGridOutsideWorldPolygonPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2426,33 +1151,23 @@ namespace TPMapEditor
 
         private void WorldPolygonPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPolygon = new WorldPolygon(Map, NamedObject.GenerateName("WorldPolygon", Map.WorldPolygons), copyPasteService);
-            var point = new WorldPolygonPoint(worldPolygon, Canvas.GetLeft(WorldPolygonPreviewControl) + WorldPolygonPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPreviewControl) - WorldPolygonPreviewControl.ActualHeight / 2);
-            worldPolygon.Points.Add(point);
-            Map.WorldPolygons.Add(worldPolygon);
-            WorldPolygonSelectionService.ClearSelection();
-            WorldPolygonPointSelectionService.ClearSelection();
-            WorldPolygonSelectionService.SelectAndMakeLastSelected(worldPolygon);
-            WorldPolygonPointSelectionService.SelectAndMakeLastSelected(point);
+            var x = Canvas.GetLeft(WorldPolygonPreviewControl) + WorldPolygonPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WorldPolygonPreviewControl) - WorldPolygonPreviewControl.ActualHeight / 2;
+            vm.CreateWorldPolygon(x, y);
             AddWorldPolygonPointRadioButton.IsChecked = true;
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
         private void WorldPolygonPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-
             NewWorldPolygonRadioButton.IsChecked = false;
         }
 
         private void WorldPolygonPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (WorldPolygonSelectionService.SelectedMapObject != null)
-            {
-                var point = new WorldPolygonPoint(WorldPolygonSelectionService.SelectedMapObject, Canvas.GetLeft(WorldPolygonPointPreviewControl) + WorldPolygonPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPolygonPointPreviewControl) - WorldPolygonPointPreviewControl.ActualHeight / 2);
-                WorldPolygonPointSelectionService.SelectAndMakeLastSelected(point);
-                WorldPolygonSelectionService.SelectAndMakeLastSelectedWithoutPoints(WorldPolygonSelectionService.SelectedMapObject);
-                WorldPolygonSelectionService.SelectedMapObject.Points.Add(point);
-            }
+            var x = Canvas.GetLeft(WorldPolygonPointPreviewControl) + WorldPolygonPointPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WorldPolygonPointPreviewControl) - WorldPolygonPointPreviewControl.ActualHeight / 2;
+            vm.AddWorldPolygonPointToSelectedWorldPolygon(x, y);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -2463,18 +1178,12 @@ namespace TPMapEditor
 
         private void WorldPolygonVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WorldPolygons)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllWorldPolygonsVisibility(true);
         }
 
         private void WorldPolygonVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WorldPolygons)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllWorldPolygonsVisibility(false);
         }
 
         #endregion
@@ -2509,10 +1218,8 @@ namespace TPMapEditor
             if (RotateCheckBox.IsChecked == true)
                 EnableRotateWorldPoint();
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = worldPointSetSelectionKBShortcutService;
-            currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(WorldPointSetItemsControl);
+            vm.ActivateWorldPointSets();
         }
 
         private void HideWorldPointSetElements()
@@ -2541,8 +1248,7 @@ namespace TPMapEditor
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && AddWorldPointSetRadioButton.IsChecked == false && AddWorldPointSetPointRadioButton.IsChecked == false)
             {
-                WorldPointSetSelectionService.ClearSelection();
-                WorldPointSelectionService.ClearSelection();
+                vm.ClearWorldPointSetSelection();
             }
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
@@ -2558,25 +1264,9 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.Zoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.Zoom)
             {
-                for (int i = 0; i < Map.WorldPointSets.Count; i++)
-                {
-                    var path = Map.WorldPointSets[i];
-                    if (path.IsShownOnUi)
-                    {
-                        for (int j = 0; j < path.Points.Count; j++)
-                        {
-                            var p = path.Points[j];
-                            if (rect.Contains(new Point(p.X, -p.Y)))
-                            {
-                                WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(p.Parent);
-                                WorldPointSelectionService.SelectAndMakeLastSelected(p);
-                            }
-
-                        }
-                    }
-                }
+                vm.SelectWorldPointsInRect(rect);
                 e.Handled = true;
             }
             else if (AddWorldPointSetPointRadioButton.IsChecked != true && AddWorldPointSetRadioButton.IsChecked != true)
@@ -2589,33 +1279,10 @@ namespace TPMapEditor
 
         private void OnWorldPointClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is WorldPoint clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
-
-                if (ctrlPressed)
-                {
-                    if (clickedObject.IsLastSelected)
-                    {
-                        WorldPointSelectionService.RemoveFromSelection(clickedObject);
-                        WorldPointSetSelectionService.RemoveFromSelectionWithoutPoints(clickedObject.Parent);
-                        if (WorldPointSelectionService.SelectedMapObject != null)
-                            WorldPointSetSelectionService.MakeLastSelected(WorldPointSelectionService.SelectedMapObject.Parent);
-                    }
-                    else
-                    {
-                        WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
-                        WorldPointSelectionService.SelectAndMakeLastSelected(clickedObject);
-                    }
-                }
-                else
-                {
-                    WorldPointSetSelectionService.ClearSelection();
-                    WorldPointSelectionService.ClearSelection();
-                    WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(clickedObject.Parent);
-                    WorldPointSelectionService.SelectAndMakeLastSelected(clickedObject);
-                }
-
+                vm.SelectWorldPoint(element.DataContext, ctrlPressed);
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
             }
@@ -2668,33 +1335,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WorldPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedWorldPoints(x, y);
             moveActionPoint = pos;
         }
 
         private void DeleteWorldPointButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in WorldPointSelectionService.SelectedMapObjects)
-            {
-                p.Parent.Points.Remove(p);
-                //remove path if no more points
-                if (p.Parent.Points.Count == 0)
-                {
-                    Map.WorldPointSets.Remove(p.Parent);
-                    if (p.Parent.IsLastSelected)
-                    {
-                        WorldPointSetSelectionService.RemoveFromSelection(p.Parent);
-                    }
-                }
-            }
-            WorldPointSetSelectionService.ClearSelection();
-            WorldPointSelectionService.ClearSelection();
+            vm.RemoveSelectedWorldPointsFromMap();
         }
 
         private void MapGridOutsideWorldPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2708,33 +1355,25 @@ namespace TPMapEditor
 
         private void WorldPointSetPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var worldPointSet = new WorldPointSet(Map, NamedObject.GenerateName("WorldPointSet", Map.WorldPointSets), copyPasteService);
-            var point = new WorldPoint(worldPointSet, Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
-            worldPointSet.Points.Add(point);
-            Map.WorldPointSets.Add(worldPointSet);
-            WorldPointSetSelectionService.ClearSelection();
-            WorldPointSelectionService.ClearSelection();
-            WorldPointSetSelectionService.SelectAndMakeLastSelected(worldPointSet);
-            WorldPointSelectionService.SelectAndMakeLastSelected(point);
+            var x = Canvas.GetLeft(WorldPointSetPreviewControl) + WorldPointSetPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WorldPointSetPreviewControl) - WorldPointSetPreviewControl.ActualHeight / 2;
+            var zRotation = WorldPointSliderRotate.Value;
+            vm.CreateWorldPointSet(x, y, 0, zRotation);
             AddWorldPointSetPointRadioButton.IsChecked = true;
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
         private void WorldPointSetPreviewControl_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-
             AddWorldPointSetRadioButton.IsChecked = false;
         }
 
         private void WorldPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (WorldPointSetSelectionService.SelectedMapObject != null)
-            {
-                var point = new WorldPoint(WorldPointSetSelectionService.SelectedMapObject, Canvas.GetLeft(WorldPointPreviewControl) + WorldPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(WorldPointPreviewControl) - WorldPointPreviewControl.ActualHeight / 2, 0, WorldPointSliderRotate.Value);
-                WorldPointSelectionService.SelectAndMakeLastSelected(point);
-                WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(WorldPointSetSelectionService.SelectedMapObject);
-                WorldPointSetSelectionService.SelectedMapObject.Points.Add(point);
-            }
+            var x = Canvas.GetLeft(WorldPointPreviewControl) + WorldPointPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(WorldPointPreviewControl) - WorldPointPreviewControl.ActualHeight / 2;
+            var zRotation = WorldPointSliderRotate.Value;
+            vm.AddWorldPointToSelectedWorldPointSet(x, y, 0, zRotation);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -2779,30 +1418,20 @@ namespace TPMapEditor
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
             {
                 var step = GetAcceleratedRotation();
-                for (int i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
-                {
-                    var worldPoint = WorldPointSelectionService.SelectedMapObjects[i];
-                    var newRotation = worldPoint.ZRotation + (e.Delta > 0 ? step : -step);
-                    worldPoint.ZRotation = GetRotation(newRotation);
-                    e.Handled = true;
-                }
+                step = e.Delta > 0 ? step : -step;
+                vm.RotateTransformSelectedWorldPoints(step);
+                e.Handled = true;
             }
         }
 
         private void WorldPointSetVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WorldPointSets)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllWorldPointSetsVisibility(true);
         }
 
         private void WorldPointSetVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.WorldPointSets)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllWorldPointSetsVisibility(false);
         }
 
         #endregion
@@ -2833,10 +1462,8 @@ namespace TPMapEditor
                 EnableMoveObjectivePoint();
             MapGridOutside.MouseMove += MapGridOutsideObjectivePointPreview_MouseMove;
             DeleteButton.Click += DeleteObjectivePointButton_Click;
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = objectivePointSelectionKBShortcutService;
-            currentMovableSelection = ObjectivePointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(ObjectivePointItemsControl);
+            vm.ActivateObjectivePoints();
         }
 
         private void HideObjectivePointElements()
@@ -2860,7 +1487,7 @@ namespace TPMapEditor
         private void MapGridOutsideObjectivePoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-                ObjectivePointSelectionService.ClearSelection();
+                vm.ClearObjectivePointSelection();
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
             Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
@@ -2875,14 +1502,9 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.Zoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.Zoom)
             {
-                for (int i = 0; i < Map.ObjectivePoints.Count; i++)
-                {
-                    var obj = Map.ObjectivePoints[i];
-                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
-                        ObjectivePointSelectionService.SelectAndMakeLastSelected(obj);
-                }
+                vm.SelectObjectivePointsInRect(rect);
                 e.Handled = true;
             }
             else if(AddObjectivePointCheckBox.IsChecked != true)
@@ -2895,19 +1517,11 @@ namespace TPMapEditor
 
         private void OnObjectivePointClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is ObjectivePoint clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
-                if (ctrlPressed)
-                {
-                    ObjectivePointSelectionService.CtrlSelect(clickedObject);
-                }
-                else
-                {
-                    ObjectivePointSelectionService.ClearSelection();
-                    ObjectivePointSelectionService.SelectAndMakeLastSelected(clickedObject);
-                }
+                vm.SelectObjectivePoint(element.DataContext, ctrlPressed);
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
@@ -2961,24 +1575,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < ObjectivePointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = ObjectivePointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedObjectivePoints(x, y);
             moveActionPoint = pos;
         }
 
         private void DeleteObjectivePointButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = ObjectivePointSelectionService.SelectedMapObjects.ToArray();
-            foreach (var item in selectedItems)
-            {
-                Map.ObjectivePoints.Remove(item);
-            }
-            ObjectivePointSelectionService.ClearSelection();
+            vm.RemoveSelectedObjectivePointsFromMap();
         }
 
         private void MapGridOutsideObjectivePointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -2990,9 +1593,9 @@ namespace TPMapEditor
 
         private void ObjectivePointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var wot = new ObjectivePoint(Map, NamedObject.GenerateName("ObjectivePoint", Map.ObjectivePoints), Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2, -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2);
-            Map.ObjectivePoints.Add(wot);
-            ObjectivePointSelectionService.SelectAndMakeLastSelected(wot);
+            var x = Canvas.GetLeft(ObjectivePointPreviewControl) + ObjectivePointPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(ObjectivePointPreviewControl) - ObjectivePointPreviewControl.ActualHeight / 2;
+            vm.CreateObjectivePoint(x, y);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -3003,18 +1606,12 @@ namespace TPMapEditor
 
         private void ObjectivePointVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.ObjectivePoints)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllObjectivePointsVisibility(true);
         }
 
         private void ObjectivePointVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.ObjectivePoints)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllObjectivePointsVisibility(false);
         }
 
         #endregion
@@ -3045,10 +1642,8 @@ namespace TPMapEditor
                 EnableMoveMapTextPoint();
             MapGridOutside.MouseMove += MapGridOutsideMapTextPointPreview_MouseMove;
             DeleteButton.Click += DeleteMapTextPointButton_Click;
-            copyPasteService.ClearClipboard();
-            currenSelectionKBShortcutService = mapTextPointSelectionKBShortcutService;
-            currentMovableSelection = MapTextPointSelectionService.SelectedMapObjects;
             currentCanvas = FindVisualChild<Canvas>(MapTextPointItemsControl);
+            vm.ActivateMapTextPoints();
         }
 
         private void HideMapTextPointElements()
@@ -3072,7 +1667,7 @@ namespace TPMapEditor
         private void MapGridOutsideMapTextPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-                MapTextPointSelectionService.ClearSelection();
+                vm.ClearMapTextPointSelection();
             selectActionPoint = e.GetPosition(PreviewCanvas);
             Canvas.SetLeft(SelectionRectangle, selectActionPoint.X);
             Canvas.SetTop(SelectionRectangle, selectActionPoint.Y);
@@ -3087,14 +1682,9 @@ namespace TPMapEditor
             SelectionRectangle.Width = SelectionRectangle.Height = 0;
             var pos = e.GetPosition(PreviewCanvas);
             var rect = new Rect(selectActionPoint, pos);
-            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance * InverseZoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance * InverseZoom)
+            if (rect.Width >= SystemParameters.MinimumHorizontalDragDistance / vm.Zoom || rect.Height >= SystemParameters.MinimumVerticalDragDistance / vm.Zoom)
             {
-                for (int i = 0; i < Map.MapTextPoints.Count; i++)
-                {
-                    var obj = Map.MapTextPoints[i];
-                    if (rect.Contains(new Point(obj.X, -obj.Y)) && obj.IsShownOnUi)
-                        MapTextPointSelectionService.SelectAndMakeLastSelected(obj);
-                }
+                vm.SelectMapTextPointsInRect(rect);
                 e.Handled = true;
             }
             else if (AddMapTextPointCheckBox.IsChecked != true)
@@ -3107,19 +1697,11 @@ namespace TPMapEditor
 
         private void OnMapTextPointClicked(object sender, MouseButtonEventArgs e)
         {
-            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element && element.DataContext is MapTextPoint clickedObject)
+            if (SelectCheckBox.IsChecked == true && sender is FrameworkElement element)
             {
                 bool ctrlPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
-                if (ctrlPressed)
-                {
-                    MapTextPointSelectionService.CtrlSelect(clickedObject);
-                }
-                else
-                {
-                    MapTextPointSelectionService.ClearSelection();
-                    MapTextPointSelectionService.SelectAndMakeLastSelected(clickedObject);
-                }
+                vm.SelectMapTextPoint(element.DataContext, ctrlPressed);
 
                 if (MoveCheckBox.IsChecked == false)
                     e.Handled = true;
@@ -3173,24 +1755,13 @@ namespace TPMapEditor
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
             var y = pos.Y - moveActionPoint.Y;
-            //move wot selection
-            for (var i = 0; i < MapTextPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = MapTextPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
+            vm.TranslateTransformSelectedMapTextPoints(x, y);
             moveActionPoint = pos;
         }
 
         private void DeleteMapTextPointButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = MapTextPointSelectionService.SelectedMapObjects.ToArray();
-            foreach (var item in selectedItems)
-            {
-                Map.MapTextPoints.Remove(item);
-            }
-            MapTextPointSelectionService.ClearSelection();
+            vm.RemoveSelectedMapTextPointsFromMap();
         }
 
         private void MapGridOutsideMapTextPointPreview_MouseMove(object sender, MouseEventArgs e)
@@ -3202,10 +1773,9 @@ namespace TPMapEditor
 
         private void MapTextPointPreviewControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var text = StringDictionnary.MapTextItems.Keys.ElementAt(MapTextPointPreviewTextComboBox.SelectedIndex);
-            var point = new MapTextPoint(Map, NamedObject.GenerateName("MapTextPoint", Map.MapTextPoints), text, Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2, -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2);
-            MapTextPointSelectionService.SelectAndMakeLastSelected(point);
-            Map.MapTextPoints.Add(point);
+            var x = Canvas.GetLeft(MapTextPointPreviewControl) + MapTextPointPreviewControl.ActualWidth / 2;
+            var y = -Canvas.GetTop(MapTextPointPreviewControl) - MapTextPointPreviewControl.ActualHeight / 2;
+            vm.CreateMapTextPoint(x, y);
             e.Handled = true; // to not trigger the mapGrid MouseLeftButtonDown event
         }
 
@@ -3216,18 +1786,12 @@ namespace TPMapEditor
 
         private void MapTextPointVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.MapTextPoints)
-            {
-                obj.IsShownOnUi = true;
-            }
+            vm?.SetAllMapTextPointsVisibility(true);
         }
 
         private void MapTextPointVisibilityCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            foreach (var obj in Map.MapTextPoints)
-            {
-                obj.IsShownOnUi = false;
-            }
+            vm?.SetAllMapTextPointsVisibility(false);
         }
 
         #endregion
