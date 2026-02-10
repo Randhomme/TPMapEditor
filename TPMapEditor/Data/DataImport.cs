@@ -352,7 +352,7 @@ namespace TPMapEditor.Data
                     isValidWorldObject = false;
                 }
 
-                var worldObject = new WorldObject(map, type, 0, 0, 0) { Id = id };
+                var worldObject = new WorldObject(map, type, 0, 0, 0, 0) { Id = id };
 
                 try
                 {

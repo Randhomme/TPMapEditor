@@ -56,12 +56,13 @@ namespace TPMapEditor.Data
             this.id = nextId++;
         }
 
-        public WorldObject(WorldMap map, WorldObjectType type, double x, double y, double zRotation) : base(map)
+        public WorldObject(WorldMap map, WorldObjectType type, double x, double y, double z, double zRotation) : base(map)
         {
             this.type = type;
             this.x = x;
             this.y = y;
-            this.z = this.xRotation = this.yRotation = 0;
+            this.z = z;
+            this.xRotation = this.yRotation = 0;
             this.zRotation = zRotation;
             this.id = nextId++;
         }
