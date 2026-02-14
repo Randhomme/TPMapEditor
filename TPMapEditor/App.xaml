@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="/Styles/SliderTextBoxControl.xaml"/>
                 <ResourceDictionary Source="/Styles/ScrollViewerStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/CollectionEditorControlStyle.xaml"/>
+                <ResourceDictionary Source="/Styles/SplitToggleButtonStyle.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/GroupTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/PlayerTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/WorldObjectTemplate.xaml"/>

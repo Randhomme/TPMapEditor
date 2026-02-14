@@ -1,0 +1,105 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:controls="clr-namespace:TPMapEditor.Controls"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="FocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+    <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+    <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+    <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+    <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+    <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+    <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+    <SolidColorBrush x:Key="ToggleButton.Checked.Background" Color="#FFBCDDEE" />
+    <SolidColorBrush x:Key="ToggleButton.Checked.BorderBrush" Color="#FF245A83" />
+    <SolidColorBrush x:Key="&#243;" Color="#FF606060" />
+    <Style x:Key="SplitButtonStyle" TargetType="{x:Type controls:SplitToggleButton}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+        <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <Button Name="PART_DropDownButton" Grid.Column="1" BorderThickness="0" Margin="{TemplateBinding Padding}" VerticalContentAlignment="Center">
+                                <Path x:Name="Arrow"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Fill="{StaticResource &#243;}"
+                                Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z"
+                                Margin="0"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsDefaulted" Value="true">
+                            <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                            <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                        </Trigger>
+                        <Trigger Property="ToggleButton.IsChecked" Value="true" >
+                            <Setter Property="Background" Value="{StaticResource ToggleButton.Checked.Background}" TargetName="border" />
+                            <Setter Property="BorderBrush" Value="{StaticResource ToggleButton.Checked.BorderBrush}" TargetName="border" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+       BasedOn="{StaticResource SplitButtonStyle}"
+       TargetType="{x:Type controls:SplitToggleButton}">
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true"/>
+                    <Condition Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}" Value="true"/>
+                    <Condition Binding="{Binding Path=IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="false"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true"/>
+                    <Condition Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource Self}}" Value="true"/>
+                    <Condition Binding="{Binding Path=IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="true"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>
