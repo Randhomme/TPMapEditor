@@ -43,6 +43,9 @@ namespace TPMapEditor.ViewModel
         [NotifyPropertyChangedFor(nameof(ZoomedBorderThicknessLarge))]
         private double zoom = 1;
 
+        [ObservableProperty]
+        private bool isRotationIndividual = true;
+
         public double InverseZoom { get => 1 / Zoom; }
         public double ZoomedBorderThicknessSmall { get => 2.5 / Zoom; }
         public double ZoomedBorderThicknessMed { get => 5 / Zoom; }
@@ -1068,6 +1071,24 @@ namespace TPMapEditor.ViewModel
             return rotation;
         }
 
+        public void InitTranslateTransformCommand()
+        {
+            translateTransformMapCommand = new(currentMovableSelection);
+        }
+
+        public void TranslateTransformSelection(double x, double y)
+        {
+            translateTransformMapCommand!.DeltaX += x;
+            translateTransformMapCommand!.DeltaY += y;
+            translateTransformMapCommand.Apply();
+        }
+
+        public void CommitTranslateTransformCommand()
+        {
+            translateTransformMapCommand!.Commit();
+            undoManagerService.Push(translateTransformMapCommand);
+        }
+
         #endregion
 
         #region WorldObject
@@ -1107,16 +1128,6 @@ namespace TPMapEditor.ViewModel
                     WorldObjectSelectionService.ClearSelection();
                     WorldObjectSelectionService.SelectAndMakeLastSelected(worldObject);
                 }
-            }
-        }
-
-        public void TranslateTransformSelectedWorldObjects(double x, double y)
-        {
-            for (var i = 0; i < WorldObjectSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WorldObjectSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
             }
         }
 
@@ -1194,16 +1205,6 @@ namespace TPMapEditor.ViewModel
                     PlayerSelectionService.ClearSelection();
                     PlayerSelectionService.SelectAndMakeLastSelected(player);
                 }
-            }
-        }
-
-        public void TranslateTransformSelectedPlayers(double x, double y)
-        {
-            for (var i = 0; i < PlayerSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = PlayerSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
             }
         }
 
@@ -1356,16 +1357,6 @@ namespace TPMapEditor.ViewModel
                 WaypointPathPointSelectionService.ClearSelection();
                 WaypointPathSelectionService.SelectAndMakeLastSelectedWithoutPoints(point.Parent);
                 WaypointPathPointSelectionService.SelectAndMakeLastSelected(point);
-            }
-        }
-
-        public void TranslateTransformSelectedWaypointPathPoints(double x, double y)
-        {
-            for (var i = 0; i < WaypointPathPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WaypointPathPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
             }
         }
 
@@ -1534,16 +1525,6 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void TranslateTransformSelectedWorldPolygonPoints(double x, double y)
-        {
-            for (var i = 0; i < WorldPolygonPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WorldPolygonPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
-        }
-
         public void RemoveSelectedWorldPolygonPointsFromMap()
         {
             foreach (var p in WorldPolygonPointSelectionService.SelectedMapObjects)
@@ -1709,16 +1690,6 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void TranslateTransformSelectedWorldPoints(double x, double y)
-        {
-            for (var i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = WorldPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
-        }
-
         public void RotateTransformSelectedWorldPoints(int rotation)
         {
             for (int i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
@@ -1819,16 +1790,6 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void TranslateTransformSelectedObjectivePoints(double x, double y)
-        {
-            for (var i = 0; i < ObjectivePointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = ObjectivePointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
-            }
-        }
-
         public void RemoveSelectedObjectivePointsFromMap()
         {
             var selectedItems = ObjectivePointSelectionService.SelectedMapObjects.ToArray();
@@ -1893,16 +1854,6 @@ namespace TPMapEditor.ViewModel
                     MapTextPointSelectionService.ClearSelection();
                     MapTextPointSelectionService.SelectAndMakeLastSelected(mapTextPoint);
                 }
-            }
-        }
-
-        public void TranslateTransformSelectedMapTextPoints(double x, double y)
-        {
-            for (var i = 0; i < MapTextPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var selectedObject = MapTextPointSelectionService.SelectedMapObjects[i];
-                selectedObject.X += x;
-                selectedObject.Y -= y;
             }
         }
 
