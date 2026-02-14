@@ -24,14 +24,15 @@ namespace TPMapEditor.ViewModel
 
         public WorldMap Map { get; }
         public double NegativeWorldBuffer { get => -Map.WorldBuffer; }
-        public double BorderThickness { get; } = 2;
+        public double BorderThickness { get; } = 2.5;
         public double TranslateTransformIsland { get; } = -0.5;
         public double ScaleDownTransformIsland { get; } = 0.001;
         public double NegativeBorderThickness { get; }
-        public double EtheriumCurrentThickness { get; } = 9;
+        public double EtheriumCurrentThickness { get; } = 10;
         public double EtheriumCurrentShadowThickness { get; } = 6;
         public double NebulaBlurRadius { get; } = 15;
-        public double IslandShadowBlurRadius { get; } = 40;
+        public double IslandShadowBlurRadius { get; } = 30;
+        public double IslandInnerShadowBlurRadius { get; } = 0;
         public ICollectionView Asteroids { get; }
         public ICollectionView BlackHoles { get; }
         public ICollectionView Islands { get; }
@@ -42,8 +43,8 @@ namespace TPMapEditor.ViewModel
 
         public StarmapExportViewModel(WorldMap map)
         {
-            islandBrush = new SolidColorBrush(Colors.Black);
-            asteroidBrush = new SolidColorBrush(Colors.Black);
+            islandBrush = new SolidColorBrush(Colors.DarkCyan);
+            asteroidBrush = new SolidColorBrush(Colors.LimeGreen);
             outlineColor = Colors.White;
             this.Map = map;
             BorderThickness *= (Map.Size - Map.WorldBuffer) / 512.0;
@@ -52,6 +53,7 @@ namespace TPMapEditor.ViewModel
             EtheriumCurrentThickness *= (Map.Size - Map.WorldBuffer) / 512;
             EtheriumCurrentShadowThickness *= (Map.Size - Map.WorldBuffer) / 512;
             IslandShadowBlurRadius *= (Map.Size - Map.WorldBuffer) / 512;
+            IslandInnerShadowBlurRadius *= (Map.Size - Map.WorldBuffer) / 512;
             TranslateTransformIsland *= (Map.Size - Map.WorldBuffer) / 512;
             ScaleDownTransformIsland = 1 - ScaleDownTransformIsland * (Map.Size - Map.WorldBuffer) / 512;
             IList<StarmapWorldObjectViewModel> worldObjectViewModels = new List<StarmapWorldObjectViewModel>(map.WorldObjects.Select((w) => new StarmapWorldObjectViewModel(w)));
@@ -123,7 +125,8 @@ namespace TPMapEditor.ViewModel
                     gradientImage.Freeze();
 
                 var mapSize = Map.Size > Map.WorldBuffer ? Map.Size - Map.WorldBuffer : Map.Size;
-                var outlineThickness = BorderThickness + 5 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
+                //var outlineThickness = BorderThickness + 0 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
+                var outlineThickness = Math.Min(BorderThickness, Math.Min(gradientImage.PixelWidth, gradientImage.PixelHeight));
                 var result = await Task.Run(() =>
                 {
                     var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness);
@@ -151,7 +154,8 @@ namespace TPMapEditor.ViewModel
                     gradientImage.Freeze();
 
                 var mapSize = Map.Size > Map.WorldBuffer ? Map.Size - Map.WorldBuffer : Map.Size;
-                var outlineThickness = BorderThickness + 5 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
+                //var outlineThickness = BorderThickness + 0 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
+                var outlineThickness = Math.Min(BorderThickness, Math.Min(gradientImage.PixelWidth, gradientImage.PixelHeight));
                 var result = await Task.Run(() =>
                 {
                     var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness);
