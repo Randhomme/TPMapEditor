@@ -104,16 +104,22 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <CheckBox x:Name="SelectCheckBox" ToolTip="Select" Margin="0" Width="25" Style="{StaticResource {x:Type ToggleButton}}" IsChecked="True">
+                    <ToggleButton x:Name="SelectCheckBox" ToolTip="Select" Margin="0" Width="25" IsChecked="True">
                         <Image Margin="2.5" Source="/Images/Default.png"/>
-                    </CheckBox>
-                    <CheckBox x:Name="MoveCheckBox" ToolTip="Move" Margin="-1,0,0,0" Width="25" Style="{StaticResource {x:Type ToggleButton}}">
+                    </ToggleButton>
+                    <ToggleButton x:Name="MoveCheckBox" ToolTip="Move" Margin="-1,0,0,0" Width="25">
                         <Image Margin="2.5" Source="/Images/Move.png"/>
-                    </CheckBox>
-                    <CheckBox x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0" Width="25" Style="{StaticResource {x:Type ToggleButton}}">
+                    </ToggleButton>
+                    <controls:SplitToggleButton x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0">
+                        <controls:SplitToggleButton.DropDownMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Individual" IsCheckable="True" IsChecked="{Binding IsRotationIndividual}"/>
+                                <MenuItem Header="Selection" IsCheckable="True" IsChecked="{c:Binding '!IsRotationIndividual'}"/>
+                            </ContextMenu>
+                        </controls:SplitToggleButton.DropDownMenu>
                         <Image Margin="2.5" Source="/Images/Rotate.png"/>
-                    </CheckBox>
-                    <Button x:Name="DeleteButton" ToolTip="Delete" Margin="-1,0,0,0" Width="25">
+                    </controls:SplitToggleButton>
+                    <Button x:Name="DeleteButton" ToolTip="Delete" Margin="9,0,0,0" Width="25">
                         <Image Source="/Images/RedCross.png"/>
                     </Button>
                     <Grid>
