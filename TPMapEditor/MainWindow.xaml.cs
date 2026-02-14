@@ -9,8 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using TPMapEditor.Data;
-using TPMapEditor.Interfaces.Implementations;
 using System.Windows.Controls.Primitives;
 using TPMapEditor.ViewModel;
 
@@ -407,8 +405,8 @@ namespace TPMapEditor
         {
             MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
-            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
-            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
+            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
@@ -416,14 +414,15 @@ namespace TPMapEditor
         {
             MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
-            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
-            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
+            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
         private void MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMoveWorldObject_MouseMove;
         }
 
@@ -431,6 +430,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldObject_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -439,8 +439,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedWorldObjects(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
@@ -656,6 +656,7 @@ namespace TPMapEditor
         private void MapGridOutsideBeginMovePlayer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMovePlayer_MouseMove;
         }
 
@@ -663,6 +664,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMovePlayer_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -671,8 +673,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedPlayers(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
@@ -900,6 +902,7 @@ namespace TPMapEditor
         private void MapGridOutsideBeginMoveWaypointPathPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMoveWaypointPathPoint_MouseMove;
         }
 
@@ -907,6 +910,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWaypointPathPoint_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -915,8 +919,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedWaypointPathPoints(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
@@ -1115,6 +1119,7 @@ namespace TPMapEditor
         private void MapGridOutsideBeginMoveWorldPolygonPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMoveWorldPolygonPoint_MouseMove;
         }
 
@@ -1122,6 +1127,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldPolygonPoint_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1130,8 +1136,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedWorldPolygonPoints(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
@@ -1319,6 +1325,7 @@ namespace TPMapEditor
         private void MapGridOutsideBeginMoveWorldPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMoveWorldPoint_MouseMove;
         }
 
@@ -1326,6 +1333,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldPoint_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1334,8 +1342,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedWorldPoints(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
@@ -1559,6 +1567,7 @@ namespace TPMapEditor
         private void MapGridOutsideBeginMoveObjectivePoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMoveObjectivePoint_MouseMove;
         }
 
@@ -1566,6 +1575,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveObjectivePoint_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1574,8 +1584,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedObjectivePoints(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
@@ -1739,6 +1749,7 @@ namespace TPMapEditor
         private void MapGridOutsideBeginMoveMapTextPoint_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             moveActionPoint = e.GetPosition(MapGridInside);
+            vm.InitTranslateTransformCommand();
             MapGridOutside.MouseMove += MapGridOutsideMoveMapTextPoint_MouseMove;
         }
 
@@ -1746,6 +1757,7 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveMapTextPoint_MouseMove;
             Mouse.Capture(null);
+            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1754,8 +1766,8 @@ namespace TPMapEditor
             Mouse.Capture(MapGridOutside);
             var pos = e.GetPosition(MapGridInside);
             var x = pos.X - moveActionPoint.X;
-            var y = pos.Y - moveActionPoint.Y;
-            vm.TranslateTransformSelectedMapTextPoints(x, y);
+            var y = moveActionPoint.Y - pos.Y; // y position is upside down
+            vm.TranslateTransformSelection(x, y);
             moveActionPoint = pos;
         }
 
