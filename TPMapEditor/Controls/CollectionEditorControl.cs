@@ -184,10 +184,8 @@ namespace TPMapEditor.Controls
         private static void OnSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (CollectionEditorControl)d;
-
             control.DetachFromOldSelectedItems();
             control.AttachToNewSelectedItems(e.NewValue);
-            control.ApplySelectedItemsToDataGridSelectionIfPossible();
         }
 
         private void DetachFromOldSelectedItems()
@@ -201,7 +199,10 @@ namespace TPMapEditor.Controls
             _selectedItemsNotifier = newValue as INotifyCollectionChanged;
 
             if (_selectedItemsNotifier != null)
+            {
                 _selectedItemsNotifier.CollectionChanged += OnSelectedItemsCollectionChanged;
+                ApplySelectedItemsToDataGridSelectionIfPossible();
+            }
         }
 
         private void OnSelectedItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
