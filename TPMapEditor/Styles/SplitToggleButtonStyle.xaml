@@ -23,7 +23,7 @@
     <SolidColorBrush x:Key="ToggleButton.Checked.Background" Color="#FFBCDDEE" />
     <SolidColorBrush x:Key="ToggleButton.Checked.BorderBrush" Color="#FF245A83" />
     <SolidColorBrush x:Key="&#243;" Color="#FF606060" />
-    <Style x:Key="SplitButtonStyle" TargetType="{x:Type controls:SplitToggleButton}">
+    <Style x:Key="SplitButtonBaseStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
@@ -79,8 +79,8 @@
         </Setter>
     </Style>
 
-    <Style
-       BasedOn="{StaticResource SplitButtonStyle}"
+    <Style x:Key="SplitButtonStyle"
+       BasedOn="{StaticResource SplitButtonBaseStyle}"
        TargetType="{x:Type controls:SplitToggleButton}">
         <Style.Triggers>
             <MultiDataTrigger>
@@ -101,5 +101,8 @@
             </MultiDataTrigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="{x:Type controls:SplitToggleButton}" BasedOn="{StaticResource SplitButtonStyle}"/>
+    <Style TargetType="{x:Type controls:SplitRadioButton}" BasedOn="{StaticResource SplitButtonBaseStyle}"/>
 
 </ResourceDictionary>
