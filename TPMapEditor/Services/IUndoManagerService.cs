@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Services
@@ -28,5 +23,10 @@ namespace TPMapEditor.Services
         /// Redo the last action
         /// </summary>
         public void Redo();
+
+        /// <summary>
+        /// Clears the undo and redo commands
+        /// </summary>
+        public void Clear();
     }
 }

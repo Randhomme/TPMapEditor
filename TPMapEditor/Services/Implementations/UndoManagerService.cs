@@ -1,9 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Services.Implementations
@@ -50,6 +46,14 @@ namespace TPMapEditor.Services.Implementations
             var cmd = _redo.Pop();
             cmd.Redo();
             _undo.Push(cmd);
+            OnPropertyChanged(nameof(CanUndo));
+            OnPropertyChanged(nameof(CanRedo));
+        }
+
+        public void Clear()
+        {
+            _undo.Clear();
+            _redo.Clear();
             OnPropertyChanged(nameof(CanUndo));
             OnPropertyChanged(nameof(CanRedo));
         }
