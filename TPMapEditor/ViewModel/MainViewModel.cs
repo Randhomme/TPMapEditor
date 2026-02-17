@@ -3,13 +3,11 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -23,18 +21,21 @@ using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Services;
 using TPMapEditor.Services.Implementations;
 using TPMapEditor.Settings;
-using TPMapEditor.ViewModel.SelectionTransform;
 
 namespace TPMapEditor.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
         private AppSettings settings;
+        private bool shouldCommitTransformMapCommand = false;
+        private bool hasCommittedTransformMapCommand = false;
 
         [ObservableProperty]
         private WorldObjectType? selectedWorldObjectType;
         [ObservableProperty]
-        private int selectedMapTextPointPreviewTextIndex;
+        private int selectedMapTextPointPreviewTextIndex = -1;
+        [ObservableProperty]
+        private string transformMapCommandTitle = string.Empty;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(InverseZoom))]
@@ -44,20 +45,19 @@ namespace TPMapEditor.ViewModel
         private double zoom = 1;
 
         [ObservableProperty]
-        private bool isRotationIndividual = true;
+        private bool isRotationIndividual = true, isMoveCommandActive, isRotateCommandActive;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsTransformingMap))]
+        private IUndoableMapCommand? currentMapCommand;
+
+        public bool IsTransformingMap { get => CurrentMapCommand != null; }
 
         public double InverseZoom { get => 1 / Zoom; }
         public double ZoomedBorderThicknessSmall { get => 2.5 / Zoom; }
         public double ZoomedBorderThicknessMed { get => 5 / Zoom; }
         public double ZoomedBorderThicknessLarge { get => 10 / Zoom; }
         public bool IsMovableSelection3D { get; set; }
-        public bool WorldObjectsVisible { get; set; }
-        public bool PlayersVisible { get; set; }
-        public bool WaypointPathsVisible { get; set; }
-        public bool WorldPolygonsVisible { get; set; }
-        public bool WorldPointSetsVisible { get; set; }
-        public bool ObjectivePointsVisible { get; set; }
-        public bool MapTextPointsVisible { get; set; }
 
         private TranslateTransformMapCommand? translateTransformMapCommand;
 
@@ -132,6 +132,13 @@ namespace TPMapEditor.ViewModel
                 (Key.Z, ModifierKeys.Control, UndoCommand),
                 (Key.Z, ModifierKeys.Control | ModifierKeys.Shift, RedoCommand),
             };
+            WorldObjectSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            PlayerSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            WaypointPathPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            WorldPolygonPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            WorldPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            ObjectivePointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            MapTextPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
         }
 
         #region MenuCommands
@@ -150,8 +157,7 @@ namespace TPMapEditor.ViewModel
             {
                 if (MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    Map.Reset();
-                    ClearSelections();
+                    MapReset();
                     var _lock = new object();
                     Map.EnableCollectionSynchronization(_lock);
                     new ProgressDialog(Application.Current.MainWindow, "Import map").RunActionSameThread((progress, progressLogs) =>
@@ -453,23 +459,23 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
         }
 
-        [RelayCommand]
-        private void OnAlignTransform()
-        {
-            new SelectionTransformWindow(Application.Current.MainWindow, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        }
+        //[RelayCommand]
+        //private void OnAlignTransform()
+        //{
+        //    new SelectionTransformWindow(Application.Current.MainWindow, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
+        //}
 
-        [RelayCommand]
-        private void OnDistributeTransform()
-        {
-            new SelectionTransformWindow(Application.Current.MainWindow, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        }
+        //[RelayCommand]
+        //private void OnDistributeTransform()
+        //{
+        //    new SelectionTransformWindow(Application.Current.MainWindow, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
+        //}
 
-        [RelayCommand]
-        private void OnTranslateTransform()
-        {
-            new SelectionTransformWindow(Application.Current.MainWindow, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        }
+        //[RelayCommand]
+        //private void OnTranslateTransform()
+        //{
+        //    new SelectionTransformWindow(Application.Current.MainWindow, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection, IsMovableSelection3D)).Show();
+        //}
 
         [RelayCommand(CanExecute = nameof(CanUndo))]
         private void OnUndo()
@@ -783,6 +789,13 @@ namespace TPMapEditor.ViewModel
 
         #region UtilMethods
 
+        private void MapReset()
+        {
+            Map.Reset();
+            ClearSelections();
+            undoManagerService.Clear();
+        }
+
         /// <summary>
         /// Clear all the selections
         /// </summary>
@@ -1073,20 +1086,79 @@ namespace TPMapEditor.ViewModel
 
         public void InitTranslateTransformCommand()
         {
-            translateTransformMapCommand = new(currentMovableSelection);
+            ClearTranslateTransformMapCommand();
+            if (currentMovableSelection.Count() > 0)
+            {
+                translateTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D);
+                translateTransformMapCommand.PropertyChanged += TranslateTransformMapCommand_PropertyChanged;
+                CurrentMapCommand = translateTransformMapCommand;
+                shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
+                TransformMapCommandTitle = "Move";
+            }
+        }
+        
+        private void ClearTranslateTransformMapCommand()
+        {
+            if (translateTransformMapCommand != null)
+                translateTransformMapCommand.PropertyChanged -= TranslateTransformMapCommand_PropertyChanged;
+            CurrentMapCommand = translateTransformMapCommand = null;
+        }
+
+        private void TranslateTransformMapCommand_PropertyChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (!translateTransformMapCommand!.CanUndo)
+                InitTranslateTransformCommand();
+            shouldCommitTransformMapCommand = true;
+            if (shouldCommitTransformMapCommand && !hasCommittedTransformMapCommand)
+            {
+                undoManagerService.Push(translateTransformMapCommand!);
+                hasCommittedTransformMapCommand = true;
+            }
+            translateTransformMapCommand!.Apply();
         }
 
         public void TranslateTransformSelection(double x, double y)
         {
-            translateTransformMapCommand!.DeltaX += x;
-            translateTransformMapCommand!.DeltaY += y;
-            translateTransformMapCommand.Apply();
+            if (translateTransformMapCommand != null)
+            {
+                translateTransformMapCommand!.DeltaX += x;
+                translateTransformMapCommand!.DeltaY += y;
+            }
         }
 
-        public void CommitTranslateTransformCommand()
+        private void InitTransformCommandsIfPossible()
         {
-            translateTransformMapCommand!.Commit();
-            undoManagerService.Push(translateTransformMapCommand);
+            if (IsMoveCommandActive)
+            {
+                InitTranslateTransformCommand();
+            }
+            else if (IsRotateCommandActive)
+            {
+
+            }
+        }
+
+        private void SelectionService_SelectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+        }
+
+        partial void OnIsMoveCommandActiveChanging(bool value)
+        {
+            if (value)
+            {
+                IsRotateCommandActive = false;
+            }
+            else
+            {
+                ClearTranslateTransformMapCommand();
+            }
+        }
+
+        partial void OnIsRotateCommandActiveChanging(bool value)
+        {
+            if (value)
+                IsMoveCommandActive = false;
         }
 
         #endregion
@@ -1098,6 +1170,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
             currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = true;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearWorldObjectSelection()
@@ -1175,6 +1249,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = playerSelectionKBShortcutService;
             currentMovableSelection = PlayerSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = true;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearPlayerSelection()
@@ -1252,6 +1328,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = waypointPathSelectionKBShortcutService;
             currentMovableSelection = WaypointPathPointSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = true;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearWaypointPathSelection()
@@ -1417,6 +1495,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPolygonSelectionKBShortcutService;
             currentMovableSelection = WorldPolygonPointSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = false;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearWorldPolygonSelection()
@@ -1582,6 +1662,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPointSetSelectionKBShortcutService;
             currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = true;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearWorldPointSetSelection()
@@ -1757,6 +1839,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = objectivePointSelectionKBShortcutService;
             currentMovableSelection = ObjectivePointSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = true;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearObjectivePointSelection()
@@ -1824,6 +1908,8 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = mapTextPointSelectionKBShortcutService;
             currentMovableSelection = MapTextPointSelectionService.SelectedMapObjects;
+            IsMovableSelection3D = true;
+            InitTransformCommandsIfPossible();
         }
 
         public void ClearMapTextPointSelection()
