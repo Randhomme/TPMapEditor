@@ -42,7 +42,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <Button Name="PART_DropDownButton" Grid.Column="1" BorderThickness="0" Margin="{TemplateBinding Padding}" VerticalContentAlignment="Center">
+                            <Button Name="PART_DropDownButton" Grid.Column="1" BorderThickness="0" Padding="{TemplateBinding Padding}" VerticalContentAlignment="Center">
                                 <Path x:Name="Arrow"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
