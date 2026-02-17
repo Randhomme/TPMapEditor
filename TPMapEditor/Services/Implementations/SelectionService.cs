@@ -23,6 +23,7 @@ namespace TPMapEditor.Services.Implementations
 
         public IReadOnlyList<T> SelectedMapObjects { get => selectedMapObjects; }
 
+        public NotifyCollectionChangedEventHandler? SelectionChanged { get; set; }
 
         public SelectionService()
         {
@@ -46,6 +47,7 @@ namespace TPMapEditor.Services.Implementations
                     var last = SelectedMapObjects.LastOrDefault();
                     MakeLastSelected(last);
                 }
+                SelectionChanged?.Invoke(s, e);
             };
         }
 

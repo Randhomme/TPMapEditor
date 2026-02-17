@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Services
@@ -11,6 +13,7 @@ namespace TPMapEditor.Services
     {
         public IReadOnlyList<T> SelectedMapObjects { get; }
         public T? SelectedMapObject { get; }
+        public NotifyCollectionChangedEventHandler? SelectionChanged { get; set; }
         public void Select(T mapObject);
         public void AddToSelection(T mapObject);
         public void AddAllToSelection(IEnumerable<T> mapObjects);
