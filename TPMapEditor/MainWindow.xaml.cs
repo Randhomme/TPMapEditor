@@ -405,8 +405,8 @@ namespace TPMapEditor
         {
             MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
-            MapGridOutside.MouseLeftButtonDown += MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp += MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.SizeAll;
         }
 
@@ -414,8 +414,8 @@ namespace TPMapEditor
         {
             MapGridOutside.PreviewMouseLeftButtonDown += MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp += MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
-            MapGridOutside.MouseLeftButtonDown -= MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
-            MapGridOutside.MouseLeftButtonUp -= MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
+            MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideBeginMoveWorldObject_MouseLeftButtonDown;
+            MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideEndMoveWorldObject_MouseLeftButtonUp;
             MapGridOutside.Cursor = Cursors.Arrow;
         }
 
@@ -430,7 +430,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldObject_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -664,7 +663,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMovePlayer_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -910,7 +908,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWaypointPathPoint_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1127,7 +1124,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldPolygonPoint_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1333,7 +1329,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveWorldPoint_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1575,7 +1570,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveObjectivePoint_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
@@ -1757,7 +1751,6 @@ namespace TPMapEditor
         {
             MapGridOutside.MouseMove -= MapGridOutsideMoveMapTextPoint_MouseMove;
             Mouse.Capture(null);
-            vm.CommitTranslateTransformCommand();
             e.Handled = true;
         }
 
