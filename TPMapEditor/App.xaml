@@ -32,6 +32,7 @@
                 <ResourceDictionary Source="/DataTemplate/RuleActionTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/WorldRuleTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/SelectionTransformViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/TransformMapCommandTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
