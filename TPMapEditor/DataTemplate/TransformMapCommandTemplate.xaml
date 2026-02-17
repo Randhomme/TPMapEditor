@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                    xmlns:impls="clr-namespace:TPMapEditor.Interfaces.Implementations"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate DataType="{x:Type impls:TranslateTransformMapCommand}">
+        <StackPanel>
+            <Label Margin="-5,0,0,0" Content="X"/>
+            <Slider Value="{Binding DeltaX}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True"/>
+            <Label Margin="-5,5,0,0" Content="Y"/>
+            <Slider Value="{Binding DeltaY}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True"/>
+            <StackPanel Visibility="{c:Binding Is3D}">
+                <Label Margin="-5,5,0,0" Content="Z"/>
+                <Slider Value="{Binding DeltaZ}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True"/>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>
