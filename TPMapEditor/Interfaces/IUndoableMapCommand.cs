@@ -17,11 +17,6 @@ namespace TPMapEditor.Interfaces
         public void Apply();
 
         /// <summary>
-        /// Save the changes on the targets
-        /// </summary>
-        public void Commit();
-
-        /// <summary>
         /// Undo the command
         /// </summary>
         public void Undo();
