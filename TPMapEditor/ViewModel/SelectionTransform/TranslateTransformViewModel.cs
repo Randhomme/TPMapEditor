@@ -18,9 +18,10 @@ namespace TPMapEditor.ViewModel.SelectionTransform
         private readonly TranslateTransformMapCommand internalCommand;
         protected override IUndoableMapCommand Command => internalCommand;
 
-        public TranslateTransformViewModel(IUndoManagerService undoManagerService, IEnumerable<IMovableMapObject> targets) : base(undoManagerService)
+        public TranslateTransformViewModel(IUndoManagerService undoManagerService, IEnumerable<IMovableMapObject> targets, bool is3D) : base(undoManagerService)
         {
-            internalCommand = new(targets);
+            internalCommand = new(targets, is3D);
+            Is3D = is3D;
         }
 
         partial void OnXChanged(double value)

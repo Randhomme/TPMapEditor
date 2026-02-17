@@ -19,7 +19,6 @@ namespace TPMapEditor.ViewModel.SelectionTransform
 
         public void CommitCommand()
         {
-            Command.Commit();
             undoManagerService.Push(Command);
         }
 
