@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TPMapEditor.Interfaces
 {
     /// <summary>
-    /// Movable map object in 2D
+    /// Movable map object in 3D
     /// </summary>
     public interface IMovableMapObject
     {
