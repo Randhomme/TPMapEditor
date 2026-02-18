@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TPMapEditor.Interfaces
 {
     /// <summary>
-    /// Represents a map command that can be undone/redone. Cycle is Apply, Commit, Undo/Redo.
+    /// Represents a map command that can be undone/redone.
     /// </summary>
     public interface IUndoableMapCommand
     {
