@@ -112,9 +112,10 @@
                     </ToggleButton>
                     <controls:SplitToggleButton x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0" Padding="2.5" IsChecked="{Binding IsRotateCommandActive}">
                         <controls:SplitToggleButton.DropDownMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Individual" IsCheckable="True" IsChecked="{Binding IsRotationIndividual}"/>
-                                <MenuItem Header="Selection" IsCheckable="True" IsChecked="{c:Binding '!IsRotationIndividual'}"/>
+                            <ContextMenu IsEnabled="{Binding CanChangeRotationMode}">
+                                <MenuItem Header="Orbit" IsCheckable="True" IsChecked="{Binding IsRotationOrbit}"/>
+                                <MenuItem Header="Spin" IsCheckable="True" IsChecked="{Binding IsRotationSpin}"/>
+                                <MenuItem Header="Orbit+Spin" IsCheckable="True" IsChecked="{Binding IsRotationOrbitSpin}"/>
                             </ContextMenu>
                         </controls:SplitToggleButton.DropDownMenu>
                         <Image Source="/Images/Rotate.png"/>
