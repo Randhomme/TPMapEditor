@@ -14,4 +14,20 @@
             </StackPanel>
         </StackPanel>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type impls:RotateOrbitSpinTransformMapCommand}">
+        <StackPanel>
+            <Label Margin="-5,0,0,0" Content="Rotation"/>
+            <Slider Value="{Binding Rotation}" Minimum="-180" Maximum="180" TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+            <Label Margin="-5,5,0,0" Content="Orbit"/>
+            <CheckBox IsChecked="{Binding IsRotationOrbit}" Content="{Binding IsRotationOrbit}"/>
+            <Label Margin="-5,5,0,0" Content="Spin"/>
+            <CheckBox IsChecked="{Binding IsRotationSpin}" Content="{Binding IsRotationSpin}"/>
+        </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type impls:RotateOrbitTransformMapCommand}">
+        <StackPanel>
+            <Label Margin="-5,0,0,0" Content="Rotation"/>
+            <Slider Value="{Binding Rotation}" Minimum="-180" Maximum="180" TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+        </StackPanel>
+    </DataTemplate>
 </ResourceDictionary>
