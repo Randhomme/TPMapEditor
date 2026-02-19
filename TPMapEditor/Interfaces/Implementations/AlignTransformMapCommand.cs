@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
-    public class AlignTransformMapCommand : TransformMapCommand
+    public class AlignTransformMapCommand : TransformMovableMapObjectCommand
     {
         public bool AlignOnX { get; set; } = false;
         public bool AlignOnY { get; set; } = false;

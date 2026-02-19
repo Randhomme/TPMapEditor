@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
-    public partial class TranslateTransformMapCommand : TransformMapCommand
+    public partial class TranslateTransformMapCommand : TransformMovableMapObjectCommand
     {
         [ObservableProperty]
         private double deltaX = 0, deltaY = 0, deltaZ = 0;
 
         private double deltaXbefore, deltaYbefore, deltaZbefore;
-        private double deltaXafter, deltaYafter, deltaZafter;
 
         public bool Is3D { get; }
 
@@ -27,9 +26,6 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public override void Undo()
         {
-            deltaXafter = DeltaX;
-            deltaYafter = DeltaY;
-            deltaZafter = DeltaZ;
             (deltaXbefore, DeltaX) = (DeltaX, deltaXbefore);
             (deltaYbefore, DeltaY) = (DeltaY, deltaYbefore);
             (deltaZbefore, DeltaZ) = (DeltaZ, deltaZbefore);
@@ -39,12 +35,9 @@ namespace TPMapEditor.Interfaces.Implementations
         public override void Redo()
         {
             base.Redo();
-            deltaXbefore = DeltaX;
-            deltaYbefore = DeltaY;
-            deltaZbefore = DeltaZ;
-            (deltaXafter, DeltaX) = (DeltaX, deltaXafter);
-            (deltaYafter, DeltaY) = (DeltaY, deltaYafter);
-            (deltaZafter, DeltaZ) = (DeltaZ, deltaZafter);
+            (deltaXbefore, DeltaX) = (DeltaX, deltaXbefore);
+            (deltaYbefore, DeltaY) = (DeltaY, deltaYbefore);
+            (deltaZbefore, DeltaZ) = (DeltaZ, deltaZbefore);
         }
 
         public override void Apply()

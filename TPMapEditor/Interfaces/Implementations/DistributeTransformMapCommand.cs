@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
-    internal class DistributeTransformMapCommand : TransformMapCommand
+    internal class DistributeTransformMapCommand : TransformMovableMapObjectCommand
     {
         public bool DistributeOnX { get; set; } = false;
         public bool DistributeOnY { get; set; } = false;

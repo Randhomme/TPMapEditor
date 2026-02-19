@@ -1,24 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
     /// <summary>
-    /// Base class for a transformation command on a <see cref="IMovable3MapObject"/>. Derive this class to implement a command action.
+    /// Base class for a transformation command on a <see cref="IMovableMapObject"/>. Derive this class to implement a command action.
     /// </summary>
-    public abstract class TransformMapCommand : ObservableObject, IUndoableMapCommand
+    public abstract class TransformMovableMapObjectCommand : ObservableObject, IUndoableMapCommand
     {
         protected readonly Dictionary<IMovableMapObject, (double X, double Y, double Z)> _before;
         protected Dictionary<IMovableMapObject, (double X, double Y, double Z)>? _after;
 
         public bool CanUndo { get; private set; } = true;
 
-        public TransformMapCommand(IEnumerable<IMovableMapObject> targets)
+        public TransformMovableMapObjectCommand(IEnumerable<IMovableMapObject> targets)
         {
             _before = targets.ToDictionary(
                 o => o,
