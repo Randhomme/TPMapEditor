@@ -8,14 +8,14 @@ using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class Player : SelectableNamedMapObject, IMovableMapObject
+    public partial class Player : SelectableNamedMapObject, IMovableMapObject, IRotatableMapObject
     {
         public static string DefaultName => "NO PLAYER";
 
         public static Player DefaultPlayer { get; } = new(null, DefaultName);
 
         [ObservableProperty]
-        private double x, y, z, rotation;
+        private double x, y, z, zRotation;
         [ObservableProperty]
         private Color color;
         [ObservableProperty]
@@ -24,6 +24,9 @@ namespace TPMapEditor.Data
         private Team? selectableTeam, inGameTeam;
         [ObservableProperty]
         private bool isPlayable, hasSelectableTeam, hasInGameTeam;
+
+        public double XRotation { get; set; } // Not used
+        public double YRotation { get; set; } // Not used
 
         public int TeamIndex { get; set; } = -1; //only used for data import
 
@@ -46,7 +49,7 @@ namespace TPMapEditor.Data
             X = x;
             Y = y;
             Z = z;
-            Rotation = rotation;
+            zRotation = rotation;
             Color = playerColor;
             FormationTypeStart = FormationType = FormationType.Column;
             IsPlayable = true;

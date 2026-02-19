@@ -7,7 +7,7 @@ using TPMapEditor.Interfaces.Implementations;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldObject : SelectableMapObject, IMovableMapObject
+    public partial class WorldObject : SelectableMapObject, IMovableMapObject, IRotatableMapObject
     {
         private static int nextId = 0;
 

@@ -3,7 +3,7 @@ using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Data
 {
-    public partial class WorldPoint : Point3, ISelectableMapObject, IMovableMapObject
+    public partial class WorldPoint : Point3, ISelectableMapObject, IMovableMapObject, IRotatableMapObject
     {
         [ObservableProperty]
         private double xRotation, yRotation, zRotation, magnitude;
