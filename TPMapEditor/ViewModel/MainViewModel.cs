@@ -45,11 +45,15 @@ namespace TPMapEditor.ViewModel
         private double zoom = 1;
 
         [ObservableProperty]
-        private bool isRotationIndividual = true, isMoveCommandActive, isRotateCommandActive;
+        private bool isMoveCommandActive, isRotateCommandActive, isRotationOrbit = true, isRotationSpin, isRotationOrbitSpin, canChangeRotationMode;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsTransformingMap))]
         private IUndoableMapCommand? currentMapCommand;
+
+        private TranslateTransformMapCommand? translateTransformMapCommand;
+        private RotateOrbitSpinTransformMapCommand? rotateOrbitSpinTransformMapCommand;
+        private RotateOrbitTransformMapCommand? rotateOrbitTransformMapCommand;
 
         public bool IsTransformingMap { get => CurrentMapCommand != null; }
 
@@ -58,8 +62,6 @@ namespace TPMapEditor.ViewModel
         public double ZoomedBorderThicknessMed { get => 5 / Zoom; }
         public double ZoomedBorderThicknessLarge { get => 10 / Zoom; }
         public bool IsMovableSelection3D { get; set; }
-
-        private TranslateTransformMapCommand? translateTransformMapCommand;
 
         private readonly IReadOnlyList<(Key key, ModifierKeys modifiers, ICommand command)> keyboardShortcut;
         private readonly ISelectionKBShortcutService worldObjectSelectionKBShortcutService;
@@ -75,7 +77,7 @@ namespace TPMapEditor.ViewModel
         private readonly ICopyPasteService waypointPathPointCopyPasteService;
         private readonly ICopyPasteService worldPolygonPointCopyPasteService;
         private readonly ICopyPasteService worldPointCopyPasteService;
-        private readonly IUndoManagerService undoManagerService = new UndoManagerService(10);
+        private readonly IUndoManagerService undoManagerService = new UndoManagerService(20);
         public ISelectionService<WorldObject> WorldObjectSelectionService { get; } = new SelectionService<WorldObject>();
         public ISelectionService<Player> PlayerSelectionService { get; } = new SelectionService<Player>();
         public IMultiPointMapObjectSelectionService<WaypointPath, WaypointPathPoint> WaypointPathSelectionService { get; }
@@ -91,6 +93,7 @@ namespace TPMapEditor.ViewModel
 
         private ISelectionKBShortcutService currenSelectionKBShortcutService;
         private IEnumerable<IMovableMapObject> currentMovableSelection;
+        private IEnumerable<IRotatableMapObject>? currentRotatableSelection;
 
         public WorldMap Map { get; }
 
@@ -119,6 +122,7 @@ namespace TPMapEditor.ViewModel
             undoManagerService.PropertyChanged += UndoManagerService_PropertyChanged;
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
             currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
+            currentRotatableSelection = WorldObjectSelectionService.SelectedMapObjects;
             keyboardShortcut = new List<(Key key, ModifierKeys modifiers, ICommand command)>()
             {
                 (Key.H, ModifierKeys.None, HKeyCommand),
@@ -1084,12 +1088,12 @@ namespace TPMapEditor.ViewModel
             return rotation;
         }
 
-        public void InitTranslateTransformCommand()
+        public void InitTranslateTransformCommand(double x = 0, double y = 0, double z = 0)
         {
             ClearTranslateTransformMapCommand();
             if (currentMovableSelection.Count() > 0)
             {
-                translateTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D);
+                translateTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D) { DeltaX = x, DeltaY = y, DeltaZ = z };
                 translateTransformMapCommand.PropertyChanged += TranslateTransformMapCommand_PropertyChanged;
                 CurrentMapCommand = translateTransformMapCommand;
                 shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
@@ -1107,7 +1111,7 @@ namespace TPMapEditor.ViewModel
         private void TranslateTransformMapCommand_PropertyChanged(object s, PropertyChangedEventArgs e)
         {
             if (!translateTransformMapCommand!.CanUndo)
-                InitTranslateTransformCommand();
+                InitTranslateTransformCommand(translateTransformMapCommand.DeltaX, translateTransformMapCommand.DeltaY, translateTransformMapCommand.DeltaZ);
             shouldCommitTransformMapCommand = true;
             if (shouldCommitTransformMapCommand && !hasCommittedTransformMapCommand)
             {
@@ -1126,6 +1130,102 @@ namespace TPMapEditor.ViewModel
             }
         }
 
+        public void InitRotateTransformMapCommand()
+        {
+            //Rotation on IRotatableMapObject
+            if (CanChangeRotationMode)
+            {
+                InitRotateOrbitSpinTransformMapCommand(0, IsRotationOrbit || IsRotationOrbitSpin, IsRotationSpin || IsRotationOrbitSpin);
+            }
+            //Rotation on IMovableMapObject
+            else
+            {
+                InitRotateOrbitTransformMapCommand();
+            }
+        }
+
+        private void InitRotateOrbitSpinTransformMapCommand(double rotation, bool isRotationOrbit, bool isRotationSpin)
+        {
+            ClearRotateOrbitSpinTransformMapCommand();
+            if (currentRotatableSelection != null && currentRotatableSelection.Count() > 0)
+            {
+                rotateOrbitSpinTransformMapCommand = new(currentRotatableSelection) { Rotation = rotation, IsRotationOrbit = isRotationOrbit, IsRotationSpin = isRotationSpin };
+                rotateOrbitSpinTransformMapCommand.PropertyChanged += RotateOrbitSpinTransformMapCommand_PropertyChanged;
+                CurrentMapCommand = rotateOrbitSpinTransformMapCommand;
+                shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
+                TransformMapCommandTitle = "Rotate";
+            }
+        }
+
+        private void RotateOrbitSpinTransformMapCommand_PropertyChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (!rotateOrbitSpinTransformMapCommand!.CanUndo)
+                InitRotateOrbitSpinTransformMapCommand(rotateOrbitSpinTransformMapCommand.Rotation, rotateOrbitSpinTransformMapCommand.IsRotationOrbit, rotateOrbitSpinTransformMapCommand.IsRotationSpin);
+            shouldCommitTransformMapCommand = true;
+            if (shouldCommitTransformMapCommand && !hasCommittedTransformMapCommand)
+            {
+                undoManagerService.Push(rotateOrbitSpinTransformMapCommand!);
+                hasCommittedTransformMapCommand = true;
+            }
+            rotateOrbitSpinTransformMapCommand!.Apply();
+        }
+
+        //public void RotateOrbitSpinTransformSelection(double rotation)
+        //{
+        //    if (rotateOrbitSpinTransformMapCommand != null)
+        //    {
+        //        rotateOrbitSpinTransformMapCommand!.Rotation += rotation;
+        //    }
+        //}
+
+        private void ClearRotateOrbitSpinTransformMapCommand()
+        {
+            if (rotateOrbitSpinTransformMapCommand != null)
+                rotateOrbitSpinTransformMapCommand.PropertyChanged -= RotateOrbitSpinTransformMapCommand_PropertyChanged;
+            CurrentMapCommand = rotateOrbitSpinTransformMapCommand = null;
+        }
+
+        private void InitRotateOrbitTransformMapCommand(double rotation = 0)
+        {
+            ClearRotateOrbitTransformMapCommand();
+            if (currentMovableSelection.Count() > 0)
+            {
+                rotateOrbitTransformMapCommand = new(currentMovableSelection) { Rotation = rotation };
+                rotateOrbitTransformMapCommand.PropertyChanged += RotateOrbitTransformMapCommand_PropertyChanged;
+                CurrentMapCommand = rotateOrbitTransformMapCommand;
+                shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
+                TransformMapCommandTitle = "Rotate";
+            }
+        }
+
+        private void RotateOrbitTransformMapCommand_PropertyChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (!rotateOrbitTransformMapCommand!.CanUndo)
+                InitRotateOrbitTransformMapCommand(rotateOrbitTransformMapCommand.Rotation);
+            shouldCommitTransformMapCommand = true;
+            if (shouldCommitTransformMapCommand && !hasCommittedTransformMapCommand)
+            {
+                undoManagerService.Push(rotateOrbitTransformMapCommand!);
+                hasCommittedTransformMapCommand = true;
+            }
+            rotateOrbitTransformMapCommand!.Apply();
+        }
+
+        //public void RotateOrbitTransformSelection(double rotation)
+        //{
+        //    if (rotateOrbitTransformMapCommand != null)
+        //    {
+        //        rotateOrbitTransformMapCommand!.Rotation += rotation;
+        //    }
+        //}
+
+        private void ClearRotateOrbitTransformMapCommand()
+        {
+            if (rotateOrbitTransformMapCommand != null)
+                rotateOrbitTransformMapCommand.PropertyChanged -= RotateOrbitTransformMapCommand_PropertyChanged;
+            CurrentMapCommand = rotateOrbitTransformMapCommand = null;
+        }
+
         private void InitTransformCommandsIfPossible()
         {
             if (IsMoveCommandActive)
@@ -1134,8 +1234,15 @@ namespace TPMapEditor.ViewModel
             }
             else if (IsRotateCommandActive)
             {
-
+                InitRotateTransformMapCommand();
             }
+        }
+
+        private void ClearTransformMapCommands()
+        {
+            ClearTranslateTransformMapCommand();
+            ClearRotateOrbitSpinTransformMapCommand();
+            ClearRotateOrbitTransformMapCommand();
         }
 
         private void SelectionService_SelectionChanged(object s, NotifyCollectionChangedEventArgs e)
@@ -1148,6 +1255,7 @@ namespace TPMapEditor.ViewModel
             if (value)
             {
                 IsRotateCommandActive = false;
+                InitTranslateTransformCommand();
             }
             else
             {
@@ -1158,7 +1266,50 @@ namespace TPMapEditor.ViewModel
         partial void OnIsRotateCommandActiveChanging(bool value)
         {
             if (value)
+            {
                 IsMoveCommandActive = false;
+                InitRotateTransformMapCommand();
+            }
+            else
+            {
+                ClearRotateOrbitTransformMapCommand();
+                ClearRotateOrbitSpinTransformMapCommand();
+            }
+        }
+
+        partial void OnCanChangeRotationModeChanging(bool value)
+        {
+            if(!value)
+            {
+                IsRotationOrbit = true;
+            }
+        }
+
+        partial void OnIsRotationOrbitChanging(bool value)
+        {
+            if (value)
+            {
+                IsRotationSpin = false;
+                IsRotationOrbitSpin = false;
+            }
+        }
+
+        partial void OnIsRotationSpinChanging(bool value)
+        {
+            if (value)
+            {
+                IsRotationOrbit = false;
+                IsRotationOrbitSpin = false;
+            }
+        }
+
+        partial void OnIsRotationOrbitSpinChanging(bool value)
+        {
+            if (value)
+            {
+                IsRotationOrbit = false;
+                IsRotationSpin = false;
+            }
         }
 
         #endregion
@@ -1170,8 +1321,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
             currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
+            currentRotatableSelection = WorldObjectSelectionService.SelectedMapObjects;
             IsMovableSelection3D = true;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = true;
+            ClearTransformMapCommands();
         }
 
         public void ClearWorldObjectSelection()
@@ -1249,8 +1402,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = playerSelectionKBShortcutService;
             currentMovableSelection = PlayerSelectionService.SelectedMapObjects;
+            currentRotatableSelection = PlayerSelectionService.SelectedMapObjects;
             IsMovableSelection3D = true;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = true;
+            ClearTransformMapCommands();
         }
 
         public void ClearPlayerSelection()
@@ -1289,8 +1444,8 @@ namespace TPMapEditor.ViewModel
             for (int i = 0; i < PlayerSelectionService.SelectedMapObjects.Count; i++)
             {
                 var player = PlayerSelectionService.SelectedMapObjects[i];
-                var newRotation = player.Rotation + rotation;
-                player.Rotation = GetRotation(newRotation);
+                var newRotation = player.ZRotation + rotation;
+                player.ZRotation = GetRotation(newRotation);
             }
         }
 
@@ -1328,8 +1483,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = waypointPathSelectionKBShortcutService;
             currentMovableSelection = WaypointPathPointSelectionService.SelectedMapObjects;
+            currentRotatableSelection = null;
             IsMovableSelection3D = true;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = false;
+            ClearTransformMapCommands();
         }
 
         public void ClearWaypointPathSelection()
@@ -1495,8 +1652,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPolygonSelectionKBShortcutService;
             currentMovableSelection = WorldPolygonPointSelectionService.SelectedMapObjects;
+            currentRotatableSelection = null;
             IsMovableSelection3D = false;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = false;
+            ClearTransformMapCommands();
         }
 
         public void ClearWorldPolygonSelection()
@@ -1662,8 +1821,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPointSetSelectionKBShortcutService;
             currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
+            currentRotatableSelection = WorldPointSelectionService.SelectedMapObjects;
             IsMovableSelection3D = true;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = true;
+            ClearTransformMapCommands();
         }
 
         public void ClearWorldPointSetSelection()
@@ -1839,8 +2000,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = objectivePointSelectionKBShortcutService;
             currentMovableSelection = ObjectivePointSelectionService.SelectedMapObjects;
+            currentRotatableSelection = null;
             IsMovableSelection3D = true;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = false;
+            ClearTransformMapCommands();
         }
 
         public void ClearObjectivePointSelection()
@@ -1908,8 +2071,10 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = mapTextPointSelectionKBShortcutService;
             currentMovableSelection = MapTextPointSelectionService.SelectedMapObjects;
+            currentRotatableSelection = null;
             IsMovableSelection3D = true;
-            InitTransformCommandsIfPossible();
+            CanChangeRotationMode = false;
+            ClearTransformMapCommands();
         }
 
         public void ClearMapTextPointSelection()
