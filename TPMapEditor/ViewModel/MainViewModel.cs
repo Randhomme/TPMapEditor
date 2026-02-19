@@ -46,7 +46,7 @@ namespace TPMapEditor.ViewModel
         private double zoom = 1;
 
         [ObservableProperty]
-        private bool isMoveCommandActive, isRotateCommandActive, canChangeRotationMode;
+        private bool isSelectCommandActive = true, isMoveCommandActive, isRotateCommandActive, canChangeRotationMode;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsTransformingMap))]
@@ -136,6 +136,12 @@ namespace TPMapEditor.ViewModel
                 (Key.V, ModifierKeys.Control, CtrlVKeyCommand),
                 (Key.Z, ModifierKeys.Control, UndoCommand),
                 (Key.Z, ModifierKeys.Control | ModifierKeys.Shift, RedoCommand),
+                (Key.D1, ModifierKeys.None, ToggleSelectActionCommand),
+                (Key.NumPad1, ModifierKeys.None, ToggleSelectActionCommand),
+                (Key.D2, ModifierKeys.None, ToggleMoveActionCommand),
+                (Key.NumPad2, ModifierKeys.None, ToggleMoveActionCommand),
+                (Key.D3, ModifierKeys.None, ToggleRotateActionCommand),
+                (Key.NumPad3, ModifierKeys.None, ToggleRotateActionCommand),
             };
             WorldObjectSelectionService.SelectionChanged += SelectionService_SelectionChanged;
             PlayerSelectionService.SelectionChanged += SelectionService_SelectionChanged;
@@ -467,18 +473,21 @@ namespace TPMapEditor.ViewModel
         [RelayCommand]
         private void OnAlignTransform()
         {
+            ClearTransformMapCommands();
             new SelectionTransformWindow(Application.Current.MainWindow, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
         }
 
         [RelayCommand]
         private void OnDistributeTransform()
         {
+            ClearTransformMapCommands();
             new SelectionTransformWindow(Application.Current.MainWindow, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
         }
 
         [RelayCommand]
         private void OnTranslateTransform()
         {
+            ClearTransformMapCommands();
             new SelectionTransformWindow(Application.Current.MainWindow, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection, IsMovableSelection3D)).Show();
         }
 
@@ -788,6 +797,24 @@ namespace TPMapEditor.ViewModel
         private void OnCtrlVKey()
         {
             currenSelectionKBShortcutService.OnCtrlV();
+        }
+
+        [RelayCommand]
+        private void OnToggleSelectAction()
+        {
+            IsSelectCommandActive = !IsSelectCommandActive;
+        }
+
+        [RelayCommand]
+        private void OnToggleMoveAction()
+        {
+            IsMoveCommandActive = !IsMoveCommandActive;
+        }
+
+        [RelayCommand]
+        private void OnToggleRotateAction()
+        {
+            IsRotateCommandActive = !IsRotateCommandActive;
         }
 
         #endregion

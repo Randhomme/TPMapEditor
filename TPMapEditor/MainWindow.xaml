@@ -104,7 +104,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="SelectCheckBox" ToolTip="Select" Margin="0" Width="25" IsChecked="True">
+                    <ToggleButton x:Name="SelectCheckBox" ToolTip="Select" Margin="0" Width="25" IsChecked="{Binding IsSelectCommandActive}">
                         <Image Margin="2.5" Source="/Images/Default.png"/>
                     </ToggleButton>
                     <ToggleButton x:Name="MoveCheckBox" ToolTip="Move" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsMoveCommandActive}">
