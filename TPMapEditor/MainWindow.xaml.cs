@@ -193,6 +193,27 @@ namespace TPMapEditor
             WorldObjectRadioButton.IsChecked = true;
         }
 
+        private void RotateCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            MapGridOutside.MouseWheel += MapGridOutsideRotation_MouseWheel;
+        }
+
+        private void RotateCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            MapGridOutside.MouseWheel -= MapGridOutsideRotation_MouseWheel;
+        }
+
+        private void MapGridOutsideRotation_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                var step = GetAcceleratedRotation();
+                step = e.Delta > 0 ? step : -step;
+                vm.RotateTransformSelection(step);
+                e.Handled = true;
+            }
+        }
+
         #endregion
 
         #region UtilsMethods
@@ -315,10 +336,6 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked += MoveWorldObjectCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldObject();
-            RotateCheckBox.Checked += RotateWorldObjectCheckBox_Checked;
-            RotateCheckBox.Unchecked += RotateWorldObjectCheckBox_Unchecked;
-            if (RotateCheckBox.IsChecked == true)
-                EnableRotateWorldObject();
             MapGridOutside.MouseMove += MapGridOutsideWorldObjectPreview_MouseMove;
             DeleteButton.Click += DeleteWorldObjectButton_Click;
             currentCanvas = FindVisualChild<Canvas>(WorldObjectItemsControl);
@@ -336,10 +353,6 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveWorldObjectCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveWorldObject();
-            RotateCheckBox.Checked -= RotateWorldObjectCheckBox_Checked;
-            RotateCheckBox.Unchecked -= RotateWorldObjectCheckBox_Unchecked;
-            if (RotateCheckBox.IsChecked == true)
-                DisableRotateWorldObject();
             MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldObject_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldObject_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideWorldObjectPreview_MouseMove;
@@ -480,37 +493,6 @@ namespace TPMapEditor
             }
         }
 
-        private void RotateWorldObjectCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            EnableRotateWorldObject();
-        }
-
-        private void RotateWorldObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            DisableRotateWorldObject();
-        }
-
-        private void EnableRotateWorldObject()
-        {
-            MapGridOutside.MouseWheel += MapGridOutsideWorldObject_MouseWheel;
-        }
-
-        private void DisableRotateWorldObject()
-        {
-            MapGridOutside.MouseWheel -= MapGridOutsideWorldObject_MouseWheel;
-        }
-
-        private void MapGridOutsideWorldObject_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
-            {
-                var step = GetAcceleratedRotation();
-                step = e.Delta > 0 ? step : -step;
-                vm.RotateTransformSelectedWorldObjects(step);
-                e.Handled = true;
-            }
-        }
-
         private void WorldObjectVisibilityCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             vm?.SetAllWorldObjectsVisibility(true);
@@ -547,10 +529,6 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked += MovePlayerCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 EnableMovePlayer();
-            RotateCheckBox.Checked += RotatePlayerCheckBox_Checked;
-            RotateCheckBox.Unchecked += RotatePlayerCheckBox_Unchecked;
-            if (RotateCheckBox.IsChecked == true)
-                EnableRotatePlayer();
             MapGridOutside.MouseMove += MapGridOutsidePlayerPreview_MouseMove;
             DeleteButton.Click += DeletePlayerButton_Click;
             currentCanvas = FindVisualChild<Canvas>(PlayerItemsControl);
@@ -569,10 +547,6 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MovePlayerCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMovePlayer();
-            RotateCheckBox.Checked -= RotatePlayerCheckBox_Checked;
-            RotateCheckBox.Unchecked -= RotatePlayerCheckBox_Unchecked;
-            if (RotateCheckBox.IsChecked == true)
-                DisableRotatePlayer();
             MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsidePlayer_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsidePlayer_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsidePlayerPreview_MouseMove;
@@ -711,36 +685,6 @@ namespace TPMapEditor
                 var newValue = PlayerSliderRotate.Value + (e.Delta > 0 ? step : -step);
                 PlayerSliderRotate.Value = GetRotation(newValue);
                 e.Handled = true;
-            }
-        }
-
-        private void RotatePlayerCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            EnableRotatePlayer();
-        }
-
-        private void RotatePlayerCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            DisableRotatePlayer();
-        }
-
-        private void EnableRotatePlayer()
-        {
-            MapGridOutside.MouseWheel += MapGridOutsidePlayer_MouseWheel;
-        }
-
-        private void DisableRotatePlayer()
-        {
-            MapGridOutside.MouseWheel -= MapGridOutsidePlayer_MouseWheel;
-        }
-
-        private void MapGridOutsidePlayer_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
-            {
-                var step = GetAcceleratedRotation();
-                step = e.Delta > 0 ? step : -step;
-                vm.RotateTransformSelectedPlayers(step);
             }
         }
 
@@ -1215,10 +1159,6 @@ namespace TPMapEditor
             DeleteButton.Click += DeleteWorldPointButton_Click;
             if (MoveCheckBox.IsChecked == true)
                 EnableMoveWorldPoint();
-            RotateCheckBox.Checked += RotateWorldPointCheckBox_Checked;
-            RotateCheckBox.Unchecked += RotateWorldPointCheckBox_Unchecked;
-            if (RotateCheckBox.IsChecked == true)
-                EnableRotateWorldPoint();
             MapGridOutside.MouseMove += MapGridOutsideWorldPointPreview_MouseMove;
             currentCanvas = FindVisualChild<Canvas>(WorldPointSetItemsControl);
             vm.ActivateWorldPointSets();
@@ -1235,10 +1175,6 @@ namespace TPMapEditor
             MoveCheckBox.Unchecked -= MoveWorldPointCheckBox_Unchecked;
             if (MoveCheckBox.IsChecked == true)
                 DisableMoveWorldPoint();
-            RotateCheckBox.Checked -= RotateWorldPointCheckBox_Checked;
-            RotateCheckBox.Unchecked -= RotateWorldPointCheckBox_Unchecked;
-            if (RotateCheckBox.IsChecked == true)
-                DisableRotateWorldPoint();
             MapGridOutside.PreviewMouseLeftButtonDown -= MapGridOutsideWorldPoint_PreviewMouseLeftButtonDown;
             MapGridOutside.PreviewMouseLeftButtonUp -= MapGridOutsideWorldPoint_PreviewMouseLeftButtonUp;
             MapGridOutside.MouseMove -= MapGridOutsideWorldPointPreview_MouseMove;
@@ -1392,37 +1328,6 @@ namespace TPMapEditor
                 var step = GetAcceleratedRotation();
                 var newValue = WorldPointSliderRotate.Value + (e.Delta > 0 ? step : -step);
                 WorldPointSliderRotate.Value = GetRotation(newValue);
-                e.Handled = true;
-            }
-        }
-
-        private void RotateWorldPointCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            EnableRotateWorldPoint();
-        }
-
-        private void RotateWorldPointCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            DisableRotateWorldPoint();
-        }
-
-        private void EnableRotateWorldPoint()
-        {
-            MapGridOutside.MouseWheel += MapGridOutsideWorldPoint_MouseWheel;
-        }
-
-        private void DisableRotateWorldPoint()
-        {
-            MapGridOutside.MouseWheel -= MapGridOutsideWorldPoint_MouseWheel;
-        }
-
-        private void MapGridOutsideWorldPoint_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
-            {
-                var step = GetAcceleratedRotation();
-                step = e.Delta > 0 ? step : -step;
-                vm.RotateTransformSelectedWorldPoints(step);
                 e.Handled = true;
             }
         }

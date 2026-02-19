@@ -21,6 +21,7 @@ using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Services;
 using TPMapEditor.Services.Implementations;
 using TPMapEditor.Settings;
+using TPMapEditor.ViewModel.SelectionTransform;
 
 namespace TPMapEditor.ViewModel
 {
@@ -45,7 +46,7 @@ namespace TPMapEditor.ViewModel
         private double zoom = 1;
 
         [ObservableProperty]
-        private bool isMoveCommandActive, isRotateCommandActive, isRotationOrbit = true, isRotationSpin, isRotationOrbitSpin, canChangeRotationMode;
+        private bool isMoveCommandActive, isRotateCommandActive, canChangeRotationMode;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsTransformingMap))]
@@ -463,23 +464,23 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
         }
 
-        //[RelayCommand]
-        //private void OnAlignTransform()
-        //{
-        //    new SelectionTransformWindow(Application.Current.MainWindow, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        //}
+        [RelayCommand]
+        private void OnAlignTransform()
+        {
+            new SelectionTransformWindow(Application.Current.MainWindow, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
+        }
 
-        //[RelayCommand]
-        //private void OnDistributeTransform()
-        //{
-        //    new SelectionTransformWindow(Application.Current.MainWindow, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        //}
+        [RelayCommand]
+        private void OnDistributeTransform()
+        {
+            new SelectionTransformWindow(Application.Current.MainWindow, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
+        }
 
-        //[RelayCommand]
-        //private void OnTranslateTransform()
-        //{
-        //    new SelectionTransformWindow(Application.Current.MainWindow, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection, IsMovableSelection3D)).Show();
-        //}
+        [RelayCommand]
+        private void OnTranslateTransform()
+        {
+            new SelectionTransformWindow(Application.Current.MainWindow, "Move transform", new TranslateTransformViewModel(undoManagerService, currentMovableSelection, IsMovableSelection3D)).Show();
+        }
 
         [RelayCommand(CanExecute = nameof(CanUndo))]
         private void OnUndo()
@@ -1135,7 +1136,7 @@ namespace TPMapEditor.ViewModel
             //Rotation on IRotatableMapObject
             if (CanChangeRotationMode)
             {
-                InitRotateOrbitSpinTransformMapCommand(0, IsRotationOrbit || IsRotationOrbitSpin, IsRotationSpin || IsRotationOrbitSpin);
+                InitRotateOrbitSpinTransformMapCommand();
             }
             //Rotation on IMovableMapObject
             else
@@ -1144,7 +1145,7 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        private void InitRotateOrbitSpinTransformMapCommand(double rotation, bool isRotationOrbit, bool isRotationSpin)
+        private void InitRotateOrbitSpinTransformMapCommand(double rotation = 0, bool isRotationOrbit = true, bool isRotationSpin = true)
         {
             ClearRotateOrbitSpinTransformMapCommand();
             if (currentRotatableSelection != null && currentRotatableSelection.Count() > 0)
@@ -1169,14 +1170,6 @@ namespace TPMapEditor.ViewModel
             }
             rotateOrbitSpinTransformMapCommand!.Apply();
         }
-
-        //public void RotateOrbitSpinTransformSelection(double rotation)
-        //{
-        //    if (rotateOrbitSpinTransformMapCommand != null)
-        //    {
-        //        rotateOrbitSpinTransformMapCommand!.Rotation += rotation;
-        //    }
-        //}
 
         private void ClearRotateOrbitSpinTransformMapCommand()
         {
@@ -1211,14 +1204,6 @@ namespace TPMapEditor.ViewModel
             rotateOrbitTransformMapCommand!.Apply();
         }
 
-        //public void RotateOrbitTransformSelection(double rotation)
-        //{
-        //    if (rotateOrbitTransformMapCommand != null)
-        //    {
-        //        rotateOrbitTransformMapCommand!.Rotation += rotation;
-        //    }
-        //}
-
         private void ClearRotateOrbitTransformMapCommand()
         {
             if (rotateOrbitTransformMapCommand != null)
@@ -1236,6 +1221,20 @@ namespace TPMapEditor.ViewModel
             {
                 InitRotateTransformMapCommand();
             }
+        }
+
+        public void RotateTransformSelection(double rotation)
+        {
+            if (CanChangeRotationMode)
+                if (rotateOrbitSpinTransformMapCommand != null)
+                    rotateOrbitSpinTransformMapCommand.Rotation = GetRotation(rotateOrbitSpinTransformMapCommand.Rotation + rotation);
+                else
+                    InitRotateOrbitSpinTransformMapCommand(GetRotation(rotation));
+            else
+                if (rotateOrbitTransformMapCommand != null)
+                    rotateOrbitTransformMapCommand.Rotation = GetRotation(rotateOrbitTransformMapCommand.Rotation + rotation);
+                else
+                    InitRotateOrbitTransformMapCommand(GetRotation(rotation));
         }
 
         private void ClearTransformMapCommands()
@@ -1274,41 +1273,6 @@ namespace TPMapEditor.ViewModel
             {
                 ClearRotateOrbitTransformMapCommand();
                 ClearRotateOrbitSpinTransformMapCommand();
-            }
-        }
-
-        partial void OnCanChangeRotationModeChanging(bool value)
-        {
-            if(!value)
-            {
-                IsRotationOrbit = true;
-            }
-        }
-
-        partial void OnIsRotationOrbitChanging(bool value)
-        {
-            if (value)
-            {
-                IsRotationSpin = false;
-                IsRotationOrbitSpin = false;
-            }
-        }
-
-        partial void OnIsRotationSpinChanging(bool value)
-        {
-            if (value)
-            {
-                IsRotationOrbit = false;
-                IsRotationOrbitSpin = false;
-            }
-        }
-
-        partial void OnIsRotationOrbitSpinChanging(bool value)
-        {
-            if (value)
-            {
-                IsRotationOrbit = false;
-                IsRotationSpin = false;
             }
         }
 
@@ -1355,16 +1319,6 @@ namespace TPMapEditor.ViewModel
                     WorldObjectSelectionService.ClearSelection();
                     WorldObjectSelectionService.SelectAndMakeLastSelected(worldObject);
                 }
-            }
-        }
-
-        public void RotateTransformSelectedWorldObjects(int rotation)
-        {
-            for (int i = 0; i < WorldObjectSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var worldObject = WorldObjectSelectionService.SelectedMapObjects[i];
-                var newRotation = worldObject.ZRotation + rotation;
-                worldObject.ZRotation = GetRotation(newRotation);
             }
         }
 
@@ -1436,16 +1390,6 @@ namespace TPMapEditor.ViewModel
                     PlayerSelectionService.ClearSelection();
                     PlayerSelectionService.SelectAndMakeLastSelected(player);
                 }
-            }
-        }
-
-        public void RotateTransformSelectedPlayers(int rotation)
-        {
-            for (int i = 0; i < PlayerSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var player = PlayerSelectionService.SelectedMapObjects[i];
-                var newRotation = player.ZRotation + rotation;
-                player.ZRotation = GetRotation(newRotation);
             }
         }
 
@@ -1930,16 +1874,6 @@ namespace TPMapEditor.ViewModel
                 WorldPointSelectionService.ClearSelection();
                 WorldPointSetSelectionService.SelectAndMakeLastSelectedWithoutPoints(point.Parent);
                 WorldPointSelectionService.SelectAndMakeLastSelected(point);
-            }
-        }
-
-        public void RotateTransformSelectedWorldPoints(int rotation)
-        {
-            for (int i = 0; i < WorldPointSelectionService.SelectedMapObjects.Count; i++)
-            {
-                var worldPoint = WorldPointSelectionService.SelectedMapObjects[i];
-                var newRotation = worldPoint.ZRotation + rotation;
-                worldPoint.ZRotation = GetRotation(newRotation);
             }
         }
 

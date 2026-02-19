@@ -64,11 +64,11 @@
                 <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
             </MenuItem>
             <MenuItem Header="Edit">
-                <!--<MenuItem Header="Transform">
+                <MenuItem Header="Transform">
                     <MenuItem Header="Align" Command="{Binding AlignTransformCommand}"/>
                     <MenuItem Header="Distribute" Command="{Binding DistributeTransformCommand}"/>
                     <MenuItem Header="Move" Command="{Binding TranslateTransformCommand}"/>
-                </MenuItem>-->
+                </MenuItem>
                 <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}"/>
                 <MenuItem Header="Redo" InputGestureText="Ctrl+Shift+Z" Command="{Binding RedoCommand}"/>
             </MenuItem>
@@ -110,16 +110,9 @@
                     <ToggleButton x:Name="MoveCheckBox" ToolTip="Move" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsMoveCommandActive}">
                         <Image Margin="2.5" Source="/Images/Move.png"/>
                     </ToggleButton>
-                    <controls:SplitToggleButton x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0" Padding="2.5" IsChecked="{Binding IsRotateCommandActive}">
-                        <controls:SplitToggleButton.DropDownMenu>
-                            <ContextMenu IsEnabled="{Binding CanChangeRotationMode}">
-                                <MenuItem Header="Orbit" IsCheckable="True" IsChecked="{Binding IsRotationOrbit}"/>
-                                <MenuItem Header="Spin" IsCheckable="True" IsChecked="{Binding IsRotationSpin}"/>
-                                <MenuItem Header="Orbit+Spin" IsCheckable="True" IsChecked="{Binding IsRotationOrbitSpin}"/>
-                            </ContextMenu>
-                        </controls:SplitToggleButton.DropDownMenu>
-                        <Image Source="/Images/Rotate.png"/>
-                    </controls:SplitToggleButton>
+                    <ToggleButton x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsRotateCommandActive}" Checked="RotateCheckBox_Checked" Unchecked="RotateCheckBox_Unchecked">
+                        <Image Margin="2.5" Source="/Images/Rotate.png"/>
+                    </ToggleButton>
                     <Button x:Name="DeleteButton" ToolTip="Delete" Margin="9,0,0,0" Width="25">
                         <Image Source="/Images/RedCross.png"/>
                     </Button>
@@ -867,7 +860,7 @@
                 </Grid>
             </ScrollViewer>
 
-            <Expander Header="{Binding TransformMapCommandTitle}" Visibility="{c:Binding IsTransformingMap}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5" Width="200" Background="#BFBCDDEE">
+            <Expander Header="{Binding TransformMapCommandTitle}" Visibility="{c:Binding IsTransformingMap}" IsExpanded="True" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5" Width="200" Background="#BFBCDDEE">
                 <ContentControl Margin="15,0,15,15" Content="{Binding CurrentMapCommand}"/>
             </Expander>
 
