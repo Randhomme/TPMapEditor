@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using TPMapEditor.ViewModel;
+using System.Diagnostics;
 
 namespace TPMapEditor
 {
@@ -73,25 +74,25 @@ namespace TPMapEditor
         {
             vm.LoadSettings();
             #if !DEBUG //Don't check for updates in debug mode
-            var local = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
-            var latest = await GetLatestGitHubVersionAsync();
-            if (latest != null && latest > local)
-            {
-                if (MessageBox.Show(
-                    $"A new update is available (v{latest}).\n" +
-                    "Do you want to check it out ?",
-                    "Update available",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Information
-                ) == MessageBoxResult.Yes)
+                var local = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
+                var latest = await GetLatestGitHubVersionAsync();
+                if (latest != null && latest > local)
                 {
-                    Process.Start(new ProcessStartInfo
+                    if (MessageBox.Show(
+                        $"A new update is available (v{latest}).\n" +
+                        "Do you want to check it out ?",
+                        "Update available",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information
+                    ) == MessageBoxResult.Yes)
                     {
-                        FileName = "https://github.com/Randhomme/TPMapEditor/releases/latest",
-                        UseShellExecute = true
-                    });
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "https://github.com/Randhomme/TPMapEditor/releases/latest",
+                            UseShellExecute = true
+                        });
+                    }
                 }
-            }
             #endif
         }
 
