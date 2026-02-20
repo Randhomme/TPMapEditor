@@ -2,19 +2,6 @@
                     xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
                     xmlns:vm="clr-namespace:TPMapEditor.ViewModel.SelectionTransform"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <DataTemplate DataType="{x:Type vm:TranslateTransformViewModel}">
-        <StackPanel>
-            <Label Margin="-5,0,0,0" Content="X"/>
-            <Slider Value="{Binding X}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True"/>
-            <Label Margin="-5,5,0,0" Content="Y"/>
-            <Slider Value="{Binding Y}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True"/>
-            <StackPanel Visibility="{c:Binding Is3D}">
-                <Label Margin="-5,5,0,0" Content="Z"/>
-                <Slider Value="{Binding Z}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True"/>
-            </StackPanel>
-        </StackPanel>
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type vm:AlignTransformViewModel}">
         <StackPanel>
             <CheckBox Content="Align on X" IsChecked="{Binding AlignOnX}"/>
