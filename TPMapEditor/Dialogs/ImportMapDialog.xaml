@@ -1,0 +1,51 @@
+﻿<local:DialogWindow x:Class="TPMapEditor.Dialogs.ImportMapDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+        xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        mc:Ignorable="d"
+        Title="ImportMapDialog" Height="450" Width="450">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Label Margin="0,5,5,5" Content="Choose what you want to import"/>
+                <CheckBox Margin="5" Content="Import flags" IsChecked="{Binding ImportFlags}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import groups" IsChecked="{Binding ImportGroups}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import in game teams" IsChecked="{Binding ImportInGameTeams}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import journal entries" IsChecked="{Binding ImportJournalEntries}"/>
+                <CheckBox Margin="5" Content="Import map text points" IsChecked="{Binding ImportMapTextPoints}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import objective points" IsChecked="{Binding ImportObjectivePoints}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import objective tasks" IsChecked="{Binding ImportObjectiveTasks}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import player alliances" IsChecked="{Binding ImportPlayerAlliances}"/>
+                <CheckBox Margin="5" Content="Import players" IsChecked="{Binding ImportPlayers}" IsEnabled="{c:Binding '!ImportWorldRules and !ImportPlayerAlliances'}"/>
+                <CheckBox Margin="5" Content="Import selectable teams" IsChecked="{Binding ImportSelectableTeams}"/>
+                <CheckBox Margin="5" Content="Import speech events" IsChecked="{Binding ImportSpeechEvents}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import timers" IsChecked="{Binding ImportTimers}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import waypoint paths" IsChecked="{Binding ImportWaypointPaths}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import world arms" IsChecked="{Binding ImportWorldArms}"/>
+                <CheckBox Margin="5" Content="Import world crews" IsChecked="{Binding ImportWorldCrews}"/>
+                <CheckBox Margin="5" Content="Import world objects" IsChecked="{Binding ImportWorldObjects}" IsEnabled="{c:Binding '!ImportWorldRules and !ImportGroups'}"/>
+                <CheckBox Margin="5" Content="Import world point sets" IsChecked="{Binding ImportWorldPointSets}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import world polygons" IsChecked="{Binding ImportWorldPolygons}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Import world rules" IsChecked="{Binding ImportWorldRules}"/>
+            </StackPanel>
+        </ScrollViewer>
+        <Grid Grid.Row="1" Margin="0,15,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Check all" MinWidth="85" IsDefault="True" Command="{Binding CheckAllCommand}"/>
+                <Button Content="Uncheck all" MinWidth="85" IsDefault="True" Command="{Binding UncheckAllCommand}" Margin="-1,0,0,0"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click" Margin="15,0,0,0"/>
+        </Grid>
+    </Grid>
+</local:DialogWindow>

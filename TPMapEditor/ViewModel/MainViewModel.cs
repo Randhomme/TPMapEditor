@@ -196,9 +196,13 @@ namespace TPMapEditor.ViewModel
                 {
                     using var di = new DataImport(ofd.FileName, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                     tempMap = di.ReadMapFileAndAddData();
-                });
+                }, true, false);
                 if (tempMap != null)
-                    FuseMap(tempMap);
+                {
+                    var vm = new ImportMapViewModel(Map);
+                    new ImportMapDialog(Application.Current.MainWindow, "Map import settings") { DataContext = vm }.ShowDialog();
+                    vm.ImportMap(tempMap);
+                }
             }
         }
 
@@ -840,142 +844,6 @@ namespace TPMapEditor.ViewModel
             Map.Reset();
             ClearSelections();
             undoManagerService.Clear();
-        }
-
-        /// <summary>
-        /// Adds WorldObjects, SelectableTeams, InGameTeams, Players, Groups, WaypointPaths, WorldPolygons, WorldPointSets, Flags, PlayerAlliances, Timers,
-        /// SpeechEvents, WorldRules, Nebulas, EtheriumCurrents, ShipUnits, ObjectivePoints, ObjectiveTasks, MapTextPoints, JournalEntries, WorldCrews, WorldArms
-        /// from a map to the current map
-        /// </summary>
-        /// <param name="map"></param>
-        private void FuseMap(WorldMap map)
-        {
-            for (int i = 0; i < map.WorldObjects.Count; i++)
-            {
-                var item = map.WorldObjects[i];
-                Map.WorldObjects.Add(item);
-            }
-            for (int i = 0; i < map.SelectableTeams.Count; i++)
-            {
-                var item = map.SelectableTeams[i];
-                Map.SelectableTeams.Add(item);
-            }
-            for (int i = 0; i < map.InGameTeams.Count; i++)
-            {
-                var item = map.InGameTeams[i];
-                Map.InGameTeams.Add(item);
-            }
-            for (int i = 0; i < map.Players.Count; i++)
-            {
-                var item = map.Players[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.Players);
-                Map.Players.Add(item);
-            }
-            for (int i = 0; i < map.Groups.Count; i++)
-            {
-                var item = map.Groups[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.Groups);
-                Map.Groups.Add(item);
-            }
-            for (int i = 0; i < map.WaypointPaths.Count; i++)
-            {
-                var item = map.WaypointPaths[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.WaypointPaths);
-                Map.WaypointPaths.Add(item);
-            }
-            for (int i = 0; i < map.WorldPolygons.Count; i++)
-            {
-                var item = map.WorldPolygons[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.WorldPolygons);
-                Map.WorldPolygons.Add(item);
-            }
-            for (int i = 0; i < map.WorldPointSets.Count; i++)
-            {
-                var item = map.WorldPointSets[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.WorldPointSets);
-                Map.WorldPointSets.Add(item);
-            }
-            for (int i = 0; i < map.Flags.Count; i++)
-            {
-                var item = map.Flags[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.Flags);
-                Map.Flags.Add(item);
-            }
-            for (int i = 0; i < map.Timers.Count; i++)
-            {
-                var item = map.Timers[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.Timers);
-                Map.Timers.Add(item);
-            }
-            for (int i = 0; i < map.SpeechEvents.Count; i++)
-            {
-                var item = map.SpeechEvents[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.SpeechEvents);
-                Map.SpeechEvents.Add(item);
-            }
-            for (int i = 0; i < map.WorldRules.Count; i++)
-            {
-                var item = map.WorldRules[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.WorldRules);
-                Map.WorldRules.Add(item);
-            }
-            for (int i = 0; i < map.Nebulas.Count; i++)
-            {
-                var item = map.Nebulas[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.Nebulas);
-                Map.Nebulas.Add(item);
-            }
-            for (int i = 0; i < map.EtheriumCurrents.Count; i++)
-            {
-                var item = map.EtheriumCurrents[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.EtheriumCurrents);
-                Map.EtheriumCurrents.Add(item);
-            }
-            for (int i = 0; i < map.ShipUnits.Count; i++)
-            {
-                var item = map.ShipUnits[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.ShipUnits);
-                Map.ShipUnits.Add(item);
-            }
-            for (int i = 0; i < map.ObjectivePoints.Count; i++)
-            {
-                var item = map.ObjectivePoints[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.ObjectivePoints);
-                Map.ObjectivePoints.Add(item);
-            }
-            for (int i = 0; i < map.ObjectiveTasks.Count; i++)
-            {
-                var item = map.ObjectiveTasks[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.ObjectiveTasks);
-                Map.ObjectiveTasks.Add(item);
-            }
-            for (int i = 0; i < map.MapTextPoints.Count; i++)
-            {
-                var item = map.MapTextPoints[i];
-                item.Name = NamedObject.GenerateName(item.Name, Map.MapTextPoints);
-                Map.MapTextPoints.Add(item);
-            }
-            for (int i = 0; i < map.PlayerAlliances.Count; i++)
-            {
-                var item = map.PlayerAlliances[i];
-                Map.PlayerAlliances.Add(item);
-            }
-            for (int i = 0; i < map.JournalEntries.Count; i++)
-            {
-                var item = map.JournalEntries[i];
-                Map.JournalEntries.Add(item);
-            }
-            for (int i = 0; i < map.WorldCrews.Count; i++)
-            {
-                var item = map.WorldCrews[i];
-                Map.WorldCrews.Add(item);
-            }
-            for (int i = 0; i < map.WorldArms.Count; i++)
-            {
-                var item = map.WorldArms[i];
-                Map.WorldArms.Add(item);
-            }
-            Map.ReorganizeWorldObjectIds();
         }
 
         /// <summary>
