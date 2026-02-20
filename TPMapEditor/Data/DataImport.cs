@@ -16,9 +16,9 @@ namespace TPMapEditor.Data
     public class DataImport : IDisposable
     {
         private readonly PositionnedStreamReader reader;
-        private WorldMap map;
-        private IProgress<string> progress;
-        private IProgress<string> progressOperation;
+        private readonly WorldMap map;
+        private readonly IProgress<string> progress;
+        private readonly IProgress<string> progressOperation;
         private readonly ICopyPasteService copyPasteService;
         private readonly ICopyPasteService ruleConditionCopyPasteService;
         private readonly ICopyPasteService ruleActionCopyPasteService;
@@ -26,10 +26,10 @@ namespace TPMapEditor.Data
         private readonly ICopyPasteService worldPolygonPointCopyPasteService;
         private readonly ICopyPasteService worldPointCopyPasteService;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
+        public DataImport(string filePath, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
-            this.map = map;
+            this.map = new();
             this.progress = progress;
             this.progressOperation = progressOperation;
             this.copyPasteService = copyPasteService;
@@ -40,7 +40,7 @@ namespace TPMapEditor.Data
             this.worldPointCopyPasteService = worldPointCopyPasteService;
         }
 
-        public void ReadMapFileAndAddData()
+        public WorldMap ReadMapFileAndAddData()
         {
             progressOperation.Report("Begin map import ...");
             var time = DateTime.Now;
@@ -60,6 +60,7 @@ namespace TPMapEditor.Data
                 progress.Report($"An error has occured.\n{ex.Message}");
                 map.Reset();
             }
+            return map;
         }
 
         private void ReadSection(string sectionName, Action action)
