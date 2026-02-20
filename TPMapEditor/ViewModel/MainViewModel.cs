@@ -155,6 +155,30 @@ namespace TPMapEditor.ViewModel
         #region MenuCommands
 
         [RelayCommand]
+        private void OnMapOpenNew()
+        {
+            var ofd = new OpenFileDialog()
+            {
+                Multiselect = false,
+                DefaultExt = ".twt",
+                Filter = "Map file (.twt)|*.twt",
+                Title = "Select a map file",
+            };
+            if (ofd.ShowDialog(Application.Current.MainWindow) == true)
+            {
+                if (MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    MapReset();
+                    new ProgressDialog(Application.Current.MainWindow, "Import map").RunActionSameThread((progress, progressLogs) =>
+                    {
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                        di.ReadMapFileAndAddData();
+                    });
+                }
+            }
+        }
+
+        [RelayCommand]
         private void OnMapImport()
         {
             var ofd = new OpenFileDialog()
@@ -169,14 +193,11 @@ namespace TPMapEditor.ViewModel
                 if (MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     MapReset();
-                    var _lock = new object();
-                    Map.EnableCollectionSynchronization(_lock);
                     new ProgressDialog(Application.Current.MainWindow, "Import map").RunActionSameThread((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, _lock, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                         di.ReadMapFileAndAddData();
                     });
-                    Map.DisableCollectionSynchronization();
                 }
             }
         }

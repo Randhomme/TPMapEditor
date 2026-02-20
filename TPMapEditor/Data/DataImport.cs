@@ -19,7 +19,6 @@ namespace TPMapEditor.Data
         private WorldMap map;
         private IProgress<string> progress;
         private IProgress<string> progressOperation;
-        private object _lock;
         private readonly ICopyPasteService copyPasteService;
         private readonly ICopyPasteService ruleConditionCopyPasteService;
         private readonly ICopyPasteService ruleActionCopyPasteService;
@@ -27,13 +26,12 @@ namespace TPMapEditor.Data
         private readonly ICopyPasteService worldPolygonPointCopyPasteService;
         private readonly ICopyPasteService worldPointCopyPasteService;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, object _lock, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = map;
             this.progress = progress;
             this.progressOperation = progressOperation;
-            this._lock = _lock;
             this.copyPasteService = copyPasteService;
             this.ruleConditionCopyPasteService = ruleConditionCopyPasteService;
             this.ruleActionCopyPasteService = ruleActionCopyPasteService;
@@ -48,15 +46,12 @@ namespace TPMapEditor.Data
             var time = DateTime.Now;
             try
             {
-                lock (_lock)
-                {
-                    //skip comment line
-                    reader.ReadLine();
-                    ReadWorldInfoSection();
-                    ReadGameSection();
-                    ReadWorldSection();
-                    map.ReorganizeWorldObjectIds();
-                }
+                //skip comment line
+                reader.ReadLine();
+                ReadWorldInfoSection();
+                ReadGameSection();
+                ReadWorldSection();
+                map.ReorganizeWorldObjectIds();
                 progressOperation.Report($"Map import completed in {(DateTime.Now - time).TotalSeconds} seconds.");
             }
             catch (Exception ex)
