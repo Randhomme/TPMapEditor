@@ -68,7 +68,6 @@
                 <MenuItem Header="Transform">
                     <MenuItem Header="Align" Command="{Binding AlignTransformCommand}"/>
                     <MenuItem Header="Distribute" Command="{Binding DistributeTransformCommand}"/>
-                    <MenuItem Header="Move" Command="{Binding TranslateTransformCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}"/>
                 <MenuItem Header="Redo" InputGestureText="Ctrl+Shift+Z" Command="{Binding RedoCommand}"/>
