@@ -42,29 +42,33 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public static string GenerateName(string prefix, IEnumerable<INamedObject> collection)
         {
-            int i = prefix.Length - 1;
-            while (i >= 0 && char.IsDigit(prefix[i]))
+            string newPrefix = prefix;
+            int i = newPrefix.Length - 1;
+            while (i >= 0 && char.IsDigit(newPrefix[i]))
             {
                 i--;
             }
 
-            if (i < prefix.Length - 1)
+            if (i < newPrefix.Length - 1)
             {
-                prefix = prefix.Substring(0, i + 1);
+                newPrefix = newPrefix.Substring(0, i + 1);
             }
             var c = 0;
+            bool shouldKeppSameName = true;
             foreach (var namedMapObject in collection)
             {
-                if (namedMapObject.Name.Length >= prefix.Length)
+                if (namedMapObject.Name.StartsWith(newPrefix))
                 {
-                    var s = namedMapObject.Name.Substring(prefix.Length);
+                    if (namedMapObject.Name.Equals(prefix))
+                        shouldKeppSameName = false;
+                    var s = namedMapObject.Name.Substring(newPrefix.Length);
                     if (int.TryParse(s, out int j))
                     {
                         if (j > c) c = j;
                     }
                 }
             }
-            return prefix + (c + 1);
+            return shouldKeppSameName ? prefix : newPrefix + (c + 1);
         }
 
         public override string ToString()
