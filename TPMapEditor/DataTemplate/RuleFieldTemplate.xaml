@@ -35,7 +35,6 @@
         </ContentControl>
     </DataTemplate>
 
-
     <!--Bool-->
     <DataTemplate DataType="{x:Type datarule:RuleFieldBool}">
         <ContentControl Template="{StaticResource RuleFieldTemplate}">
