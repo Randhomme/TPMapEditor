@@ -171,7 +171,7 @@ namespace TPMapEditor.ViewModel
                     MapReset();
                     new ProgressDialog(Application.Current.MainWindow, "Import map").RunAction((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                        using var di = new DataImport(ofd.FileName, null, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                         Map = di.ReadMapFileAndAddData();
                     });
                     OnPropertyChanged(nameof(Map));

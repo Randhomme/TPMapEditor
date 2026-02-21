@@ -27,11 +27,11 @@ namespace TPMapEditor.Data
         private readonly ICopyPasteService worldPolygonPointCopyPasteService;
         private readonly ICopyPasteService worldPointCopyPasteService;
 
-        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
+        public DataImport(string filePath, WorldMap? map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
-            this.originalMap = map;
             this.map = new();
+            this.originalMap = map ?? this.map;
             this.progress = progress;
             this.progressOperation = progressOperation;
             this.copyPasteService = copyPasteService;
@@ -350,7 +350,7 @@ namespace TPMapEditor.Data
                     isValidWorldObject = false;
                 }
 
-                var worldObject = new WorldObject(map, type, 0, 0, 0, 0) { Id = id };
+                var worldObject = new WorldObject(originalMap, type, 0, 0, 0, 0) { Id = id };
 
                 try
                 {
@@ -756,7 +756,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Waypoint Path Info Vector - Element", () =>
             {
-                var waypointPath = new WaypointPath(map, reader.ReadAndParseString("Waypoint Path Name String "), waypointPathPointCopyPasteService);
+                var waypointPath = new WaypointPath(originalMap, reader.ReadAndParseString("Waypoint Path Name String "), waypointPathPointCopyPasteService);
 
                 //Waypoint Path Points - Size
                 var waypointPathPointsCount = reader.ReadAndParseInt("Waypoint Path Points - Size Int ");
@@ -775,7 +775,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Polygons Vectors - Element", () =>
             {
-                var worldPolygon = new WorldPolygon(map, reader.ReadAndParseString("Name String "), worldPolygonPointCopyPasteService);
+                var worldPolygon = new WorldPolygon(originalMap, reader.ReadAndParseString("Name String "), worldPolygonPointCopyPasteService);
 
                 //Points
                 var worldPolygonPointsCount = reader.ReadAndParseInt("Points Int ");
@@ -794,7 +794,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("World Point Sets Vector - Element", () =>
             {
-                var worldPointSet = new WorldPointSet(map, reader.ReadAndParseString("Name String "), worldPointCopyPasteService);
+                var worldPointSet = new WorldPointSet(originalMap, reader.ReadAndParseString("Name String "), worldPointCopyPasteService);
 
                 //Points
                 var worldPointsCount = reader.ReadAndParseInt("World Points - Size Int ");
@@ -861,7 +861,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Flag List - Element", () =>
             {
-                var flag = new Flag(map, reader.ReadAndParseString("Flag Name String "), reader.ReadAndParseBool("Flag Value Bool "));
+                var flag = new Flag(originalMap, reader.ReadAndParseString("Flag Name String "), reader.ReadAndParseBool("Flag Value Bool "));
 
                 map.Flags.Add(flag);
             });
@@ -871,7 +871,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Timer List - Element", () =>
             {
-                var timer = new Timer(map, reader.ReadAndParseString("Timer Name String "), reader.ReadAndParseBool("Timer Status Bool "), 0);
+                var timer = new Timer(originalMap, reader.ReadAndParseString("Timer Name String "), reader.ReadAndParseBool("Timer Status Bool "), 0);
 
                 reader.ReadLine();
                 reader.ReadLine();
@@ -888,7 +888,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Speech Event List - Element", () =>
             {
-                var speechEvent = new SpeechEvent(map, reader.ReadAndParseString("Name String "))
+                var speechEvent = new SpeechEvent(originalMap, reader.ReadAndParseString("Name String "))
                 {
                     SoundFileName = reader.ReadAndParseString("Sound FileName String "),
                     TextColor = reader.ReadAndParseColor("Text Color Colour"),
@@ -921,7 +921,7 @@ namespace TPMapEditor.Data
             {
                 var player0 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player0 Int ")) ?? Player.DefaultPlayer;
                 var player1 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player1 Int ")) ?? Player.DefaultPlayer;
-                var playerAlliance = new PlayerAlliance(map, map.SelectablePlayers, player0, player1);
+                var playerAlliance = new PlayerAlliance(originalMap, map.SelectablePlayers, player0, player1);
                 map.PlayerAlliances.Add(playerAlliance);
             });
         }
@@ -1038,7 +1038,7 @@ namespace TPMapEditor.Data
                     progressOperation.Report($"Reading World Rule section {i + 1} / {ruleListCount} ...");
                     try
                     {
-                        var worldRule = new WorldRule(map, reader.ReadAndParseString("Rule Name String "), ruleConditionCopyPasteService, ruleActionCopyPasteService)
+                        var worldRule = new WorldRule(originalMap, reader.ReadAndParseString("Rule Name String "), ruleConditionCopyPasteService, ruleActionCopyPasteService)
                         {
                             RunOnce = reader.ReadAndParseBool("Run Once Bool ")
                         };
@@ -1077,7 +1077,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Condition List", () =>
             {
-                var condition = new Rule.RuleCondition(map);
+                var condition = new Rule.RuleCondition(originalMap);
                 var typeString = reader.ReadAndParseString("Type String ");
                 var isValidCondition = true;
                 if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleCondition>(typeString, out var type))
@@ -1137,7 +1137,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Action List", () =>
             {
-                var action = new Rule.RuleAction(map);
+                var action = new Rule.RuleAction(originalMap);
                 var typeString = reader.ReadAndParseString("Type String ");
                 var isValidAction = true;
                 if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleAction>(typeString, out var type))
@@ -1282,7 +1282,7 @@ namespace TPMapEditor.Data
                     var etheriumCurrentName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(etheriumCurrentName))
                     {
-                        etheriumCurrentName = NamedObject.GenerateName("EtheriumCurrent", map.EtheriumCurrents);
+                        etheriumCurrentName = NamedObject.GenerateName("EtheriumCurrent", originalMap.EtheriumCurrents);
                         progress.Report($"Warning: Empty etherium current name replaced by {etheriumCurrentName}.");
                     }
                     if (ruleField.Value != null)
@@ -1387,7 +1387,7 @@ namespace TPMapEditor.Data
                                 if (unitName.Equals(ShipUnit.DefaultName))
                                     unit = ShipUnit.DefaultShipUnit;
                                 else
-                                    unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                    unit = originalMap.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                                 if (unit != null)
                                 {
                                     ruleField.SelectedGroup = unitGroup;
@@ -1458,7 +1458,7 @@ namespace TPMapEditor.Data
                     var nebulaName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(nebulaName))
                     {
-                        nebulaName = NamedObject.GenerateName("Nebula", map.Nebulas);
+                        nebulaName = NamedObject.GenerateName("Nebula", originalMap.Nebulas);
                         progress.Report($"Warning: Empty nebula name replaced by {nebulaName}.");
                     }
                     if (ruleField.Value != null)
@@ -1552,7 +1552,7 @@ namespace TPMapEditor.Data
                     var shipUnitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(shipUnitName))
                     {
-                        shipUnitName = NamedObject.GenerateName("Ship", map.ShipUnits);
+                        shipUnitName = NamedObject.GenerateName("Ship", originalMap.ShipUnits);
                         progress.Report($"Warning: Empty unit name replaced by {shipUnitName}.");
                     }
                     if(ruleField.Value!=null)
@@ -1635,7 +1635,7 @@ namespace TPMapEditor.Data
                             if (unitName.Equals(ShipUnit.DefaultName))
                                 unit = ShipUnit.DefaultShipUnit;
                             else
-                                unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                unit = originalMap.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                             if (unit != null)
                             {
                                 ruleField.SelectedGroup = unitGroup;
