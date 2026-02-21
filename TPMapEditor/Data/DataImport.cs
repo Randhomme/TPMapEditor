@@ -17,6 +17,7 @@ namespace TPMapEditor.Data
     {
         private readonly PositionnedStreamReader reader;
         private readonly WorldMap map;
+        private readonly WorldMap originalMap; //used for MapObject.Map
         private readonly IProgress<string> progress;
         private readonly IProgress<string> progressOperation;
         private readonly ICopyPasteService copyPasteService;
@@ -26,9 +27,10 @@ namespace TPMapEditor.Data
         private readonly ICopyPasteService worldPolygonPointCopyPasteService;
         private readonly ICopyPasteService worldPointCopyPasteService;
 
-        public DataImport(string filePath, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
+        public DataImport(string filePath, WorldMap map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
+            this.originalMap = map;
             this.map = new();
             this.progress = progress;
             this.progressOperation = progressOperation;
@@ -128,7 +130,7 @@ namespace TPMapEditor.Data
 
                     reader.ReadLine(); //skip line
 
-                    map.SelectableTeams.Add(new(map, teamName) { Race = race, RaceLocked = raceLocked });
+                    map.SelectableTeams.Add(new(originalMap, teamName) { Race = race, RaceLocked = raceLocked });
                 }
 
                 //Number of Players (playable)
@@ -143,7 +145,7 @@ namespace TPMapEditor.Data
                     //PlayerInfo - TeamIndex
                     var playerTeam = reader.ReadAndParseInt("PlayerInfo - TeamIndex Int ");
 
-                    map.Players.Add(new(map, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, SelectableTeam = playerTeam < 0 ? null : map.SelectableTeams[playerTeam] });
+                    map.Players.Add(new(originalMap, playerName, 0, 0, 0, 0, Colors.Red) { IsPlayable = true, SelectableTeam = playerTeam < 0 ? null : map.SelectableTeams[playerTeam] });
                 }
 
                 //IsCampaign
@@ -244,7 +246,7 @@ namespace TPMapEditor.Data
                 var player = map.Players.FirstOrDefault((p) => p.Name == playerName);
                 if (player is null)
                 {
-                    player = new(map, playerName, 0, 0, 0, 0, Colors.White) { IsPlayable = false };
+                    player = new(originalMap, playerName, 0, 0, 0, 0, Colors.White) { IsPlayable = false };
                     map.Players.Insert(playerIndex, player);
                 }
 
@@ -932,7 +934,7 @@ namespace TPMapEditor.Data
                 var race = (Race)reader.ReadAndParseInt("Race Int ");
                 var raceLocked = reader.ReadAndParseBool("Race Lock Bool ");
 
-                map.InGameTeams.Add(new(map, name) { Race = race, RaceLocked = raceLocked });
+                map.InGameTeams.Add(new(originalMap, name) { Race = race, RaceLocked = raceLocked });
             });
         }
 
@@ -940,7 +942,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Group", () =>
             {
-                var group = new Group(map, reader.ReadAndParseString("Name String "));
+                var group = new Group(originalMap, reader.ReadAndParseString("Name String "));
 
                 //World Object IDs - Size
                 var worldObjectCount = reader.ReadAndParseInt("World Object IDs - Size Int ");
@@ -1021,7 +1023,7 @@ namespace TPMapEditor.Data
                 var position = reader.ReadAndParseVector3("Position Vector3");
                 var visible = reader.ReadAndParseBool("Visible Bool ");
 
-                map.MapTextPoints.Add(new(map, name, text, position.X, position.Y, position.Z, visible));
+                map.MapTextPoints.Add(new(originalMap, name, text, position.X, position.Y, position.Z, visible));
             });
         }
 
@@ -1956,7 +1958,7 @@ namespace TPMapEditor.Data
             {
                 var name = reader.ReadAndParseString("Name String ");
                 var pos = reader.ReadAndParseVector3("Position Vector3");
-                map.ObjectivePoints.Add(new(map, name, pos.X, pos.Y, pos.Z));
+                map.ObjectivePoints.Add(new(originalMap, name, pos.X, pos.Y, pos.Z));
             });
         }
 
@@ -1967,7 +1969,7 @@ namespace TPMapEditor.Data
                 var name = reader.ReadAndParseString("Name String ");
                 var textStringID = reader.ReadAndParseString("TextStringID String ");
 
-                map.ObjectiveTasks.Add(new(map, name, textStringID)
+                map.ObjectiveTasks.Add(new(originalMap, name, textStringID)
                 {
                     Active = reader.ReadAndParseBool("Active Bool "),
                     Completed = reader.ReadAndParseBool("Completed Bool "),
@@ -2004,7 +2006,7 @@ namespace TPMapEditor.Data
                 var speechEventFileName = reader.ReadAndParseString("SpeechEventFileName String ");
                 var pictureTexture = reader.ReadAndParseString("PictureTexture String ");
 
-                map.JournalEntries.Add(new(map, textStringID, speechEventFileName, pictureTexture));
+                map.JournalEntries.Add(new(originalMap, textStringID, speechEventFileName, pictureTexture));
             });
         }
 

@@ -171,7 +171,7 @@ namespace TPMapEditor.ViewModel
                     MapReset();
                     new ProgressDialog(Application.Current.MainWindow, "Import map").RunAction((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                         Map = di.ReadMapFileAndAddData();
                     });
                     OnPropertyChanged(nameof(Map));
@@ -194,14 +194,28 @@ namespace TPMapEditor.ViewModel
                 WorldMap? tempMap = null;
                 new ProgressDialog(Application.Current.MainWindow, "Import map").RunAction((progress, progressLogs) =>
                 {
-                    using var di = new DataImport(ofd.FileName, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                    using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                     tempMap = di.ReadMapFileAndAddData();
                 }, true, false);
                 if (tempMap != null)
                 {
                     var vm = new ImportMapViewModel(Map);
-                    new ImportMapDialog(Application.Current.MainWindow, "Map import settings") { DataContext = vm }.ShowDialog();
-                    vm.ImportMap(tempMap);
+                    var shouldContinue = true;
+                    while (shouldContinue)
+                    {
+                        if (new ImportMapDialog(Application.Current.MainWindow, "Map import settings") { DataContext = vm }.ShowDialog() == true)
+                        {
+                            vm.ImportMap(tempMap);
+                            shouldContinue = false;
+                        }
+                        else
+                        {
+                            if(MessageBox.Show("Do you want to cancel the import ?", "Cancel map import ?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                shouldContinue = false;
+                            }
+                        }
+                    }
                 }
             }
         }
