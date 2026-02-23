@@ -1,22 +1,42 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
-    public class AlignTransformMapCommand : TransformMovableMapObjectCommand
+    public partial class AlignTransformMapCommand : TransformMovableMapObjectCommand
     {
-        public bool AlignOnX { get; set; } = false;
-        public bool AlignOnY { get; set; } = false;
-        public bool AlignOnZ { get; set; } = false;
-        public double X { get; set; } = 0;
-        public double Y { get; set; } = 0;
-        public double Z { get; set; } = 0;
+        [ObservableProperty]
+        private bool alignOnX, alignOnY, alignOnZ;
 
-        public AlignTransformMapCommand(IEnumerable<IMovableMapObject> targets) : base(targets)
+        [ObservableProperty]
+        private double x, y, z;
+
+        private double xBefore, yBefore, zBefore;
+
+        public bool Is3D { get; }
+
+        public AlignTransformMapCommand(IEnumerable<IMovableMapObject> targets, bool is3D) : base(targets)
         {
+            xBefore = x;
+            yBefore = y;
+            zBefore = z;
+            Is3D = is3D;
+        }
+
+        public override void Undo()
+        {
+            (xBefore, X) = (X, xBefore);
+            (yBefore, Y) = (Y, yBefore);
+            (zBefore, Z) = (Z, zBefore);
+            base.Undo();
+        }
+
+        public override void Redo()
+        {
+            base.Redo();
+            (xBefore, X) = (X, xBefore);
+            (yBefore, Y) = (Y, yBefore);
+            (zBefore, Z) = (Z, zBefore);
         }
 
         public override void Apply()

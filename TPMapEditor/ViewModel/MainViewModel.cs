@@ -21,7 +21,6 @@ using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Services;
 using TPMapEditor.Services.Implementations;
 using TPMapEditor.Settings;
-using TPMapEditor.ViewModel.SelectionTransform;
 
 namespace TPMapEditor.ViewModel
 {
@@ -46,12 +45,14 @@ namespace TPMapEditor.ViewModel
         private double zoom = 1;
 
         [ObservableProperty]
-        private bool isSelectCommandActive = true, isMoveCommandActive, isRotateCommandActive, canChangeRotationMode;
+        private bool isSelectCommandActive = true, isMoveCommandActive, isRotateCommandActive, canChangeRotationMode, isAlignCommandActive, isDistributeCommandActive;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsTransformingMap))]
         private IUndoableMapCommand? currentMapCommand;
 
+        private AlignTransformMapCommand? alignTransformMapCommand;
+        private DistributeTransformMapCommand? distributeTransformMapCommand;
         private TranslateTransformMapCommand? translateTransformMapCommand;
         private RotateOrbitSpinTransformMapCommand? rotateOrbitSpinTransformMapCommand;
         private RotateOrbitTransformMapCommand? rotateOrbitTransformMapCommand;
@@ -142,6 +143,10 @@ namespace TPMapEditor.ViewModel
                 (Key.NumPad2, ModifierKeys.None, ToggleMoveActionCommand),
                 (Key.D3, ModifierKeys.None, ToggleRotateActionCommand),
                 (Key.NumPad3, ModifierKeys.None, ToggleRotateActionCommand),
+                (Key.D4, ModifierKeys.None, ToggleAlignActionCommand),
+                (Key.NumPad4, ModifierKeys.None, ToggleAlignActionCommand),
+                (Key.D5, ModifierKeys.None, ToggleDistributeActionCommand),
+                (Key.NumPad5, ModifierKeys.None, ToggleDistributeActionCommand),
             };
             WorldObjectSelectionService.SelectionChanged += SelectionService_SelectionChanged;
             PlayerSelectionService.SelectionChanged += SelectionService_SelectionChanged;
@@ -509,20 +514,6 @@ namespace TPMapEditor.ViewModel
             copyPasteService.ClearClipboard();
         }
 
-        [RelayCommand]
-        private void OnAlignTransform()
-        {
-            ClearTransformMapCommands();
-            new SelectionTransformWindow(Application.Current.MainWindow, "Align transform", new AlignTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        }
-
-        [RelayCommand]
-        private void OnDistributeTransform()
-        {
-            ClearTransformMapCommands();
-            new SelectionTransformWindow(Application.Current.MainWindow, "Distribute transform", new DistributeTransformViewModel(undoManagerService, currentMovableSelection) { Is3D = IsMovableSelection3D }).Show();
-        }
-
         [RelayCommand(CanExecute = nameof(CanUndo))]
         private void OnUndo()
         {
@@ -849,6 +840,18 @@ namespace TPMapEditor.ViewModel
             IsRotateCommandActive = !IsRotateCommandActive;
         }
 
+        [RelayCommand]
+        private void OnToggleAlignAction()
+        {
+            IsAlignCommandActive = !IsAlignCommandActive;
+        }
+
+        [RelayCommand]
+        private void OnToggleDistributeAction()
+        {
+            IsDistributeCommandActive = !IsDistributeCommandActive;
+        }
+
         #endregion
 
         #region UtilMethods
@@ -1148,6 +1151,90 @@ namespace TPMapEditor.ViewModel
             return rotation;
         }
 
+        public void InitAlignTransformCommand(bool alignOnX = false, bool alignOnY = false, bool alignOnZ = false, double x = 0, double y = 0, double z = 0)
+        {
+            ClearAlignTransformMapCommand();
+            if (currentMovableSelection.Count() > 0)
+            {
+                alignTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D) { AlignOnX = alignOnX, AlignOnY = alignOnY, AlignOnZ = alignOnZ, X = x, Y = y, Z = z };
+                alignTransformMapCommand.PropertyChanged += AlignTransformMapCommand_PropertyChanged;
+                CurrentMapCommand = alignTransformMapCommand;
+                shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
+                TransformMapCommandTitle = "Align";
+            }
+        }
+
+        private void ClearAlignTransformMapCommand()
+        {
+            if (alignTransformMapCommand != null)
+                alignTransformMapCommand.PropertyChanged -= AlignTransformMapCommand_PropertyChanged;
+            CurrentMapCommand = alignTransformMapCommand = null;
+        }
+
+        private void AlignTransformMapCommand_PropertyChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (!alignTransformMapCommand!.CanUndo)
+                InitAlignTransformCommand(alignTransformMapCommand.AlignOnX, alignTransformMapCommand.AlignOnY, alignTransformMapCommand.AlignOnZ, alignTransformMapCommand.X, alignTransformMapCommand.Y, alignTransformMapCommand.Z);
+            shouldCommitTransformMapCommand = true;
+            if (shouldCommitTransformMapCommand && !hasCommittedTransformMapCommand)
+            {
+                undoManagerService.Push(alignTransformMapCommand!);
+                hasCommittedTransformMapCommand = true;
+            }
+            alignTransformMapCommand!.Apply();
+        }
+
+        public void AlignTransformSelection(double x, double y)
+        {
+            if (alignTransformMapCommand != null)
+            {
+                alignTransformMapCommand!.X += x;
+                alignTransformMapCommand!.Y += y;
+            }
+        }
+
+        public void InitDistributeTransformCommand(bool distributeOnX = false, bool distributeOnY = false, bool distributeOnZ = false, double x = 0, double y = 0, double z = 0)
+        {
+            ClearDistributeTransformMapCommand();
+            if (currentMovableSelection.Count() > 0)
+            {
+                distributeTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D) { DistributeOnX = distributeOnX, DistributeOnY = distributeOnY, DistributeOnZ = distributeOnZ, X = x, Y = y, Z = z };
+                distributeTransformMapCommand.PropertyChanged += DistributeTransformMapCommand_PropertyChanged;
+                CurrentMapCommand = distributeTransformMapCommand;
+                shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
+                TransformMapCommandTitle = "Distribute";
+            }
+        }
+
+        private void ClearDistributeTransformMapCommand()
+        {
+            if (distributeTransformMapCommand != null)
+                distributeTransformMapCommand.PropertyChanged -= DistributeTransformMapCommand_PropertyChanged;
+            CurrentMapCommand = distributeTransformMapCommand = null;
+        }
+
+        private void DistributeTransformMapCommand_PropertyChanged(object s, PropertyChangedEventArgs e)
+        {
+            if (!distributeTransformMapCommand!.CanUndo)
+                InitDistributeTransformCommand(distributeTransformMapCommand.DistributeOnX, distributeTransformMapCommand.DistributeOnY, distributeTransformMapCommand.DistributeOnZ, distributeTransformMapCommand.X, distributeTransformMapCommand.Y, distributeTransformMapCommand.Z);
+            shouldCommitTransformMapCommand = true;
+            if (shouldCommitTransformMapCommand && !hasCommittedTransformMapCommand)
+            {
+                undoManagerService.Push(distributeTransformMapCommand!);
+                hasCommittedTransformMapCommand = true;
+            }
+            distributeTransformMapCommand!.Apply();
+        }
+
+        public void DistributeTransformSelection(double x, double y)
+        {
+            if (distributeTransformMapCommand != null)
+            {
+                distributeTransformMapCommand!.X += x;
+                distributeTransformMapCommand!.Y += y;
+            }
+        }
+
         public void InitTranslateTransformCommand(double x = 0, double y = 0, double z = 0)
         {
             ClearTranslateTransformMapCommand();
@@ -1270,18 +1357,6 @@ namespace TPMapEditor.ViewModel
             CurrentMapCommand = rotateOrbitTransformMapCommand = null;
         }
 
-        private void InitTransformCommandsIfPossible()
-        {
-            if (IsMoveCommandActive)
-            {
-                InitTranslateTransformCommand();
-            }
-            else if (IsRotateCommandActive)
-            {
-                InitRotateTransformMapCommand();
-            }
-        }
-
         public void RotateTransformSelection(double rotation)
         {
             if (CanChangeRotationMode)
@@ -1296,11 +1371,33 @@ namespace TPMapEditor.ViewModel
                     InitRotateOrbitTransformMapCommand(GetRotation(rotation));
         }
 
+        private void InitTransformCommandsIfPossible()
+        {
+            if (IsMoveCommandActive)
+            {
+                InitTranslateTransformCommand();
+            }
+            else if (IsRotateCommandActive)
+            {
+                InitRotateTransformMapCommand();
+            }
+            else if (IsAlignCommandActive)
+            {
+                InitAlignTransformCommand();
+            }
+            else if (IsDistributeCommandActive)
+            {
+                InitDistributeTransformCommand();
+            }
+        }
+
         private void ClearTransformMapCommands()
         {
             ClearTranslateTransformMapCommand();
             ClearRotateOrbitSpinTransformMapCommand();
             ClearRotateOrbitTransformMapCommand();
+            ClearAlignTransformMapCommand();
+            ClearDistributeTransformMapCommand();
         }
 
         private void SelectionService_SelectionChanged(object s, NotifyCollectionChangedEventArgs e)
@@ -1312,7 +1409,7 @@ namespace TPMapEditor.ViewModel
         {
             if (value)
             {
-                IsRotateCommandActive = false;
+                IsRotateCommandActive = IsAlignCommandActive = IsDistributeCommandActive = false;
                 InitTranslateTransformCommand();
             }
             else
@@ -1325,13 +1422,39 @@ namespace TPMapEditor.ViewModel
         {
             if (value)
             {
-                IsMoveCommandActive = false;
+                IsMoveCommandActive = IsAlignCommandActive = IsDistributeCommandActive = false;
                 InitRotateTransformMapCommand();
             }
             else
             {
                 ClearRotateOrbitTransformMapCommand();
                 ClearRotateOrbitSpinTransformMapCommand();
+            }
+        }
+
+        partial void OnIsAlignCommandActiveChanging(bool value)
+        {
+            if (value)
+            {
+                IsRotateCommandActive = IsMoveCommandActive = IsDistributeCommandActive = false;
+                InitAlignTransformCommand();
+            }
+            else
+            {
+                ClearAlignTransformMapCommand();
+            }
+        }
+
+        partial void OnIsDistributeCommandActiveChanging(bool value)
+        {
+            if (value)
+            {
+                IsRotateCommandActive = IsAlignCommandActive = IsMoveCommandActive = false;
+                InitDistributeTransformCommand();
+            }
+            else
+            {
+                ClearDistributeTransformMapCommand();
             }
         }
 

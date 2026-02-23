@@ -65,10 +65,6 @@
                 <MenuItem Header="World rules" Command="{Binding WorldRulesEditCommand}"/>
             </MenuItem>
             <MenuItem Header="Edit">
-                <MenuItem Header="Transform">
-                    <MenuItem Header="Align" Command="{Binding AlignTransformCommand}"/>
-                    <MenuItem Header="Distribute" Command="{Binding DistributeTransformCommand}"/>
-                </MenuItem>
                 <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}"/>
                 <MenuItem Header="Redo" InputGestureText="Ctrl+Shift+Z" Command="{Binding RedoCommand}"/>
             </MenuItem>
@@ -112,6 +108,14 @@
                     </ToggleButton>
                     <ToggleButton x:Name="RotateCheckBox" ToolTip="Rotate" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsRotateCommandActive}" Checked="RotateCheckBox_Checked" Unchecked="RotateCheckBox_Unchecked">
                         <Image Margin="2.5" Source="/Images/Rotate.png"/>
+                    </ToggleButton>
+                    <ToggleButton x:Name="AlignCheckBox" ToolTip="Align" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsAlignCommandActive}">
+                        <!--<Image Margin="2.5" Source="/Images/Rotate.png"/>-->
+                        D
+                    </ToggleButton>
+                    <ToggleButton x:Name="DistributeCheckBox" ToolTip="Distribute" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsDistributeCommandActive}">
+                        <!--<Image Margin="2.5" Source="/Images/Rotate.png"/>-->
+                        A
                     </ToggleButton>
                     <Button x:Name="DeleteButton" ToolTip="Delete" Margin="9,0,0,0" Width="25">
                         <Image Source="/Images/RedCross.png"/>
@@ -867,7 +871,7 @@
             <!-- Column 1 (right) -->
             <Expander Grid.Column="1" ExpandDirection="Left" IsExpanded="True" Margin="-1">
                 <Expander.Header>
-                    <TextBlock Text="Actions / Selected object / Mini map" FontSize="14">
+                    <TextBlock Text="Actions / Selected object" FontSize="14">
                         <TextBlock.LayoutTransform>
                             <RotateTransform Angle="90"/>
                         </TextBlock.LayoutTransform>
