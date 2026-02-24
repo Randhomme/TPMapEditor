@@ -110,12 +110,10 @@
                         <Image Margin="2.5" Source="/Images/Rotate.png"/>
                     </ToggleButton>
                     <ToggleButton x:Name="AlignCheckBox" ToolTip="Align" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsAlignCommandActive}">
-                        <!--<Image Margin="2.5" Source="/Images/Rotate.png"/>-->
-                        D
+                        <Image Margin="2.5" Source="/Images/Align.png"/>
                     </ToggleButton>
                     <ToggleButton x:Name="DistributeCheckBox" ToolTip="Distribute" Margin="-1,0,0,0" Width="25" IsChecked="{Binding IsDistributeCommandActive}">
-                        <!--<Image Margin="2.5" Source="/Images/Rotate.png"/>-->
-                        A
+                        <Image Margin="2.5" Source="/Images/Distribute.png"/>
                     </ToggleButton>
                     <Button x:Name="DeleteButton" ToolTip="Delete" Margin="9,0,0,0" Width="25">
                         <Image Source="/Images/RedCross.png"/>

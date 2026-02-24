@@ -24,10 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Nebula.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="render_topdown.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -61,6 +57,7 @@
 
   <ItemGroup>
     <Resource Include="Images\Ai.png" />
+    <Resource Include="Images\Align.png" />
     <Resource Include="Images\AlphaBg.png" />
     <Resource Include="Images\Arrow.png" />
     <Resource Include="Images\ArrowDown.png" />
@@ -68,6 +65,7 @@
     <Resource Include="Images\bg.png" />
     <Resource Include="Images\Cross.png" />
     <Resource Include="Images\Default.png" />
+    <Resource Include="Images\Distribute.png" />
     <Resource Include="Images\Minus.png" />
     <Resource Include="Images\Move.png" />
     <Resource Include="Images\Nebula.png" />
