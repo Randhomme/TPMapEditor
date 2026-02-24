@@ -4,7 +4,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DataTemplate DataType="{x:Type impls:AlignTransformMapCommand}">
         <StackPanel>
-            <CheckBox Content="Align on X" IsChecked="{Binding AlignOnX}"/>
+            <CheckBox Margin="0,15,0,0" Content="Align on X" IsChecked="{Binding AlignOnX}"/>
             <Label Margin="-5,0,0,0" Content="X"/>
             <Slider Value="{Binding X}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True" IsEnabled="{Binding AlignOnX}"/>
             <CheckBox Margin="0,15,0,0" Content="Align on Y" IsChecked="{Binding AlignOnY}"/>
@@ -19,7 +19,7 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type impls:DistributeTransformMapCommand}">
         <StackPanel>
-            <CheckBox Content="Distribute on X" IsChecked="{Binding DistributeOnX}"/>
+            <CheckBox Margin="0,15,0,0" Content="Distribute on X" IsChecked="{Binding DistributeOnX}"/>
             <Label Margin="-5,0,0,0" Content="X"/>
             <Slider Value="{Binding X}" Minimum="-9999" Maximum="9999" TickFrequency="1" IsSnapToTickEnabled="True" IsEnabled="{Binding DistributeOnX}"/>
             <CheckBox Margin="0,15,0,0" Content="Distribute on Y" IsChecked="{Binding DistributeOnY}"/>
