@@ -400,7 +400,7 @@
                                                 PreviewMouseLeftButtonDown="OnPlayerClicked">
                                                 <Border.RenderTransform>
                                                     <TransformGroup>
-                                                        <RotateTransform Angle="{Binding Rotation}"/>
+                                                        <RotateTransform Angle="{Binding ZRotation}"/>
                                                         <ScaleTransform
                                                             ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
                                                             ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
