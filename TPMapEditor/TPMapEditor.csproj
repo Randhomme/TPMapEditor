@@ -56,6 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="GameImpl.wot" />
     <Resource Include="Images\Ai.png" />
     <Resource Include="Images\Align.png" />
     <Resource Include="Images\AlphaBg.png" />

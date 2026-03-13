@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Enums;
 using TPMapEditor.Utils;
@@ -40,6 +41,7 @@ namespace TPMapEditor.Data
                 WriteWorldInfoSection(baseLevel);
                 WriteGameSection(baseLevel);
                 WriteWorldSection(baseLevel);
+                WriteGameImplSection(baseLevel);
 
                 progressOperation.Report($"Map export completed in {(DateTime.Now - time).TotalSeconds} seconds.");
             }
@@ -666,6 +668,24 @@ namespace TPMapEditor.Data
                 WriteLineLevel($"Position Vector3( {point.X:F6}, {point.Y:F6}, {point.Z:F6} )", level);
                 WriteLineLevel($"Visible Bool {point.Visible}", level);
             }, level);
+        }
+
+        #endregion
+
+        #region GameImpl
+
+        private void WriteGameImplSection(int level = 0)
+        {
+            var uri = new Uri("GameImpl.wot", UriKind.Relative);
+            var resourceStream = Application.GetResourceStream(uri);
+            using (StreamReader streamReader = new(resourceStream.Stream))
+            {
+                string line = "";
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    WriteLineLevel(line, level);
+                }
+            }
         }
 
         #endregion
