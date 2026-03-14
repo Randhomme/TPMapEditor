@@ -3,14 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using TPMapEditor.Data;
-using TPMapEditor.Enums;
 using TPMapEditor.Enums.WorldObjectDefinition;
 
 namespace TPMapEditor.Settings

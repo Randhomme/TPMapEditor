@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace TPMapEditor.Data.Rule
 {

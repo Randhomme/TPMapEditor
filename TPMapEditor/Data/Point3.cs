@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows;
 
 namespace TPMapEditor.Data
 {

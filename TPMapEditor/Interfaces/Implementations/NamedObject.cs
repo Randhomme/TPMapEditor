@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using TPMapEditor.Interfaces;
 using TPMapEditor.Utils;
 
 namespace TPMapEditor.Interfaces.Implementations

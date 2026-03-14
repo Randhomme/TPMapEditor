@@ -1,5 +1,4 @@
 ﻿using TPMapEditor.Data;
-using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.Interfaces.Implementations
 {

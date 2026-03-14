@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TPMapEditor.Enums
+﻿namespace TPMapEditor.Enums
 {
     /// <summary>
     /// Used by "Player Killed A Object" rule condition

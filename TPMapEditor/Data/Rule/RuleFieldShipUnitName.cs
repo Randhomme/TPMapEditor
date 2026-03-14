@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
-
-namespace TPMapEditor.Data.Rule
+﻿namespace TPMapEditor.Data.Rule
 {
     public class RuleFieldShipUnitName : RuleField<ShipUnit>
     {

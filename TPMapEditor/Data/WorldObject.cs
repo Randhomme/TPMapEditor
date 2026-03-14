@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Xml.Linq;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 

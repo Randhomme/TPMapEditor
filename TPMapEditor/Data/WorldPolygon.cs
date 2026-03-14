@@ -8,7 +8,6 @@ using System.Windows.Media;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Services;
-using TPMapEditor.Services.Implementations;
 
 namespace TPMapEditor.Data
 {
