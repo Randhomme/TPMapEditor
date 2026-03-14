@@ -96,12 +96,12 @@ namespace TPMapEditor.Utils
             float.TryParse(values[0], out var x1);
             float.TryParse(values[1], out var x2);
             float.TryParse(values[2], out var x3);
-            float.TryParse(values[0], out var y1);
-            float.TryParse(values[1], out var y2);
-            float.TryParse(values[2], out var y3);
-            float.TryParse(values[0], out var z1);
-            float.TryParse(values[1], out var z2);
-            float.TryParse(values[2], out var z3);
+            float.TryParse(values[3], out var y1);
+            float.TryParse(values[4], out var y2);
+            float.TryParse(values[5], out var y3);
+            float.TryParse(values[6], out var z1);
+            float.TryParse(values[7], out var z2);
+            float.TryParse(values[8], out var z3);
             return (new Vector3(x1, x2, x3), new Vector3(y1, y2, y3), new Vector3(z1, z2, z3));
 
         }

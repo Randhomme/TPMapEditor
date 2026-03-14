@@ -40,11 +40,15 @@ namespace TPMapEditor.Utils
                 z = -Math.Atan2(-m.M21, m.M22);
             }
 
+            x = Math.Round(x * 180.0 / Math.PI);
+            y = Math.Round(y * 180.0 / Math.PI);
+            z = Math.Round(z * 180.0 / Math.PI);
+
             // Convert to degrees
             return new Vector3(
-                (float)Math.Round(x * 180.0 / Math.PI),
-                (float)Math.Round(y * 180.0 / Math.PI),
-                (float)Math.Round(z * 180.0 / Math.PI)
+                (float)x + 90,
+                (float)y,
+                (float)z
             );
         }
 
@@ -53,7 +57,7 @@ namespace TPMapEditor.Utils
         /// </summary>
         public static double[,] EulerXYZToMatrix33(double rotXDeg, double rotYDeg, double rotZDeg)
         {
-            double x = rotXDeg * Math.PI / 180;
+            double x = NormalizeAngle(rotXDeg - 90) * Math.PI / 180;
             double y = rotYDeg * Math.PI / 180;
             double z = (-rotZDeg) * Math.PI / 180;
 
