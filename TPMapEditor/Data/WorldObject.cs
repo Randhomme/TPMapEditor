@@ -15,7 +15,7 @@ namespace TPMapEditor.Data
         [property: Required(ErrorMessage = "The WorldObjectType is required.")]
         private WorldObjectType type;
         [ObservableProperty]
-        private double x, y, z, xRotation, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)
+        private double x, y, z, xRotation = 90, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)
         [ObservableProperty]
         private Group? group;
         [ObservableProperty]
@@ -62,7 +62,6 @@ namespace TPMapEditor.Data
             this.x = x;
             this.y = y;
             this.z = z;
-            this.xRotation = this.yRotation = 0;
             this.zRotation = zRotation;
             this.id = nextId++;
         }
