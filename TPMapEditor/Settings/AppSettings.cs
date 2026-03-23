@@ -999,7 +999,7 @@ namespace TPMapEditor.Settings
                                     using var stream = File.OpenRead($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Name}.xml");
                                     var serializer = new XmlSerializer(typeof(WorldObjectTypeXml));
                                     var xmlData = (WorldObjectTypeXml)serializer.Deserialize(stream);
-                                    wot.Pivot = new(xmlData.PivotX, xmlData.PivotY);
+                                    wot.Pivot = new(xmlData.CenterX, -xmlData.CenterY); // Y is down on wpf canvas
                                 }
                                 catch
                                 {
