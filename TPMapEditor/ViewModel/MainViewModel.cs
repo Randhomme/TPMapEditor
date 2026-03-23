@@ -1516,6 +1516,9 @@ namespace TPMapEditor.ViewModel
 
         public void CreateWorldObject(double x, double y, double z, double zRotation)
         {
+            var zRotationRad = zRotation * Math.PI / 180;
+            x -= Math.Cos(zRotationRad) * SelectedWorldObjectType!.Pivot.X + Math.Sin(zRotationRad) * SelectedWorldObjectType!.Pivot.Y;
+            y += Math.Cos(zRotationRad) * SelectedWorldObjectType!.Pivot.Y - Math.Sin(zRotationRad) * SelectedWorldObjectType!.Pivot.X;
             var wot = new WorldObject(Map, SelectedWorldObjectType!, x, y, z, zRotation);
             Map.WorldObjects.Add(wot);
             WorldObjectSelectionService.SelectAndMakeLastSelected(wot);
