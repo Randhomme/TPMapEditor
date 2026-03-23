@@ -64,8 +64,8 @@ size_y = max_y - min_y
 center_x = (min_x + max_x) / 2
 center_y = (min_y + max_y) / 2
 
-pivot_norm_x = (obj.location.x - min_x) / (max_x - min_x)
-pivot_norm_y = (obj.location.y - min_y) / (max_y - min_y)
+# pivot_norm_x = (obj.location.x - min_x) / (max_x - min_x)
+# pivot_norm_y = (obj.location.y - min_y) / (max_y - min_y)
 
 # ------------------------------------------------------
 # CAMERA ORTHO TOP-DOWN
@@ -179,8 +179,8 @@ xml_path = output_png.replace(".png", ".xml")
 obj_node = ET.Element("Object")
 
 ET.SubElement(obj_node, "Name").text = os.path.splitext(os.path.basename(input_obj))[0]
-ET.SubElement(obj_node, "PivotX").text = str(round(pivot_norm_x, 6))
-ET.SubElement(obj_node, "PivotY").text = str(round(1-pivot_norm_y, 6))
+ET.SubElement(obj_node, "CenterX").text = str(round(center_x, 6))
+ET.SubElement(obj_node, "CenterY").text = str(round(center_y, 6))
 
 tree = ET.ElementTree(obj_node)
 
