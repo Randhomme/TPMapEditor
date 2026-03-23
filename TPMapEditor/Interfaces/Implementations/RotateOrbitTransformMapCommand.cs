@@ -47,7 +47,7 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public override void Apply()
         {
-            double rotationRad = -Rotation * Math.PI / 180.0;
+            double rotationRad = Rotation * Math.PI / 180.0;
             double cos = Math.Cos(rotationRad);
             double sin = Math.Sin(rotationRad);
 
