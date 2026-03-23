@@ -72,11 +72,11 @@ namespace TPMapEditor.Data
         [XmlElement("Name")]
         public string Name { get; set; } = string.Empty;
 
-        [XmlElement("PivotX")]
-        public double PivotX { get; set; }
+        [XmlElement("CenterX")]
+        public double CenterX { get; set; }
 
-        [XmlElement("PivotY")]
-        public double PivotY { get; set; }
+        [XmlElement("CenterY")]
+        public double CenterY { get; set; }
     }
 
 }
