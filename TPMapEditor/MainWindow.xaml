@@ -207,7 +207,7 @@
                                     <Rectangle x:Name="SelectionRectangle" Stroke="OrangeRed" StrokeThickness="{Binding ZoomedBorderThicknessSmall}" Width="0" Height="0"/>
 
                                     <!-- Preview WorldObject -->
-                                    <Border x:Name="WorldObjectPreviewControl" BorderThickness="{Binding ZoomedBorderThicknessSmall}" RenderTransformOrigin="{Binding SelectedWorldObjectType.Pivot}" Visibility="{c:Binding 'SelectedWorldObjectType!=null'}" PreviewMouseLeftButtonUp="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown" MouseWheel="WorldObjectPreviewControl_MouseWheel">
+                                    <Border x:Name="WorldObjectPreviewControl" BorderThickness="{Binding ZoomedBorderThicknessSmall}" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding 'SelectedWorldObjectType!=null'}" PreviewMouseLeftButtonUp="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown" MouseWheel="WorldObjectPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{c:Binding ElementName=WotSliderRotate, Path='-Value'}"/>
                                         </Border.RenderTransform>
@@ -335,10 +335,13 @@
                                             <Border x:Name="border"
                                                 BorderThickness="2.5"
                                                 BorderBrush="Transparent"
-                                                RenderTransformOrigin="{Binding Type.Pivot}"
+                                                RenderTransformOrigin="0.5,0.5"
                                                 PreviewMouseLeftButtonDown="OnWorldObjectClicked">
                                                 <Border.RenderTransform>
-                                                    <RotateTransform Angle="{Binding DisplayedZRotation}"/>
+                                                    <TransformGroup>
+                                                        <TranslateTransform X="{Binding Type.Pivot.X}" Y="{Binding Type.Pivot.Y}"/>
+                                                        <RotateTransform Angle="{Binding DisplayedZRotation}"/>
+                                                    </TransformGroup>
                                                 </Border.RenderTransform>
                                                 <Border BorderThickness="2.5">
                                                     <Border.BorderBrush>
