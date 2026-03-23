@@ -164,7 +164,7 @@ namespace TPMapEditor.Data
                 WriteLineLevel("Is Used In Game Bool False", level); // False for now, maybe state ?
                 WriteLineLevel("Multiplayer Name String ''", level); //Empty for now, maybe state ?
                 WriteLineLevel($"StartPoint Vector3( {player.X:F6}, {player.Y:F6}, {player.Z:F6} )", level);
-                var playerRotationRad = player.ZRotation * (float)Math.PI / 180f;
+                var playerRotationRad = -player.ZRotation * (float)Math.PI / 180f;
                 WriteLineLevel($"StartPointForwardVector Vector3( {Math.Sin(playerRotationRad):F6}, {Math.Cos(playerRotationRad):F6}, 0.000000 )", level);
                 var raceInt = player.InGameTeam is null ? 4 : (int)player.InGameTeam.Race;
                 WriteLineLevel($"Race Int {raceInt}", level);

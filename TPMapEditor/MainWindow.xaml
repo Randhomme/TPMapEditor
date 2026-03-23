@@ -209,7 +209,7 @@
                                     <!-- Preview WorldObject -->
                                     <Border x:Name="WorldObjectPreviewControl" BorderThickness="{Binding ZoomedBorderThicknessSmall}" RenderTransformOrigin="{Binding SelectedWorldObjectType.Pivot}" Visibility="{c:Binding 'SelectedWorldObjectType!=null'}" PreviewMouseLeftButtonUp="WorldObjectPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldObjectPreviewControl_MouseRightButtonDown" MouseWheel="WorldObjectPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
-                                            <RotateTransform Angle="{Binding ElementName=WotSliderRotate, Path=Value}"/>
+                                            <RotateTransform Angle="{c:Binding ElementName=WotSliderRotate, Path='-Value'}"/>
                                         </Border.RenderTransform>
                                         <Image Source="{Binding SelectedWorldObjectType.Image}"/>
                                     </Border>
@@ -218,7 +218,7 @@
                                     <Border x:Name="PlayerPreviewControl" Width="20" Height="20" RenderTransformOrigin="0.5,0.5" Visibility="{c:Binding ElementName=AddPlayerCheckBox, Path=IsChecked}" PreviewMouseLeftButtonUp="PlayerPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="PlayerPreviewControl_MouseRightButtonDown" MouseWheel="PlayerPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
                                             <TransformGroup>
-                                                <RotateTransform Angle="{Binding ElementName=PlayerSliderRotate, Path=Value}"/>
+                                                <RotateTransform Angle="{c:Binding ElementName=PlayerSliderRotate, Path='-Value'}"/>
                                                 <ScaleTransform
                                                     ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
                                                     ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
@@ -263,7 +263,7 @@
                                     <Border x:Name="WorldPointSetPreviewControl" Width="15" Height="15" RenderTransformOrigin="0.5,0.5" BorderThickness="2.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPointSetPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointSetPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
                                             <TransformGroup>
-                                                <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
+                                                <RotateTransform Angle="{c:Binding ElementName=WorldPointSliderRotate, Path='-Value'}"/>
                                                 <ScaleTransform ScaleX="{Binding InverseZoom}" ScaleY="{Binding InverseZoom}"/>
                                             </TransformGroup>
                                         </Border.RenderTransform>
@@ -272,7 +272,7 @@
                                     <Border x:Name="WorldPointPreviewControl" Width="15" Height="15" BorderThickness="2.5" RenderTransformOrigin="0.5,0.5" Background="Black" Visibility="{c:Binding ElementName=AddWorldPointSetPointRadioButton, Path=IsChecked}" PreviewMouseLeftButtonUp="WorldPointPreviewControl_MouseLeftButtonDown" MouseRightButtonDown="WorldPointPreviewControl_MouseRightButtonDown" MouseWheel="WorldPointPreviewControl_MouseWheel">
                                         <Border.RenderTransform>
                                             <TransformGroup>
-                                                <RotateTransform Angle="{Binding ElementName=WorldPointSliderRotate, Path=Value}"/>
+                                                <RotateTransform Angle="{c:Binding ElementName=WorldPointSliderRotate, Path='-Value'}"/>
                                                 <ScaleTransform
                                                     ScaleX="{Binding InverseZoom}"
                                                     ScaleY="{Binding InverseZoom}"/>
@@ -338,7 +338,7 @@
                                                 RenderTransformOrigin="{Binding Type.Pivot}"
                                                 PreviewMouseLeftButtonDown="OnWorldObjectClicked">
                                                 <Border.RenderTransform>
-                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                    <RotateTransform Angle="{Binding DisplayedZRotation}"/>
                                                 </Border.RenderTransform>
                                                 <Border BorderThickness="2.5">
                                                     <Border.BorderBrush>
@@ -400,7 +400,7 @@
                                                 PreviewMouseLeftButtonDown="OnPlayerClicked">
                                                 <Border.RenderTransform>
                                                     <TransformGroup>
-                                                        <RotateTransform Angle="{Binding ZRotation}"/>
+                                                        <RotateTransform Angle="{Binding DisplayedZRotation}"/>
                                                         <ScaleTransform
                                                             ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
                                                             ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>
@@ -702,7 +702,7 @@
                                                                 </Border>
                                                                 <Border.RenderTransform>
                                                                     <TransformGroup>
-                                                                        <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                        <RotateTransform Angle="{Binding DisplayedZRotation}"/>
                                                                         <ScaleTransform
                                                                             ScaleX="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"
                                                                             ScaleY="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InverseZoom}"/>

@@ -22,7 +22,7 @@ namespace TPMapEditor.ViewModel
         {
             X = worldObject.X;
             Y = worldObject.Y;
-            ZRotation = worldObject.ZRotation;
+            ZRotation = -worldObject.ZRotation;
             ZIndex = worldObject.ZIndex;
             Pivot = worldObject.Type.Pivot;
             OriginalImage = starmapImage = worldObject.Type.Image;

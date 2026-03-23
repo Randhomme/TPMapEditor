@@ -14,7 +14,7 @@ namespace TPMapEditor.Data
         [property: Required(ErrorMessage = "The WorldObjectType is required.")]
         private WorldObjectType type;
         [ObservableProperty]
-        private double x, y, z, xRotation = 90, yRotation, zRotation; //rotation Euler XYZ (by default in Blender)
+        private double x, y, z, xRotation = 90, yRotation, displayedZRotation; //rotation Euler XYZ (by default in Blender)
         [ObservableProperty]
         private Group? group;
         [ObservableProperty]
@@ -35,6 +35,17 @@ namespace TPMapEditor.Data
                 if (value >= nextId)
                     nextId = value+1;
             } 
+        }
+
+        private double zRotation;
+        public double ZRotation
+        {
+            get => zRotation;
+            set
+            {
+                zRotation = value;
+                DisplayedZRotation = -value;
+            }
         }
 
         public bool HasState { get => !CheckState(); }
@@ -61,7 +72,7 @@ namespace TPMapEditor.Data
             this.x = x;
             this.y = y;
             this.z = z;
-            this.zRotation = zRotation;
+            this.ZRotation = zRotation;
             this.id = nextId++;
         }
 

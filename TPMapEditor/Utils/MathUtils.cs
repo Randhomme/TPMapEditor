@@ -30,14 +30,14 @@ namespace TPMapEditor.Utils
             {
                 x = Math.Atan2(m.M23, m.M33);  // rotation around X
                 y = Math.Asin(-m.M13);         // rotation around Y
-                z = -Math.Atan2(m.M12, m.M11);  // rotation around Z
+                z = Math.Atan2(m.M12, m.M11);  // rotation around Z
             }
             else
             {
                 // Gimbal lock case
                 x = 0;
                 y = Math.Asin(-m.M13);
-                z = -Math.Atan2(-m.M21, m.M22);
+                z = Math.Atan2(-m.M21, m.M22);
             }
 
             x = Math.Round(x * 180.0 / Math.PI);
@@ -59,7 +59,7 @@ namespace TPMapEditor.Utils
         {
             double x = NormalizeAngle(rotXDeg - 90) * Math.PI / 180;
             double y = rotYDeg * Math.PI / 180;
-            double z = (-rotZDeg) * Math.PI / 180;
+            double z = rotZDeg * Math.PI / 180;
 
             double cx = Math.Cos(x);
             double sx = Math.Sin(x);

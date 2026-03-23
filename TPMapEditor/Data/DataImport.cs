@@ -270,7 +270,7 @@ namespace TPMapEditor.Data
 
                 //StartPointForwardVector
                 var startPointForwardVector = reader.ReadAndParseVector3("StartPointForwardVector Vector3");
-                player.ZRotation = Math.Atan2(startPointForwardVector.X, startPointForwardVector.Y) * 180 / Math.PI;
+                player.ZRotation = -Math.Atan2(startPointForwardVector.X, startPointForwardVector.Y) * 180 / Math.PI;
 
                 //Race
                 reader.ReadLine(); //probably not used

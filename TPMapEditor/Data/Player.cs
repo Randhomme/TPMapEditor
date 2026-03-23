@@ -14,7 +14,7 @@ namespace TPMapEditor.Data
         public static Player DefaultPlayer { get; } = new(null, DefaultName);
 
         [ObservableProperty]
-        private double x, y, z, zRotation;
+        private double x, y, z, displayedZRotation;
         [ObservableProperty]
         private Color color;
         [ObservableProperty]
@@ -24,9 +24,18 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private bool isPlayable, hasSelectableTeam, hasInGameTeam;
 
+        private double zRotation;
+        public double ZRotation
+        {
+            get => zRotation;
+            set 
+            {
+                zRotation = value;
+                DisplayedZRotation = -value;
+            }
+        }
         public double XRotation { get; set; } // Not used
         public double YRotation { get; set; } // Not used
-
         public int TeamIndex { get; set; } = -1; //only used for data import
 
         public Player(WorldMap map) : base(map, GenerateName("Player", map.Players))
@@ -48,7 +57,7 @@ namespace TPMapEditor.Data
             X = x;
             Y = y;
             Z = z;
-            zRotation = rotation;
+            ZRotation = rotation;
             Color = playerColor;
             FormationTypeStart = FormationType = FormationType.Column;
             IsPlayable = true;

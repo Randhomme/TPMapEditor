@@ -6,7 +6,7 @@ namespace TPMapEditor.Data
     public partial class WorldPoint : Point3, ISelectableMapObject, IMovableMapObject, IRotatableMapObject
     {
         [ObservableProperty]
-        private double xRotation = 90, yRotation, zRotation, magnitude;
+        private double xRotation = 90, yRotation, displayedZRotation, magnitude;
         [ObservableProperty]
         private WorldPointSet parent;
         [ObservableProperty]
@@ -14,11 +14,22 @@ namespace TPMapEditor.Data
         [ObservableProperty]
         private int zIndex = 0;
 
+        private double zRotation;
+        public double ZRotation
+        {
+            get => zRotation;
+            set
+            {
+                zRotation = value;
+                DisplayedZRotation = -value;
+            }
+        }
+
         public WorldPoint(WorldPointSet parent, double x, double y, double z, double zRotation) : base(x, y, z)
         {
             this.xRotation = 90;
             this.yRotation = this.magnitude = 0;
-            this.zRotation = zRotation;
+            this.ZRotation = zRotation;
             this.parent = parent;
         }
 
