@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -227,26 +226,14 @@ namespace TPMapEditor
         {
             try
             {
-                using var http = new HttpClient();
+                var url = "https://github.com/Randhomme/TPMapEditor/releases/latest";
 
-                // GitHub demande obligatoirement un User-Agent
-                http.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp");
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("User-Agent", "request");
 
-                var url = "https://api.github.com/repos/Randhomme/TPMapEditor/releases/latest";
-
-                var json = await http.GetStringAsync(url);
-
-                using var doc = JsonDocument.Parse(json);
-
-                // Récupère "tag_name" => "v1.4.2"
-                var tag = doc.RootElement.GetProperty("tag_name").GetString();
-
-                if (tag == null)
-                    return null;
-
-                // Supprime le "v"
-                tag = tag.TrimStart('v');
-
+                var response = await client.GetAsync(url);
+                var finalUrl = response.RequestMessage.RequestUri.ToString();
+                var tag = finalUrl.Split('/').Last().TrimStart('v');
                 return Version.TryParse(tag, out var version) ? version : null;
             }
             catch { return null; }
