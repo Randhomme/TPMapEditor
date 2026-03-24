@@ -1003,7 +1003,7 @@ namespace TPMapEditor.Settings
                                 }
                                 catch
                                 {
-                                    logs.Report($"Error while reading {wot.Name}.xml. Z axis rotations might not be accurate for type '{wot.Name}'.");
+                                    logs.Report($"Error while reading {wot.Name}.xml. Position might not be accurate for type '{wot.Name}'.");
                                 }
                             }
                             WorldObjectType.WotTypes.Add(wot);
