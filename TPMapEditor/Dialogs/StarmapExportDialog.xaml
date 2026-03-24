@@ -114,17 +114,21 @@
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <Grid >
-                                                            <Image Source="{Binding StarmapImage}" RenderTransformOrigin="{Binding Pivot}" Margin="0">
+                                                            <Image Source="{Binding StarmapImage}" RenderTransformOrigin="0.5,0.5" Margin="0">
                                                                 <Image.RenderTransform>
-                                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                    <TransformGroup>
+                                                                        <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
+                                                                        <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                    </TransformGroup>
                                                                 </Image.RenderTransform>
                                                                 <Image.Effect>
                                                                     <DropShadowEffect ShadowDepth="0" Opacity="0.5" Color="Black" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentShadowThickness}"/>
                                                                 </Image.Effect>
                                                             </Image>
-                                                            <Rectangle Fill="DarkSlateGray" RenderTransformOrigin="{Binding Pivot}" Margin="0">
+                                                            <Rectangle Fill="DarkSlateGray" RenderTransformOrigin="0.5,0.5" Margin="0">
                                                                 <Rectangle.RenderTransform>
                                                                     <TransformGroup>
+                                                                        <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
                                                                         <RotateTransform Angle="{Binding ZRotation}"/>
                                                                     </TransformGroup>
                                                                 </Rectangle.RenderTransform>
@@ -135,9 +139,10 @@
                                                                     <DropShadowEffect ShadowDepth="0" Color="DarkSlateGray" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.IslandInnerShadowBlurRadius}"/>
                                                                 </Rectangle.Effect>
                                                             </Rectangle>
-                                                            <Rectangle Fill="DarkSlateGray" RenderTransformOrigin="{Binding Pivot}" Margin="0">
+                                                            <Rectangle Fill="DarkSlateGray" RenderTransformOrigin="0.5,0.5" Margin="0">
                                                                 <Rectangle.RenderTransform>
                                                                     <TransformGroup>
+                                                                        <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
                                                                         <RotateTransform Angle="{Binding ZRotation}"/>
                                                                     </TransformGroup>
                                                                 </Rectangle.RenderTransform>
@@ -148,9 +153,10 @@
                                                                     <DropShadowEffect ShadowDepth="0" Color="DarkSlateGray" BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.IslandInnerShadowBlurRadius}"/>
                                                                 </Rectangle.Effect>
                                                             </Rectangle>
-                                                            <Rectangle RenderTransformOrigin="{Binding Pivot}" Margin="0">
+                                                            <Rectangle RenderTransformOrigin="0.5,0.5" Margin="0">
                                                                 <Rectangle.RenderTransform>
                                                                     <TransformGroup>
+                                                                        <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
                                                                         <RotateTransform Angle="{Binding ZRotation}"/>
                                                                         <!--<ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}" ScaleY="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ScaleDownTransformIsland}"/>-->
                                                                         <!--<TranslateTransform X="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}" Y="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.TranslateTransformIsland}"/>-->
@@ -207,9 +213,12 @@
                                             </ItemsControl.ItemContainerStyle>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Image Source="{Binding OriginalImage}" RenderTransformOrigin="{Binding Pivot}">
+                                                    <Image Source="{Binding OriginalImage}" RenderTransformOrigin="0.5,0.5">
                                                         <Image.RenderTransform>
-                                                            <RotateTransform Angle="{Binding ZRotation}"/>
+                                                            <TransformGroup>
+                                                                <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
+                                                                <RotateTransform Angle="{Binding ZRotation}"/>
+                                                            </TransformGroup>
                                                         </Image.RenderTransform>
                                                         <Image.Effect>
                                                             <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="MediumSeaGreen" ShadowDepth="0"/>
@@ -252,17 +261,23 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid>
-                                                        <Image Source="{Binding StarmapImage}" RenderTransformOrigin="{Binding Pivot}">
+                                                        <Image Source="{Binding StarmapImage}" RenderTransformOrigin="0.5,0.5">
                                                             <Image.RenderTransform>
-                                                                <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                <TransformGroup>
+                                                                    <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
+                                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                </TransformGroup>
                                                             </Image.RenderTransform>
                                                             <Image.Effect>
                                                                 <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.BorderThickness}" Color="Green" ShadowDepth="0" Opacity="1"/>
                                                             </Image.Effect>
                                                         </Image>
-                                                        <Rectangle Fill="Lime" RenderTransformOrigin="{Binding Pivot}" >
+                                                        <Rectangle Fill="Lime" RenderTransformOrigin="0.5,0.5" >
                                                             <Rectangle.RenderTransform>
-                                                                <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                <TransformGroup>
+                                                                    <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
+                                                                    <RotateTransform Angle="{Binding ZRotation}"/>
+                                                                </TransformGroup>
                                                             </Rectangle.RenderTransform>
                                                             <Rectangle.OpacityMask>
                                                                 <ImageBrush ImageSource="{Binding OriginalImage}" Stretch="None"/>
