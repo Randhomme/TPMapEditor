@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Object><Name>Asteroid_Large</Name><PivotX>0.5</PivotX><PivotY>0.5</PivotY></Object>
+<Object><Name>Asteroid_Large</Name><CenterX>0.0</CenterX><CenterY>1e-06</CenterY></Object>
