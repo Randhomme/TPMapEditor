@@ -174,12 +174,17 @@ namespace TPMapEditor.ViewModel
                 if (MessageBox.Show("The current map will be cleared. Continue ?", "Map import", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     MapReset();
+                    WorldMap? tempMap = null;
                     new ProgressDialog(Application.Current.MainWindow, "Import map").RunAction((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, null, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
-                        Map = di.ReadMapFileAndAddData();
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                        tempMap = di.ReadMapFileAndAddData();
                     });
-                    OnPropertyChanged(nameof(Map));
+                    if(tempMap != null)
+                    {
+                        var vm = new ImportMapViewModel(Map, true);
+                        vm.ImportMap(tempMap);
+                    }
                 }
             }
         }
