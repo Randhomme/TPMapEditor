@@ -63,7 +63,8 @@ namespace TPMapEditor.Data
         {
             isCampaign = playEndMovie = isAllianceChangeAllowed = false;
             isMultiplayer = mustAssembleFleet = useCustomName = useCustomDescription = islandsMakeSounds = true;
-            playerPlayableCount = roofLightOrientationYaw = roofLightOrientationPitch = 0;
+            playerPlayableCount = roofLightOrientationYaw = 0;
+            roofLightOrientationPitch = 90;
             worldName = StringDictionnary.WorldNames.Keys.FirstOrDefault();
             worldDescription = StringDictionnary.WorldDescriptions.Keys.FirstOrDefault() ?? string.Empty;
             customName = "My new map";
@@ -75,9 +76,9 @@ namespace TPMapEditor.Data
             size = 2500;
             zSize = 1500;
             worldBuffer = 500;
-            ambientLightColor = Colors.Khaki;
-            roofLightColor = Colors.DarkKhaki;
-            floorLightColor = Colors.DarkKhaki;
+            ambientLightColor = Color.FromRgb(50, 50, 50); ;
+            roofLightColor = Colors.White;
+            floorLightColor = Colors.Black;
             WorldObjects = new ObservableCollection<WorldObject>();
             SelectableTeams = new ObservableCollection<Team>();
             InGameTeams = new ObservableCollection<Team>();
@@ -290,7 +291,8 @@ namespace TPMapEditor.Data
         {
             IsCampaign = PlayEndMovie = IsAllianceChangeAllowed = false;
             IsMultiplayer = MustAssembleFleet = UseCustomName = UseCustomDescription = IslandsMakeSounds = true;
-            PlayerPlayableCount = RoofLightOrientationYaw = RoofLightOrientationPitch = 0;
+            PlayerPlayableCount = RoofLightOrientationYaw = 0;
+            RoofLightOrientationPitch = 90;
             WorldName = StringDictionnary.WorldNames.Keys.FirstOrDefault();
             WorldDescription = StringDictionnary.WorldDescriptions.Keys.FirstOrDefault();
             CustomName = "My new map";
@@ -302,9 +304,9 @@ namespace TPMapEditor.Data
             Size = 2500;
             ZSize = 1500;
             WorldBuffer = 500;
-            AmbientLightColor = Colors.Khaki;
-            RoofLightColor = Colors.DarkKhaki;
-            FloorLightColor = Colors.DarkKhaki;
+            AmbientLightColor = Color.FromRgb(50,50,50);
+            RoofLightColor = Colors.White;
+            FloorLightColor = Colors.Black;
         }
 
         private void Clear()
