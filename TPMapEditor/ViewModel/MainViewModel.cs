@@ -1658,7 +1658,7 @@ namespace TPMapEditor.ViewModel
             }
             else if(obj is WaypointPathPoint point)
             {
-
+                SelectWaypointPathPoint_Internal(point, ctrlPressed);
             }
         }
 
@@ -1827,7 +1827,7 @@ namespace TPMapEditor.ViewModel
             }
             else if (obj is WorldPolygonPoint point)
             {
-
+                SelectWorldPolygonPoint_Internal(point, ctrlPressed);
             }
         }
 
@@ -1996,7 +1996,7 @@ namespace TPMapEditor.ViewModel
             }
             else if (obj is WorldPoint point)
             {
-
+                SelectWorldPoint_Internal(point, ctrlPressed);
             }
         }
 
