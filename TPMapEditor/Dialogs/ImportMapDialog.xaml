@@ -15,25 +15,27 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <Label Margin="0,5,5,5" Content="Choose what you want to import"/>
-                <CheckBox Margin="5" Content="Import flags" IsChecked="{Binding ImportFlags}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import groups" IsChecked="{Binding ImportGroups}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import in game teams" IsChecked="{Binding ImportInGameTeams}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import journal entries" IsChecked="{Binding ImportJournalEntries}"/>
-                <CheckBox Margin="5" Content="Import map text points" IsChecked="{Binding ImportMapTextPoints}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import objective points" IsChecked="{Binding ImportObjectivePoints}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import objective tasks" IsChecked="{Binding ImportObjectiveTasks}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import player alliances" IsChecked="{Binding ImportPlayerAlliances}"/>
-                <CheckBox Margin="5" Content="Import players" IsChecked="{Binding ImportPlayers}" IsEnabled="{c:Binding '!ImportWorldRules and !ImportPlayerAlliances'}"/>
-                <CheckBox Margin="5" Content="Import selectable teams" IsChecked="{Binding ImportSelectableTeams}"/>
-                <CheckBox Margin="5" Content="Import speech events" IsChecked="{Binding ImportSpeechEvents}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import timers" IsChecked="{Binding ImportTimers}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import waypoint paths" IsChecked="{Binding ImportWaypointPaths}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import world arms" IsChecked="{Binding ImportWorldArms}"/>
-                <CheckBox Margin="5" Content="Import world crews" IsChecked="{Binding ImportWorldCrews}"/>
-                <CheckBox Margin="5" Content="Import world objects" IsChecked="{Binding ImportWorldObjects}" IsEnabled="{c:Binding '!ImportWorldRules and !ImportGroups'}"/>
-                <CheckBox Margin="5" Content="Import world point sets" IsChecked="{Binding ImportWorldPointSets}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import world polygons" IsChecked="{Binding ImportWorldPolygons}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
-                <CheckBox Margin="5" Content="Import world rules" IsChecked="{Binding ImportWorldRules}"/>
+                <CheckBox Margin="5" Content="Map size" IsChecked="{Binding ImportMapSize}"/>
+                <CheckBox Margin="5" Content="World info" IsChecked="{Binding ImportWorldInfo}"/>
+                <CheckBox Margin="5" Content="Flags" IsChecked="{Binding ImportFlags}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Groups" IsChecked="{Binding ImportGroups}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="In game teams" IsChecked="{Binding ImportInGameTeams}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Journal entries" IsChecked="{Binding ImportJournalEntries}"/>
+                <CheckBox Margin="5" Content="Map text points" IsChecked="{Binding ImportMapTextPoints}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Objective points" IsChecked="{Binding ImportObjectivePoints}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Objective tasks" IsChecked="{Binding ImportObjectiveTasks}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Player alliances" IsChecked="{Binding ImportPlayerAlliances}"/>
+                <CheckBox Margin="5" Content="Players" IsChecked="{Binding ImportPlayers}" IsEnabled="{c:Binding '!ImportWorldRules and !ImportPlayerAlliances'}"/>
+                <CheckBox Margin="5" Content="Selectable teams" IsChecked="{Binding ImportSelectableTeams}"/>
+                <CheckBox Margin="5" Content="Speech events" IsChecked="{Binding ImportSpeechEvents}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Timers" IsChecked="{Binding ImportTimers}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="Waypoint paths" IsChecked="{Binding ImportWaypointPaths}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="World arms" IsChecked="{Binding ImportWorldArms}"/>
+                <CheckBox Margin="5" Content="World crews" IsChecked="{Binding ImportWorldCrews}"/>
+                <CheckBox Margin="5" Content="World objects" IsChecked="{Binding ImportWorldObjects}" IsEnabled="{c:Binding '!ImportWorldRules and !ImportGroups'}"/>
+                <CheckBox Margin="5" Content="World point sets" IsChecked="{Binding ImportWorldPointSets}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="World polygons" IsChecked="{Binding ImportWorldPolygons}" IsEnabled="{c:Binding '!ImportWorldRules'}"/>
+                <CheckBox Margin="5" Content="World rules" IsChecked="{Binding ImportWorldRules}"/>
             </StackPanel>
         </ScrollViewer>
         <Grid Grid.Row="1" Margin="0,15,0,0" >

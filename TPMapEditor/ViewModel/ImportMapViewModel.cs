@@ -8,20 +8,25 @@ namespace TPMapEditor.ViewModel
     public partial class ImportMapViewModel : ObservableObject
     {
         [ObservableProperty]
+        private bool importMapSize, importWorldInfo;
+        [ObservableProperty]
         private bool importWorldObjects, importSelectableTeams, importInGameTeams, importPlayers, importGroups, importWaypointPaths, importWorldPolygons, importWorldPointSets, importFlags, importPlayerAlliances, importTimers;
         [ObservableProperty]
         private bool importSpeechEvents, importWorldRules, importObjectivePoints, importObjectiveTasks, importMapTextPoints, importJournalEntries, importWorldCrews, importWorldArms;
 
         private readonly WorldMap map;
 
-        public ImportMapViewModel(WorldMap map)
+        public ImportMapViewModel(WorldMap map, bool checkAll = false)
         {
             this.map = map;
+            if (checkAll)
+                OnCheckAll();
         }
 
         [RelayCommand]
         private void OnCheckAll()
         {
+            ImportMapSize = ImportWorldInfo = true;
             ImportWorldObjects = ImportSelectableTeams = ImportInGameTeams = ImportPlayers = ImportGroups = ImportWaypointPaths = ImportWorldPolygons = ImportWorldPointSets = ImportFlags = ImportPlayerAlliances = ImportTimers = true;
             ImportSpeechEvents = ImportWorldRules = ImportObjectivePoints = ImportObjectiveTasks = ImportMapTextPoints = ImportJournalEntries = ImportWorldCrews = ImportWorldArms = true;
         }
@@ -29,6 +34,7 @@ namespace TPMapEditor.ViewModel
         [RelayCommand]
         private void OnUncheckAll()
         {
+            ImportMapSize = ImportWorldInfo = false;
             ImportWorldObjects = ImportSelectableTeams = ImportInGameTeams = ImportPlayers = ImportGroups = ImportWaypointPaths = ImportWorldPolygons = ImportWorldPointSets = ImportFlags = ImportPlayerAlliances = ImportTimers = false;
             ImportSpeechEvents = ImportWorldRules = ImportObjectivePoints = ImportObjectiveTasks = ImportMapTextPoints = ImportJournalEntries = ImportWorldCrews = ImportWorldArms = false;
         }
@@ -41,6 +47,36 @@ namespace TPMapEditor.ViewModel
         /// <param name="map"></param>
         public void ImportMap(WorldMap map)
         {
+            if (ImportMapSize)
+            {
+                this.map.Size = map.Size;
+                this.map.ZSize = map.ZSize;
+                this.map.WorldBuffer = map.WorldBuffer;
+            }
+            if (ImportWorldInfo)
+            {
+                this.map.MustAssembleFleet = map.MustAssembleFleet;
+                this.map.IsCampaign = map.IsCampaign;
+                this.map.IsAllianceChangeAllowed = map.IsAllianceChangeAllowed;
+                this.map.IsMultiplayer = map.IsMultiplayer;
+                this.map.IslandsMakeSounds = map.IslandsMakeSounds;
+                this.map.WorldName = map.WorldName;
+                this.map.UseCustomName = map.UseCustomName;
+                this.map.CustomName = map.CustomName;
+                this.map.UseCustomDescription = map.UseCustomDescription;
+                this.map.CustomDescription = map.CustomDescription;
+                this.map.Skybox = map.Skybox;
+                this.map.StarmapTexture = map.StarmapTexture;
+                this.map.AmbientLightColor = map.AmbientLightColor;
+                this.map.RoofLightColor = map.RoofLightColor;
+                this.map.FloorLightColor = map.FloorLightColor;
+                this.map.RoofLightOrientationYaw = map.RoofLightOrientationYaw;
+                this.map.RoofLightOrientationPitch = map.RoofLightOrientationPitch;
+                this.map.CurrentObjectivePoint = map.CurrentObjectivePoint;
+                this.map.IsCurrentObjectivePointVisibleOnStarMap = map.IsCurrentObjectivePointVisibleOnStarMap;
+                this.map.JournalTitle = map.JournalTitle;
+                this.map.JournalMusic = map.JournalMusic;
+            }
             if (ImportWorldObjects)
             {
                 for (int i = 0; i < map.WorldObjects.Count; i++)
