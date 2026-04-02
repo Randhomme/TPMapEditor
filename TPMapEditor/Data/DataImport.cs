@@ -190,7 +190,7 @@ namespace TPMapEditor.Data
                 //World Size - Max Vector3
                 var worldSizeMax = reader.ReadAndParseVector3("World Size - Max Vector3");
 
-                var size = (int)(worldSizeMax.X - worldSizeMin.X);
+                var size = (int)Math.Min(worldSizeMin.X, worldSizeMin.Y) - (int)Math.Max(worldSizeMax.X, worldSizeMax.Y);
                 map.Size = size < 0 ? -size : size;
                 var zSize = (int)(worldSizeMax.Z - worldSizeMin.Z);
                 map.ZSize = zSize < 0 ? -zSize : zSize;
