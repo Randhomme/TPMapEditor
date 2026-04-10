@@ -43,7 +43,7 @@ namespace TPMapEditor.Data
             get => zRotation;
             set
             {
-                zRotation = value;
+                SetProperty(ref zRotation, value);
                 DisplayedZRotation = -value;
             }
         }
