@@ -7,7 +7,7 @@ namespace TPMapEditor.Services.Implementations
     public class UndoManagerService : ObservableObject, IUndoManagerService
     {
         private readonly int _max;
-        private readonly Stack<IUndoableMapCommand> _undo = new();
+        private readonly LinkedList<IUndoableMapCommand> _undo = new();
         private readonly Stack<IUndoableMapCommand> _redo = new();
 
         public bool CanUndo { get => _undo.Count > 0; }
@@ -20,11 +20,11 @@ namespace TPMapEditor.Services.Implementations
 
         public void Push(IUndoableMapCommand cmd)
         {
-            _undo.Push(cmd);
+            _undo.AddLast(cmd);
             _redo.Clear();
 
             if (_undo.Count > _max)
-                _undo.Pop();
+                _undo.RemoveFirst();
 
             OnPropertyChanged(nameof(CanUndo));
             OnPropertyChanged(nameof(CanRedo));
@@ -33,7 +33,8 @@ namespace TPMapEditor.Services.Implementations
         public void Undo()
         {
             if (_undo.Count == 0) return;
-            var cmd = _undo.Pop();
+            var cmd = _undo.Last.Value;
+            _undo.RemoveLast();
             cmd.Undo();
             _redo.Push(cmd);
             OnPropertyChanged(nameof(CanUndo));
@@ -45,7 +46,7 @@ namespace TPMapEditor.Services.Implementations
             if (_redo.Count == 0) return;
             var cmd = _redo.Pop();
             cmd.Redo();
-            _undo.Push(cmd);
+            _undo.AddLast(cmd);
             OnPropertyChanged(nameof(CanUndo));
             OnPropertyChanged(nameof(CanRedo));
         }
