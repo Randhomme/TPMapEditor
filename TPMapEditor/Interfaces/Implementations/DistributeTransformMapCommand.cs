@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
@@ -7,15 +6,15 @@ namespace TPMapEditor.Interfaces.Implementations
     {
         [ObservableProperty]
         private bool distributeOnX, distributeOnY, distributeOnZ;
-
         [ObservableProperty]
         private double x, y, z;
 
-        private double startX, startY, startZ, xBefore, yBefore, zBefore;
+        private readonly double startX, startY, startZ;
+        private double xBefore, yBefore, zBefore;
 
         public bool Is3D { get; }
 
-        public DistributeTransformMapCommand(IEnumerable<IMovableMapObject> targets, bool is3D) : base(targets)
+        public DistributeTransformMapCommand(IMultiMovableMapObject multiMovableMapObject, bool is3D) : base(multiMovableMapObject)
         {
             xBefore = x;
             yBefore = y;
@@ -24,6 +23,7 @@ namespace TPMapEditor.Interfaces.Implementations
             double minX = double.MaxValue;
             double minY = double.MaxValue;
             double minZ = double.MaxValue;
+            var targets = multiMovableMapObject.GetSelectedMovableMapObjects();
             foreach (var item in targets)
             {
                 if (item.X < minX)
@@ -64,6 +64,10 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.Z = DistributeOnZ ? startZ + i * Z : kv.Value.Z;
                 i++;
             }
+            i--;
+            multiMovableMapObject.X = DistributeOnX ? startX + i * X : multiXBefore;
+            multiMovableMapObject.Y = DistributeOnY ? startY + i * Y : multiYBefore;
+            multiMovableMapObject.Z = DistributeOnZ ? startZ + i * Z : multiZBefore;
         }
     }
 }

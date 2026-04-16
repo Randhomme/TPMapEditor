@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
@@ -15,7 +14,7 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public bool Is3D { get; }
 
-        public AlignTransformMapCommand(IEnumerable<IMovableMapObject> targets, bool is3D) : base(targets)
+        public AlignTransformMapCommand(IMultiMovableMapObject multiMovableMapObject, bool is3D) : base(multiMovableMapObject)
         {
             xBefore = x;
             yBefore = y;
@@ -47,6 +46,9 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.Y = AlignOnY ? Y : kv.Value.Y;
                 kv.Key.Z = AlignOnZ ? Z : kv.Value.Z;
             }
+            multiMovableMapObject.X = AlignOnX ? X : multiXBefore;
+            multiMovableMapObject.Y = AlignOnY ? Y : multiYBefore;
+            multiMovableMapObject.Z = AlignOnZ ? Z : multiZBefore;
         }
     }
 }

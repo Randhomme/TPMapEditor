@@ -11,12 +11,18 @@ namespace TPMapEditor.Interfaces.Implementations
     {
         protected readonly Dictionary<IMovableMapObject, (double X, double Y, double Z)> _before;
         protected Dictionary<IMovableMapObject, (double X, double Y, double Z)>? _after;
+        protected IMultiMovableMapObject multiMovableMapObject;
+        protected double multiXBefore, multiYBefore, multiZBefore;
 
         public bool CanUndo { get; private set; } = true;
 
-        public TransformMovableMapObjectCommand(IEnumerable<IMovableMapObject> targets)
+        public TransformMovableMapObjectCommand(IMultiMovableMapObject multiMovableMapObject)
         {
-            _before = targets.ToDictionary(
+            this.multiMovableMapObject = multiMovableMapObject;
+            multiXBefore = multiMovableMapObject.X;
+            multiYBefore = multiMovableMapObject.Y;
+            multiZBefore = multiMovableMapObject.Z;
+            _before = multiMovableMapObject.GetSelectedMovableMapObjects().ToDictionary(
                 o => o,
                 o => (o.X, o.Y, o.Z));
         }
@@ -39,6 +45,9 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.Y = kv.Value.Y;
                 kv.Key.Z = kv.Value.Z;
             }
+            (multiMovableMapObject.X, multiXBefore) = (multiXBefore, multiMovableMapObject.X);
+            (multiMovableMapObject.Y, multiYBefore) = (multiYBefore, multiMovableMapObject.Y);
+            (multiMovableMapObject.Z, multiZBefore) = (multiZBefore, multiMovableMapObject.Z);
             CanUndo = false;
         }
 
@@ -53,6 +62,9 @@ namespace TPMapEditor.Interfaces.Implementations
                     kv.Key.Z = kv.Value.Z;
                 }
             }
+            (multiMovableMapObject.X, multiXBefore) = (multiXBefore, multiMovableMapObject.X);
+            (multiMovableMapObject.Y, multiYBefore) = (multiYBefore, multiMovableMapObject.Y);
+            (multiMovableMapObject.Z, multiZBefore) = (multiZBefore, multiMovableMapObject.Z);
             CanUndo = true;
         }
     }

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
@@ -12,12 +11,13 @@ namespace TPMapEditor.Interfaces.Implementations
         private readonly double centerX;
         private readonly double centerY;
 
-        public RotateOrbitTransformMapCommand(IEnumerable<IMovableMapObject> targets) : base(targets)
+        public RotateOrbitTransformMapCommand(IMultiMovableMapObject multiMovableMapObject) : base(multiMovableMapObject)
         {
             double minX = double.MaxValue;
             double maxX = double.MinValue;
             double minY = double.MaxValue;
             double maxY = double.MinValue;
+            var targets = multiMovableMapObject.GetSelectedMovableMapObjects();
             foreach (var item in targets)
             {
                 if (item.X < minX)
@@ -62,6 +62,14 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.X = centerX + rotatedX;
                 kv.Key.Y = centerY + rotatedY;
             }
+            double multiDx = multiXBefore - centerX;
+            double multiDy = multiYBefore - centerY;
+
+            double multiRotatedX = multiDx * cos - multiDy * sin;
+            double multiRotatedY = multiDx * sin + multiDy * cos;
+
+            multiMovableMapObject.X = centerX + multiRotatedX;
+            multiMovableMapObject.Y = centerY + multiRotatedY;
         }
     }
 }

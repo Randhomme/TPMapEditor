@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
@@ -15,7 +14,7 @@ namespace TPMapEditor.Interfaces.Implementations
         private readonly double centerX;
         private readonly double centerY;
 
-        public RotateOrbitSpinTransformMapCommand(IEnumerable<IRotatableMapObject> targets) : base(targets)
+        public RotateOrbitSpinTransformMapCommand(IMultiRotatableMapObject multiRotatableMapObject) : base(multiRotatableMapObject)
         {
             rotationBefore = rotation;
             isRotationOrbit = isRotationSpin = true;
@@ -23,6 +22,7 @@ namespace TPMapEditor.Interfaces.Implementations
             double maxX = double.MinValue;
             double minY = double.MaxValue;
             double maxY = double.MinValue;
+            var targets = multiRotatableMapObject.GetSelectedRotatableMapObjects();
             foreach (var item in targets)
             {
                 if (item.X < minX)
@@ -52,33 +52,112 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public override void Apply()
         {
+            if (IsRotationOrbit)
+                if (IsRotationSpin)
+                    RotateOrbitSpin();
+                else
+                    RotateOrbitNoSpin();
+            else
+                if (IsRotationSpin)
+                    RotateNoOrbitSpin();
+                else
+                    RotateNoOrbitNoSpin();
+        }
+
+        private void RotateOrbitSpin()
+        {
             double rotationRad = Rotation * Math.PI / 180.0;
             double cos = Math.Cos(rotationRad);
             double sin = Math.Sin(rotationRad);
 
             foreach (var kv in _before)
             {
-                if (IsRotationOrbit)
-                {
-                    double dx = kv.Value.X - centerX;
-                    double dy = kv.Value.Y - centerY;
+                double dx = kv.Value.X - centerX;
+                double dy = kv.Value.Y - centerY;
 
-                    double rotatedX = dx * cos - dy * sin;
-                    double rotatedY = dx * sin + dy * cos;
+                double rotatedX = dx * cos - dy * sin;
+                double rotatedY = dx * sin + dy * cos;
 
-                    kv.Key.X = centerX + rotatedX;
-                    kv.Key.Y = centerY + rotatedY;
-                }
-                else
-                {
-                    kv.Key.X = kv.Value.X;
-                    kv.Key.Y = kv.Value.Y;
-                }
-                if (IsRotationSpin)
-                    kv.Key.ZRotation = kv.Value.ZRotation + Rotation;
-                else
-                    kv.Key.ZRotation = kv.Value.ZRotation;
+                kv.Key.X = centerX + rotatedX;
+                kv.Key.Y = centerY + rotatedY;
+
+                kv.Key.ZRotation = kv.Value.ZRotation + Rotation;
             }
+
+            double multiDx = multiXBefore - centerX;
+            double multiDy = multiYBefore - centerY;
+
+            double multiRotatedX = multiDx * cos - multiDy * sin;
+            double multiRotatedY = multiDx * sin + multiDy * cos;
+
+            multiRotatableMapObject.X = centerX + multiRotatedX;
+            multiRotatableMapObject.Y = centerY + multiRotatedY;
+
+            multiRotatableMapObject.ZRotation = multiZRotationBefore + Rotation;
+        }
+
+        private void RotateOrbitNoSpin()
+        {
+            double rotationRad = Rotation * Math.PI / 180.0;
+            double cos = Math.Cos(rotationRad);
+            double sin = Math.Sin(rotationRad);
+
+            foreach (var kv in _before)
+            {
+                double dx = kv.Value.X - centerX;
+                double dy = kv.Value.Y - centerY;
+
+                double rotatedX = dx * cos - dy * sin;
+                double rotatedY = dx * sin + dy * cos;
+
+                kv.Key.X = centerX + rotatedX;
+                kv.Key.Y = centerY + rotatedY;
+
+                kv.Key.ZRotation = kv.Value.ZRotation;
+            }
+
+            double multiDx = multiXBefore - centerX;
+            double multiDy = multiYBefore - centerY;
+
+            double multiRotatedX = multiDx * cos - multiDy * sin;
+            double multiRotatedY = multiDx * sin + multiDy * cos;
+
+            multiRotatableMapObject.X = centerX + multiRotatedX;
+            multiRotatableMapObject.Y = centerY + multiRotatedY;
+
+            multiRotatableMapObject.ZRotation = multiZRotationBefore;
+        }
+
+        private void RotateNoOrbitSpin()
+        {
+            foreach (var kv in _before)
+            {
+                kv.Key.X = kv.Value.X;
+                kv.Key.Y = kv.Value.Y;
+
+                kv.Key.ZRotation = kv.Value.ZRotation + Rotation;
+            }
+
+            multiRotatableMapObject.X = multiXBefore;
+            multiRotatableMapObject.Y = multiYBefore;
+
+            multiRotatableMapObject.ZRotation = multiZRotationBefore + Rotation;
+        }
+
+        private void RotateNoOrbitNoSpin()
+        {
+            foreach (var kv in _before)
+            {
+                kv.Key.X = kv.Value.X;
+                kv.Key.Y = kv.Value.Y;
+
+                kv.Key.ZRotation = kv.Value.ZRotation;
+            }
+
+            multiRotatableMapObject.X = multiXBefore;
+            multiRotatableMapObject.Y = multiYBefore;
+
+            multiRotatableMapObject.ZRotation = multiZRotationBefore;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Generic;
 
 namespace TPMapEditor.Interfaces.Implementations
 {
@@ -12,7 +11,7 @@ namespace TPMapEditor.Interfaces.Implementations
 
         public bool Is3D { get; }
 
-        public TranslateTransformMapCommand(IEnumerable<IMovableMapObject> targets, bool is3D) : base(targets)
+        public TranslateTransformMapCommand(IMultiMovableMapObject multiMovableMapObject, bool is3D) : base(multiMovableMapObject)
         {
             deltaXbefore = deltaX;
             deltaYbefore = deltaY;
@@ -44,6 +43,9 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.Y = kv.Value.Y + DeltaY;
                 kv.Key.Z = kv.Value.Z + DeltaZ;
             }
+            multiMovableMapObject.X = multiXBefore + DeltaX;
+            multiMovableMapObject.Y = multiYBefore + DeltaY;
+            multiMovableMapObject.Z = multiZBefore + DeltaZ;
         }
     }
 }
