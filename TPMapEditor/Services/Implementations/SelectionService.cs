@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -16,11 +17,19 @@ namespace TPMapEditor.Services.Implementations
         private T? selectedMapObject;
         private readonly ObservableCollection<T> selectedMapObjects = new();
 
-        public T? SelectedMapObject { get => selectedMapObject; private set => SetProperty(ref selectedMapObject, value); }
+        public T? SelectedMapObject 
+        {
+            get => selectedMapObject;
+            private set
+            {
+                SetProperty(ref selectedMapObject, value);
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         public IReadOnlyList<T> SelectedMapObjects { get => selectedMapObjects; }
 
-        public NotifyCollectionChangedEventHandler? SelectionChanged { get; set; }
+        public EventHandler? SelectionChanged { get; set; }
 
         public SelectionService()
         {
