@@ -91,11 +91,23 @@ namespace TPMapEditor.ViewModel
         public ISelectionService<ObjectivePoint> ObjectivePointSelectionService { get; } = new SelectionService<ObjectivePoint>();
         public ISelectionService<MapTextPoint> MapTextPointSelectionService { get; } = new SelectionService<MapTextPoint>();
 
+        public MultiWorldObjectViewModel MultiWorldObjectViewModel { get; }
+        public MultiPlayerViewModel MultiPlayerViewModel { get; }
+        public MultiWaypointPathViewModel MultiWaypointPathViewModel { get; }
+        public MultiWaypointPathPointViewModel MultiWaypointPathPointViewModel { get; }
+        public MultiWorldPolygonViewModel MultiWorldPolygonViewModel { get; }
+        public MultiWorldPolygonPointViewModel MultiWorldPolygonPointViewModel { get; }
+        public MultiWorldPointSetViewModel MultiWorldPointSetViewModel { get; }
+        public MultiWorldPointViewModel MultiWorldPointViewModel { get; }
+        public MultiObjectivePointViewModel MultiObjectivePointViewModel { get; }
+        public MultiMapTextPointViewModel MultiMapTextPointViewModel { get; }
+
         public ICollectionView SelectableWorldObjectTypes { get; }
 
         private ISelectionKBShortcutService currenSelectionKBShortcutService;
-        private IEnumerable<IMovableMapObject> currentMovableSelection;
-        private IEnumerable<IRotatableMapObject>? currentRotatableSelection;
+        private IMultiMovableMapObject currentMultiMovableMapObject;
+        private IMultiRotatableMapObject? currentMultiRotatableMapObject;
+
 
         public WorldMap Map { get; set; }
 
@@ -121,10 +133,19 @@ namespace TPMapEditor.ViewModel
             worldPointSetSelectionKBShortcutService = new SelectionKBShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService, copyPasteService);
             objectivePointSelectionKBShortcutService = new SelectionKBShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService, copyPasteService);
             mapTextPointSelectionKBShortcutService = new SelectionKBShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService, copyPasteService);
-            undoManagerService.PropertyChanged += UndoManagerService_PropertyChanged;
+            MultiWorldObjectViewModel = new(WorldObjectSelectionService.SelectedMapObjects, undoManagerService);
+            MultiPlayerViewModel = new(PlayerSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWaypointPathViewModel = new(WaypointPathSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWaypointPathPointViewModel = new(WaypointPathPointSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWorldPolygonViewModel = new(WorldPolygonSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWorldPolygonPointViewModel = new(WorldPolygonPointSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWorldPointSetViewModel = new(WorldPointSetSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWorldPointViewModel = new(WorldPointSelectionService.SelectedMapObjects, undoManagerService);
+            MultiObjectivePointViewModel = new(ObjectivePointSelectionService.SelectedMapObjects, undoManagerService);
+            MultiMapTextPointViewModel = new(MapTextPointSelectionService.SelectedMapObjects, undoManagerService);
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
-            currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
-            currentRotatableSelection = WorldObjectSelectionService.SelectedMapObjects;
+            currentMultiMovableMapObject = MultiWorldObjectViewModel;
+            currentMultiRotatableMapObject = MultiWorldObjectViewModel;
             keyboardShortcut = new List<(Key key, ModifierKeys modifiers, ICommand command)>()
             {
                 (Key.H, ModifierKeys.None, HKeyCommand),
@@ -148,13 +169,17 @@ namespace TPMapEditor.ViewModel
                 (Key.D5, ModifierKeys.None, ToggleDistributeActionCommand),
                 (Key.NumPad5, ModifierKeys.None, ToggleDistributeActionCommand),
             };
-            WorldObjectSelectionService.SelectionChanged += SelectionService_SelectionChanged;
-            PlayerSelectionService.SelectionChanged += SelectionService_SelectionChanged;
-            WaypointPathPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
-            WorldPolygonPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
-            WorldPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
-            ObjectivePointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
-            MapTextPointSelectionService.SelectionChanged += SelectionService_SelectionChanged;
+            undoManagerService.PropertyChanged += UndoManagerService_PropertyChanged;
+            WorldObjectSelectionService.SelectionChanged += WorldObjectSelectionService_SelectionChanged;
+            PlayerSelectionService.SelectionChanged += PlayerSelectionService_SelectionChanged;
+            WaypointPathSelectionService.SelectionChanged += WaypointPathSelectionService_SelectionChanged;
+            WaypointPathPointSelectionService.SelectionChanged += WaypointPathPointSelectionService_SelectionChanged;
+            WorldPolygonSelectionService.SelectionChanged += WorldPolygonSelectionService_SelectionChanged;
+            WorldPolygonPointSelectionService.SelectionChanged += WorldPolygonPointSelectionService_SelectionChanged;
+            WorldPointSetSelectionService.SelectionChanged += WorldPointSetSelectionService_SelectionChanged;
+            WorldPointSelectionService.SelectionChanged += WorldPointSelectionService_SelectionChanged;
+            ObjectivePointSelectionService.SelectionChanged += ObjectivePointSelectionService_SelectionChanged;
+            MapTextPointSelectionService.SelectionChanged += MapTextPointSelectionService_SelectionChanged;
         }
 
         #region MenuCommands
@@ -271,8 +296,7 @@ namespace TPMapEditor.ViewModel
         {
             if (MessageBox.Show("The current map will be cleared. Continue ?", "Map reset", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                ClearSelections();
-                Map.Reset();
+                MapReset();
             }
         }
 
@@ -1159,9 +1183,9 @@ namespace TPMapEditor.ViewModel
         public void InitAlignTransformCommand(bool alignOnX = false, bool alignOnY = false, bool alignOnZ = false, double x = 0, double y = 0, double z = 0)
         {
             ClearAlignTransformMapCommand();
-            if (currentMovableSelection.Count() > 0)
+            if (currentMultiMovableMapObject.Count > 0)
             {
-                alignTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D) { AlignOnX = alignOnX, AlignOnY = alignOnY, AlignOnZ = alignOnZ, X = x, Y = y, Z = z };
+                alignTransformMapCommand = new(currentMultiMovableMapObject, IsMovableSelection3D) { AlignOnX = alignOnX, AlignOnY = alignOnY, AlignOnZ = alignOnZ, X = x, Y = y, Z = z };
                 alignTransformMapCommand.PropertyChanged += AlignTransformMapCommand_PropertyChanged;
                 CurrentMapCommand = alignTransformMapCommand;
                 shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
@@ -1201,9 +1225,9 @@ namespace TPMapEditor.ViewModel
         public void InitDistributeTransformCommand(bool distributeOnX = false, bool distributeOnY = false, bool distributeOnZ = false, double x = 0, double y = 0, double z = 0)
         {
             ClearDistributeTransformMapCommand();
-            if (currentMovableSelection.Count() > 0)
+            if (currentMultiMovableMapObject.Count > 0)
             {
-                distributeTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D) { DistributeOnX = distributeOnX, DistributeOnY = distributeOnY, DistributeOnZ = distributeOnZ, X = x, Y = y, Z = z };
+                distributeTransformMapCommand = new(currentMultiMovableMapObject, IsMovableSelection3D) { DistributeOnX = distributeOnX, DistributeOnY = distributeOnY, DistributeOnZ = distributeOnZ, X = x, Y = y, Z = z };
                 distributeTransformMapCommand.PropertyChanged += DistributeTransformMapCommand_PropertyChanged;
                 CurrentMapCommand = distributeTransformMapCommand;
                 shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
@@ -1243,9 +1267,9 @@ namespace TPMapEditor.ViewModel
         public void InitTranslateTransformCommand(double x = 0, double y = 0, double z = 0)
         {
             ClearTranslateTransformMapCommand();
-            if (currentMovableSelection.Count() > 0)
+            if (currentMultiMovableMapObject.Count > 0)
             {
-                translateTransformMapCommand = new(currentMovableSelection, IsMovableSelection3D) { DeltaX = x, DeltaY = y, DeltaZ = z };
+                translateTransformMapCommand = new(currentMultiMovableMapObject, IsMovableSelection3D) { DeltaX = x, DeltaY = y, DeltaZ = z };
                 translateTransformMapCommand.PropertyChanged += TranslateTransformMapCommand_PropertyChanged;
                 CurrentMapCommand = translateTransformMapCommand;
                 shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
@@ -1299,9 +1323,9 @@ namespace TPMapEditor.ViewModel
         private void InitRotateOrbitSpinTransformMapCommand(double rotation = 0, bool isRotationOrbit = true, bool isRotationSpin = true)
         {
             ClearRotateOrbitSpinTransformMapCommand();
-            if (currentRotatableSelection != null && currentRotatableSelection.Count() > 0)
+            if (currentMultiRotatableMapObject != null && currentMultiRotatableMapObject.Count > 0)
             {
-                rotateOrbitSpinTransformMapCommand = new(currentRotatableSelection) { Rotation = rotation, IsRotationOrbit = isRotationOrbit, IsRotationSpin = isRotationSpin };
+                rotateOrbitSpinTransformMapCommand = new(currentMultiRotatableMapObject) { Rotation = rotation, IsRotationOrbit = isRotationOrbit, IsRotationSpin = isRotationSpin };
                 rotateOrbitSpinTransformMapCommand.PropertyChanged += RotateOrbitSpinTransformMapCommand_PropertyChanged;
                 CurrentMapCommand = rotateOrbitSpinTransformMapCommand;
                 shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
@@ -1332,9 +1356,9 @@ namespace TPMapEditor.ViewModel
         private void InitRotateOrbitTransformMapCommand(double rotation = 0)
         {
             ClearRotateOrbitTransformMapCommand();
-            if (currentMovableSelection.Count() > 0)
+            if (currentMultiMovableMapObject.Count > 0)
             {
-                rotateOrbitTransformMapCommand = new(currentMovableSelection) { Rotation = rotation };
+                rotateOrbitTransformMapCommand = new(currentMultiMovableMapObject) { Rotation = rotation };
                 rotateOrbitTransformMapCommand.PropertyChanged += RotateOrbitTransformMapCommand_PropertyChanged;
                 CurrentMapCommand = rotateOrbitTransformMapCommand;
                 shouldCommitTransformMapCommand = hasCommittedTransformMapCommand = false;
@@ -1405,9 +1429,64 @@ namespace TPMapEditor.ViewModel
             ClearDistributeTransformMapCommand();
         }
 
-        private void SelectionService_SelectionChanged(object s, NotifyCollectionChangedEventArgs e)
+        private void WorldObjectSelectionService_SelectionChanged(object s, EventArgs e)
         {
             InitTransformCommandsIfPossible();
+            MultiWorldObjectViewModel.UpdateFromMapObject(WorldObjectSelectionService.SelectedMapObject);
+        }
+
+        private void PlayerSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiPlayerViewModel.UpdateFromMapObject(PlayerSelectionService.SelectedMapObject);
+        }
+
+        private void WaypointPathSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiWaypointPathViewModel.UpdateFromMapObject(WaypointPathSelectionService.SelectedMapObject);
+        }
+
+        private void WaypointPathPointSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiWaypointPathPointViewModel.UpdateFromMapObject(WaypointPathPointSelectionService.SelectedMapObject);
+        }
+
+        private void WorldPolygonSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiWorldPolygonViewModel.UpdateFromMapObject(WorldPolygonSelectionService.SelectedMapObject);
+        }
+
+        private void WorldPolygonPointSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiWorldPolygonPointViewModel.UpdateFromMapObject(WorldPolygonPointSelectionService.SelectedMapObject);
+        }
+
+        private void WorldPointSetSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiWorldPointSetViewModel.UpdateFromMapObject(WorldPointSetSelectionService.SelectedMapObject);
+        }
+
+        private void WorldPointSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiWorldPointViewModel.UpdateFromMapObject(WorldPointSelectionService.SelectedMapObject);
+        }
+
+        private void ObjectivePointSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiObjectivePointViewModel.UpdateFromMapObject(ObjectivePointSelectionService.SelectedMapObject);
+        }
+
+        private void MapTextPointSelectionService_SelectionChanged(object s, EventArgs e)
+        {
+            InitTransformCommandsIfPossible();
+            MultiMapTextPointViewModel.UpdateFromMapObject(MapTextPointSelectionService.SelectedMapObject);
         }
 
         partial void OnIsMoveCommandActiveChanging(bool value)
@@ -1471,8 +1550,7 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldObjectSelectionKBShortcutService;
-            currentMovableSelection = WorldObjectSelectionService.SelectedMapObjects;
-            currentRotatableSelection = WorldObjectSelectionService.SelectedMapObjects;
+            currentMultiMovableMapObject = currentMultiRotatableMapObject = MultiWorldObjectViewModel;
             IsMovableSelection3D = true;
             CanChangeRotationMode = true;
             ClearTransformMapCommands();
@@ -1545,8 +1623,7 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = playerSelectionKBShortcutService;
-            currentMovableSelection = PlayerSelectionService.SelectedMapObjects;
-            currentRotatableSelection = PlayerSelectionService.SelectedMapObjects;
+            currentMultiMovableMapObject = currentMultiRotatableMapObject = MultiPlayerViewModel;
             IsMovableSelection3D = true;
             CanChangeRotationMode = true;
             ClearTransformMapCommands();
@@ -1616,8 +1693,8 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = waypointPathSelectionKBShortcutService;
-            currentMovableSelection = WaypointPathPointSelectionService.SelectedMapObjects;
-            currentRotatableSelection = null;
+            currentMultiMovableMapObject = MultiWaypointPathPointViewModel;
+            currentMultiRotatableMapObject = null;
             IsMovableSelection3D = true;
             CanChangeRotationMode = false;
             ClearTransformMapCommands();
@@ -1785,8 +1862,8 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPolygonSelectionKBShortcutService;
-            currentMovableSelection = WorldPolygonPointSelectionService.SelectedMapObjects;
-            currentRotatableSelection = null;
+            currentMultiMovableMapObject = MultiWorldPolygonPointViewModel;
+            currentMultiRotatableMapObject = null;
             IsMovableSelection3D = false;
             CanChangeRotationMode = false;
             ClearTransformMapCommands();
@@ -1954,8 +2031,7 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = worldPointSetSelectionKBShortcutService;
-            currentMovableSelection = WorldPointSelectionService.SelectedMapObjects;
-            currentRotatableSelection = WorldPointSelectionService.SelectedMapObjects;
+            currentMultiMovableMapObject = currentMultiRotatableMapObject = MultiWorldPointViewModel;
             IsMovableSelection3D = true;
             CanChangeRotationMode = true;
             ClearTransformMapCommands();
@@ -2123,8 +2199,8 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = objectivePointSelectionKBShortcutService;
-            currentMovableSelection = ObjectivePointSelectionService.SelectedMapObjects;
-            currentRotatableSelection = null;
+            currentMultiMovableMapObject = MultiObjectivePointViewModel;
+            currentMultiRotatableMapObject = null;
             IsMovableSelection3D = true;
             CanChangeRotationMode = false;
             ClearTransformMapCommands();
@@ -2194,8 +2270,8 @@ namespace TPMapEditor.ViewModel
         {
             copyPasteService.ClearClipboard();
             currenSelectionKBShortcutService = mapTextPointSelectionKBShortcutService;
-            currentMovableSelection = MapTextPointSelectionService.SelectedMapObjects;
-            currentRotatableSelection = null;
+            currentMultiMovableMapObject = MultiMapTextPointViewModel;
+            currentMultiRotatableMapObject = null;
             IsMovableSelection3D = true;
             CanChangeRotationMode = false;
             ClearTransformMapCommands();
