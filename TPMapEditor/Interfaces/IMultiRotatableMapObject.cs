@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TPMapEditor.Interfaces
 {
@@ -16,5 +12,6 @@ namespace TPMapEditor.Interfaces
         public void BeginSpinZFixTransformMapCommand();
         public void UpdateSpinFixTransformMapCommand();
         public void EndSpinFixTransformMapCommand();
+        public IEnumerable<IRotatableMapObject> GetSelectedRotatableMapObjects();
     }
 }
