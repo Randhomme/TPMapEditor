@@ -2,7 +2,7 @@
 
 namespace TPMapEditor.Interfaces
 {
-    public interface IMultiMovableMapObject
+    public interface IMultiMovableMapObject : IMultiSelectableMapObject
     {
         public double X { get; set; }
         public double Y { get; set; }
