@@ -45,9 +45,11 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.Y = kv.Value.Y;
                 kv.Key.Z = kv.Value.Z;
             }
+            multiMovableMapObject.UseUpdateCommands = false;
             (multiMovableMapObject.X, multiXBefore) = (multiXBefore, multiMovableMapObject.X);
             (multiMovableMapObject.Y, multiYBefore) = (multiYBefore, multiMovableMapObject.Y);
             (multiMovableMapObject.Z, multiZBefore) = (multiZBefore, multiMovableMapObject.Z);
+            multiMovableMapObject.UseUpdateCommands = true;
             CanUndo = false;
         }
 
@@ -62,9 +64,11 @@ namespace TPMapEditor.Interfaces.Implementations
                     kv.Key.Z = kv.Value.Z;
                 }
             }
+            multiMovableMapObject.UseUpdateCommands = false;
             (multiMovableMapObject.X, multiXBefore) = (multiXBefore, multiMovableMapObject.X);
             (multiMovableMapObject.Y, multiYBefore) = (multiYBefore, multiMovableMapObject.Y);
             (multiMovableMapObject.Z, multiZBefore) = (multiZBefore, multiMovableMapObject.Z);
+            multiMovableMapObject.UseUpdateCommands = true;
             CanUndo = true;
         }
     }

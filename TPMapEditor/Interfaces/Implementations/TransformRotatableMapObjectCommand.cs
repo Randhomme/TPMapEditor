@@ -48,12 +48,14 @@ namespace TPMapEditor.Interfaces.Implementations
                 kv.Key.YRotation = kv.Value.YRotation;
                 kv.Key.ZRotation = kv.Value.ZRotation;
             }
+            multiRotatableMapObject.UseUpdateCommands = false;
             (multiRotatableMapObject.X, multiXBefore) = (multiXBefore, multiRotatableMapObject.X);
             (multiRotatableMapObject.Y, multiYBefore) = (multiYBefore, multiRotatableMapObject.Y);
             (multiRotatableMapObject.Z, multiZBefore) = (multiZBefore, multiRotatableMapObject.Z);
             (multiRotatableMapObject.XRotation, multiXRotationBefore) = (multiXRotationBefore, multiRotatableMapObject.XRotation);
             (multiRotatableMapObject.YRotation, multiYRotationBefore) = (multiYRotationBefore, multiRotatableMapObject.YRotation);
             (multiRotatableMapObject.ZRotation, multiZRotationBefore) = (multiZRotationBefore, multiRotatableMapObject.ZRotation);
+            multiRotatableMapObject.UseUpdateCommands = true;
             CanUndo = false;
         }
 
@@ -71,12 +73,14 @@ namespace TPMapEditor.Interfaces.Implementations
                     kv.Key.ZRotation = kv.Value.ZRotation;
                 }
             }
+            multiRotatableMapObject.UseUpdateCommands = false;
             (multiRotatableMapObject.X, multiXBefore) = (multiXBefore, multiRotatableMapObject.X);
             (multiRotatableMapObject.Y, multiYBefore) = (multiYBefore, multiRotatableMapObject.Y);
             (multiRotatableMapObject.Z, multiZBefore) = (multiZBefore, multiRotatableMapObject.Z);
             (multiRotatableMapObject.XRotation, multiXRotationBefore) = (multiXRotationBefore, multiRotatableMapObject.XRotation);
             (multiRotatableMapObject.YRotation, multiYRotationBefore) = (multiYRotationBefore, multiRotatableMapObject.YRotation);
             (multiRotatableMapObject.ZRotation, multiZRotationBefore) = (multiZRotationBefore, multiRotatableMapObject.ZRotation);
+            multiRotatableMapObject.UseUpdateCommands = true;
             CanUndo = true;
         }
     }
