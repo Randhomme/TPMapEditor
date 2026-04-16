@@ -27,6 +27,17 @@ namespace TPMapEditor.Interfaces.Implementations
                 o => (o.X, o.Y, o.Z));
         }
 
+        public TransformMovableMapObjectCommand(IMultiMovableMapObject multiMovableMapObject, double multiXBefore, double multiYBefore, double multiZBefore)
+        {
+            this.multiMovableMapObject = multiMovableMapObject;
+            this.multiXBefore = multiXBefore;
+            this.multiYBefore = multiYBefore;
+            this.multiZBefore = multiZBefore;
+            _before = multiMovableMapObject.GetSelectedMovableMapObjects().ToDictionary(
+                o => o,
+                o => (o.X, o.Y, o.Z));
+        }
+
         public abstract void Apply();
 
         private void Commit()

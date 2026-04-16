@@ -28,11 +28,11 @@ namespace TPMapEditor.ViewModel
             Z = mapObject.Z;
         }
 
-        public void BeginAlignXTransformMapCommand()
+        public void BeginAlignXTransformMapCommand(double multiXBefore)
         {
             if (UseUpdateCommands)
             {
-                alignTransformMapCommand = new(this, true)
+                alignTransformMapCommand = new(this, multiXBefore, Y, Z, true)
                 {
                     AlignOnX = true,
                     AlignOnY = false,
@@ -41,11 +41,11 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void BeginAlignYTransformMapCommand()
+        public void BeginAlignYTransformMapCommand(double multiYBefore)
         {
             if (UseUpdateCommands)
             {
-                alignTransformMapCommand = new(this, true)
+                alignTransformMapCommand = new(this, X, multiYBefore, Z, true)
                 {
                     AlignOnX = false,
                     AlignOnY = true,
@@ -54,11 +54,11 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void BeginAlignZTransformMapCommand()
+        public void BeginAlignZTransformMapCommand(double multiZBefore)
         {
             if (UseUpdateCommands)
             {
-                alignTransformMapCommand = new(this, true)
+                alignTransformMapCommand = new(this, X, Y, multiZBefore, true)
                 {
                     AlignOnX = false,
                     AlignOnY = false,
@@ -74,6 +74,7 @@ namespace TPMapEditor.ViewModel
                 alignTransformMapCommand!.X = X;
                 alignTransformMapCommand!.Y = Y;
                 alignTransformMapCommand!.Z = Z;
+                alignTransformMapCommand.Apply();
             }
         }
 

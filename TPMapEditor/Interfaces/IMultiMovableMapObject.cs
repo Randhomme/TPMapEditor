@@ -7,9 +7,9 @@ namespace TPMapEditor.Interfaces
         public double X { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
-        public void BeginAlignXTransformMapCommand();
-        public void BeginAlignYTransformMapCommand();
-        public void BeginAlignZTransformMapCommand();
+        public void BeginAlignXTransformMapCommand(double multiXBefore);
+        public void BeginAlignYTransformMapCommand(double multiYBefore);
+        public void BeginAlignZTransformMapCommand(double multiZBefore);
         public void UpdateAlignTransformMapCommand();
         public void EndAlignTransformMapCommand();
         public IEnumerable<IMovableMapObject> GetSelectedMovableMapObjects();

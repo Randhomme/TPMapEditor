@@ -10,7 +10,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
             {
-                vm.BeginAlignXTransformMapCommand();
+                vm.BeginAlignXTransformMapCommand(e.OldValue);
                 vm.UpdateAlignTransformMapCommand();
                 vm.EndAlignTransformMapCommand();
             }
@@ -20,7 +20,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
             {
-                vm.BeginAlignYTransformMapCommand();
+                vm.BeginAlignYTransformMapCommand(e.OldValue);
                 vm.UpdateAlignTransformMapCommand();
                 vm.EndAlignTransformMapCommand();
             }
@@ -30,7 +30,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
             {
-                vm.BeginAlignZTransformMapCommand();
+                vm.BeginAlignZTransformMapCommand(e.OldValue);
                 vm.UpdateAlignTransformMapCommand();
                 vm.EndAlignTransformMapCommand();
             }
@@ -42,7 +42,7 @@ namespace TPMapEditor.DataTemplate
             {
                 slider.ValueChanged -= SliderX_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
-                vm.BeginAlignXTransformMapCommand();
+                vm.BeginAlignXTransformMapCommand(vm.X);
             }
         }
 
@@ -52,7 +52,7 @@ namespace TPMapEditor.DataTemplate
             {
                 slider.ValueChanged -= SliderY_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
-                vm.BeginAlignYTransformMapCommand();
+                vm.BeginAlignYTransformMapCommand(vm.Y);
             }
         }
 
@@ -62,7 +62,7 @@ namespace TPMapEditor.DataTemplate
             {
                 slider.ValueChanged -= SliderZ_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
-                vm.BeginAlignZTransformMapCommand();
+                vm.BeginAlignZTransformMapCommand(vm.Z);
             }
         }
 

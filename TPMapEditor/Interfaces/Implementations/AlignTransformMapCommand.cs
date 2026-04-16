@@ -22,6 +22,14 @@ namespace TPMapEditor.Interfaces.Implementations
             Is3D = is3D;
         }
 
+        public AlignTransformMapCommand(IMultiMovableMapObject multiMovableMapObject, double multiXBefore, double multiYBefore, double multiZBefore, bool is3D) : base(multiMovableMapObject, multiXBefore, multiYBefore, multiZBefore)
+        {
+            xBefore = x;
+            yBefore = y;
+            zBefore = z;
+            Is3D = is3D;
+        }
+
         public override void Undo()
         {
             (xBefore, X) = (X, xBefore);
