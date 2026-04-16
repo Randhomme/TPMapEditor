@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using System.Linq;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Services;
 
@@ -11,6 +12,8 @@ namespace TPMapEditor.ViewModel
         protected readonly IEnumerable<T> selectedMapObjects;
 
         public bool UseUpdateCommands { get; set; } = true;
+
+        public int Count { get => selectedMapObjects.Count(); }
 
         public MultiSelectableMapObjectViewModel(IEnumerable<T> selectedMapObjects, IUndoManagerService undoManagerService)
         {
