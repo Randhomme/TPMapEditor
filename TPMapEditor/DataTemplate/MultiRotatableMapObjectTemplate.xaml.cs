@@ -4,73 +4,73 @@ using TPMapEditor.Interfaces;
 
 namespace TPMapEditor.DataTemplate
 {
-    public partial class MultiMovableMapObjectTemplate
+    public partial class MultiRotatableMapObjectTemplate
     {
         private void SliderX_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginAlignXTransformMapCommand();
-                vm.UpdateAlignTransformMapCommand();
-                vm.EndAlignTransformMapCommand();
+                vm.BeginSpinXFixTransformMapCommand();
+                vm.UpdateSpinFixTransformMapCommand();
+                vm.EndSpinFixTransformMapCommand();
             }
         }
 
         private void SliderY_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginAlignYTransformMapCommand();
-                vm.UpdateAlignTransformMapCommand();
-                vm.EndAlignTransformMapCommand();
+                vm.BeginSpinYFixTransformMapCommand();
+                vm.UpdateSpinFixTransformMapCommand();
+                vm.EndSpinFixTransformMapCommand();
             }
         }
 
         private void SliderZ_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginAlignZTransformMapCommand();
-                vm.UpdateAlignTransformMapCommand();
-                vm.EndAlignTransformMapCommand();
+                vm.BeginSpinZFixTransformMapCommand();
+                vm.UpdateSpinFixTransformMapCommand();
+                vm.EndSpinFixTransformMapCommand();
             }
         }
 
         private void SliderX_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
+                vm.BeginSpinXFixTransformMapCommand();
                 slider.ValueChanged -= SliderX_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
-                vm.BeginAlignXTransformMapCommand();
             }
         }
 
         private void SliderY_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
+                vm.BeginSpinYFixTransformMapCommand();
                 slider.ValueChanged -= SliderY_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
-                vm.BeginAlignYTransformMapCommand();
             }
         }
 
         private void SliderZ_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
+                vm.BeginSpinZFixTransformMapCommand();
                 slider.ValueChanged -= SliderZ_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
-                vm.BeginAlignZTransformMapCommand();
             }
         }
 
         private void SliderX_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.EndAlignTransformMapCommand();
+                vm.EndSpinFixTransformMapCommand();
                 slider.ValueChanged -= Slider_ValueChanged;
                 slider.ValueChanged += SliderX_ValueChanged_BeginEndCommand;
             }
@@ -78,9 +78,9 @@ namespace TPMapEditor.DataTemplate
 
         private void SliderY_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.EndAlignTransformMapCommand();
+                vm.EndSpinFixTransformMapCommand();
                 slider.ValueChanged -= Slider_ValueChanged;
                 slider.ValueChanged += SliderY_ValueChanged_BeginEndCommand;
             }
@@ -88,9 +88,9 @@ namespace TPMapEditor.DataTemplate
 
         private void SliderZ_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.EndAlignTransformMapCommand();
+                vm.EndSpinFixTransformMapCommand();
                 slider.ValueChanged -= Slider_ValueChanged;
                 slider.ValueChanged += SliderZ_ValueChanged_BeginEndCommand;
             }
@@ -98,9 +98,9 @@ namespace TPMapEditor.DataTemplate
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.UpdateAlignTransformMapCommand();
+                vm.UpdateSpinFixTransformMapCommand();
             }
         }
     }

@@ -1,12 +1,18 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     x:Class="TPMapEditor.DataTemplate.MultiMovableMapObjectTemplate"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel x:Key="MultiMovableMapObjectSliders">
+    <StackPanel x:Key="MultiMovable3MapObjectSliders" x:Shared="False">
         <Label Margin="-5,5,0,0" Content="Position X"/>
         <Slider Value="{Binding X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999" ValueChanged="SliderX_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderX_DragStarted" Thumb.DragCompleted="SliderX_DragCompleted"/>
         <Label Margin="-5,5,0,0" Content="Position Y"/>
         <Slider Value="{Binding Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999" ValueChanged="SliderY_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderY_DragStarted" Thumb.DragCompleted="SliderY_DragCompleted"/>
         <Label Margin="-5,5,0,0" Content="Position Z"/>
         <Slider Value="{Binding Z}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999" ValueChanged="SliderZ_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderZ_DragStarted" Thumb.DragCompleted="SliderZ_DragCompleted"/>
+    </StackPanel>
+    <StackPanel x:Key="MultiMovable2MapObjectSliders" x:Shared="False">
+        <Label Margin="-5,5,0,0" Content="Position X"/>
+        <Slider Value="{Binding X}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999" ValueChanged="SliderX_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderX_DragStarted" Thumb.DragCompleted="SliderX_DragCompleted"/>
+        <Label Margin="-5,5,0,0" Content="Position Y"/>
+        <Slider Value="{Binding Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999" ValueChanged="SliderY_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderY_DragStarted" Thumb.DragCompleted="SliderY_DragCompleted"/>
     </StackPanel>
 </ResourceDictionary>

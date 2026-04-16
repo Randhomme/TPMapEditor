@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    x:Class="TPMapEditor.DataTemplate.MultiRotatableMapObjectTemplate"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel x:Key="MultiRotatableMapObjectSliders" x:Shared="False">
+        <Label Margin="-5,5,0,0" Content="Rotation X (Euler XYZ)"/>
+        <Slider Value="{Binding XRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15" ValueChanged="SliderX_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderX_DragStarted" Thumb.DragCompleted="SliderX_DragCompleted"/>
+        <Label Margin="-5,5,0,0" Content="Rotation Y (Euler XYZ)"/>
+        <Slider Value="{Binding YRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15" ValueChanged="SliderY_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderY_DragStarted" Thumb.DragCompleted="SliderY_DragCompleted"/>
+        <Label Margin="-5,5,0,0" Content="Rotation Z (Euler XYZ)"/>
+        <Slider Value="{Binding ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15" ValueChanged="SliderZ_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderZ_DragStarted" Thumb.DragCompleted="SliderZ_DragCompleted"/>
+    </StackPanel>
+    <StackPanel x:Key="MultiRotatableMapObjectZOnlySliders" x:Shared="False">
+        <Label Margin="-5,5,0,0" Content="Rotation"/>
+        <Slider Value="{Binding ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15" ValueChanged="SliderZ_ValueChanged_BeginEndCommand" Thumb.DragStarted="SliderZ_DragStarted" Thumb.DragCompleted="SliderZ_DragCompleted"/>
+    </StackPanel>
+</ResourceDictionary>
