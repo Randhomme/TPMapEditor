@@ -18,11 +18,14 @@ namespace TPMapEditor.ViewModel
             this.undoManagerService = undoManagerService;
         }
 
-        public void UpdateFromMapObject(T mapObject)
+        public void UpdateFromMapObject(T? mapObject)
         {
-            UseUpdateCommands = false;
-            UpdateFromMapObject_Internal(mapObject);
-            UseUpdateCommands = true;
+            if (mapObject != null)
+            {
+                UseUpdateCommands = false;
+                UpdateFromMapObject_Internal(mapObject);
+                UseUpdateCommands = true;
+            }
         }
 
         protected abstract void UpdateFromMapObject_Internal(T mapObject);
