@@ -27,6 +27,20 @@ namespace TPMapEditor.Interfaces.Implementations
                 o => (o.X, o.Y, o.Z, o.XRotation, o.YRotation, o.ZRotation));
         }
 
+        public TransformRotatableMapObjectCommand(IMultiRotatableMapObject multiRotatableMapObject, double multiXRotationBefore, double multiYRotationBefore, double multiZRotationBefore)
+        {
+            this.multiRotatableMapObject = multiRotatableMapObject;
+            multiXBefore = multiRotatableMapObject.X;
+            multiYBefore = multiRotatableMapObject.Y;
+            multiZBefore = multiRotatableMapObject.Z;
+            this.multiXRotationBefore = multiXRotationBefore;
+            this.multiYRotationBefore = multiYRotationBefore;
+            this.multiZRotationBefore = multiZRotationBefore;
+            _before = multiRotatableMapObject.GetSelectedRotatableMapObjects().ToDictionary(
+                o => o,
+                o => (o.X, o.Y, o.Z, o.XRotation, o.YRotation, o.ZRotation));
+        }
+
         public abstract void Apply();
 
         private void Commit()

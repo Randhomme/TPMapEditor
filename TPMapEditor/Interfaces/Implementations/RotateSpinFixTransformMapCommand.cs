@@ -19,6 +19,13 @@ namespace TPMapEditor.Interfaces.Implementations
             zRotationBefore = zRotation;
         }
 
+        public RotateSpinFixTransformMapCommand(IMultiRotatableMapObject multiRotatableMapObject, double multiXRotationBefore, double multiYRotationBefore, double multiZRotationBefore) : base(multiRotatableMapObject, multiXRotationBefore, multiYRotationBefore, multiZRotationBefore)
+        {
+            xRotationBefore = xRotation;
+            yRotationBefore = yRotation;
+            zRotationBefore = zRotation;
+        }
+
         public override void Undo()
         {
             (xRotationBefore, XRotation) = (XRotation, xRotationBefore);

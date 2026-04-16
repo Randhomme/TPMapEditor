@@ -10,7 +10,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginSpinXFixTransformMapCommand();
+                vm.BeginSpinXFixTransformMapCommand(e.OldValue);
                 vm.UpdateSpinFixTransformMapCommand();
                 vm.EndSpinFixTransformMapCommand();
             }
@@ -20,7 +20,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginSpinYFixTransformMapCommand();
+                vm.BeginSpinYFixTransformMapCommand(e.OldValue);
                 vm.UpdateSpinFixTransformMapCommand();
                 vm.EndSpinFixTransformMapCommand();
             }
@@ -30,7 +30,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginSpinZFixTransformMapCommand();
+                vm.BeginSpinZFixTransformMapCommand(e.OldValue);
                 vm.UpdateSpinFixTransformMapCommand();
                 vm.EndSpinFixTransformMapCommand();
             }
@@ -40,7 +40,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginSpinXFixTransformMapCommand();
+                vm.BeginSpinXFixTransformMapCommand(vm.XRotation);
                 slider.ValueChanged -= SliderX_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
             }
@@ -50,7 +50,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginSpinYFixTransformMapCommand();
+                vm.BeginSpinYFixTransformMapCommand(vm.YRotation);
                 slider.ValueChanged -= SliderY_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
             }
@@ -60,7 +60,7 @@ namespace TPMapEditor.DataTemplate
         {
             if (sender is Slider slider && slider.DataContext is IMultiRotatableMapObject vm)
             {
-                vm.BeginSpinZFixTransformMapCommand();
+                vm.BeginSpinZFixTransformMapCommand(vm.ZRotation);
                 slider.ValueChanged -= SliderZ_ValueChanged_BeginEndCommand;
                 slider.ValueChanged += Slider_ValueChanged;
             }

@@ -27,11 +27,11 @@ namespace TPMapEditor.ViewModel
             ZRotation = mapObject.ZRotation;
         }
 
-        public void BeginSpinXFixTransformMapCommand()
+        public void BeginSpinXFixTransformMapCommand(double multiXRotationBefore)
         {
             if (UseUpdateCommands)
             {
-                rotateSpinFixTransformMapCommand = new(this)
+                rotateSpinFixTransformMapCommand = new(this, multiXRotationBefore, Y, Z)
                 {
                     RotateOnX = true,
                     RotateOnY = false,
@@ -40,11 +40,11 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void BeginSpinYFixTransformMapCommand()
+        public void BeginSpinYFixTransformMapCommand(double multiYRotationBefore)
         {
             if (UseUpdateCommands)
             {
-                rotateSpinFixTransformMapCommand = new(this)
+                rotateSpinFixTransformMapCommand = new(this, X, multiYRotationBefore, Z)
                 {
                     RotateOnX = false,
                     RotateOnY = true,
@@ -53,11 +53,11 @@ namespace TPMapEditor.ViewModel
             }
         }
 
-        public void BeginSpinZFixTransformMapCommand()
+        public void BeginSpinZFixTransformMapCommand(double multiZRotationBefore)
         {
             if (UseUpdateCommands)
             {
-                rotateSpinFixTransformMapCommand = new(this)
+                rotateSpinFixTransformMapCommand = new(this, X, Y, multiZRotationBefore)
                 {
                     RotateOnX = false,
                     RotateOnY = false,
@@ -73,6 +73,7 @@ namespace TPMapEditor.ViewModel
                 rotateSpinFixTransformMapCommand!.XRotation = XRotation;
                 rotateSpinFixTransformMapCommand!.YRotation = YRotation;
                 rotateSpinFixTransformMapCommand!.ZRotation = ZRotation;
+                rotateSpinFixTransformMapCommand.Apply();
             }
         }
 

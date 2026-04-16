@@ -7,9 +7,9 @@ namespace TPMapEditor.Interfaces
         public double XRotation { get; set; }
         public double YRotation { get; set; }
         public double ZRotation { get; set; }
-        public void BeginSpinXFixTransformMapCommand();
-        public void BeginSpinYFixTransformMapCommand();
-        public void BeginSpinZFixTransformMapCommand();
+        public void BeginSpinXFixTransformMapCommand(double multiXRotationBefore);
+        public void BeginSpinYFixTransformMapCommand(double multiYRotationBefore);
+        public void BeginSpinZFixTransformMapCommand(double multiZRotationBefore);
         public void UpdateSpinFixTransformMapCommand();
         public void EndSpinFixTransformMapCommand();
         public IEnumerable<IRotatableMapObject> GetSelectedRotatableMapObjects();
