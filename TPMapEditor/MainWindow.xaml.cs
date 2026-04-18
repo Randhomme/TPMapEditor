@@ -1588,7 +1588,7 @@ namespace TPMapEditor
             {
                 var s = currentCanvas?.InputHitTest(pos);
                 if (s != null)
-                    OnObjectivePointClicked(s, e);
+                    OnMapTextPointClicked(s, e);
             }
         }
 
