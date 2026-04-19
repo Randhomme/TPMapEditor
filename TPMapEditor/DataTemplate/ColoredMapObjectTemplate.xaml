@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    x:Class="TPMapEditor.DataTemplate.ColoredMapObjectTemplate"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel x:Key="ColoredMapObjectStackPanel" x:Shared="false">
+        <Label Margin="-5,5,0,0" Content="Color"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Rectangle>
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="/Images/AlphaBg.png" Stretch="Fill" TileMode="Tile" ViewportUnits="Absolute" ViewboxUnits="RelativeToBoundingBox" Viewport="0,0,10,10" Viewbox="0,0,1,1"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle>
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding Color}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Button Width="70" Content="Edit" Grid.Column="1" Click="EditColor_Click"/>
+        </Grid>
+    </StackPanel>
+</ResourceDictionary>
