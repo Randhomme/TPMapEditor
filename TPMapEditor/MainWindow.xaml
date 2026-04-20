@@ -992,7 +992,7 @@
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
                                         <GroupBox Grid.Row="1" Header="Selected world object" Visibility="{c:Binding 'WorldObjectSelectionService.SelectedMapObject!=null'}">
-                                            <ContentControl Content="{Binding WorldObjectSelectionService.SelectedMapObject}"/>
+                                            <ContentControl Content="{Binding MultiWorldObjectViewModel}"/>
                                         </GroupBox>
                                     </Grid>
                                     <Grid Visibility="{c:Binding ElementName=PlayerRadioButton, Path=IsChecked}">
@@ -1015,7 +1015,7 @@
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
                                         <GroupBox Grid.Row="1" Header="Selected player" Visibility="{c:Binding 'PlayerSelectionService.SelectedMapObject!=null'}">
-                                            <ContentControl Content="{Binding PlayerSelectionService.SelectedMapObject}"/>
+                                            <ContentControl Content="{Binding MultiPlayerViewModel}"/>
                                         </GroupBox>
                                     </Grid>
                                     <Grid Visibility="{c:Binding ElementName=WaypointPathRadioButton, Path=IsChecked}">
@@ -1040,10 +1040,10 @@
                                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <StackPanel>
                                                 <GroupBox Header="Selected path" Visibility="{c:Binding 'WaypointPathSelectionService.SelectedMapObject!=null'}">
-                                                    <ContentControl Content="{Binding WaypointPathSelectionService.SelectedMapObject}" ContentTemplate="{StaticResource WaypointPathNoPointsTemplate}"/>
+                                                    <ContentControl Content="{Binding MultiWaypointPathViewModel}" ContentTemplate="{StaticResource MultiWaypointPathViewModelNoPointsTemplate}"/>
                                                 </GroupBox>
                                                 <GroupBox Header="Selected path point" Visibility="{c:Binding 'WaypointPathPointSelectionService.SelectedMapObject!=null'}">
-                                                    <ContentControl Content="{Binding WaypointPathPointSelectionService.SelectedMapObject}"/>
+                                                    <ContentControl Content="{Binding MultiWaypointPathPointViewModel}"/>
                                                 </GroupBox>
                                             </StackPanel>
                                         </ScrollViewer>
@@ -1070,10 +1070,10 @@
                                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <StackPanel>
                                                 <GroupBox Header="Selected polygon" Visibility="{c:Binding 'WorldPolygonSelectionService.SelectedMapObject!=null'}">
-                                                    <ContentControl Content="{Binding WorldPolygonSelectionService.SelectedMapObject}" ContentTemplate="{StaticResource WorldPolygonNoPointTemplate}"/>
+                                                    <ContentControl Content="{Binding MultiWorldPolygonViewModel}" ContentTemplate="{StaticResource MultiWorldPolygonViewModelNoPointsTemplate}"/>
                                                 </GroupBox>
                                                 <GroupBox Header="Selected polygon point" Visibility="{c:Binding 'WorldPolygonPointSelectionService.SelectedMapObject!=null'}">
-                                                    <ContentControl Content="{Binding WorldPolygonPointSelectionService.SelectedMapObject}"/>
+                                                    <ContentControl Content="{Binding MultiWorldPolygonPointViewModel}"/>
                                                 </GroupBox>
                                             </StackPanel>
                                         </ScrollViewer>
@@ -1100,10 +1100,10 @@
                                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <StackPanel>
                                                 <GroupBox Header="Selected world point set" Visibility="{c:Binding 'WorldPointSetSelectionService.SelectedMapObject!=null'}">
-                                                    <ContentControl Content="{Binding WorldPointSetSelectionService.SelectedMapObject}" ContentTemplate="{StaticResource WorldPointSetNoPointsTemplate}"/>
+                                                    <ContentControl Content="{Binding MultiWorldPointSetViewModel}" ContentTemplate="{StaticResource MultiWorldPointSetViewModelNoPointsTemplate}"/>
                                                 </GroupBox>
                                                 <GroupBox Header="World point" Visibility="{c:Binding 'WorldPointSelectionService.SelectedMapObject!=null'}">
-                                                    <ContentControl Content="{Binding WorldPointSelectionService.SelectedMapObject}"/>
+                                                    <ContentControl Content="{Binding MultiWorldPointViewModel}"/>
                                                 </GroupBox>
                                             </StackPanel>
                                         </ScrollViewer>
@@ -1128,7 +1128,7 @@
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
                                         <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'ObjectivePointSelectionService.SelectedMapObject!=null'}">
-                                            <ContentControl Content="{Binding ObjectivePointSelectionService.SelectedMapObject}"/>
+                                            <ContentControl Content="{Binding MultiObjectivePointViewModel}"/>
                                         </GroupBox>
                                     </Grid>
                                     <Grid Visibility="{c:Binding ElementName=MapTextPointRadioButton, Path=IsChecked}">
@@ -1150,8 +1150,8 @@
                                                 </DataGridTemplateColumn>
                                             </controls:CollectionEditorControl.Columns>
                                         </controls:CollectionEditorControl>
-                                        <GroupBox Grid.Row="1" Header="Selected objective point" Visibility="{c:Binding 'MapTextPointSelectionService.SelectedMapObject!=null'}">
-                                            <ContentControl Content="{Binding MapTextPointSelectionService.SelectedMapObject}"/>
+                                        <GroupBox Grid.Row="1" Header="Selected map text point" Visibility="{c:Binding 'MapTextPointSelectionService.SelectedMapObject!=null'}">
+                                            <ContentControl Content="{Binding MultiMapTextPointViewModel, UpdateSourceTrigger=PropertyChanged}"/>
                                         </GroupBox>
                                     </Grid>
                                 </Grid>
