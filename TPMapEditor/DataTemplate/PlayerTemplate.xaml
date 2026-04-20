@@ -34,7 +34,7 @@
                 <Label Margin="-5,5,0,0" Content="Position Y"/>
                 <Slider Value="{Binding Y}" IsSnapToTickEnabled="True" SmallChange="1" Minimum="-9999" Maximum="9999"/>
                 <Label Margin="-5,5,0,0" Content="Rotation"/>
-                <Slider Value="{Binding ZRotation}" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
+                <Slider Value="{Binding ZRotation}" IsSnapToTickEnabled="True" Maximum="180" Minimum="-180" TickFrequency="1" AutoToolTipPlacement="TopLeft" SmallChange="1" LargeChange="15"/>
                 <Label Margin="-5,5,0,0" Content="Formation type start"/>
                 <ComboBox SelectedItem="{Binding FormationTypeStart}" ItemsSource="{enums:EnumBindingSource enums:FormationType}"/>
                 <CheckBox Margin="0,15,0,0" Content="Has selectable team ?" IsChecked="{Binding HasSelectableTeam}"/>
