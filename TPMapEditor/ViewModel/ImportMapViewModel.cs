@@ -82,8 +82,6 @@ namespace TPMapEditor.ViewModel
                 for (int i = 0; i < map.WorldObjects.Count; i++)
                 {
                     var item = map.WorldObjects[i];
-                    item.HasGroup = ImportGroups;
-                    item.HasPlayer = ImportPlayers;
                     this.map.WorldObjects.Add(item);
                 }
             }
@@ -109,8 +107,6 @@ namespace TPMapEditor.ViewModel
                 {
                     var item = map.Players[i];
                     item.Name = NamedObject.GenerateName(item.Name, this.map.Players);
-                    item.HasSelectableTeam = ImportSelectableTeams;
-                    item.HasInGameTeam = ImportInGameTeams;
                     this.map.Players.Add(item);
                 }
             }
