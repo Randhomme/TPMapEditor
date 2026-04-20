@@ -15,6 +15,17 @@
                 <ResourceDictionary Source="/Styles/ScrollViewerStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/CollectionEditorControlStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/SplitToggleButtonStyle.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/ColoredMapObjectTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiMovableMapObjectTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiRotatableMapObjectTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiPointViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiWorldObjectViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiPlayerViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiWaypointPathViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiWorldPolygonViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiWorldPointSetViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiObjectivePointViewModelTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplate/MultiMapTextPointViewModelTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/GroupTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/PlayerTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplate/WorldObjectTemplate.xaml"/>
