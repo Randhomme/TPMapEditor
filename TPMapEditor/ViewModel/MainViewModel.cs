@@ -133,8 +133,8 @@ namespace TPMapEditor.ViewModel
             worldPointSetSelectionKBShortcutService = new SelectionKBShortcutService<WorldPointSet>(Map.WorldPointSets, WorldPointSetSelectionService, copyPasteService);
             objectivePointSelectionKBShortcutService = new SelectionKBShortcutService<ObjectivePoint>(Map.ObjectivePoints, ObjectivePointSelectionService, copyPasteService);
             mapTextPointSelectionKBShortcutService = new SelectionKBShortcutService<MapTextPoint>(Map.MapTextPoints, MapTextPointSelectionService, copyPasteService);
-            MultiWorldObjectViewModel = new(WorldObjectSelectionService.SelectedMapObjects, undoManagerService);
-            MultiPlayerViewModel = new(PlayerSelectionService.SelectedMapObjects, undoManagerService);
+            MultiWorldObjectViewModel = new(WorldObjectSelectionService.SelectedMapObjects, undoManagerService, Map);
+            MultiPlayerViewModel = new(PlayerSelectionService.SelectedMapObjects, undoManagerService, Map);
             MultiWaypointPathViewModel = new(WaypointPathSelectionService.SelectedMapObjects, undoManagerService);
             MultiWaypointPathPointViewModel = new(WaypointPathPointSelectionService.SelectedMapObjects, undoManagerService);
             MultiWorldPolygonViewModel = new(WorldPolygonSelectionService.SelectedMapObjects, undoManagerService);
