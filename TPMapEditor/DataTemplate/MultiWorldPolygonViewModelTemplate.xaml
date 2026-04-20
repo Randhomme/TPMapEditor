@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                    xmlns:vm="clr-namespace:TPMapEditor.ViewModel"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate DataType="{x:Type vm:MultiWorldPolygonViewModel}" x:Key="MultiWorldPolygonViewModelNoPointsTemplate">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,-5,0,0">
+                <StackPanel Visibility="{c:Binding ShowName}">
+                    <Label Margin="-5,5,0,0" Content="Name"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                </StackPanel>
+                <ContentPresenter Content="{StaticResource ColoredMapObjectStackPanel}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+</ResourceDictionary>
