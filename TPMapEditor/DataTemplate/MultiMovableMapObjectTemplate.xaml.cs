@@ -8,7 +8,7 @@ namespace TPMapEditor.DataTemplate
     {
         private void SliderX_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.IsKeyboardFocusWithin && slider.DataContext is IMultiMovableMapObject vm)
             {
                 vm.BeginAlignXTransformMapCommand(e.OldValue);
                 vm.UpdateAlignTransformMapCommand();
@@ -18,7 +18,7 @@ namespace TPMapEditor.DataTemplate
 
         private void SliderY_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.IsKeyboardFocusWithin && slider.DataContext is IMultiMovableMapObject vm)
             {
                 vm.BeginAlignYTransformMapCommand(e.OldValue);
                 vm.UpdateAlignTransformMapCommand();
@@ -28,7 +28,7 @@ namespace TPMapEditor.DataTemplate
 
         private void SliderZ_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiMovableMapObject vm)
+            if (sender is Slider slider && slider.IsKeyboardFocusWithin && slider.DataContext is IMultiMovableMapObject vm)
             {
                 vm.BeginAlignZTransformMapCommand(e.OldValue);
                 vm.UpdateAlignTransformMapCommand();

@@ -8,7 +8,7 @@ namespace TPMapEditor.DataTemplate
     {
         private void SliderX_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
+            if (sender is Slider slider && slider.IsKeyboardFocusWithin && slider.DataContext is IMultiRotatableMapObject vm)
             {
                 vm.BeginSpinXFixTransformMapCommand(e.OldValue);
                 vm.UpdateSpinFixTransformMapCommand();
@@ -18,7 +18,7 @@ namespace TPMapEditor.DataTemplate
 
         private void SliderY_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
+            if (sender is Slider slider && slider.IsKeyboardFocusWithin && slider.DataContext is IMultiRotatableMapObject vm)
             {
                 vm.BeginSpinYFixTransformMapCommand(e.OldValue);
                 vm.UpdateSpinFixTransformMapCommand();
@@ -28,7 +28,7 @@ namespace TPMapEditor.DataTemplate
 
         private void SliderZ_ValueChanged_BeginEndCommand(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (sender is Slider slider && (slider.IsFocused || slider.IsMouseOver) && slider.DataContext is IMultiRotatableMapObject vm)
+            if (sender is Slider slider && slider.IsKeyboardFocusWithin && slider.DataContext is IMultiRotatableMapObject vm)
             {
                 vm.BeginSpinZFixTransformMapCommand(e.OldValue);
                 vm.UpdateSpinFixTransformMapCommand();
