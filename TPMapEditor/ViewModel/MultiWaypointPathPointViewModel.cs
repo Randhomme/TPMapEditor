@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TPMapEditor.Data;
+using TPMapEditor.Interfaces;
 using TPMapEditor.Services;
 
 namespace TPMapEditor.ViewModel
