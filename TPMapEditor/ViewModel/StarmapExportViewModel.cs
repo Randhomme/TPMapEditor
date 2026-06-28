@@ -62,9 +62,9 @@ namespace TPMapEditor.ViewModel
             BlackHoles.Filter = IsWorldObjectBlackHole;
             Asteroids = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             Asteroids.Filter = IsWorldObjectAsteroid;
-            Nebulas = new CollectionViewSource() { Source = map.Nebulas }.View;
+            Nebulas = new CollectionViewSource() { Source = map.Nebulas.ToList() }.View;
             Nebulas.Filter = IsNebulaNebula;
-            EtheriumCurrents = new CollectionViewSource() { Source = map.EtheriumCurrents }.View;
+            EtheriumCurrents = new CollectionViewSource() { Source = map.EtheriumCurrents.ToList() }.View;
         }
 
         private bool IsWorldObjectIsland(object o)
