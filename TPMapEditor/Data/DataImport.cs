@@ -20,21 +20,19 @@ namespace TPMapEditor.Data
         private readonly WorldMap originalMap; //used for MapObject.Map
         private readonly IProgress<string> progress;
         private readonly IProgress<string> progressOperation;
-        private readonly ICopyPasteService copyPasteService;
         private readonly ICopyPasteService ruleConditionCopyPasteService;
         private readonly ICopyPasteService ruleActionCopyPasteService;
         private readonly ICopyPasteService waypointPathPointCopyPasteService;
         private readonly ICopyPasteService worldPolygonPointCopyPasteService;
         private readonly ICopyPasteService worldPointCopyPasteService;
 
-        public DataImport(string filePath, WorldMap? map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService copyPasteService, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
+        public DataImport(string filePath, WorldMap? map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
             reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = new();
             this.originalMap = map ?? this.map;
             this.progress = progress;
             this.progressOperation = progressOperation;
-            this.copyPasteService = copyPasteService;
             this.ruleConditionCopyPasteService = ruleConditionCopyPasteService;
             this.ruleActionCopyPasteService = ruleActionCopyPasteService;
             this.waypointPathPointCopyPasteService = waypointPathPointCopyPasteService;
