@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -202,7 +204,7 @@ namespace TPMapEditor.ViewModel
                     WorldMap? tempMap = null;
                     new ProgressDialog(Application.Current.MainWindow, "Import map").RunAction((progress, progressLogs) =>
                     {
-                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                        using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                         tempMap = di.ReadMapFileAndAddData();
                     });
                     if(tempMap != null)
@@ -229,7 +231,7 @@ namespace TPMapEditor.ViewModel
                 WorldMap? tempMap = null;
                 new ProgressDialog(Application.Current.MainWindow, "Import map").RunAction((progress, progressLogs) =>
                 {
-                    using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, copyPasteService, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
+                    using var di = new DataImport(ofd.FileName, Map, progressLogs, progress, ruleConditionCopyPasteService, ruleActionCopyPasteService, waypointPathPointCopyPasteService, worldPolygonPointCopyPasteService, worldPointCopyPasteService);
                     tempMap = di.ReadMapFileAndAddData();
                 }, true, false);
                 if (tempMap != null)
@@ -270,6 +272,11 @@ namespace TPMapEditor.ViewModel
                 {
                     try
                     {
+                        if (settings.CreateBackupOnMapExport && File.Exists(sfd.FileName))
+                        {
+                            // Create backup file
+                            File.Copy(sfd.FileName, sfd.FileName + ".bak", true);
+                        }
                         ValidateMap(progressLogs);
                         using (var de = new DataExport(sfd.FileName, Map, progressLogs, progress))
                         {
