@@ -38,6 +38,7 @@ namespace TPMapEditor.Settings
         public ObservableCollection<GameHeadersFile> TPMapTextItems { get; } = new();
         public ObservableCollection<GameHeadersFile> TPWorldNames { get; } = new();
         public ObservableCollection<GameHeadersFile> TPWorldDescriptions { get; } = new();
+        public bool CreateBackupOnMapExport { get; set; } = true;
         [XmlIgnore]
         public string EffectsDirectory { get; set; } = string.Empty;
         [XmlIgnore]
