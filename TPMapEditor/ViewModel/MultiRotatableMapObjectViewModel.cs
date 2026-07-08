@@ -31,7 +31,7 @@ namespace TPMapEditor.ViewModel
         {
             if (UseUpdateCommands)
             {
-                rotateSpinFixTransformMapCommand = new(this, multiXRotationBefore, Y, Z)
+                rotateSpinFixTransformMapCommand = new(this, multiXRotationBefore, YRotation, ZRotation)
                 {
                     RotateOnX = true,
                     RotateOnY = false,
@@ -44,7 +44,7 @@ namespace TPMapEditor.ViewModel
         {
             if (UseUpdateCommands)
             {
-                rotateSpinFixTransformMapCommand = new(this, X, multiYRotationBefore, Z)
+                rotateSpinFixTransformMapCommand = new(this, XRotation, multiYRotationBefore, ZRotation)
                 {
                     RotateOnX = false,
                     RotateOnY = true,
@@ -57,7 +57,7 @@ namespace TPMapEditor.ViewModel
         {
             if (UseUpdateCommands)
             {
-                rotateSpinFixTransformMapCommand = new(this, X, Y, multiZRotationBefore)
+                rotateSpinFixTransformMapCommand = new(this, XRotation, YRotation, multiZRotationBefore)
                 {
                     RotateOnX = false,
                     RotateOnY = false,
