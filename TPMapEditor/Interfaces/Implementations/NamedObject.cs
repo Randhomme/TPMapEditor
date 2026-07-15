@@ -38,7 +38,7 @@ namespace TPMapEditor.Interfaces.Implementations
             return false;
         }
 
-        public static string GenerateName(string prefix, IEnumerable<INamedObject> collection)
+        public static string GenerateName(string prefix, params IEnumerable<INamedObject>[] collections)
         {
             string newPrefix = prefix;
             int i = newPrefix.Length - 1;
@@ -53,16 +53,19 @@ namespace TPMapEditor.Interfaces.Implementations
             }
             var c = 0;
             bool shouldKeppSameName = true;
-            foreach (var namedMapObject in collection)
+            foreach(var collection in collections)
             {
-                if (namedMapObject.Name.StartsWith(newPrefix))
+                foreach (var namedMapObject in collection)
                 {
-                    if (namedMapObject.Name.Equals(prefix))
-                        shouldKeppSameName = false;
-                    var s = namedMapObject.Name.Substring(newPrefix.Length);
-                    if (int.TryParse(s, out int j))
+                    if (namedMapObject.Name.StartsWith(newPrefix))
                     {
-                        if (j > c) c = j;
+                        if (namedMapObject.Name.Equals(prefix))
+                            shouldKeppSameName = false;
+                        var s = namedMapObject.Name.Substring(newPrefix.Length);
+                        if (int.TryParse(s, out int j))
+                        {
+                            if (j > c) c = j;
+                        }
                     }
                 }
             }
