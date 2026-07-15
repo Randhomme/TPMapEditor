@@ -1280,7 +1280,7 @@ namespace TPMapEditor.Data
                     var etheriumCurrentName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(etheriumCurrentName))
                     {
-                        etheriumCurrentName = NamedObject.GenerateName("EtheriumCurrent", originalMap.EtheriumCurrents);
+                        etheriumCurrentName = NamedObject.GenerateName("EtheriumCurrent", originalMap.EtheriumCurrents, map.EtheriumCurrents);
                         progress.Report($"Warning: Empty etherium current name replaced by {etheriumCurrentName}.");
                     }
                     if (ruleField.Value != null)
@@ -1385,7 +1385,7 @@ namespace TPMapEditor.Data
                                 if (unitName.Equals(ShipUnit.DefaultName))
                                     unit = ShipUnit.DefaultShipUnit;
                                 else
-                                    unit = originalMap.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                    unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                                 if (unit != null)
                                 {
                                     ruleField.SelectedGroup = unitGroup;
@@ -1456,7 +1456,7 @@ namespace TPMapEditor.Data
                     var nebulaName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(nebulaName))
                     {
-                        nebulaName = NamedObject.GenerateName("Nebula", originalMap.Nebulas);
+                        nebulaName = NamedObject.GenerateName("Nebula", originalMap.Nebulas, map.Nebulas);
                         progress.Report($"Warning: Empty nebula name replaced by {nebulaName}.");
                     }
                     if (ruleField.Value != null)
@@ -1550,7 +1550,7 @@ namespace TPMapEditor.Data
                     var shipUnitName = DataImportExtensions.ParseString(ruleField.RealLabel + " ", line);
                     if (string.IsNullOrEmpty(shipUnitName))
                     {
-                        shipUnitName = NamedObject.GenerateName("Ship", originalMap.ShipUnits);
+                        shipUnitName = NamedObject.GenerateName("Ship", originalMap.ShipUnits, map.ShipUnits);
                         progress.Report($"Warning: Empty unit name replaced by {shipUnitName}.");
                     }
                     if(ruleField.Value!=null)
