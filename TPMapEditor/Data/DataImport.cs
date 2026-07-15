@@ -919,7 +919,7 @@ namespace TPMapEditor.Data
             {
                 var player0 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player0 Int ")) ?? Player.DefaultPlayer;
                 var player1 = map.Players.ElementAtOrDefault(reader.ReadAndParseInt("Player1 Int ")) ?? Player.DefaultPlayer;
-                var playerAlliance = new PlayerAlliance(originalMap, map.SelectablePlayers, player0, player1);
+                var playerAlliance = new PlayerAlliance(originalMap, originalMap.SelectablePlayers, player0, player1);
                 map.PlayerAlliances.Add(playerAlliance);
             });
         }
