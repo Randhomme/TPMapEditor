@@ -44,5 +44,11 @@ namespace TPMapEditor.Dialogs
                 MessageBox.Show("Starmap image exported !", "Starmap image exported", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        private void DialogWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var vm = (StarmapExportViewModel)DataContext;
+            vm.Close();
+        }
     }
 }
