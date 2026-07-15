@@ -96,6 +96,14 @@ namespace TPMapEditor.Data
             return copy;
         }
 
+        public void Clear()
+        {
+            while (Conditions.Count > 0)
+                Conditions.RemoveAt(0);
+            while (Actions.Count > 0)
+                Actions.RemoveAt(0);
+        }
+
         //TODO : Move everything below into a ViewModel, it needs a solid amount of refactoring
 
         [RelayCommand(CanExecute = nameof(CanCopyConditions))]

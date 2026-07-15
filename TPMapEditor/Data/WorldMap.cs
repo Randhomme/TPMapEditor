@@ -115,6 +115,7 @@ namespace TPMapEditor.Data
             WorldObjects.CollectionChanged += OnWorldObjectsCollectionChanged;
             WorldPointSets.CollectionChanged += OnWorldPointSetsCollectionChanged;
             WorldPolygons.CollectionChanged += (s, e) => NullifyRuleFieldOnRemoveItems(WorldPolygons, e);
+            WorldRules.CollectionChanged += OnWorldRulesCollectionChanged;
         }
 
         private void NullifyRuleFieldOnRemoveItems<T>(ObservableCollection<T> itemSource, NotifyCollectionChangedEventArgs e, T? defaultItem = default)
@@ -217,6 +218,17 @@ namespace TPMapEditor.Data
         {
             SelectableWorldPointSets.SynchronizeFrom(WorldPointSets, e, new[] { WorldPointSet.DefaultWorldPointSet });
             NullifyRuleFieldOnRemoveItems(WorldPointSets, e, WorldPointSet.DefaultWorldPointSet);
+        }
+
+        private void OnWorldRulesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (WorldRule item in e.OldItems)
+                {
+                    item.Clear();
+                }
+            }
         }
 
         public void EnableCollectionSynchronization(object _lock)
