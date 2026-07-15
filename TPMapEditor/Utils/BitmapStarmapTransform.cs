@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -14,7 +16,7 @@ namespace TPMapEditor.Utils
     /// </summary>
     public static class BitmapStarmapTransform
     {
-        public static BitmapSource GenerateOutline(BitmapSource src, Color outlineColor, double thickness)
+        public static BitmapSource GenerateOutline(BitmapSource src, Color outlineColor, double thickness, CancellationToken token)
         {
             int srcW = src.PixelWidth;
             int srcH = src.PixelHeight;
@@ -41,12 +43,12 @@ namespace TPMapEditor.Utils
                     outPixels[dstIdx + 3] = srcPixels[srcIdx + 3];
                 }
             }
-
             // Generate ouline
             for (int y = 0; y < srcH; y++)
             {
                 for (int x = 0; x < srcW; x++)
                 {
+                    token.ThrowIfCancellationRequested();
                     int srcIdx = (y * srcW + x) * 4;
                     if (srcPixels[srcIdx + 3] == 0) continue;
 
@@ -77,7 +79,6 @@ namespace TPMapEditor.Utils
                     }
                 }
             }
-
             return BitmapSource.Create(newW, newH, src.DpiX, src.DpiY, PixelFormats.Pbgra32, null, outPixels, newW * 4);
         }
 

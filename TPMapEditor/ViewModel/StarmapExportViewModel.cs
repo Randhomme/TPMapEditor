@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,8 @@ namespace TPMapEditor.ViewModel
         private readonly Brush asteroidBrush;
         private Color outlineColor;
 
+        private readonly IList<StarmapWorldObjectViewModel> worldObjectViewModels;
+
         public WorldMap Map { get; }
         public double NegativeWorldBuffer { get => -Map.WorldBuffer; }
         public double BorderThickness { get; } = 2.5;
@@ -39,6 +42,7 @@ namespace TPMapEditor.ViewModel
         public ICollectionView EtheriumCurrents { get; }
 
         private readonly SemaphoreSlim _semaphore = new(4); // CPU limit
+        private readonly CancellationTokenSource _cts = new();
 
         public StarmapExportViewModel(WorldMap map)
         {
@@ -55,16 +59,16 @@ namespace TPMapEditor.ViewModel
             IslandInnerShadowBlurRadius *= (Map.Size - Map.WorldBuffer) / 512;
             TranslateTransformIsland *= (Map.Size - Map.WorldBuffer) / 512;
             ScaleDownTransformIsland = 1 - ScaleDownTransformIsland * (Map.Size - Map.WorldBuffer) / 512;
-            IList<StarmapWorldObjectViewModel> worldObjectViewModels = new List<StarmapWorldObjectViewModel>(map.WorldObjects.Select((w) => new StarmapWorldObjectViewModel(w)));
+            worldObjectViewModels = new List<StarmapWorldObjectViewModel>(map.WorldObjects.Select((w) => new StarmapWorldObjectViewModel(w)));
             Islands = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             Islands.Filter = IsWorldObjectIsland;
             BlackHoles = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             BlackHoles.Filter = IsWorldObjectBlackHole;
             Asteroids = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             Asteroids.Filter = IsWorldObjectAsteroid;
-            Nebulas = new CollectionViewSource() { Source = map.Nebulas.ToList() }.View;
+            Nebulas = new CollectionViewSource() { Source = map.Nebulas }.View;
             Nebulas.Filter = IsNebulaNebula;
-            EtheriumCurrents = new CollectionViewSource() { Source = map.EtheriumCurrents.ToList() }.View;
+            EtheriumCurrents = new CollectionViewSource() { Source = map.EtheriumCurrents }.View;
         }
 
         private bool IsWorldObjectIsland(object o)
@@ -105,70 +109,98 @@ namespace TPMapEditor.ViewModel
 
         public async Task ProcessIslandsAndAsteroidsImages()
         {
+            var token = _cts.Token;
             var islands = Islands.Cast<StarmapWorldObjectViewModel>().ToList();
             var asteroids = Asteroids.Cast<StarmapWorldObjectViewModel>().ToList();
-            var islandsTasks = islands.Select(ProcessIslandsAsync);
-            var asteroidsTasks = asteroids.Select(ProcessAsteroidsAsync);
+            var islandsTasks = islands.Select(i => ProcessIslandsAsync(i, token));
+            var asteroidsTasks = asteroids.Select(a => ProcessAsteroidsAsync(a, token));
             await Task.WhenAll(islandsTasks);
             await Task.WhenAll(asteroidsTasks);
         }
 
-        private async Task ProcessIslandsAsync(StarmapWorldObjectViewModel item)
+        private async Task ProcessIslandsAsync(StarmapWorldObjectViewModel item, CancellationToken token)
         {
-            await _semaphore.WaitAsync();
+            var entered = false;
             try
             {
+                await _semaphore.WaitAsync(token);
+                entered = true;
+
+                token.ThrowIfCancellationRequested();
                 var original = item.OriginalImage;
                 var gradientImage = BitmapStarmapTransform.ApplyGradient(original, islandBrush);
                 if (gradientImage.CanFreeze)
                     gradientImage.Freeze();
 
                 var mapSize = Map.Size > Map.WorldBuffer ? Map.Size - Map.WorldBuffer : Map.Size;
-                //var outlineThickness = BorderThickness + 0 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
                 var outlineThickness = Math.Min(BorderThickness, Math.Min(gradientImage.PixelWidth, gradientImage.PixelHeight));
                 var result = await Task.Run(() =>
                 {
-                    var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness);
+                    token.ThrowIfCancellationRequested();
+                    var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness, token);
                     if (temp.CanFreeze)
                         temp.Freeze();
                     return temp;
-                });
+                }, token);
 
                 item.StarmapImage = result;
             }
+            catch (OperationCanceledException)
+            {
+                // Cancellation requested - stop processing
+            }
             finally
             {
-                _semaphore.Release();
+                if (entered)
+                    _semaphore.Release();
             }
         }
 
-        private async Task ProcessAsteroidsAsync(StarmapWorldObjectViewModel item)
+        private async Task ProcessAsteroidsAsync(StarmapWorldObjectViewModel item, CancellationToken token)
         {
-            await _semaphore.WaitAsync();
+            var entered = false;
             try
             {
+                await _semaphore.WaitAsync(token);
+                entered = true;
+
+                token.ThrowIfCancellationRequested();
                 var original = item.OriginalImage;
                 var gradientImage = BitmapStarmapTransform.ApplyGradient(original, asteroidBrush);
                 if (gradientImage.CanFreeze)
                     gradientImage.Freeze();
 
                 var mapSize = Map.Size > Map.WorldBuffer ? Map.Size - Map.WorldBuffer : Map.Size;
-                //var outlineThickness = BorderThickness + 0 * Math.Max(gradientImage.PixelWidth, gradientImage.PixelHeight) / (mapSize);
                 var outlineThickness = Math.Min(BorderThickness, Math.Min(gradientImage.PixelWidth, gradientImage.PixelHeight));
                 var result = await Task.Run(() =>
                 {
-                    var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness);
+                    token.ThrowIfCancellationRequested();
+                    var temp = BitmapStarmapTransform.GenerateOutline(gradientImage, outlineColor, outlineThickness, token);
                     if (temp.CanFreeze)
                         temp.Freeze();
                     return temp;
-                });
+                }, token);
 
                 item.StarmapImage = result;
             }
+            catch (OperationCanceledException)
+            {
+                // Cancellation requested - stop processing
+            }
             finally
             {
-                _semaphore.Release();
+                if (entered)
+                    _semaphore.Release();
             }
+        }
+
+        public void Close()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            //_semaphore.Release();
+            //_semaphore.Dispose();
+            worldObjectViewModels.Clear();
         }
     }
 }
