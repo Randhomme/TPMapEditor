@@ -1075,7 +1075,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Condition List", () =>
             {
-                var condition = new Rule.RuleCondition(originalMap);
+                var condition = new Rule.RuleCondition(map, originalMap);
                 var typeString = reader.ReadAndParseString("Type String ");
                 var isValidCondition = true;
                 if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleCondition>(typeString, out var type))
@@ -1135,7 +1135,7 @@ namespace TPMapEditor.Data
         {
             ReadSection("Action List", () =>
             {
-                var action = new Rule.RuleAction(originalMap);
+                var action = new Rule.RuleAction(map, originalMap);
                 var typeString = reader.ReadAndParseString("Type String ");
                 var isValidAction = true;
                 if (EnumExtensions.TryGetValueFromDisplayName<Enums.RuleAction>(typeString, out var type))
@@ -1633,7 +1633,7 @@ namespace TPMapEditor.Data
                             if (unitName.Equals(ShipUnit.DefaultName))
                                 unit = ShipUnit.DefaultShipUnit;
                             else
-                                unit = originalMap.ShipUnits.FirstOrDefault(u => u.Name == unitName);
+                                unit = map.ShipUnits.FirstOrDefault(u => u.Name == unitName);
                             if (unit != null)
                             {
                                 ruleField.SelectedGroup = unitGroup;

@@ -13,103 +13,106 @@ namespace TPMapEditor.Data.Rule
         [ObservableProperty]
         private Enums.RuleCondition type;
 
+        private readonly WorldMap ruleFieldMap;
+
         public ObservableCollection<RuleField> RuleFields { get; } = new();
 
-        public RuleCondition(WorldMap map) : base(map)
+        public RuleCondition(WorldMap map, WorldMap? ruleFieldMap = null) : base(map)
         {
+            this.ruleFieldMap = ruleFieldMap ?? map;
             OnTypeChanged(Enums.RuleCondition.AllUnitsFromGroupHaveEnteredTriggerVolumeOnce);
         }
 
         private void AddRuleFieldBool(string? realLabel, string? label, bool value = false, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            RuleFields.Add(new RuleFieldBool(Map, realLabel, label, value, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldBool(ruleFieldMap, realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldDouble(string? realLabel, string? label, double value = 0, double min = -9999, double max = 9999, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            RuleFields.Add(new RuleFieldDouble(Map, realLabel, label, value, min, max, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldDouble(ruleFieldMap, realLabel, label, value, min, max, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldEquivalence(string? realLabel, string? label, Equivalence value = Equivalence.GreaterThan, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            RuleFields.Add(new RuleFieldEquivalence(Map, realLabel, label, value, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldEquivalence(ruleFieldMap, realLabel, label, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldFlag(string? realLabel, string? label, Flag? flag = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             flag ??= Map.Flags.FirstOrDefault();
-            RuleFields.Add(new RuleFieldFlag(Map, realLabel, label, flag, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldFlag(ruleFieldMap, realLabel, label, flag, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldFlagTexture(string? realLabel, string? label, string? flagTexture = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             flagTexture ??= AppSettings.FlagTextures.FirstOrDefault();
-            RuleFields.Add(new RuleFieldFlagTexture(Map, realLabel, label, flagTexture, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldFlagTexture(ruleFieldMap, realLabel, label, flagTexture, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldGroup(string? realLabel, string? label, Group? group = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             group ??= Map.SelectableGroups.FirstOrDefault();
-            RuleFields.Add(new RuleFieldGroup(Map, realLabel, label, group, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldGroup(ruleFieldMap, realLabel, label, group, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldGroupUnit(string? realLabel, string? label, Group? selectedGroup = null, NamedMapObject? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             value ??= Map.SelectableGroups.FirstOrDefault();
             selectedGroup ??= Map.SelectableGroups.FirstOrDefault();
-            RuleFields.Add(new RuleFieldGroupUnit(Map, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldGroupUnit(ruleFieldMap, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldInt(string? realLabel, string? label, int value = 0, int min = -9999, int max = 9999, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            RuleFields.Add(new RuleFieldInt(Map, realLabel, label, value, min, max, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldInt(ruleFieldMap, realLabel, label, value, min, max, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldPlayer(string? realLabel, string? label, Player? player = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             player ??= Map.SelectablePlayers.FirstOrDefault();
-            RuleFields.Add(new RuleFieldPlayer(Map, realLabel, label, player, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldPlayer(ruleFieldMap, realLabel, label, player, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldSpeechEvent(string? realLabel, string? label, SpeechEvent? speechEvent = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             speechEvent ??= Map.SpeechEvents.FirstOrDefault();
-            RuleFields.Add(new RuleFieldSpeechEvent(Map, realLabel, label, speechEvent, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldSpeechEvent(ruleFieldMap, realLabel, label, speechEvent, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldTeam(string? realLabel, string? label, Team? team = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             team ??= Map.InGameTeams.FirstOrDefault();
-            RuleFields.Add(new RuleFieldTeam(Map, realLabel, label, team, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldTeam(ruleFieldMap, realLabel, label, team, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldTimer(string? realLabel, string? label, Timer? timer = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             timer ??= Map.Timers.FirstOrDefault();
-            RuleFields.Add(new RuleFieldTimer(Map, realLabel, label, timer, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldTimer(ruleFieldMap, realLabel, label, timer, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldUnit(string? realLabel, string? label, Group? selectedGroup = null, ShipUnit? value = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             selectedGroup ??= Map.Groups.FirstOrDefault();
             value ??= Map.SelectableShipUnits.FirstOrDefault();
-            RuleFields.Add(new RuleFieldUnit(Map, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldUnit(ruleFieldMap, realLabel, label, selectedGroup, value, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldVitalSection(string? realLabel, string? label, VitalSection vitalSection = VitalSection.VitalToMission, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            RuleFields.Add(new RuleFieldVitalSection(Map, realLabel, label, vitalSection, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldVitalSection(ruleFieldMap, realLabel, label, vitalSection, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldVolume(string? realLabel, string? label, WorldPolygon? volume = null, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
             volume ??= Map.WorldPolygons.FirstOrDefault();
-            RuleFields.Add(new RuleFieldWorldPolygon(Map, realLabel, label, volume, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldWorldPolygon(ruleFieldMap, realLabel, label, volume, isOptional, optionalLabel, isShown));
         }
 
         private void AddRuleFieldWorldObjectType(string? realLabel, string? label, KillableWorldObjectType worldObjectType = KillableWorldObjectType.Ship, bool isOptional = false, string? optionalLabel = null, bool isShown = true)
         {
-            RuleFields.Add(new RuleFieldWorldObjectType(Map, realLabel, label, worldObjectType, isOptional, optionalLabel, isShown));
+            RuleFields.Add(new RuleFieldWorldObjectType(ruleFieldMap, realLabel, label, worldObjectType, isOptional, optionalLabel, isShown));
         }
 
         partial void OnTypeChanged(Enums.RuleCondition value)
