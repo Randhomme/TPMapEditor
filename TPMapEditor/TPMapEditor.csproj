@@ -1158,6 +1158,9 @@
     <None Update="ImageData\WorldObjects\Ship_WeaponBarge.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ImageData\WorldObjects\Terrain_BlackHole.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Big.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
