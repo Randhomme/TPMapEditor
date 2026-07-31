@@ -1161,19 +1161,10 @@
     <None Update="ImageData\WorldObjects\Terrain_BlackHole.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ImageData\WorldObjects\Terrain_BlackHole_Big.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Big.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ImageData\WorldObjects\Terrain_BlackHole_Med.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Med.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ImageData\WorldObjects\Terrain_BlackHole_Small.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ImageData\WorldObjects\Terrain_BlackHole_Small.xml">
