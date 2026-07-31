@@ -185,7 +185,7 @@
                                                 <ItemsPanelTemplate>
                                                     <Canvas HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <Canvas.Effect>
-                                                            <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="MediumAquamarine" ShadowDepth="0"/>
+                                                            <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="MediumSeaGreen" ShadowDepth="0"/>
                                                         </Canvas.Effect>
                                                     </Canvas>
                                                 </ItemsPanelTemplate>
@@ -216,6 +216,7 @@
                                                     <Image Source="{Binding OriginalImage}" RenderTransformOrigin="0.5,0.5">
                                                         <Image.RenderTransform>
                                                             <TransformGroup>
+                                                                <ScaleTransform ScaleX="{Binding SizeFactor}" ScaleY="{Binding SizeFactor}"/>
                                                                 <TranslateTransform X="{Binding Pivot.X}" Y="{Binding Pivot.Y}"/>
                                                                 <RotateTransform Angle="{Binding ZRotation}"/>
                                                             </TransformGroup>
@@ -232,7 +233,7 @@
                                                 <ItemsPanelTemplate>
                                                     <Canvas HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <Canvas.Effect>
-                                                            <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Color="LimeGreen" ShadowDepth="0"/>
+                                                            <DropShadowEffect BlurRadius="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.EtheriumCurrentThickness}" Opacity="1" Color="LimeGreen" ShadowDepth="0"/>
                                                         </Canvas.Effect>
                                                     </Canvas>
                                                 </ItemsPanelTemplate>

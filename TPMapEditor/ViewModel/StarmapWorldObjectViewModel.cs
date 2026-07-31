@@ -15,6 +15,7 @@ namespace TPMapEditor.ViewModel
         public double Y { get; }
         public double ZRotation { get; }
         public double ZIndex { get; }
+        public float SizeFactor { get; }
         public Point Pivot { get; }
         public BitmapSource OriginalImage { get; }
         public CustomInfoDefinition CustomInfo { get; }
@@ -24,6 +25,7 @@ namespace TPMapEditor.ViewModel
             Y = worldObject.Y;
             ZRotation = -worldObject.ZRotation;
             ZIndex = worldObject.ZIndex;
+            SizeFactor = worldObject.Type.SizeFactor;
             Pivot = worldObject.Type.Pivot;
             OriginalImage = starmapImage = worldObject.Type.Image;
             CustomInfo = worldObject.Type.CustomInfoDefinition;

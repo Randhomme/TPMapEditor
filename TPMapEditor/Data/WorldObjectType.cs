@@ -15,14 +15,17 @@ namespace TPMapEditor.Data
         public static BitmapImage WotPlaceholder { get; } = new BitmapImage(new Uri("/Images/WotPlaceholder.png", UriKind.Relative));
 
         [ObservableProperty]
-        private BitmapImage image = WotPlaceholder;
+        private BitmapImage image;
         [ObservableProperty]
         private Point pivot = new(0.5, 0.5);
         [ObservableProperty]
         private CustomInfoDefinition customInfoDefinition;
+        [ObservableProperty]
+        private float sizeFactor = 1;
 
         public WorldObjectType(string name) : base(name)
         {
+            image = WotPlaceholder;
         }
 
         public override string ToString()

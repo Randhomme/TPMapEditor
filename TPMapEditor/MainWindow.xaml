@@ -211,7 +211,11 @@
                                         <Border.RenderTransform>
                                             <RotateTransform Angle="{c:Binding ElementName=WotSliderRotate, Path='-Value'}"/>
                                         </Border.RenderTransform>
-                                        <Image Source="{Binding SelectedWorldObjectType.Image}"/>
+                                        <Image Source="{Binding SelectedWorldObjectType.Image}">
+                                            <Image.LayoutTransform>
+                                                <ScaleTransform ScaleX="{Binding SelectedWorldObjectType.SizeFactor}" ScaleY="{Binding SelectedWorldObjectType.SizeFactor}"/>
+                                            </Image.LayoutTransform>
+                                        </Image>
                                     </Border>
 
                                     <!-- Preview Player -->
@@ -347,7 +351,11 @@
                                                     <Border.BorderBrush>
                                                         <SolidColorBrush Color="{Binding Group.Color}"/>
                                                     </Border.BorderBrush>
-                                                    <Image Source="{Binding Type.Image}"/>
+                                                    <Image Source="{Binding Type.Image}">
+                                                        <Image.LayoutTransform>
+                                                            <ScaleTransform ScaleX="{Binding Type.SizeFactor}" ScaleY="{Binding Type.SizeFactor}"/>
+                                                        </Image.LayoutTransform>
+                                                    </Image>
                                                 </Border>
                                             </Border>
                                             <DataTemplate.Triggers>
