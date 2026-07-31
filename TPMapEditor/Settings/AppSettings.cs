@@ -963,6 +963,8 @@ namespace TPMapEditor.Settings
                         using (var reader = new StreamReader(File.OpenRead(file)))
                         {
                             var wot = new WorldObjectType(string.Empty);
+                            var hasSizeFactor = false;
+                            var collisionRadius = 1f;
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
@@ -971,6 +973,41 @@ namespace TPMapEditor.Settings
                                     string typeString = line.Substring("Type String:".Length).Trim('\'');
 
                                     wot.Name = typeString;
+                                }
+                                else if (line.Equals("Definition String 'COLLISIONDEFINITION'"))
+                                {
+                                    // Entity type
+                                    var strEntityType = reader.ReadLine().Trim().Substring(18).Trim('\'');
+                                    if (!string.IsNullOrEmpty(strEntityType))
+                                    {
+                                        int i = 0;
+                                        while (!reader.EndOfStream && i < 5)
+                                        {
+                                            reader.ReadLine();
+                                            i++;
+                                        }
+                                        if (!reader.EndOfStream)
+                                        {
+                                            var strUserDefineSphere = reader.ReadLine().Trim();
+                                            if (strUserDefineSphere.StartsWith("User defined sphere size Bool"))
+                                            {
+                                                var strBool = strUserDefineSphere.Substring(30);
+                                                if (bool.TryParse(strBool, out var definedSphere) && definedSphere == true)
+                                                {
+                                                    reader.ReadLine();
+                                                    var strRadius = reader.ReadLine().Trim().Substring(13);
+                                                    if (float.TryParse(strRadius, out var radius))
+                                                    {
+                                                        if (!hasSizeFactor)
+                                                        {
+                                                            collisionRadius = radius;
+                                                            hasSizeFactor = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                                 else if (line.Equals("Definition String 'CUSTOMINFODEFINITION'"))
                                 {
@@ -987,13 +1024,44 @@ namespace TPMapEditor.Settings
                                             throw new Exception("Invalid custom info definition.");
                                         }
                                     }
+                                    // Get BlackHole radius and image
+                                    if (wot.CustomInfoDefinition == CustomInfoDefinition.BlackHoleCustomInfoFactory)
+                                    {
+                                        wot.Image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/Terrain_BlackHole.png"));
+                                        int i = 0;
+                                        while (!reader.EndOfStream && i < 3)
+                                        {
+                                            reader.ReadLine();
+                                            i++;
+                                        }
+                                        if (!reader.EndOfStream)
+                                        {
+                                            var strRadius = reader.ReadLine().Trim().Substring(13);
+                                            if (hasSizeFactor)
+                                            {
+                                                if (wot.Image.Width != 0)
+                                                {
+                                                    wot.SizeFactor = collisionRadius * 2 / (float)wot.Image.Width;
+                                                    hasSizeFactor = true;
+                                                }
+                                            }
+                                            else if(float.TryParse(strRadius, out var radius))
+                                            {
+                                                if (wot.Image.Width != 0)
+                                                {
+                                                    wot.SizeFactor = radius * 2 / (float)wot.Image.Width;
+                                                    hasSizeFactor = true;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             // Attempt to load the image for the world object type
                             if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Name}.png"))
                             {
                                 wot.Image = new BitmapImage(new Uri($"{AppDomain.CurrentDomain.BaseDirectory}/ImageData/WorldObjects/{wot.Name}.png"));
-
+                                wot.SizeFactor = 1;
                                 //If an image is found, load the rotation data
                                 try
                                 {
