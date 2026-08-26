@@ -295,7 +295,7 @@ namespace TPMapEditor.ViewModel
         [RelayCommand]
         private void OnStarmapExport()
         {
-            new StarmapExportDialog(Application.Current.MainWindow, "Starmap preview") { DataContext = new StarmapExportViewModel(Map) }.ShowDialog();
+            new StarmapExportDialog(Application.Current.MainWindow, "Starmap preview") { DataContext = new StarmapExportViewModel(Map) }.Show();
         }
 
         [RelayCommand]
