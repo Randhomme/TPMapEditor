@@ -26,14 +26,14 @@ namespace TPMapEditor.ViewModel
 
         public WorldMap Map { get; }
         public double NegativeWorldBuffer { get => -Map.WorldBuffer; }
-        public double BorderThickness { get; } = 2.5;
+        public double BorderThickness { get; } = 3;
         public double TranslateTransformIsland { get; } = -0.5;
         public double ScaleDownTransformIsland { get; } = 0.001;
         public double NegativeBorderThickness { get; }
-        public double EtheriumCurrentThickness { get; } = 10;
+        public double EtheriumCurrentThickness { get; } = 14;
         public double EtheriumCurrentShadowThickness { get; } = 6;
-        public double NebulaBlurRadius { get; } = 15;
-        public double IslandShadowBlurRadius { get; } = 30;
+        public double NebulaBlurRadius { get; } = 20;
+        public double IslandShadowBlurRadius { get; } = 25;
         public double IslandInnerShadowBlurRadius { get; } = 0;
         public ICollectionView Asteroids { get; }
         public ICollectionView BlackHoles { get; }
@@ -50,15 +50,15 @@ namespace TPMapEditor.ViewModel
             asteroidBrush = new SolidColorBrush(Colors.LimeGreen);
             outlineColor = Colors.White;
             this.Map = map;
-            BorderThickness *= (Map.Size - Map.WorldBuffer) / 512.0;
+            BorderThickness *= (Map.Size - Map.WorldBuffer * 2) / 512.0;
             NegativeBorderThickness = -BorderThickness;
-            NebulaBlurRadius *= (Map.Size - Map.WorldBuffer) / 512.0;
-            EtheriumCurrentThickness *= (Map.Size - Map.WorldBuffer) / 512.0;
-            EtheriumCurrentShadowThickness *= (Map.Size - Map.WorldBuffer) / 512.0;
-            IslandShadowBlurRadius *= (Map.Size - Map.WorldBuffer) / 512.0;
-            IslandInnerShadowBlurRadius *= (Map.Size - Map.WorldBuffer) / 512.0;
-            TranslateTransformIsland *= (Map.Size - Map.WorldBuffer) / 512;
-            ScaleDownTransformIsland = 1 - ScaleDownTransformIsland * (Map.Size - Map.WorldBuffer) / 512.0;
+            NebulaBlurRadius *= (Map.Size - Map.WorldBuffer * 2) / 512.0;
+            EtheriumCurrentThickness *= (Map.Size - Map.WorldBuffer * 2) / 512.0;
+            EtheriumCurrentShadowThickness *= (Map.Size - Map.WorldBuffer * 2) / 512.0;
+            IslandShadowBlurRadius *= (Map.Size - Map.WorldBuffer * 2) / 512.0;
+            IslandInnerShadowBlurRadius *= (Map.Size - Map.WorldBuffer * 2) / 512.0;
+            TranslateTransformIsland *= (Map.Size - Map.WorldBuffer * 2) / 512;
+            ScaleDownTransformIsland = 1 - ScaleDownTransformIsland * (Map.Size - Map.WorldBuffer * 2) / 512.0;
             worldObjectViewModels = new List<StarmapWorldObjectViewModel>(map.WorldObjects.Select((w) => new StarmapWorldObjectViewModel(w)));
             Islands = new CollectionViewSource() { Source = worldObjectViewModels }.View;
             Islands.Filter = IsWorldObjectIsland;
