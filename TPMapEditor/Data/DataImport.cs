@@ -15,7 +15,7 @@ namespace TPMapEditor.Data
 {
     public class DataImport : IDisposable
     {
-        private readonly PositionnedStreamReader reader;
+        private readonly StreamReader reader;
         private readonly WorldMap map;
         private readonly WorldMap originalMap; //used for MapObject.Map
         private readonly IProgress<string> progress;
@@ -28,7 +28,7 @@ namespace TPMapEditor.Data
 
         public DataImport(string filePath, WorldMap? map, IProgress<string> progress, IProgress<string> progressOperation, ICopyPasteService ruleConditionCopyPasteService, ICopyPasteService ruleActionCopyPasteService, ICopyPasteService waypointPathPointCopyPasteService, ICopyPasteService worldPolygonPointCopyPasteService, ICopyPasteService worldPointCopyPasteService)
         {
-            reader = new PositionnedStreamReader(File.Open(filePath, FileMode.Open, FileAccess.Read));
+            reader = new(File.Open(filePath, FileMode.Open, FileAccess.Read));
             this.map = new();
             this.originalMap = map ?? this.map;
             this.progress = progress;
@@ -401,7 +401,7 @@ namespace TPMapEditor.Data
                 else
                     worldObject.AIEntity += firstLine + Environment.NewLine;
 
-                var pos = reader.CurrentPosition;
+                var pos = PositionnedStreamReader.GetActualPosition(reader);
                 var line = reader.ReadLine();
                 if (line.Trim().EndsWith("State"))
                 {
@@ -410,7 +410,7 @@ namespace TPMapEditor.Data
                     SkipSection((line) => worldObject.AIEntity += line + Environment.NewLine);
                 }
                 else
-                    reader.CurrentPosition = pos;
+                    ReaderSeek(pos, SeekOrigin.Begin);
 
                     worldObject.AIEntity = worldObject.AIEntity.TrimEnd();
 
@@ -418,7 +418,7 @@ namespace TPMapEditor.Data
 
                 //# RenderEntity
                 worldObject.RenderEntity += reader.ReadLine() + Environment.NewLine;
-                pos = reader.CurrentPosition;
+                pos = PositionnedStreamReader.GetActualPosition(reader);
                 line = reader.ReadLine();
                 if (line.Trim().EndsWith("State"))
                 {
@@ -427,14 +427,14 @@ namespace TPMapEditor.Data
                     SkipSection((line) => worldObject.RenderEntity += line + Environment.NewLine);
                 }
                 else
-                    reader.CurrentPosition = pos;
+                    ReaderSeek(pos, SeekOrigin.Begin);
                 worldObject.RenderEntity = worldObject.RenderEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# PhysicsEntity
                 worldObject.PhysicsEntity += reader.ReadLine() + Environment.NewLine;
-                pos = reader.CurrentPosition;
+                pos = PositionnedStreamReader.GetActualPosition(reader);
                 line = reader.ReadLine();
                 if (line.Trim().EndsWith("State"))
                 {
@@ -443,14 +443,14 @@ namespace TPMapEditor.Data
                     SkipSection((line) => worldObject.PhysicsEntity += line + Environment.NewLine);
                 }
                 else
-                    reader.CurrentPosition = pos;
+                    ReaderSeek(pos, SeekOrigin.Begin);
                 worldObject.PhysicsEntity = worldObject.PhysicsEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# CollisionEntity
                 worldObject.CollisionEntity += reader.ReadLine() + Environment.NewLine;
-                pos = reader.CurrentPosition;
+                pos = PositionnedStreamReader.GetActualPosition(reader);
                 line = reader.ReadLine();
                 if (line.Trim().EndsWith("State"))
                 {
@@ -459,14 +459,14 @@ namespace TPMapEditor.Data
                     SkipSection((line) => worldObject.CollisionEntity += line + Environment.NewLine);
                 }
                 else
-                    reader.CurrentPosition = pos;
+                    ReaderSeek(pos, SeekOrigin.Begin);
                 worldObject.CollisionEntity = worldObject.CollisionEntity.TrimEnd();
 
                 reader.ReadLine(); //skip line between state section (it's normally a comment line)
 
                 //# CustomInfoEntity
                 worldObject.CustomInfoEntity += reader.ReadLine() + Environment.NewLine;
-                pos = reader.CurrentPosition;
+                pos = PositionnedStreamReader.GetActualPosition(reader);
                 line = reader.ReadLine();
                 if (line.Trim().EndsWith("State"))
                 {
@@ -475,7 +475,7 @@ namespace TPMapEditor.Data
                     SkipSection((line) => worldObject.CustomInfoEntity += line + Environment.NewLine);
                 }
                 else
-                    reader.CurrentPosition = pos;
+                    ReaderSeek(pos, SeekOrigin.Begin);
                 worldObject.CustomInfoEntity = worldObject.CustomInfoEntity.TrimEnd();
 
             });
@@ -641,7 +641,7 @@ namespace TPMapEditor.Data
                 }
 
                 //Skip World Rules section
-                var worldRulesSectionPosition = reader.CurrentPosition;
+                var worldRulesSectionPosition = PositionnedStreamReader.GetActualPosition(reader);
                 SkipNamedSection("World Rules");
 
                 //Objective System
@@ -730,7 +730,7 @@ namespace TPMapEditor.Data
                 catch (Exception ex) { throw new TPMapEditorException($"Fail to read end of Game Specific section : {ex.Message}", ex); }
 
                 //go back to read world rules
-                reader.CurrentPosition = worldRulesSectionPosition;
+                ReaderSeek(worldRulesSectionPosition, SeekOrigin.Begin);
                 ReadWorldRulesSection();
 
             });
@@ -1088,13 +1088,13 @@ namespace TPMapEditor.Data
 
                 while (!reader.EndOfStream)
                 {
-                    var pos = reader.CurrentPosition;
+                    var pos = PositionnedStreamReader.GetActualPosition(reader);
                     var line = reader.ReadLine() ?? throw new TPMapEditorException("Unexpected end of file when reading condition fields.");
                     line = line.Trim();
 
                     if (line.Equals("}"))
                     {
-                        reader.CurrentPosition = pos;
+                        ReaderSeek(pos, SeekOrigin.Begin);
                         break;
                     }
 
@@ -1122,7 +1122,7 @@ namespace TPMapEditor.Data
                     }
 
                     if (targetField == null)
-                        progress.Report($"Warning: Unknown condition field for : " );
+                        throw new TPMapEditorException("Unknown action field: " + line);
                     else
                         ProcessRuleField(targetField, line);                    
                 }
@@ -1148,13 +1148,13 @@ namespace TPMapEditor.Data
 
                 while (!reader.EndOfStream)
                 {
-                    var pos = reader.CurrentPosition;
+                    var pos = PositionnedStreamReader.GetActualPosition(reader);
                     var line = reader.ReadLine() ?? throw new TPMapEditorException("Unexpected end of file when reading action fields.");
                     line = line.Trim();
 
                     if (line.Equals("}"))
                     {
-                        reader.CurrentPosition = pos;
+                        ReaderSeek(pos, SeekOrigin.Begin);
                         break;
                     }
 
@@ -1477,7 +1477,7 @@ namespace TPMapEditor.Data
                         {
                             if (!ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: ObjectivePoint '{name}' is the default name.\n'{line}', position {reader.CurrentPosition}");
+                                progress.Report($"Warning: ObjectivePoint '{name}' is the default name.\n'{line}', position {PositionnedStreamReader.GetActualPosition(reader)}");
                             }
                             ruleField.Value = ObjectivePoint.DefaultObjectivePoint;
                         }
@@ -1518,7 +1518,7 @@ namespace TPMapEditor.Data
                         {
                             if (!ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: Player '{playerName}' is the default name.\n'{line}', position {reader.CurrentPosition}");
+                                progress.Report($"Warning: Player '{playerName}' is the default name.\n'{line}', position {PositionnedStreamReader.GetActualPosition(reader)}");
                             }
                             ruleField.Value = Player.DefaultPlayer;
                         }
@@ -1672,7 +1672,7 @@ namespace TPMapEditor.Data
                         {
                             if (!ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: WaypointPath '{name}' is a default name.\n'{line}', position {reader.CurrentPosition}");
+                                progress.Report($"Warning: WaypointPath '{name}' is a default name.\n'{line}', position {PositionnedStreamReader.GetActualPosition(reader)}");
                             }
                             ruleField.Value = WaypointPath.DefaultWaypointPath;
                         }
@@ -1802,7 +1802,7 @@ namespace TPMapEditor.Data
                         {
                             if (!ruleField.IsOptional)
                             {
-                                progress.Report($"Warning: WorldPointSet '{name}' is the default name.\n'{line}', position {reader.CurrentPosition}");
+                                progress.Report($"Warning: WorldPointSet '{name}' is the default name.\n'{line}', position {PositionnedStreamReader.GetActualPosition(reader)}");
                             }
                             ruleField.Value = WorldPointSet.DefaultWorldPointSet;
                         }
@@ -1845,7 +1845,7 @@ namespace TPMapEditor.Data
 
         private void SkipNamedSection(string sectionName, Action<string>? action)
         {
-            var pos = reader.CurrentPosition;
+            var pos = PositionnedStreamReader.GetActualPosition(reader);
             try
             {
                 var line = reader.ReadLine();
@@ -1859,13 +1859,13 @@ namespace TPMapEditor.Data
                 else
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
             }
-            catch (TPMapEditorException) { reader.CurrentPosition = pos; throw; }
-            catch { reader.CurrentPosition = pos; throw new Exception($"Fail to skip {sectionName} section."); }
+            catch (TPMapEditorException) { ReaderSeek(pos, SeekOrigin.Begin); throw; }
+            catch { ReaderSeek(pos, SeekOrigin.Begin); throw new Exception($"Fail to skip {sectionName} section."); }
         }
 
         private void SkipNamedSection(string sectionName)
         {
-            var pos = reader.CurrentPosition;
+            var pos = PositionnedStreamReader.GetActualPosition(reader);
             try
             {
                 var line = reader.ReadLine().Trim();
@@ -1877,8 +1877,8 @@ namespace TPMapEditor.Data
                 else
                     throw new TPMapEditorException($"{sectionName} section not found at the exepected position.");
             }
-            catch (TPMapEditorException) { reader.CurrentPosition = pos; throw; }
-            catch { reader.CurrentPosition = pos; throw new Exception($"Fail to skip {sectionName} section."); }
+            catch (TPMapEditorException) { ReaderSeek(pos, SeekOrigin.Begin); throw; }
+            catch { ReaderSeek(pos, SeekOrigin.Begin); throw new Exception($"Fail to skip {sectionName} section."); }
         }
 
         private void SkipSection(Action<string>? action)
@@ -2014,6 +2014,12 @@ namespace TPMapEditor.Data
             {
                 map.StarmapTexture = reader.ReadAndParseString("Backdrop Texture Name String ");
             });
+        }
+
+        private void ReaderSeek(long pos, SeekOrigin seekOrigin = SeekOrigin.Begin)
+        {
+            reader.BaseStream.Seek(pos, seekOrigin);
+            reader.DiscardBufferedData();
         }
 
         public void Dispose()
