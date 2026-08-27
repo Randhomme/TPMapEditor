@@ -10,11 +10,12 @@ namespace TPMapEditor.Dialogs
     /// <summary>
     /// Interaction logic for StarmapExportWindow.xaml
     /// </summary>
-    public partial class StarmapExportDialog : DialogWindow
+    public partial class StarmapExportDialog : Window
     {
-        public StarmapExportDialog(Window owner, string title) : base(owner, title)
+        public StarmapExportDialog(Window owner, string title)
         {
             InitializeComponent();
+            Title = title;
             Loaded += async (s, e) =>
             {
                 var vm = (StarmapExportViewModel)DataContext;
@@ -43,6 +44,11 @@ namespace TPMapEditor.Dialogs
                 }
                 MessageBox.Show("Starmap image exported !", "Starmap image exported", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        protected void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void DialogWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
