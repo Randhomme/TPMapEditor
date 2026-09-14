@@ -19,6 +19,10 @@ namespace TPMapEditor.Settings
         private readonly string filename = "TPMapEditor.xml";
         [ObservableProperty]
         private string tpGamePath = string.Empty;
+        [ObservableProperty]
+        private string bgImagePath = string.Empty;
+        [ObservableProperty]
+        private bool useBackgroundImage;
         public static IList<string> FlagTextures { get; } = new List<string>();
         public static IList<string> Effects { get; } = new List<string>();
         public static IList<string> SinglePlayerMissions { get; } = new List<string>();
