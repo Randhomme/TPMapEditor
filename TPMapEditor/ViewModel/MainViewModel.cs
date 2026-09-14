@@ -3,21 +3,21 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using TPMapEditor.Data;
 using TPMapEditor.Data.Rule;
 using TPMapEditor.Dialogs;
 using TPMapEditor.Enums;
+using TPMapEditor.Exceptions;
 using TPMapEditor.Interfaces;
 using TPMapEditor.Interfaces.Implementations;
 using TPMapEditor.Services;
@@ -28,7 +28,7 @@ namespace TPMapEditor.ViewModel
 {
     public partial class MainViewModel : ObservableObject
     {
-        private AppSettings settings;
+        public AppSettings Settings { get; private set; }
         private bool shouldCommitTransformMapCommand = false;
         private bool hasCommittedTransformMapCommand = false;
 
@@ -66,6 +66,7 @@ namespace TPMapEditor.ViewModel
         public double ZoomedBorderThicknessMed { get => 5 / Zoom; }
         public double ZoomedBorderThicknessLarge { get => 10 / Zoom; }
         public bool IsMovableSelection3D { get; set; }
+        public BitmapImage? BackgroundImage { get; private set; }
 
         private readonly IReadOnlyList<(Key key, ModifierKeys modifiers, ICommand command)> keyboardShortcut;
         private readonly ISelectionKBShortcutService worldObjectSelectionKBShortcutService;
@@ -117,7 +118,7 @@ namespace TPMapEditor.ViewModel
         {
             SelectableWorldObjectTypes = new CollectionViewSource() { Source = WorldObjectType.WotTypes }.View;
             SelectableWorldObjectTypes.Filter = WorldObjectType.IsSelectableWorldObjectType;
-            settings = new AppSettings();
+            Settings = new AppSettings();
             Map = new WorldMap();
             copyPasteService = new CopyPasteService();
             ruleConditionCopyPasteService = new CopyPasteService();
@@ -272,7 +273,7 @@ namespace TPMapEditor.ViewModel
                 {
                     try
                     {
-                        if (settings.CreateBackupOnMapExport && File.Exists(sfd.FileName))
+                        if (Settings.CreateBackupOnMapExport && File.Exists(sfd.FileName))
                         {
                             // Create backup file
                             File.Copy(sfd.FileName, sfd.FileName + ".bak", true);
@@ -569,18 +570,19 @@ namespace TPMapEditor.ViewModel
         [RelayCommand]
         private void OnAppSettingsEdit()
         {
-            var tpGamePath = settings.TpGamePath;
-            var asd = new AppSettingsDialog(Application.Current.MainWindow, "Settings", settings);
+            var tpGamePath = Settings.TpGamePath;
+            var bgImagePath = Settings.BgImagePath;
+            var useBgImage = Settings.UseBackgroundImage;
+            var asd = new AppSettingsDialog(Application.Current.MainWindow, "Settings", Settings);
             asd.ShowDialog();
-            settings.Save();
-            if (settings.TpGamePath != tpGamePath)
+            Settings.Save();
+            if (Settings.TpGamePath != tpGamePath)
             {
-                new ProgressDialog(Application.Current.MainWindow, "Reload TPGame folder").RunActionSameThread((progress, progressLogs) =>
-                {
-                    progress.Report("Reloading ...");
-                    settings.ReloadAll(progress, progressLogs);
-                    progress.Report("Reloading complete");
-                }, true);
+                ReloadAllSettings("Reload TPGame folder");
+            }
+            if (Settings.UseBackgroundImage != useBgImage || Settings.BgImagePath != bgImagePath)
+            {
+                ReloadBackgroundImage("Reload background image");
             }
         }
 
@@ -598,7 +600,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadDialogueFilesList();
+                    Settings.ReloadDialogueFilesList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -616,7 +618,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadEffectList();
+                    Settings.ReloadEffectList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -634,7 +636,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadFlagTexturesList();
+                    Settings.ReloadFlagTexturesList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -652,7 +654,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadGuiTexturesList();
+                    Settings.ReloadGuiTexturesList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -670,7 +672,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadHudTexturesList();
+                    Settings.ReloadHudTexturesList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -688,7 +690,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadMeshesList();
+                    Settings.ReloadMeshesList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -706,7 +708,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadMusicsList();
+                    Settings.ReloadMusicsList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -724,7 +726,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadSinglePlayerMissionsList();
+                    Settings.ReloadSinglePlayerMissionsList();
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -742,7 +744,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadStringsDictionnaries(progress, logs);
+                    Settings.ReloadStringsDictionnaries(progress, logs);
                     progress.Report("Reloading complete");
                     SelectedMapTextPointPreviewTextIndex = 0;
                 }
@@ -761,7 +763,7 @@ namespace TPMapEditor.ViewModel
                 try
                 {
                     progress.Report("Reloading ...");
-                    settings.ReloadWorldObjectTypeList(logs);
+                    Settings.ReloadWorldObjectTypeList(logs);
                     progress.Report("Reloading complete");
                 }
                 catch (Exception ex)
@@ -1115,8 +1117,8 @@ namespace TPMapEditor.ViewModel
 
         public void LoadSettings()
         {
-            settings = settings.Load();
-            if (string.IsNullOrEmpty(settings.TpGamePath))
+            Settings = Settings.Load();
+            if (string.IsNullOrEmpty(Settings.TpGamePath))
             {
                 MessageBox.Show("You should set the TPGame path in the application settings before using the map editor.", "TPGame Path Not Set", MessageBoxButton.OK, MessageBoxImage.Warning);
                 OnAppSettingsEdit();
@@ -1125,12 +1127,16 @@ namespace TPMapEditor.ViewModel
             {
                 ReloadAllSettings("Load TPGame folder", false);
             }
+            if (Settings.UseBackgroundImage)
+            {
+                ReloadBackgroundImage("Load background image");
+            }
             Map.Reset();
         }
 
         public void SaveSettings()
         {
-            settings.Save();
+            Settings.Save();
         }
 
         /// <summary>
@@ -1143,10 +1149,54 @@ namespace TPMapEditor.ViewModel
             new ProgressDialog(Application.Current.MainWindow, title).RunActionSameThread((progress, progressLogs) =>
             {
                 progress.Report("Reloading ...");
-                settings.ReloadAll(progress, progressLogs);
+                Settings.ReloadAll(progress, progressLogs);
                 progress.Report("Reloading complete");
                 SelectedMapTextPointPreviewTextIndex = 0;
             }, true, notifyOnFinish);
+        }
+
+        private void ReloadBackgroundImage(string title)
+        {
+            new ProgressDialog(Application.Current.MainWindow, title).RunActionSameThread((progress, progressLogs) =>
+            {
+                progress.Report("Reloading ...");
+                ReloadBackgroundImage(Settings.BgImagePath, Settings.UseBackgroundImage, progress, progressLogs);
+                progress.Report("Reloading complete");
+            }, true, false);
+        }
+
+        private void ReloadBackgroundImage(string bgImagePath, bool useBgImage, IProgress<string> progress, IProgress<string> logs)
+        {
+            try
+            {
+                progress.Report("Loading background image ...");
+                if (useBgImage)
+                {
+                    if (string.IsNullOrEmpty(bgImagePath))
+                    {
+                        throw new TPMapEditorException("The background image path is empty.");
+                    }
+                    BackgroundImage = new();
+                    BackgroundImage.BeginInit();
+                    BackgroundImage.UriSource = new(bgImagePath, UriKind.Absolute);
+                    BackgroundImage.CacheOption = BitmapCacheOption.OnLoad;
+                    BackgroundImage.EndInit();
+                    OnPropertyChanged(nameof(BackgroundImage));
+                }
+                else
+                {
+                    BackgroundImage = null;
+                    OnPropertyChanged(nameof(BackgroundImage));
+                }
+            }
+            catch (TPMapEditorException ex)
+            {
+                logs.Report($"Error: {ex.Message}");
+            }
+            catch
+            {
+                logs.Report($"Error: the background image is invalid");
+            }
         }
 
         public bool TryExecuteKBShortcutCommand(Key key, ModifierKeys modifiers)
