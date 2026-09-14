@@ -9,6 +9,7 @@
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:controls="clr-namespace:TPMapEditor.Controls"
         xmlns:data="clr-namespace:TPMapEditor.Data"
+        xmlns:settings="clr-namespace:TPMapEditor.Settings"
         xmlns:vm="clr-namespace:TPMapEditor.ViewModel"
         xmlns:Styles="clr-namespace:TPMapEditor.Styles" x:Class="TPMapEditor.MainWindow"
         mc:Ignorable="d"
@@ -199,6 +200,9 @@
                                 <ScaleTransform x:Name="ZoomTransform" ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}" />
                             </Grid.LayoutTransform>
                             <Grid Name="MapGridInside" Margin="{Binding Map.WorldBuffer}" Background="Gray">
+                                
+                                <!-- Background Image -->
+                                <Image Source="{Binding BackgroundImage}"/>
 
                                 <!-- Preview Canvas -->
                                 <Canvas x:Name="PreviewCanvas" Panel.ZIndex="2" HorizontalAlignment="Center" VerticalAlignment="Center">
