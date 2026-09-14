@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using System;
 using System.Windows;
 using TPMapEditor.Settings;
@@ -30,6 +31,28 @@ namespace TPMapEditor.Dialogs
             if (ofd.ShowDialog() == WF.DialogResult.OK)
             {
                 AppSettings.TpGamePath = ofd.SelectedPath;
+            }
+        }
+
+        [RelayCommand]
+        private void OnBrowseBgImagePath()
+        {
+            var ofd = new OpenFileDialog()
+            {
+                Multiselect = false,
+                Title = "Select an image for the map editor background",
+                Filter = "Images|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff;*.ico|" +
+                 "JPEG|*.jpg;*.jpeg|" +
+                 "PNG|*.png|" +
+                 "BMP|*.bmp|" +
+                 "GIF|*.gif|" +
+                 "TIFF|*.tif;*.tiff|" +
+                 "ICO|*.ico|" +
+                 "All files|*.*"
+            };
+            if(ofd.ShowDialog() == true)
+            {
+                AppSettings.BgImagePath = ofd.FileName;
             }
         }
 

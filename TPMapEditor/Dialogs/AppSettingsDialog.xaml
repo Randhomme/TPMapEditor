@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TPMapEditor.Dialogs"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Height="330" Width="416" Closing="DialogWindow_Closing">
@@ -24,6 +25,18 @@
             </Grid>
             <Button Margin="0,10,0,0" Content="Edit game headers" Click="Button_Click"/>
             <CheckBox Margin="0,10,0,0" Content="Create backup on map export" IsChecked="{Binding AppSettings.CreateBackupOnMapExport}"/>
+            <CheckBox Margin="0,10,0,0" Content="Use background image" IsChecked="{Binding AppSettings.UseBackgroundImage}"/>
+            <StackPanel Visibility="{c:Binding AppSettings.UseBackgroundImage}">
+                <Label Content="Background image path" Margin="-5,0,0,0"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Padding="10,0,10,0" Content="Browse" Command="{Binding BrowseBgImagePathCommand}"/>
+                    <TextBox Grid.Column="1" IsEnabled="False" Margin="10,0,0,0" Text="{Binding AppSettings.BgImagePath}" />
+                </Grid>
+            </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Right">
             <Button Content="Close" MinWidth="85" IsDefault="True" Click="SaveButton_Click"/>
