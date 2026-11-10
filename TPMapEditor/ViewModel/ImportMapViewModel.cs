@@ -259,8 +259,8 @@ namespace TPMapEditor.ViewModel
                     this.map.WorldArms.Add(item);
                 }
             }
-            this.map.ReorganizeWorldObjectIds();
             map.Reset();
+            this.map.ReorganizeWorldObjectIds();
         }
 
         partial void OnImportGroupsChanging(bool value)
