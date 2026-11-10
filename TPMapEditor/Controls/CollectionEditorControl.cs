@@ -52,16 +52,12 @@ namespace TPMapEditor.Controls
             imageFactory.SetValue(Image.SourceProperty, new BitmapImage(new Uri("pack://application:,,,/TPMapEditor;component/Images/Cross.png")));
             buttonFactory.AppendChild(imageFactory);
             buttonFactory.SetValue(Button.CommandProperty, deleteCommand);
-            buttonFactory.SetBinding(
-                Button.CommandParameterProperty,
-                new Binding("Item")
-            );
+            buttonFactory.SetBinding(Button.CommandParameterProperty, new Binding("Item"));
             deleteButtonColumn = new DataGridTemplateColumn()
             {
                 CellTemplate = new System.Windows.DataTemplate()
                 {
                     VisualTree = buttonFactory,
-                    
                 },
             };
         }
@@ -168,7 +164,7 @@ namespace TPMapEditor.Controls
 
         private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if(e.NewValue is ItemWrapper wrapper)
+            if (e.NewValue is ItemWrapper wrapper)
             {
                 var control = (CollectionEditorControl)d;
                 control.SelectedItem = wrapper.Item;
@@ -215,23 +211,19 @@ namespace TPMapEditor.Controls
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
+                    foreach (var item in e.NewItems)
                     {
-                        foreach (var item in e.NewItems)
-                        {
-                            var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
-                            dataGrid.SelectedItems.Add(wrapper);
-                        }
-                        break;
+                        var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
+                        dataGrid.SelectedItems.Add(wrapper);
                     }
+                    break;
                 case NotifyCollectionChangedAction.Remove:
+                    foreach (var item in e.OldItems)
                     {
-                        foreach (var item in e.OldItems)
-                        {
-                            var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
-                            dataGrid.SelectedItems.Remove(wrapper);
-                        }
-                        break;
+                        var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
+                        dataGrid.SelectedItems.Remove(wrapper);
                     }
+                    break;
                 case NotifyCollectionChangedAction.Reset:
                     {
                         dataGrid.SelectedItems.Clear();
@@ -297,8 +289,7 @@ namespace TPMapEditor.Controls
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in e.OldItems)
-                        RemoveWrapper(item);
+                    RemoveWrapper(e.OldStartingIndex);
                     UpdateFromIndex(e.OldStartingIndex);
                     break;
 
@@ -318,6 +309,11 @@ namespace TPMapEditor.Controls
                         }
                     }
                     break;
+
+                case NotifyCollectionChangedAction.Move:
+                    Wrappers?.Move(e.OldStartingIndex, e.NewStartingIndex);
+                    UpdateFromIndex(Math.Min(e.OldStartingIndex, e.NewStartingIndex), Math.Max(e.OldStartingIndex, e.NewStartingIndex) + 1);
+                    break;
             }
             moveUpCommand.NotifyCanExecuteChanged();
             moveDownCommand.NotifyCanExecuteChanged();
@@ -330,6 +326,19 @@ namespace TPMapEditor.Controls
             {
                 wrapper.Dispose();
                 Wrappers?.Remove(wrapper);
+            }
+        }
+
+        private void RemoveWrapper(int index)
+        {
+            if (Wrappers != null && index < Wrappers.Count)
+            {
+                var wrapper = Wrappers[index];
+                if (wrapper != null)
+                {
+                    wrapper.Dispose();
+                    Wrappers.RemoveAt(index);
+                }
             }
         }
 
@@ -382,7 +391,6 @@ namespace TPMapEditor.Controls
                         dataGrid.Columns.Clear();
                     foreach (var column in Columns)
                     {
-                        //dataGrid.Columns.Add(CloneColumn(column));
                         dataGrid.Columns.Add(column);
                     }
                 }
@@ -398,7 +406,7 @@ namespace TPMapEditor.Controls
                 moveUpButton.Command = moveUpCommand;
             if (moveDownButton != null)
                 moveDownButton.Command = moveDownCommand;
-        }
+                }
 
         private void OnDataGridPreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -497,7 +505,7 @@ namespace TPMapEditor.Controls
             {
                 dataGrid.SelectedItems.Clear();
 
-                foreach(var item in SelectedItems)
+                foreach (var item in SelectedItems)
                 {
                     var wrapper = Wrappers.FirstOrDefault((w) => w.Item == item);
                     dataGrid.SelectedItems.Add(wrapper);
@@ -575,6 +583,20 @@ namespace TPMapEditor.Controls
             }
         }
 
+        private bool MoveItem(int oldIndex, int newIndex)
+        {
+            if (EditableList == null)
+                return false;
+            var moveMethod = EditableList.GetType().GetMethod("Move", new[] { typeof(int), typeof(int) });
+            if (moveMethod != null)
+            {
+                moveMethod.Invoke(EditableList, new object[] { oldIndex, newIndex });
+                return true;
+            }
+            (EditableList[oldIndex], EditableList[newIndex]) = (EditableList[newIndex], EditableList[oldIndex]);
+            return false;
+        }
+
         private bool CanDeleteSelectedItems()
         {
             return dataGrid?.SelectedItems.Count > 0;
@@ -592,13 +614,14 @@ namespace TPMapEditor.Controls
                 .Select(i => EditableList.IndexOf(i))
                 .OrderBy(i => i)
                 .ToList();
+            var preservesItemIdentity = true;
 
             if (direction < 0) // Up
             {
                 for (int i = 0; i < indices.Count; i++)
                 {
                     var index = indices[i];
-                    (EditableList[index], EditableList[index + direction]) = (EditableList[index + direction], EditableList[index]);
+                    preservesItemIdentity &= MoveItem(index, index + direction);
                 }
                 UpdateFromIndex(indices.FirstOrDefault() + direction, indices.LastOrDefault() + 1);
             }
@@ -607,12 +630,13 @@ namespace TPMapEditor.Controls
                 for (int i = indices.Count - 1; i >= 0; i--)
                 {
                     var index = indices[i];
-                    (EditableList[index], EditableList[index + direction]) = (EditableList[index + direction], EditableList[index]);
+                    preservesItemIdentity &= MoveItem(index, index + direction);
                 }
                 UpdateFromIndex(indices.FirstOrDefault(), indices.LastOrDefault() + direction);
             }
 
-            RestoreSelection(items);
+            if (!preservesItemIdentity)
+                RestoreSelection(items);
 
             moveUpCommand.NotifyCanExecuteChanged();
             moveDownCommand.NotifyCanExecuteChanged();
@@ -621,7 +645,7 @@ namespace TPMapEditor.Controls
         private bool CanMoveSelectedItems(int direction)
         {
             var selectedItems = SelectedWrappers;
-            
+
             if (selectedItems.Count <= 0 || EditableList == null)
                 return false;
 
@@ -643,33 +667,6 @@ namespace TPMapEditor.Controls
                     dataGrid.SelectedItems.Add(wrapper);
             }
         }
-
-        //private DataGridColumn? CloneColumn(DataGridColumn column)
-        //{
-        //    return column switch
-        //    {
-        //        DataGridTextColumn text => CloneTextColumn(text),
-        //        DataGridCheckBoxColumn check => CloneCheckBoxColumn(check),
-        //        DataGridTemplateColumn template => CloneTemplateColumn(template),
-        //        _ => null,
-        //    };
-        //}
-
-        //private DataGridColumn CloneTextColumn(DataGridTextColumn column)
-        //{
-        //    return new DataGridTextColumn()
-        //    {
-        //        Binding = column.Binding
-        //    };
-        //}
-        //private DataGridColumn CloneCheckBoxColumn(DataGridCheckBoxColumn column)
-        //{
-        //    return new DataGridTextColumn();
-        //}
-        //private DataGridColumn CloneTemplateColumn(DataGridTemplateColumn column)
-        //{
-        //    return new DataGridTextColumn();
-        //}
     }
 
     public sealed class ItemWrapper : ObservableObject, IDisposable
@@ -697,28 +694,4 @@ namespace TPMapEditor.Controls
                 npc.PropertyChanged -= OnItemPropertyChanged;
         }
     }
-
-
-    //public static class DataGridColumnRegistry
-    //{
-    //    private static readonly Dictionary<Type, Func<IList<DataGridColumn>>> _map
-    //        = new();
-
-    //    public static void Register<T>(Func<IList<DataGridColumn>> factory)
-    //    {
-    //        _map[typeof(T)] = factory;
-    //    }
-
-    //    public static bool TryGet(Type type, out IList<DataGridColumn> columns)
-    //    {
-    //        if (_map.TryGetValue(type, out var factory))
-    //        {
-    //            columns = factory();
-    //            return true;
-    //        }
-
-    //        columns = null!;
-    //        return false;
-    //    }
-    //}
 }
