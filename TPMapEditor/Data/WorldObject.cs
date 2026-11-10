@@ -33,7 +33,7 @@ namespace TPMapEditor.Data
             {
                 id = value;
                 if (value >= nextId)
-                    nextId = value+1;
+                    nextId = value + 1;
             } 
         }
 
